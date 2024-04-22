@@ -1,0 +1,6 @@
+.chartContainer > div {
+    height: 100% !important;
+}
+.highcharts-credits {
+    display: none !important;
+}
