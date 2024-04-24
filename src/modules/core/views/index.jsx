@@ -1,8 +1,8 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import NavBarCustom from '../components/NavBarCustom'
 import Footer from '../components/Footer'
 import style from '../utils/style.module.css'
+import NavBarCustom from '../../NavBarCustom/views'
 const MainContent = () => {
     // const authUser = storage.get('usuario')
     // console.log(authUser)

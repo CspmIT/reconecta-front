@@ -6,6 +6,16 @@ const GraficodePrueba = () => {
         title: {
             text: 'My chart'
         },
+        legend: {
+            enabled: false
+        },
+
+        xAxis: {
+            visible: false
+        },
+        yAxis: {
+            visible: false
+        },
         series: [
             {
                 data: [3, 2, 3, 5, 10, 8, 9, 3, 5]

@@ -36,10 +36,11 @@ const componentMap = [
 
 function DashBoard() {
     const [graficos, setGraficos] = useState([])
-    const [widthGraf, setWidthGraf] = useState(window.innerWidth - 100)
-    const [numCol, setNumCol] = useState((window.innerWidth - 150) / 30)
-    const [rowHeight, setRowHeight] = useState(window.innerHeight / 30)
-    const [sizeCelu, setSizeCelu] = useState(window.innerHeight < 1050 ? true : false)
+    const column = window.__TAURI__ ? 20 : 20
+    const [widthGraf, setWidthGraf] = useState(window.innerWidth * 0.95)
+    const [numCol, setNumCol] = useState(column)
+    const [rowHeight, setRowHeight] = useState(25)
+    const [sizeCelu, setSizeCelu] = useState(window.innerWidth < 780 ? true : false)
     const [dashboardStatic, setDashboardStatic] = useState(false)
     const [availableHandles, setAvailableHandles] = useState([])
     const [layoutCustom, setLayoutCustom] = useState([
@@ -67,14 +68,12 @@ function DashBoard() {
                 const { width } = event.payload
                 setWidthGraf(width - 100)
                 setSizeCelu(false)
-                // setNumCol(parseInt((width - 150) / 30))
                 const newNumCol = parseInt((width - 150) / 30)
                 setNumCol(newNumCol)
                 const newLayout = layoutCustom.map((item) => {
                     return {
                         ...item,
                         w: Math.max(item.w + 2, 1)
-                        // h: item.h - 1
                     }
                 })
                 const oldLayout = layoutCustom.map((item) => {
@@ -89,40 +88,54 @@ function DashBoard() {
             })
         }
     }, [])
-    useEffect(() => {
+    const updateSize = () => {
         if (!window.__TAURI__) {
-            const updateSize = () => {
-                setWidthGraf(window.innerWidth)
-                let newNumCol = parseInt((window.innerWidth - 150) / 50)
-                if (window.innerWidth > 1050) {
-                    setSizeCelu(false)
-                    setNumCol(newNumCol)
-                    setRowHeight(window.innerHeight / 25)
+            const windowWidth = window.innerWidth
+            if (windowWidth > 800) {
+                const newWidth = windowWidth * 0.95
+                setWidthGraf(newWidth)
+                setSizeCelu(false)
+                if (windowWidth < 1050) {
+                    setNumCol(40)
                 } else {
-                    setSizeCelu(true)
-                    setRowHeight(30)
-                    setNumCol(10)
+                    setNumCol(55)
                 }
-                const newLayout = layoutCustom.map((item) => {
-                    return {
-                        ...item,
-                        w: Math.max(item.w + 2, 1)
-                        // h: item.h - 1
-                    }
-                })
-                const oldLayout = layoutCustom.map((item) => {
-                    return {
-                        ...item
-                    }
-                })
-                setLayoutCustom(newLayout)
-                setTimeout(() => {
-                    setLayoutCustom(oldLayout)
-                }, 200)
+            } else {
+                setWidthGraf(windowWidth)
+                setSizeCelu(true)
+                setNumCol(12)
             }
-            window.addEventListener('resize', updateSize)
+            setRowHeight(25)
+            const updatedLayout = layoutCustom.map((item) => ({
+                ...item,
+                x: controlUbicacio(item.x, item.w),
+                w: item.w > 12 && windowWidth < 800 ? 11 : item.w
+            }))
+            setLayoutCustom(updatedLayout)
+        }
+    }
+
+    useEffect(() => {
+        updateSize()
+        window.addEventListener('resize', updateSize)
+
+        return () => {
+            window.removeEventListener('resize', updateSize)
         }
     }, [])
+
+    const controlUbicacio = (x, w) => {
+        const windowWidth = window.innerWidth
+        if (windowWidth < 800 && x + w > 12) {
+            return 0
+        } else if (windowWidth < 1050 && x + w >= 41) {
+            return 0
+        } else if (x + w >= 55) {
+            return 0
+        } else {
+            return x
+        }
+    }
 
     const editDashboard = () => {
         setDashboardStatic(!dashboardStatic)
@@ -140,14 +153,39 @@ function DashBoard() {
         <>
             {graficos.length > 0 ? (
                 <>
-                    <IconButton className={`!absolute !top-5 !right-5 !p-3 !rounded-full !shadow-gray-400 shadow-md z-50 ${dashboardStatic ? '!bg-green-500' : '!bg-gray-300'}`} onClick={() => editDashboard()}>
-                        {dashboardStatic ? <Check className='text-white font-bold ' /> : <Edit className='text-blue-500' />}
+                    <IconButton
+                        className={`!absolute !top-5 !right-5 !p-3 !rounded-full !shadow-gray-400 shadow-md z-50 ${
+                            dashboardStatic ? '!bg-green-500' : '!bg-gray-300'
+                        }`}
+                        onClick={() => editDashboard()}
+                    >
+                        {dashboardStatic ? (
+                            <Check className='text-white font-bold ' />
+                        ) : (
+                            <Edit className='text-blue-500' />
+                        )}
                     </IconButton>
-                    <GridLayout onResizeStop={(data) => handleLayoutChange(data)} isDraggable={dashboardStatic} isResizable={dashboardStatic} resizeHandles={availableHandles} className='layout' hei layout={layoutCustom} cols={numCol} rowHeight={rowHeight} width={widthGraf}>
+                    <GridLayout
+                        onResizeStop={(data) => handleLayoutChange(data)}
+                        isDraggable={dashboardStatic}
+                        isResizable={dashboardStatic}
+                        resizeHandles={availableHandles}
+                        className='layout'
+                        hei
+                        layout={layoutCustom}
+                        cols={numCol}
+                        rowHeight={rowHeight}
+                        width={widthGraf}
+                    >
                         {graficos.map((item) => {
                             const Component = item.componente[0]
                             return (
-                                <div className={'chartContainer  bg-white dark:bg-gray-300 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3'} key={item.id}>
+                                <div
+                                    className={
+                                        'chartContainer  bg-white dark:bg-gray-300 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3'
+                                    }
+                                    key={item.id}
+                                >
                                     <Suspense fallback={<div>Cargando...</div>}>
                                         <Component />
                                     </Suspense>
