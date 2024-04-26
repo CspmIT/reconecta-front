@@ -4,7 +4,6 @@ import DashBoard from "../src/modules/dashBoard/views/index";
 import Map from "./modules/map/views";
 import TabDinamic from "./modules/tabs/views";
 import Login from "./modules/login/views";
-import Footer from "./modules/core/components/Footer";
 
 function App() {
   // const [userRoutes, setUserRoutes] = useState([])
@@ -28,7 +27,6 @@ function App() {
           ))}
         </Route>
       </Routes>
-      <Footer />
     </BrowserRouter>
     // </div>
   );
