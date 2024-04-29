@@ -4,15 +4,16 @@ import DashBoard from "../src/modules/dashBoard/views/index";
 import Map from "./modules/map/views";
 import TabDinamic from "./modules/tabs/views";
 import Login from "./modules/login/views";
+import Profile from "./modules/profile/views";
 
 function App() {
   // const [userRoutes, setUserRoutes] = useState([])
   const loginRoutes = [{ path: "/login", element: <Login /> }];
   const userRoutes = [
-    { path: "/login", element: <Login /> },
     { path: "/*", element: <DashBoard /> },
     { path: "/map", element: <Map /> },
     { path: "/tabs", element: <TabDinamic /> },
+    { path: "/profile", element: <Profile /> },
   ];
   return (
     // <div className='flex min-h-screen overflow-x-hidden  bg-gray-200 dark:bg-gray-600 text-gray-700'>

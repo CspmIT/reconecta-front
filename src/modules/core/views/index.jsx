@@ -8,7 +8,7 @@ const MainContent = () => {
   const { user } = useContext(MainContext);
   // const authUser = storage.get('usuario')
   // console.log(authUser)
-  if (!user) {
+  if (user) {
     return <Navigate to="/login" />;
   }
   return (
