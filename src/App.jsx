@@ -5,6 +5,7 @@ import Map from "./modules/map/views";
 import TabDinamic from "./modules/tabs/views";
 import Login from "./modules/login/views";
 import Profile from "./modules/profile/views";
+import Board from "./modules/board/views";
 
 function App() {
   // const [userRoutes, setUserRoutes] = useState([])
@@ -13,6 +14,7 @@ function App() {
     { path: "/*", element: <DashBoard /> },
     { path: "/map", element: <Map /> },
     { path: "/tabs", element: <TabDinamic /> },
+    { path: "/board/:id", element: <Board /> },
     { path: "/profile", element: <Profile /> },
   ];
   return (

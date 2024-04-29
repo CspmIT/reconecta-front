@@ -12,7 +12,7 @@ const MainContent = () => {
     return <Navigate to="/login" />;
   }
   return (
-    <div className="pt-16 !min-h-screen relative bg-gray-200 dark:bg-gray-600 ">
+    <div className="pt-16 !min-h-screen relative bg-gray-200 dark:bg-gray-700 ">
       <NavBarCustom />
       <div className={`pl-20 pt-4 pb-32 !min-h-[92vh]  flex relative w-full ${style.boxMain}`}>
         <Outlet />
