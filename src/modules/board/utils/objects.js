@@ -27,3 +27,11 @@ export const boardControls = [
   { id: 11, name: "Falla de Admitancia N", type: "switch" },
   { id: 12, name: "Disparo Rápido", type: "switch" },
 ];
+
+export const boardMetrology = [
+  { id: 1, name: "Corrientes", children: [{ name: "A" }, { name: "B" }, { name: "C" }, { name: "N" }] },
+  { id: 2, name: "Tensión ABC", children: [{ name: "A" }, { name: "AB" }, { name: "B" }, { name: "BC" }, { name: "C" }, { name: "CA" }] },
+  { id: 3, name: "Tensión SRT", children: [{ name: "R" }, { name: "RS" }, { name: "S" }, { name: "ST" }, { name: "T" }, { name: "TR" }] },
+  { id: 4, name: "Potencia", children: [{ name: "S" }, { name: "FP A" }, { name: "P" }, { name: "FP A" }, { name: "Q" }, { name: "FP A" }] },
+  { id: 5, name: "UPS", children: [{ name: "Tensión de Batería" }, { name: "Corriente de Carga" }, { name: "Carga Efectiva" }] },
+];
