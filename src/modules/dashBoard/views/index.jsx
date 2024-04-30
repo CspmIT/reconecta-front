@@ -36,11 +36,10 @@ const componentMap = [
 
 function DashBoard() {
     const [graficos, setGraficos] = useState([])
-    const column = window.__TAURI__ ? 20 : 20
-    const [widthGraf, setWidthGraf] = useState(window.innerWidth * 0.95)
-    const [numCol, setNumCol] = useState(column)
-    const [rowHeight, setRowHeight] = useState(25)
-    const [sizeCelu, setSizeCelu] = useState(window.innerWidth < 780 ? true : false)
+    const [widthGraf, setWidthGraf] = useState(window.innerWidth * 0.9)
+    const [numCol, setNumCol] = useState(window.innerWidth > 800 ? 40 : 12)
+    const [rowHeight, setRowHeight] = useState(20)
+    const [sizeCelu, setSizeCelu] = useState(window.innerWidth < 800 ? true : false)
     const [dashboardStatic, setDashboardStatic] = useState(false)
     const [availableHandles, setAvailableHandles] = useState([])
     const [layoutCustom, setLayoutCustom] = useState([
@@ -91,21 +90,19 @@ function DashBoard() {
     const updateSize = () => {
         if (!window.__TAURI__) {
             const windowWidth = window.innerWidth
+            const newWidth = windowWidth * 0.9
+            setWidthGraf(newWidth)
             if (windowWidth > 800) {
-                const newWidth = windowWidth * 0.95
-                setWidthGraf(newWidth)
                 setSizeCelu(false)
                 if (windowWidth < 1050) {
-                    setNumCol(40)
+                    setNumCol(30)
                 } else {
-                    setNumCol(55)
+                    setNumCol(40)
                 }
             } else {
-                setWidthGraf(windowWidth)
                 setSizeCelu(true)
                 setNumCol(12)
             }
-            setRowHeight(25)
             const updatedLayout = layoutCustom.map((item) => ({
                 ...item,
                 x: controlUbicacio(item.x, item.w),
@@ -128,9 +125,9 @@ function DashBoard() {
         const windowWidth = window.innerWidth
         if (windowWidth < 800 && x + w > 12) {
             return 0
-        } else if (windowWidth < 1050 && x + w >= 41) {
+        } else if (windowWidth < 1050 && x + w >= 40) {
             return 0
-        } else if (x + w >= 55) {
+        } else if (x + w >= 40) {
             return 0
         } else {
             return x

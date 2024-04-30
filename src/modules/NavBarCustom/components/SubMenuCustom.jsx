@@ -20,7 +20,6 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
             setOpenSub(item.submenus.some((value) => value.link == buttonActive))
         }
     }, [openSideBar, buttonActive])
-    console.log(buttonActive)
     return (
         <>
             <ListItemButton onClick={(evento) => handleOpen(evento)}>
