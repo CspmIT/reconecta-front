@@ -136,7 +136,7 @@ function NavBarCustom() {
                 </Toolbar>
             </AppBarCustom>
             <DrawerCustom variant='permanent' open={open} ref={NavBarRef}>
-                <div className='bg-white dark:bg-gray-700 h-full'>
+                <div className='bg-white dark:bg-gray-800 h-full'>
                     <DrawerHeaderCustom>
                         <IconButton onClick={handleDrawerClose}>
                             <ChevronLeftIcon className='dark:text-white' />
@@ -155,6 +155,7 @@ function NavBarCustom() {
                                         {item.submenus ? (
                                             <SubMenuCustom
                                                 item={item}
+                                                className={`dark:text-white`}
                                                 openSideBar={open}
                                                 buttonActive={buttonActive}
                                                 activeButton={activeButton}
