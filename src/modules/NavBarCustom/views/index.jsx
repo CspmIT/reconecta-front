@@ -21,6 +21,7 @@ import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
+import { NotificationAdd } from '@mui/icons-material'
 function NavBarCustom() {
     const [open, setOpen] = useState(false)
     const NavBarRef = useRef(null)
@@ -67,6 +68,16 @@ function NavBarCustom() {
             name: 'Mapa',
             link: 'map',
             icon: <FaMapMarkedAlt className='dark:text-white text-3xl' />
+        },
+        {
+            name: 'Visualizador',
+            link: 'visualizador',
+            icon: <FaMapMarkedAlt className='dark:text-white text-3xl' />
+        },
+        {
+            name: 'Notificaciones',
+            link: 'notificaciones',
+            icon: <NotificationAdd className='dark:text-white text-3xl' />
         },
         {
             name: 'Configuración',
