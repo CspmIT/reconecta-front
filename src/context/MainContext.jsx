@@ -3,6 +3,7 @@ import { createContext, useState } from "react";
 const MainContext = createContext();
 
 function MainProvider({ children }) {
+  const [darkMode, setDarkMode] = useState(false);
   const [user, setUser] = useState(false);
   const [tabActive, setTabActive] = useState(0);
   const [tabs, setTabs] = useState([
@@ -39,6 +40,6 @@ function MainProvider({ children }) {
       ),
     },
   ]);
-  return <MainContext.Provider value={{ tabActive, setTabActive, tabs, setTabs, user, setUser }}>{children}</MainContext.Provider>;
+  return <MainContext.Provider value={{ tabActive, setTabActive, tabs, setTabs, user, setUser, darkMode, setDarkMode }}>{children}</MainContext.Provider>;
 }
 export { MainContext, MainProvider };
