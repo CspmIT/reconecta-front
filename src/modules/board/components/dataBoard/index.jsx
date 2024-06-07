@@ -15,7 +15,7 @@ const DataBoard = ({ ...props }) => {
     setSelectedCardId(id);
   };
   return (
-    <div className="w-full md:w-10/12 items-center rounded-xl p-3 bg-gray-300 dark:bg-gray-600">
+    <div className="w-full md:w-10/12 items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600">
       <div className="flex flex-row justify-between">
         <div className="flex-grow flex justify-center">
           <h2 className="pl-10 text-2xl">Reconectador</h2>
