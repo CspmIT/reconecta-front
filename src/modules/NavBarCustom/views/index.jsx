@@ -14,7 +14,7 @@ import {
 import DropdownImage from '../../core/components/DropdownImage'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import ButtonModeDark from '../../core/components/ButtonModeDark'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaMapMarkedAlt, FaCogs } from 'react-icons/fa'
 import { RiAlertFill, RiDashboardFill, RiRemoteControl2Fill } from 'react-icons/ri'
 import AppBarCustom from '../components/AppBarCustom'
@@ -24,6 +24,7 @@ import SubMenuCustom from '../components/SubMenuCustom'
 import { NotificationAdd } from '@mui/icons-material'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
+	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
 	const location = useLocation().pathname.split('/')[1] || '/DashBoard'
 	const [buttonActive, setButtonActive] = useState(location)
@@ -108,6 +109,7 @@ function NavBarCustom() {
 	]
 	const activeButton = (id) => {
 		setButtonActive(id)
+		navigate(id)
 	}
 	return (
 		<>
