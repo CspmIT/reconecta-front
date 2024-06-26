@@ -120,6 +120,7 @@ function TableRecloser() {
 				topToolbar
 				copy
 				grouping
+				filter
 				hide
 				sort
 				pagination

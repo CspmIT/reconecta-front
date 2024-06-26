@@ -1,18 +1,31 @@
-import { MRT_ExpandButton, MaterialReactTable, useMaterialReactTable } from 'material-react-table'
+import {
+	MRT_ExpandButton,
+	MRT_GlobalFilterTextField,
+	MRT_ShowHideColumnsButton,
+	MRT_ToggleDensePaddingButton,
+	MRT_ToggleFiltersButton,
+	MRT_ToggleGlobalFilterButton,
+	MaterialReactTable,
+	useMaterialReactTable,
+} from 'material-react-table'
 import NoRegisterTable from './NoRegisterTable'
 import { storage } from '../../storage/storage'
+import { Box } from '@mui/material'
 
 const TableCustom = ({ data, columns, ...prop }) => {
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {
-			return { id: item.name, value: item.value }
-		}, {}) || []
+			if (columns.some((col) => col.accessorKey === item.name)) {
+				acc = { id: item.name, value: item.value }
+			}
+			return acc
+		}, {}) || {}
 	// creo una constante con las configuracion inicial para poder modificar con props
 	const tableInitialState = {
 		density: prop.density ? prop.density : window.innerWidth < 750 ? 'compact' : 'comfortable',
 		expanded: true,
 		showColumnFilters: false,
-		columnFilters: [filtros],
+		columnFilters: Object.keys(filtros).length ? [filtros] : [],
 		columnVisibility: prop.columnVisibility,
 		sorting: [],
 		grouping: [],
@@ -29,13 +42,14 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	if (prop.orderBy) {
 		tableInitialState.sorting.push({ id: prop.orderBy, desc: false })
 	}
-
+	const hideColumn = prop?.onColumnVisibilityChange ? { onColumnVisibilityChange: prop.onColumnVisibilityChange } : ''
+	const columnVisibility = prop?.columnVisibility ? { columnVisibility: prop.columnVisibility } : ''
 	const table = useMaterialReactTable({
 		columns,
 		data,
 		initialState: tableInitialState,
 		state: {
-			columnVisibility: prop.columnVisibility,
+			...columnVisibility,
 		},
 		groupedColumnMode: 'remove',
 		positionToolbarAlertBanner: 'none',
@@ -90,37 +104,94 @@ const TableCustom = ({ data, columns, ...prop }) => {
 			return <NoRegisterTable />
 		},
 
-		muiTableBodyRowProps: () => {
-			return {
-				sx: prop.body,
-			}
-		},
-		muiTableHeadCellProps: {
-			sx: prop.header,
-		},
-		muiTopToolbarProps: {
+		// clases para el header de la tabla (muiTableHeadRowProps, muiTableHeadCellProps, muiTableHeadProps)
+		muiTableHeadRowProps: {
 			sx: {
-				minHeight: '3rem',
-				...prop.toolbarClass,
+				backgroundColor: 'transparent',
 			},
 		},
+
+		muiTableHeadCellProps: {
+			sx: {
+				backgroundColor: 'transparent',
+				...prop.header,
+			},
+		},
+
+		// ------------------------------------
+
+		// clases para la linea de herramientas de arriba ()
+		muiTopToolbarProps: {
+			sx: {},
+		},
+		// Se creo a mano las herramientas para poder escribir en español las opciones
+		renderTopToolbar: ({ table }) => (
+			<Box
+				sx={{
+					display: 'flex',
+					justifyContent: 'flex-end',
+					alignItems: 'center',
+					backgroundColor: 'transparent',
+					...prop.toolbarClass,
+				}}
+			>
+				<MRT_GlobalFilterTextField placeholder='Escriba su busqueda' table={table} />
+				<MRT_ToggleGlobalFilterButton title='Buscar' table={table} />
+				<MRT_ToggleFiltersButton title='Filtrar' table={table} />
+				<MRT_ShowHideColumnsButton title='Mostras/Ocultar Columnas' table={table} />
+				<MRT_ToggleDensePaddingButton title='Densidad' table={table} />
+
+				{/* descomentar si queremos hacer un fullScreen en la tabla */}
+				{/* <MRT_ToggleFullScreenButton table={table} /> */}
+
+				{/* descomentar si queremos hacer un boton de impresion en la tabla */}
+				{/* <Tooltip title='Print'>
+					<IconButton onClick={() => window.print()}>
+						<Print />
+					</IconButton>
+				</Tooltip> */}
+			</Box>
+		),
+		// ------------------------------------
+
+		// clases para la linea de herramientas de abajo
+
 		muiBottomToolbarProps: {
 			sx: {
 				minHeight: prop.pagination ? '3.5rem' : '2rem',
+				backgroundColor: 'transparent',
 				...prop.footer,
 			},
 		},
+
+		// ------------------------------------
+
+		// clases para el fondo y bordes de la tabla
+
 		muiTablePaperProps: {
-			sx: prop.card,
+			sx: {
+				backgroundColor: 'transparent',
+				...prop.card,
+			},
 		},
+
+		// ------------------------------------
+
+		// clases para la paginacion
 		muiPaginationProps: {
 			showRowsPerPage: false,
-			// sx: {
-			// 	'& .MuiPaginationItem-root': {
-			// 		color: 'white',
-			// 	},
-			// },
 		},
+		paginationDisplayMode: 'pages',
+
+		// ------------------------------------
+
+		// clases para el body de la tabla(muiTableBodyCellProps, muiTableBodyProps, muiTableBodyRowProps)
+		muiTableBodyRowProps: ({ row }) => ({
+			sx: {
+				...prop.body,
+				backgroundColor: prop.ChangeColorRow ? prop.ChangeColorRow(row) && 'yellow' : undefined,
+			},
+		}),
 		muiTableBodyProps: {
 			sx: () => ({
 				'& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
@@ -137,8 +208,12 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				},
 			}),
 		},
-		paginationDisplayMode: 'pages',
-		onColumnVisibilityChange: prop.onColumnVisibilityChange,
+
+		// ------------------------------------
+
+		// funcion para guardar las columnas que se ocultan
+
+		...hideColumn,
 	})
 
 	return <MaterialReactTable table={table} />
