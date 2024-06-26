@@ -1,0 +1,41 @@
+.marcador_ubicacion_map {
+	width: 2rem;
+	height: 2rem;
+	display: block;
+	position: relative;
+	border-radius: 3rem 3rem 0;
+	transform: rotate(45deg);
+	border: 1px solid #ccc0;
+}
+.interior_marcador_map {
+	background: #ffffff;
+	width: 1.3rem;
+	height: 1.3rem;
+	display: block;
+	position: relative;
+	border-radius: 999px;
+	margin: auto;
+	margin-right: 5px;
+	margin-top: 4px;
+	transform: rotate(-45deg);
+}
+
+.texto_ubicacion_map {
+	color: black !important;
+	margin-left: 2px;
+	font-size: 14px;
+}
+
+.layers-control-base .leaflet-control-layers-toggle {
+	background-image: url('src/modules/map/utils/asset/icon/maps-and-location.png');
+	background-size: cover;
+	width: 30px;
+	height: 30px;
+}
+
+.leaflet-control-layers-toggle .layers-control-overlay {
+	background-image: url('../asset/icon/maps-and-location.png') !important;
+	background-size: cover;
+	width: 30px;
+	height: 30px;
+}
