@@ -86,7 +86,9 @@ input,
 button {
 	outline: none;
 }
-
+.swal2-container {
+	z-index: 1500 !important;
+}
 #greet-input {
 	margin-right: 5px;
 }

@@ -13,6 +13,7 @@ import { useContext, useEffect, useState } from 'react'
 import { MainContext } from './context/MainContext'
 import LoginApp from './modules/LoginApp/view'
 import ListClients from './modules/LoginApp/view/ListClient'
+import Home from './modules/home/views'
 
 function App() {
 	// const [userRoutes, setUserRoutes] = useState([])
@@ -21,7 +22,8 @@ function App() {
 		{ path: '/ListClients', element: <ListClients /> },
 	]
 	const userRoutes = [
-		{ path: '/*', element: <DashBoard /> },
+		{ path: '/*', element: <Home /> },
+		{ path: '/Dashboard', element: <DashBoard /> },
 		{ path: '/map', element: <Map /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
