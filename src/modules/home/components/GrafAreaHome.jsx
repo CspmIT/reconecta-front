@@ -1,15 +1,23 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-function GrafAreaHome({ data, numVal, title, colorStatus }) {
+import { useContext } from 'react'
+import { MainContext } from '../../../context/MainContext'
+function GrafAreaHome({ data, numVal, title, colorStatus, alert }) {
+	const { darkMode } = useContext(MainContext)
+
 	const options = {
 		chart: {
 			type: 'area',
+			backgroundColor: null,
 		},
 		title: {
 			text: title,
+			style: {
+				color: darkMode ? 'white' : 'black',
+			},
 		},
 		subtitle: {
-			text: `<span style='font-size: 20px; color: black;'>${numVal || ''}<span>`,
+			text: `<span style='font-size: 20px; color: ${darkMode ? 'white' : 'black'};'>${numVal || ''}<span>`,
 			floating: true,
 			align: 'center',
 			verticalAlign: 'middle',

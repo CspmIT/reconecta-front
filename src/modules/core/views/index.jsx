@@ -8,9 +8,9 @@ const MainContent = () => {
 	const { user } = useContext(MainContext)
 	// const authUser = storage.get('usuario')
 	// console.log(authUser)
-	if (user) {
-		return <Navigate to='/login' />
-	}
+	// if (user) {
+	// 	return <Navigate to='/login' />
+	// }
 	return (
 		<div className='pt-16 !min-h-screen relative bg-gray-200 dark:bg-gray-700 '>
 			<NavBarCustom />

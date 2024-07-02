@@ -14,29 +14,44 @@ function Alert() {
 	const ChangeColorRow = (row) => {
 		return row.original.statusAlert === 1
 	}
-	const checkAlertCriticas = () => {
+	const checkAlertCriticas = (table) => {
 		Swal.fire({
 			title: 'Atención!',
 			html: '¿Está seguro de que desea desactivar las alertas críticas?',
 			icon: 'warning',
 			showCancelButton: true,
+			allowOutsideClick: true,
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',
 			confirmButtonText: 'Si',
 			cancelButtonText: 'No, cancelar',
 		}).then((result) => {
 			if (result.isConfirmed) {
-				const changeRows = rowCriticos.map((row) => {
-					if (row.statusAlert) {
-						row.statusAlert = 0
-					}
-					return row
+				Swal.fire({
+					title: 'Atención!',
+					html: '¿Deseas limpiar toda la tabla o solo la pag actual?',
+					icon: 'warning',
+					showCancelButton: true,
+					allowOutsideClick: true,
+					confirmButtonColor: '#3085d6',
+					cancelButtonColor: '#d33',
+					confirmButtonText: 'Actual',
+					cancelButtonText: 'Toda la tabla',
+				}).then((result) => {
+					const changeRows = rowCriticos.map((row, index) => {
+						if (!result.isConfirmed || table.getRowModel().rows.some((item) => item.index == index)) {
+							row.statusAlert = 0
+						}
+						return row
+					})
+
+					setBottonCheck(false)
+					setRowCriticos(changeRows)
 				})
-				setBottonCheck(false)
-				setRowCriticos(changeRows)
 			}
 		})
 	}
+
 	useEffect(() => {
 		if (rowCriticos.some((row) => row.statusAlert === 1)) {
 			setBottonCheck(true)
@@ -50,18 +65,9 @@ function Alert() {
 					<CardCustom className={' text-black  p-4 w-full'}>
 						<div className='relative flex justify-between items-center mb-4'>
 							<FormLabel className='w-full text-center !text-2xl'>Evento Criticos</FormLabel>
-							{bottonCheck && (
-								<Button
-									className='!absolute !right-2'
-									variant='contained'
-									color='warning'
-									onClick={() => checkAlertCriticas()}
-								>
-									<Check /> check
-								</Button>
-							)}
 						</div>
 						<TableCustom
+							getPage={checkAlertCriticas}
 							data={rowCriticos}
 							columns={columnsCriticos}
 							density='comfortable'
@@ -74,6 +80,7 @@ function Alert() {
 							body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
 							footer={{ background: 'rgba(152, 152, 152, 0.631)' }}
 							ChangeColorRow={ChangeColorRow}
+							checkAlert={bottonCheck}
 							topToolbar
 							hide
 							sort

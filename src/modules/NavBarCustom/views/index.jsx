@@ -15,13 +15,13 @@ import DropdownImage from '../../core/components/DropdownImage'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import ButtonModeDark from '../../core/components/ButtonModeDark'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FaMapMarkedAlt, FaCogs } from 'react-icons/fa'
+import { FaMapMarkedAlt, FaCogs, FaProjectDiagram } from 'react-icons/fa'
 import { RiAlertFill, RiDashboardFill, RiRemoteControl2Fill } from 'react-icons/ri'
 import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
-import { NotificationAdd } from '@mui/icons-material'
+import { InsertChart, NotificationAdd } from '@mui/icons-material'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
 	const navigate = useNavigate()
@@ -46,57 +46,57 @@ function NavBarCustom() {
 		}
 	}, [])
 	const menuSideBar = [
-		{ name: 'Alertas', link: 'Alert', icon: <RiAlertFill className='dark:text-white text-3xl' /> },
-		{ name: 'Dashboard', link: 'Home', icon: <RiDashboardFill className='dark:text-white text-3xl' /> },
-		{
-			name: 'Tablero',
-			link: 'Board',
-			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-			submenus: [
-				{
-					name: 'Perfil2',
-					link: 'config/profile',
-					icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-				},
-				{
-					name: 'Cuenta2',
-					link: 'config/account',
-					icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-				},
-			],
-		},
+		{ name: 'Alertas', link: 'Alert', icon: <RiAlertFill className=' text-3xl' /> },
+		{ name: 'Dashboard', link: 'Home', icon: <RiDashboardFill className=' text-3xl' /> },
+		// {
+		// 	name: 'Tablero',
+		// 	link: 'Board',
+		// 	icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+		// 	submenus: [
+		// 		{
+		// 			name: 'Perfil2',
+		// 			link: 'config/profile',
+		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+		// 		},
+		// 		{
+		// 			name: 'Cuenta2',
+		// 			link: 'config/account',
+		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+		// 		},
+		// 	],
+		// },
 		{
 			name: 'Mapa',
 			link: 'map',
-			icon: <FaMapMarkedAlt className='dark:text-white text-3xl' />,
+			icon: <FaMapMarkedAlt className=' text-3xl' />,
 		},
 		{
-			name: 'Visualizador',
-			link: 'visualizador',
-			icon: <FaMapMarkedAlt className='dark:text-white text-3xl' />,
+			name: 'Diagram',
+			link: 'Diagram',
+			icon: <FaProjectDiagram className=' text-3xl' />,
 		},
-		{
-			name: 'Notificaciones',
-			link: 'notificaciones',
-			icon: <NotificationAdd className='dark:text-white text-3xl' />,
-		},
-		{
-			name: 'Configuración',
-			link: 'config',
-			icon: <FaCogs className='dark:text-white text-3xl' />,
-			submenus: [
-				{
-					name: 'Perfil',
-					link: 'config/profile2',
-					icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-				},
-				{
-					name: 'Cuenta',
-					link: 'config/account2',
-					icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-				},
-			],
-		},
+		// {
+		// 	name: 'Notificaciones',
+		// 	link: 'notificaciones',
+		// 	icon: <NotificationAdd className='dark:text-white text-3xl' />,
+		// },
+		// {
+		// 	name: 'Configuración',
+		// 	link: 'config',
+		// 	icon: <FaCogs className='dark:text-white text-3xl' />,
+		// 	submenus: [
+		// 		{
+		// 			name: 'Perfil',
+		// 			link: 'config/profile2',
+		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+		// 		},
+		// 		{
+		// 			name: 'Cuenta',
+		// 			link: 'config/account2',
+		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+		// 		},
+		// 	],
+		// },
 		// {
 		//     name: 'Paginas',
 		//     link: 'tabs',
@@ -107,6 +107,13 @@ function NavBarCustom() {
 		//     )
 		// }
 	]
+	useEffect(() => {
+		setButtonActive(location)
+		if (location === '/DashBoard') {
+			setButtonActive('Home')
+		}
+	}, [location])
+
 	const activeButton = (id) => {
 		setButtonActive(id)
 		navigate(id)
@@ -180,12 +187,10 @@ function NavBarCustom() {
 															justifyContent: 'center',
 															color: buttonActive == item.link ? 'blue' : '',
 														}}
-														className='dark:text-white'
 													>
 														{item.icon}
 													</ListItemIcon>
 													<ListItemText
-														className='dark:text-white'
 														primary={item.name}
 														sx={{
 															opacity: open ? 1 : 0,

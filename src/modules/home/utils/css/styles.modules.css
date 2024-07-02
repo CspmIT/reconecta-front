@@ -1,0 +1,13 @@
+/* styles.css */
+.blink-bg {
+	animation: blink-bg-animation 1s steps(5, start) infinite;
+}
+
+@keyframes blink-bg-animation {
+	50% {
+		background-color: yellow;
+	}
+	100% {
+		background-color: transparent;
+	}
+}

@@ -15,6 +15,7 @@ import LoginApp from './modules/LoginApp/view'
 import ListClients from './modules/LoginApp/view/ListClient'
 import Home from './modules/home/views'
 import Alert from './modules/alert/views'
+import Diagrams from './modules/diagrams/views'
 
 function App() {
 	// const [userRoutes, setUserRoutes] = useState([])
@@ -27,6 +28,7 @@ function App() {
 		{ path: '/Dashboard', element: <DashBoard /> },
 		{ path: '/map', element: <Map /> },
 		{ path: '/Alert', element: <Alert /> },
+		{ path: '/Diagram', element: <Diagrams /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/notificaciones', element: <Notification /> },

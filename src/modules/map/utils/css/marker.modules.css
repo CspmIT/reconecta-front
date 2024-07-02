@@ -1,3 +1,19 @@
+@font-face {
+	font-family: 'Jersey';
+	src: url('../../font/Orbitron/static/Orbitron-SemiBold.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+
+.namePopUp {
+	text-shadow: 1px 1px 3px #000000;
+}
+.textoPopUp {
+	font-family: 'Jersey';
+	font-size: 1.3rem !important;
+	/* text-shadow: 1px 1px 3px #aeaeae; */
+}
+
 .marcador_ubicacion_map {
 	width: 2rem;
 	height: 2rem;
@@ -38,4 +54,18 @@
 	background-size: cover;
 	width: 30px;
 	height: 30px;
+}
+
+.leaflet-popup-content-wrapper {
+	background-color: #ffffff00 !important;
+	box-shadow: 0px 0px 0px transparent !important;
+}
+.leaflet-popup-close-button {
+	display: none !important;
+}
+.leaflet-popup-content {
+	margin: 0px !important;
+}
+.leaflet-popup-tip {
+	display: none !important;
 }

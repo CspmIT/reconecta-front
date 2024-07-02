@@ -10,8 +10,8 @@ import {
 } from 'material-react-table'
 import NoRegisterTable from './NoRegisterTable'
 import { storage } from '../../storage/storage'
-import { Box } from '@mui/material'
-
+import { Box, IconButton, Tooltip } from '@mui/material'
+import { PiBroomFill } from 'react-icons/pi'
 const TableCustom = ({ data, columns, ...prop }) => {
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {
@@ -44,6 +44,9 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	}
 	const hideColumn = prop?.onColumnVisibilityChange ? { onColumnVisibilityChange: prop.onColumnVisibilityChange } : ''
 	const columnVisibility = prop?.columnVisibility ? { columnVisibility: prop.columnVisibility } : ''
+	const pags = () => {
+		prop.getPage(table)
+	}
 	const table = useMaterialReactTable({
 		columns,
 		data,
@@ -136,6 +139,22 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				}}
 			>
 				<MRT_GlobalFilterTextField placeholder='Escriba su busqueda' table={table} />
+				{prop.getPage && prop.checkAlert && (
+					<IconButton
+						onClick={() => pags()}
+						table={table}
+						title='Limpiar alertas'
+						sx={{
+							'&:hover': {
+								backgroundColor: '#ecec97',
+							},
+							background: 'yellow',
+							color: 'black',
+						}}
+					>
+						<PiBroomFill />
+					</IconButton>
+				)}
 				<MRT_ToggleGlobalFilterButton title='Buscar' table={table} />
 				<MRT_ToggleFiltersButton title='Filtrar' table={table} />
 				<MRT_ShowHideColumnsButton title='Mostras/Ocultar Columnas' table={table} />
@@ -192,6 +211,11 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				backgroundColor: prop.ChangeColorRow ? prop.ChangeColorRow(row) && 'yellow' : undefined,
 			},
 		}),
+		muiTableBodyCellProps: ({ row }) => ({
+			sx: {
+				color: prop.ChangeColorRow ? prop.ChangeColorRow(row) && 'black' : undefined,
+			},
+		}),
 		muiTableBodyProps: {
 			sx: () => ({
 				'& tr:nth-of-type(odd):not([data-selected="true"]):not([data-pinned="true"]) > td': {
@@ -208,7 +232,6 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				},
 			}),
 		},
-
 		// ------------------------------------
 
 		// funcion para guardar las columnas que se ocultan

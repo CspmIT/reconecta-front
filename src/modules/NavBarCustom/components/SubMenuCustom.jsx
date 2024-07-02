@@ -24,12 +24,20 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 		<>
 			<ListItemButton onClick={(evento) => handleOpen(evento)}>
 				<ListItemIcon
-					className={`${item.submenus.some((value) => value.link == buttonActive) ? ' !text-blue-500' : ''}`}
+					className={`${
+						item.submenus.some((value) => value.link == buttonActive)
+							? ' !text-blue-500 dark:!text-blue-500'
+							: ''
+					}`}
 				>
 					{item.icon}
 				</ListItemIcon>
 				<ListItemText
-					className={`${item.submenus.some((value) => value.link == buttonActive) ? ' !text-blue-500' : ''}`}
+					className={`${
+						item.submenus.some((value) => value.link == buttonActive)
+							? ' !text-blue-500 dark:!text-blue-500'
+							: ''
+					}`}
 					primary={item.name}
 				/>
 			</ListItemButton>
@@ -40,12 +48,16 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 							<ListItemButton key={index} onClick={() => activeButton(submenu.link)}>
 								<Link to={submenu.link} className='text-black dark:text-white flex pl-5'>
 									<ListItemIcon
-										className={`${buttonActive === submenu.link ? ' !text-blue-500' : ''}`}
+										className={`${
+											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+										}`}
 									>
 										{submenu.icon}
 									</ListItemIcon>
 									<ListItemText
-										className={`${buttonActive === submenu.link ? ' !text-blue-500' : ''}`}
+										className={`${
+											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+										}`}
 										primary={submenu.name}
 									/>
 								</Link>
