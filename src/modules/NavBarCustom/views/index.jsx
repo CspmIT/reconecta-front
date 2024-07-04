@@ -22,6 +22,7 @@ import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
 import { InsertChart, NotificationAdd } from '@mui/icons-material'
+import styles from '../utils/css/styles.module.css'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
 	const navigate = useNavigate()
@@ -70,11 +71,11 @@ function NavBarCustom() {
 			link: 'map',
 			icon: <FaMapMarkedAlt className=' text-3xl' />,
 		},
-		{
-			name: 'Diagram',
-			link: 'Diagram',
-			icon: <FaProjectDiagram className=' text-3xl' />,
-		},
+		// {
+		// 	name: 'Diagram',
+		// 	link: 'Diagram',
+		// 	icon: <FaProjectDiagram className=' text-3xl' />,
+		// },
 		// {
 		// 	name: 'Notificaciones',
 		// 	link: 'notificaciones',
@@ -156,11 +157,7 @@ function NavBarCustom() {
 						{menuSideBar.map((item, index) => {
 							return (
 								<Fragment key={index}>
-									<ListItem
-										disablePadding
-										sx={{ display: 'block' }}
-										onSelect={() => console.log('hola')}
-									>
+									<ListItem disablePadding sx={{ display: 'block' }}>
 										{item.submenus ? (
 											<SubMenuCustom
 												item={item}
@@ -170,8 +167,9 @@ function NavBarCustom() {
 												activeButton={activeButton}
 											/>
 										) : (
-											<Link to={item.link} className={`text-black dark:text-white`}>
+											<Link to={item.link} className={` text-black dark:text-white`}>
 												<ListItemButton
+													className={item.link === 'Alert' ? styles.backgroundAlert : ''}
 													sx={{
 														minHeight: 48,
 														justifyContent: open ? 'initial' : 'center',

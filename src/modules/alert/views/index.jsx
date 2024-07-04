@@ -17,10 +17,10 @@ function Alert() {
 	const checkAlertCriticas = (table) => {
 		Swal.fire({
 			title: 'Atención!',
-			html: '¿Está seguro de que desea desactivar las alertas críticas?',
+			html: '¿Está seguro de que desea limpiar las alertas críticas?',
 			icon: 'warning',
 			showCancelButton: true,
-			allowOutsideClick: true,
+			allowOutsideClick: false,
 			confirmButtonColor: '#3085d6',
 			cancelButtonColor: '#d33',
 			confirmButtonText: 'Si',
@@ -32,7 +32,7 @@ function Alert() {
 					html: '¿Deseas limpiar toda la tabla o solo la pag actual?',
 					icon: 'warning',
 					showCancelButton: true,
-					allowOutsideClick: true,
+					allowOutsideClick: false,
 					confirmButtonColor: '#3085d6',
 					cancelButtonColor: '#d33',
 					confirmButtonText: 'Actual',
@@ -72,14 +72,15 @@ function Alert() {
 							columns={columnsCriticos}
 							density='comfortable'
 							header={{
-								background: 'rgba(152, 152, 152, 0.631)',
+								background: 'rgb(190 190 190)',
 								fontSize: '18px',
 								fontWeight: 'bold',
 							}}
-							toolbarClass={{ background: 'rgba(152, 152, 152, 0.631)' }}
+							toolbarClass={{ background: 'rgb(190 190 190)' }}
 							body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-							footer={{ background: 'rgba(152, 152, 152, 0.631)' }}
+							footer={{ background: 'rgb(190 190 190)' }}
 							ChangeColorRow={ChangeColorRow}
+							pageSize={10}
 							checkAlert={bottonCheck}
 							topToolbar
 							hide
@@ -96,13 +97,14 @@ function Alert() {
 							columns={columnsCriticos}
 							density='comfortable'
 							header={{
-								background: 'rgba(152, 152, 152, 0.631)',
+								background: 'rgb(190 190 190)',
 								fontSize: '18px',
 								fontWeight: 'bold',
 							}}
-							toolbarClass={{ background: 'rgba(152, 152, 152, 0.631)' }}
+							toolbarClass={{ background: 'rgb(190 190 190)' }}
 							body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-							footer={{ background: 'rgba(152, 152, 152, 0.631)' }}
+							footer={{ background: 'rgb(190 190 190)' }}
+							pageSize={10}
 							topToolbar
 							sort
 							pagination

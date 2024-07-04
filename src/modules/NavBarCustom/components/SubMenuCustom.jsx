@@ -69,7 +69,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 				<Popper
 					id={item.name}
 					key={item.name}
-					className='bg-[#ffffff] z-50 rounded-md shadow-md flex flex-col justify-start'
+					className='bg-[#ffffff] z-40 rounded-md shadow-md flex flex-col justify-start'
 					placement='left-start'
 					open={openSub}
 					anchorEl={anchorEl}

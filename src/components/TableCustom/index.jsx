@@ -2,6 +2,7 @@ import {
 	MRT_ExpandButton,
 	MRT_GlobalFilterTextField,
 	MRT_ShowHideColumnsButton,
+	MRT_TablePagination,
 	MRT_ToggleDensePaddingButton,
 	MRT_ToggleFiltersButton,
 	MRT_ToggleGlobalFilterButton,
@@ -10,8 +11,10 @@ import {
 } from 'material-react-table'
 import NoRegisterTable from './NoRegisterTable'
 import { storage } from '../../storage/storage'
-import { Box, IconButton, Tooltip } from '@mui/material'
+import { Box, Button, IconButton, Tooltip } from '@mui/material'
 import { PiBroomFill } from 'react-icons/pi'
+import { useEffect } from 'react'
+import { FaLaravel } from 'react-icons/fa'
 const TableCustom = ({ data, columns, ...prop }) => {
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {
@@ -32,7 +35,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	}
 	// activacion de paginacion
 	if (prop.pagination) {
-		tableInitialState.pagination = { pageIndex: 0, pageSize: 5 }
+		tableInitialState.pagination = { pageIndex: 0, pageSize: prop.pageSize || 5 }
 	}
 	// controlo si llega un agrupacion por columna
 	if (prop.groupBy) {
@@ -197,8 +200,10 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		// ------------------------------------
 
 		// clases para la paginacion
+
 		muiPaginationProps: {
-			showRowsPerPage: false,
+			showRowsPerPage: true,
+			// El texto de las filas por paginas esta al final en el useEfect
 		},
 		paginationDisplayMode: 'pages',
 
@@ -238,7 +243,12 @@ const TableCustom = ({ data, columns, ...prop }) => {
 
 		...hideColumn,
 	})
-
+	useEffect(() => {
+		const label = document.querySelector('label[for="mrt-rows-per-page"]')
+		if (label) {
+			label.innerText = 'Filas por página'
+		}
+	}, [])
 	return <MaterialReactTable table={table} />
 }
 

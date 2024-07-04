@@ -32,9 +32,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(2),
+		alert: true,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 2,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -46,9 +47,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(18),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 18,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -56,13 +58,13 @@ export const markersRecloser = [
 		lat: -30.723412027021855,
 		lng: -61.96580886840821,
 	},
-
 	{
 		id: 1,
 		icon: redIcon(19),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 19,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -74,6 +76,7 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(1),
+		alert: false,
 		info: {
 			name: 'San Juan',
 			number: 1,
@@ -88,9 +91,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(15),
+		alert: true,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 15,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -102,9 +106,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: greenIcon(17),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 17,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -116,9 +121,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(16),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 16,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -130,9 +136,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(14),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 14,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -144,9 +151,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(6),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 6,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -158,9 +166,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(10),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 10,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -172,9 +181,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(11),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 11,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -186,9 +196,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(12),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 12,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -200,9 +211,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(20),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 20,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -214,9 +226,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(8),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 8,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -228,9 +241,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(7),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 7,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -242,9 +256,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: redIcon(9),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 9,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,
@@ -256,9 +271,10 @@ export const markersRecloser = [
 	{
 		id: 1,
 		icon: greenIcon(13),
+		alert: false,
 		info: {
 			name: 'San Juan',
-			number: 1,
+			number: 13,
 			VL1: 1045,
 			VL2: 200,
 			VL3: 30,

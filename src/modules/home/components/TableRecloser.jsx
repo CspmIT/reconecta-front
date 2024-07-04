@@ -64,7 +64,7 @@ function TableRecloser() {
 				alarm_recloser: 1,
 			},
 			{
-				Nro_recloser: '',
+				Nro_recloser: 'SETA 1',
 				Name: 'SETA 1',
 				Nro_Serie: '36037636',
 				type_recloser: 2,
@@ -106,13 +106,13 @@ function TableRecloser() {
 				columns={columns(changeAlarm, navigate)}
 				density='comfortable'
 				header={{
-					background: 'rgba(152, 152, 152, 0.631)',
+					background: 'rgb(190 190 190)',
 					fontSize: '18px',
 					fontWeight: 'bold',
 				}}
-				toolbarClass={{ background: 'rgba(152, 152, 152, 0.631)' }}
+				toolbarClass={{ background: 'rgb(190 190 190)' }}
 				body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-				footer={{ background: 'rgba(152, 152, 152, 0.631)' }}
+				footer={{ background: 'rgb(190 190 190)' }}
 				card={{
 					boxShadow: `1px 1px 8px 0px #00000046`,
 					borderRadius: '0.75rem',

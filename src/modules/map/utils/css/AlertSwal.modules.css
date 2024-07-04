@@ -1,0 +1,16 @@
+.fondoAlerta {
+	background-color: #f1c40f;
+	animation: alert 500ms infinite !important;
+}
+
+@keyframes alert {
+	0% {
+		background-color: #f1c40f;
+	}
+	50% {
+		background-color: #f6e18b;
+	}
+	100% {
+		background-color: #f1c40f;
+	}
+}
