@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import L from 'leaflet'
 import { useMap } from 'react-leaflet'
 import PopupMarker from './PopupMarker'
-import markerCustom, { redIcon } from '../utils/js/markerClass'
+import markerCustom, { workIcon } from '../utils/js/markerClass'
 
 function DrawControl({ polylines, markers }) {
 	const map = useMap()
@@ -53,10 +53,9 @@ function DrawControl({ polylines, markers }) {
 				polygon: false,
 				circle: false,
 				rectangle: false,
-				marker: false,
-				// marker: {
-				// 	icon: redIcon(0),
-				// },
+				marker: {
+					icon: workIcon(),
+				},
 				circlemarker: false,
 			},
 		})
@@ -68,7 +67,7 @@ function DrawControl({ polylines, markers }) {
 			const layer = event.layer
 			if (event.layerType === 'marker') {
 				const { lat, lng } = layer.getLatLng()
-				const newMarker = new markerCustom(0, lat, lng, 1) // Ajusta el número de opción aquí
+				const newMarker = new markerCustom('', lat, lng, 4) // Ajusta el número de opción aquí
 				setCreatedMarkers((prevMarkers) => [...prevMarkers, newMarker])
 			} else {
 				drawnItems.addLayer(layer)
