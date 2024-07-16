@@ -18,6 +18,8 @@ import Alert from './modules/alert/views'
 import Diagrams from './modules/diagrams/views'
 
 function App() {
+	const { darkMode, tabs } = useContext(MainContext)
+
 	// const [userRoutes, setUserRoutes] = useState([])
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
@@ -30,14 +32,13 @@ function App() {
 		{ path: '/Alert', element: <Alert /> },
 		{ path: '/Diagram', element: <Diagrams /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
-		{ path: '/tabs', element: <TabDinamic /> },
+		{ path: '/tabs', element: <TabDinamic tabs={tabs} /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/profile', element: <Profile /> },
 	]
 
 	//Incorporo el theme de mui
-	const { darkMode } = useContext(MainContext)
 	const lightTheme = createTheme({
 		palette: {
 			mode: 'light',

@@ -1,0 +1,18 @@
+@font-face {
+	font-family: 'Digital';
+	src: url('../../font/ds_digital/DS-DIGIT.TTF') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+.nameDetail {
+	font-family: 'Digital';
+	font-size: 1.8rem !important;
+}
+.textoMva {
+	font-family: 'Digital';
+	font-size: 1.5rem !important;
+}
+.textoDetail {
+	font-family: 'Digital';
+	font-size: 1.4rem !important;
+}

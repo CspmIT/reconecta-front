@@ -10,9 +10,10 @@ import {
 	Typography,
 	List,
 	Toolbar,
+	Badge,
 } from '@mui/material'
 import DropdownImage from '../../core/components/DropdownImage'
-import { Fragment, useEffect, useRef, useState } from 'react'
+import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import ButtonModeDark from '../../core/components/ButtonModeDark'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaMapMarkedAlt, FaCogs, FaProjectDiagram } from 'react-icons/fa'
@@ -23,8 +24,11 @@ import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
 import { InsertChart, NotificationAdd } from '@mui/icons-material'
 import styles from '../utils/css/styles.module.css'
+import { MainContext } from '../../../context/MainContext'
+import { PiTabsFill } from 'react-icons/pi'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
+	const { tabActive } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
 	const location = useLocation().pathname.split('/')[1] || '/DashBoard'
@@ -71,11 +75,11 @@ function NavBarCustom() {
 			link: 'map',
 			icon: <FaMapMarkedAlt className=' text-3xl' />,
 		},
-		// {
-		// 	name: 'Diagram',
-		// 	link: 'Diagram',
-		// 	icon: <FaProjectDiagram className=' text-3xl' />,
-		// },
+		{
+			name: 'Diagram',
+			link: 'Diagram',
+			icon: <FaProjectDiagram className=' text-3xl' />,
+		},
 		// {
 		// 	name: 'Notificaciones',
 		// 	link: 'notificaciones',
@@ -98,15 +102,15 @@ function NavBarCustom() {
 		// 		},
 		// 	],
 		// },
-		// {
-		//     name: 'Paginas',
-		//     link: 'tabs',
-		//     icon: (
-		//         <Badge badgeContent={tabActive} color='primary'>
-		//             <PiTabsFill className='dark:text-white text-3xl' />
-		//         </Badge>
-		//     )
-		// }
+		{
+			name: 'Paginas',
+			link: 'tabs',
+			icon: (
+				<Badge badgeContent={tabActive} color='primary'>
+					<PiTabsFill className='dark:text-white text-3xl' />
+				</Badge>
+			),
+		},
 	]
 	useEffect(() => {
 		setButtonActive(location)

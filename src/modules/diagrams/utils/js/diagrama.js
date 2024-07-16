@@ -1,178 +1,77 @@
-import aperturaCFlecha from '../asset/img/electricity/aperturaCFlecha.png'
+import { datosInflux } from '../objects/datosInflux'
+
 export const draw = (data, elem, context) => {
-	const array = data
-	const arrayObjetos = array.Objetos
-	const arrayLineas = array.Lineas
+	const arrayObjetos = data.Objetos
+	const arrayLineas = data.Lineas
 	let maxX = 0
 	let maxY = 0
 
-	for (let i = 0; i < arrayLineas.length; i++) {
-		const lineas = arrayLineas[i].points
-		for (let j = 0; j < lineas.length; j += 2) {
-			if (lineas[j] > maxX) {
-				maxX = lineas[j]
-			}
-		}
-		for (let j = 1; j < lineas.length; j += 2) {
-			if (lineas[j] > maxY) {
-				maxY = lineas[j]
-			}
+	for (const linea of arrayLineas) {
+		for (let j = 0; j < linea.points.length; j += 2) {
+			maxX = Math.max(maxX, linea.points[j])
+			maxY = Math.max(maxY, linea.points[j + 1])
 		}
 	}
 
-	elem.width = maxX + 10
-	elem.height = maxY + 200
+	elem.width = maxX + 100
+	elem.height = maxY + 250
 	context.clearRect(0, 0, elem.width, elem.height)
 
 	arrayObjetos.forEach((item) => {
 		if (item.type === 'img') {
-			var img = new Image()
-			if (item.color_object === 'red' && item.pic === 'aperturaCFlecha.png') {
-				img.src = 'src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png'
-			} else {
-				img.src = 'src/modules/diagrams/utils/asset/img/electricity/' + item.pic
-			}
+			const img = new Image()
+			img.src =
+				item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
+					? 'src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png'
+					: `src/modules/diagrams/utils/asset/img/electricity/${item.pic}`
 			img.onload = () => {
 				context.drawImage(img, item.left, item.top, item.width, item.heigth)
-				context.font = '15px serif'
-				let ancho, alto
-				if (item.text_aling === 'button') {
-					context.textAlign = 'center'
-					ancho = item.left + item.width / 2
-					alto = item.top + item.heigth + 20
-				} else if (item.text_aling === 'top') {
-					context.textAlign = 'center'
-					ancho = item.left + item.width / 2
-					alto = item.top
-				} else if (item.text_aling === 'rigth') {
-					context.textAlign = 'left'
-					ancho = item.left + item.width
-					alto = item.top + item.heigth / 2 + 10
-				} else if (item.text_aling === 'left') {
-					ancho = item.left - item.width
-					alto = item.top + item.heigth / 2 + 10
-				}
-
-				const text = item.text.split('\n')
-				let salto_linea = 0
-
-				if (item.text_aling === 'top') {
-					text.forEach((line) => {
-						salto_linea -= 15
-					})
-					alto += salto_linea
-					text.forEach((line) => {
-						alto += 15
-						if (line !== 'TI:') {
-							context.fillText(line, ancho, alto)
-						}
-					})
-				} else {
-					text.forEach((line) => {
-						if (line !== 'TI:') {
-							alto += salto_linea
-							context.fillText(line, ancho, alto)
-							salto_linea += line === text[0] ? 15 : 5
-						}
-					})
-				}
 			}
 		}
 	})
 }
 
 export const select_color = (color) => {
-	// if (!$('#UnifilarView').hasClass('darkmode')) {
 	switch (color) {
 		case 'red':
 			return '#f00'
-			break
 		case 'green':
 			return '#00ff1d'
-			break
 		case 'blue':
 			return '#6ea5f8'
-			break
 		case 'pink':
 			return '#faadc1'
-			break
-
 		case 'yellow':
 			return '#ffff10'
-			break
 		case 'white':
 			return '#ffff'
-			break
+		default:
+			return '#000'
 	}
-	// } else {
-	// 	switch (color) {
-	// 		case 'red':
-	// 			return '#00ffff'
-	// 			break
-	// 		case 'green':
-	// 			return '#ff00e2'
-	// 			break
-	// 		case 'blue':
-	// 			return '#915906'
-	// 			break
-	// 		case 'pink':
-	// 			return '#04513d'
-	// 			break
-
-	// 		case 'yellow':
-	// 			return '#0000ef'
-	// 			break
-	// 		case 'white':
-	// 			return '#000'
-	// 			break
-	// 	}
-	// }
 }
 
-export const draw_line = (data, elem, context) => {
-	const array = data
-	const arrayObjetos = array.Objetos
-	const arrayLineas = array.Lineas
-	let color = 'red'
-	let color2 = 'red'
-	arrayLineas.forEach((item, i) => {
-		if (item.text == 'Barra') {
-			context.lineWidth = 15
+export const draw_line = (data, context, offset) => {
+	const { Objetos, Lineas } = data
+	const getColor = (key) => {
+		const objeto = Objetos.find((item) => item.key === key)
+		if (objeto) {
+			return select_color(objeto.color_object)
 		} else {
-			context.lineWidth = 5
+			const Barra = datosInflux.find((item) => item.meter?.num_serie === '83786132')
+			return Barra?.status === 1 ? select_color('red') : select_color('black')
 		}
-		if (item.key_objet != '-1' && item.key_objet != '0') {
-			arrayObjetos.forEach((item2, f) => {
-				if (item2.key == item.key_objet) {
-					color = item2.color_object
-				}
-			})
-		} else {
-			// var Barra = datosInflux.filter((item) => {
-			// 	serieControl = item.meter ? item.meter.num_serie : 0
-			// 	if (serieControl == '83786132') {
-			// 		return item
-			// 	}
-			// })
-			// if (Barra[0].status == 1) {
-			// 	color = 'red'
-			// }
-		}
-		color2 = select_color(color)
+	}
+	Lineas.forEach((item) => {
+		context.lineWidth = item.text === 'Barra' ? 15 : 5
+		const color2 = getColor(item.key_objet)
 		context.lineCap = 'butt'
 		context.lineJoin = 'round'
 		context.strokeStyle = color2
 		context.beginPath()
-		var vueltas = item.points.length / 2
-		var ubicacion = 0
-		var U_x = 0
-		var U_y = 0
-		for (var i = 0; i < vueltas; i++) {
-			U_x = parseInt(item.points[ubicacion])
-			ubicacion++
-			U_y = parseInt(item.points[ubicacion])
-			ubicacion++
-			if (i == 0) {
+		for (let i = 0; i < item.points.length; i += 2) {
+			const U_x = parseInt(item.points[i])
+			const U_y = parseInt(item.points[i + 1])
+			if (i === 0) {
 				context.moveTo(U_x, U_y)
 			} else {
 				context.lineTo(U_x, U_y)
@@ -180,50 +79,20 @@ export const draw_line = (data, elem, context) => {
 		}
 		context.stroke()
 	})
-	arrayLineas.forEach((item, i) => {
-		if (item.key_objet != '-1') {
-			arrayObjetos.forEach((objetos, f) => {
-				if (objetos.key == item.key_objet) {
-					color = objetos.color_object
-				}
-			})
-		} else {
-			// var Barra = datosInflux.filter((item) => {
-			// 	serieControl = item.meter ? item.meter.num_serie : 0
-			// 	if (serieControl == '83786132') {
-			// 		return item
-			// 	}
-			// })
-			// if (Barra[0].status == 1) {
-			// 	color = 'red'
-			// }
-		}
-		if (
-			color == 'red' &&
-			item.id != 59 &&
-			item.id != 64 &&
-			item.id != 86 &&
-			item.id != 57 &&
-			item.id != 66 &&
-			item.id != 85
-		) {
+	Lineas.forEach((item) => {
+		const color = getColor(item.key_objet)
+		if (color === select_color('red') && ![59, 64, 86, 57, 66, 85].includes(item.id)) {
 			context.setLineDash([4, 16])
 			context.lineWidth = 2
 			context.lineCap = 'butt'
 			context.lineJoin = 'round'
-			context.strokeStyle = 'white'
+			context.strokeStyle = select_color('white')
 			context.lineDashOffset = -offset
 			context.beginPath()
-			var vueltas = item.points.length / 2
-			var ubicacion = 0
-			var U_x = 0
-			var U_y = 0
-			for (var i = 0; i < vueltas; i++) {
-				U_x = parseInt(item.points[ubicacion])
-				ubicacion++
-				U_y = parseInt(item.points[ubicacion])
-				ubicacion++
-				if (i == 0) {
+			for (let i = 0; i < item.points.length; i += 2) {
+				const U_x = parseInt(item.points[i])
+				const U_y = parseInt(item.points[i + 1])
+				if (i === 0) {
 					context.moveTo(U_x, U_y)
 				} else {
 					context.lineTo(U_x, U_y)
@@ -231,27 +100,123 @@ export const draw_line = (data, elem, context) => {
 			}
 			context.stroke()
 		} else {
-			context.setLineDash([0])
+			context.setLineDash([])
 		}
 	})
 }
-
-// function loop_line() {
-// 	if ($('#serial').val() != '') {
-// 		stopAllIntervals()
-// 	} else {
-// 		if (id_loop != '' && offset == 0) {
-// 			stopAllIntervals()
-// 			id_loop = ''
-// 		}
-// 		offset++
-// 		if (offset > 16) {
-// 			offset = 0
-// 		}
-// 		draw_line()
-// 		if (offset >= 1 && id_loop == '') {
-// 			id_loop = setInterval(loop_line, 20)
-// 			IntervalsID.push({ id: id_loop, name: 'loop_lineElectricity' })
-// 		}
-// 	}
-// }
+const nameElement = (description) => {
+	let name = ''
+	let number = ''
+	switch (description) {
+		case 'D1O':
+			number = 2
+			name = 'D1o'
+			break
+		case 'D2O':
+			number = 2
+			name = 'D2o'
+			break
+		case 'D3O':
+			number = 2
+			name = 'D3o'
+			break
+		case 'D1E':
+			number = 4
+			name = 'D1e'
+			break
+		case 'D2E':
+			number = 5
+			name = 'D2e'
+			break
+		case 'D3E':
+			number = 6
+			name = 'D3e'
+			break
+		case 'D4E':
+			number = 7
+			name = 'D4e'
+			break
+	}
+	return { name, number }
+}
+export const getDataDetail = (data) => {
+	if (datosInflux.length > 0) {
+		const arrayObjetos = data.Objetos
+		const Barra = datosInflux.filter((item) => item.meter && item.meter.num_serie == '83786132')
+		const ALim2 = datosInflux.find((item) => item.meter && item.meter.num_serie == '83786119')
+		let dataDetail = [
+			{
+				position: { x: 115, y: 90 },
+				data: {
+					name: 'BARRA',
+					R: (Barra[0].instantaneos.find((item) => item.field == 'I_0').valor / 1000).toFixed(2) + ' A',
+					S: (Barra[0].instantaneos.find((item) => item.field == 'I_1').valor / 1000).toFixed(2) + ' A',
+					T: (Barra[0].instantaneos.find((item) => item.field == 'I_2').valor / 1000).toFixed(2) + ' A',
+					Mva:
+						parseFloat(Barra[0].instantaneos.find((item) => item.field == 'IApP_3').valor / 1000).toFixed(
+							2
+						) + ' MVA',
+					description: 'Barra',
+					object: Barra[0],
+				},
+			},
+			{
+				position: { x: 455, y: 280 },
+				data: {
+					name: 'A2O ',
+					R: (ALim2.instantaneos.find((item) => item.field == 'I_0').valor / 1000).toFixed(2) + ' A',
+					S: (ALim2.instantaneos.find((item) => item.field == 'I_1').valor / 1000).toFixed(2) + ' A',
+					T: (ALim2.instantaneos.find((item) => item.field == 'I_2').valor / 1000).toFixed(2) + ' A',
+					Mva:
+						parseFloat(ALim2.instantaneos.find((item) => item.field == 'IApP_3').valor / 1000).toFixed(2) +
+						' MVA',
+					description: ALim2.caption,
+					object: ALim2,
+				},
+			},
+		]
+		arrayObjetos.forEach((objetos) => {
+			let number = nameElement(objetos.description).number
+			let name = nameElement(objetos.description).name
+			const item = datosInflux.find((item) => item.id_station == number && item.instantaneos[0] != 'sin datos')
+			let IApP_3 = ''
+			let I_0 = ''
+			let I_1 = ''
+			let I_2 = ''
+			if (item) {
+				IApP_3 = item.instantaneos.find((item) => item.field == 'IApP_3').valor
+				IApP_3 =
+					(IApP_3 > 20000 ? parseFloat(IApP_3 / 10000000).toFixed(2) : parseFloat(IApP_3 / 1000).toFixed(2)) +
+					' MVA'
+				I_0 = (item.instantaneos.find((insta) => insta.field == 'I_0').valor / 1000).toFixed(2) + ' A'
+				I_1 = (item.instantaneos.find((insta) => insta.field == 'I_1').valor / 1000).toFixed(2) + ' A'
+				I_2 = (item.instantaneos.find((insta) => insta.field == 'I_2').valor / 1000).toFixed(2) + ' A'
+				dataDetail = [
+					...dataDetail,
+					{
+						position: { x: objetos.left - 35, y: objetos.top + 70 },
+						data: {
+							name,
+							R: I_0,
+							S: I_1,
+							T: I_2,
+							Mva: IApP_3,
+							description: item.caption,
+							object: item,
+						},
+					},
+				]
+			}
+		})
+		return dataDetail
+	}
+}
+export const textosAdd = (data, context) => {
+	context.textAlign = 'start'
+	// Dato Transfo
+	context.textAlign = 'center'
+	context.fillText('Tension de', 670, 20)
+	context.fillText('entrada 132 kV', 670, 40)
+	context.fillText('Tension de', 670, 100)
+	context.fillText('salida 13,2 kV', 670, 120)
+}
