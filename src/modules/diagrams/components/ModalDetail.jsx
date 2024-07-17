@@ -1,6 +1,7 @@
 import { ContentPaste } from '@mui/icons-material'
 import { Button, Modal } from '@mui/material'
 import React, { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 function ModalDetail({ data, close }) {
 	const [openModalDetail, setOpenModal] = useState(false)
 	const [dataView, setDataView] = useState(null)
@@ -93,10 +94,11 @@ function ModalDetail({ data, close }) {
 			setDetailData(reorganizedVariables)
 		}
 	}, [dataView])
-	return (
-		<Modal
-			className='flex flex-col justify-center items-center  h-full '
-			open={openModalDetail}
+	return createPortal(
+		<div
+			className={`fixed top-0 left-0 bg-[#2e2e2ecd] z-[9999999] w-full flex-col justify-center items-center  h-full ${
+				!openModalDetail ? 'hidden' : 'flex'
+			}`}
 			onClick={handleCloseModal}
 		>
 			{!dataView ? (
@@ -134,7 +136,8 @@ function ModalDetail({ data, close }) {
 					)}
 				</div>
 			)}
-		</Modal>
+		</div>,
+		document.body
 	)
 }
 

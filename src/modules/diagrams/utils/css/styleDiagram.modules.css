@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'Digital';
-	src: url('../../font/ds_digital/DS-DIGIT.TTF') format('truetype');
+	src: url('src/modules/diagrams/fonts/ds_digital/DS-DIGIT.TTF') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }

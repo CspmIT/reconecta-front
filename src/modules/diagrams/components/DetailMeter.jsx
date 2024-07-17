@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import '../utils/css/styleDiagram.modules.css'
+import ModalDetail from './ModalDetail'
 // import ModalDetail from './ModalDetail'
 function DetailMeter({ position, data }) {
 	const { x, y } = position
@@ -38,7 +39,7 @@ function DetailMeter({ position, data }) {
 					<p className='!m-0 w-full font-bold text-end !mr-3 textoDetail'>{T}</p>
 				</div>
 			</div>
-			{/* {<ModalDetail data={modalData} close={closeModal} />} */}
+			{<ModalDetail data={modalData} close={closeModal} />}
 		</>
 	)
 }

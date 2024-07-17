@@ -3,10 +3,9 @@ import CardCustom from '../../../components/CardCustom'
 import TableCustom from '../../../components/TableCustom'
 import { columnsCriticos } from '../utils/columnTbl'
 import { dataCriticos, dataOtros } from '../utils/datosTbl'
-import { Button, FormLabel } from '@mui/material'
+import { FormLabel } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { Check } from '@mui/icons-material'
 import Swal from 'sweetalert2'
 function Alert() {
 	const [rowCriticos, setRowCriticos] = useState(dataCriticos)
@@ -51,7 +50,6 @@ function Alert() {
 			}
 		})
 	}
-
 	useEffect(() => {
 		if (rowCriticos.some((row) => row.statusAlert === 1)) {
 			setBottonCheck(true)

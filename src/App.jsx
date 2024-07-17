@@ -56,7 +56,6 @@ function App() {
 	}, [darkMode])
 
 	return (
-		// <div className='flex min-h-screen overflow-x-hidden  bg-gray-200 dark:bg-gray-600 text-gray-700'>
 		<BrowserRouter>
 			<ThemeProvider theme={theme}>
 				<Routes>
@@ -71,7 +70,6 @@ function App() {
 				</Routes>
 			</ThemeProvider>
 		</BrowserRouter>
-		// </div>
 	)
 }
 
