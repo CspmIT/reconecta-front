@@ -1,3 +1,4 @@
+import { storage } from '../../../../storage/storage'
 import { datosInflux } from '../objects/datosInflux'
 
 export const draw = (data, elem, context) => {
@@ -16,7 +17,7 @@ export const draw = (data, elem, context) => {
 	elem.width = maxX + 100
 	elem.height = maxY + 250
 	context.clearRect(0, 0, elem.width, elem.height)
-
+	const darkMode = storage.get('dark')
 	arrayObjetos.forEach((item) => {
 		if (item.type === 'img') {
 			const img = new Image()
@@ -24,8 +25,15 @@ export const draw = (data, elem, context) => {
 				item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
 					? 'src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png'
 					: `src/modules/diagrams/utils/asset/img/electricity/${item.pic}`
+
 			img.onload = () => {
+				if (!darkMode) {
+					context.filter = 'none'
+				} else {
+					context.filter = 'invert(0.9)'
+				}
 				context.drawImage(img, item.left, item.top, item.width, item.heigth)
+				context.filter = 'none'
 			}
 		}
 	})
@@ -146,7 +154,7 @@ export const getDataDetail = (data) => {
 		const ALim2 = datosInflux.find((item) => item.meter && item.meter.num_serie == '83786119')
 		let dataDetail = [
 			{
-				position: { x: 115, y: 90 },
+				position: { x: 65, y: 90 },
 				data: {
 					name: 'BARRA',
 					R: (Barra[0].instantaneos.find((item) => item.field == 'I_0').valor / 1000).toFixed(2) + ' A',
@@ -161,7 +169,7 @@ export const getDataDetail = (data) => {
 				},
 			},
 			{
-				position: { x: 455, y: 280 },
+				position: { x: 405, y: 280 },
 				data: {
 					name: 'A2O ',
 					R: (ALim2.instantaneos.find((item) => item.field == 'I_0').valor / 1000).toFixed(2) + ' A',
@@ -212,11 +220,13 @@ export const getDataDetail = (data) => {
 	}
 }
 export const textosAdd = (data, context) => {
+	const darkMode = storage.get('dark')
+	context.fillStyle = darkMode ? 'white' : 'Black'
+	context.font = '150px'
 	context.textAlign = 'start'
-	// Dato Transfo
 	context.textAlign = 'center'
-	context.fillText('Tension de', 670, 20)
-	context.fillText('entrada 132 kV', 670, 40)
-	context.fillText('Tension de', 670, 100)
-	context.fillText('salida 13,2 kV', 670, 120)
+	context.fillText('Tension de', 620, 20)
+	context.fillText('entrada 132 kV', 620, 40)
+	context.fillText('Tension de', 620, 100)
+	context.fillText('salida 13,2 kV', 620, 120)
 }

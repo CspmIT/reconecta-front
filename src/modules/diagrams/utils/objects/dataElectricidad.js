@@ -3,7 +3,7 @@ export const dataElectricity = {
 		{
 			id: 1,
 			key: '19',
-			left: 437,
+			left: 387, // 437 - 50
 			top: 450,
 			width: 80,
 			heigth: 80,
@@ -19,7 +19,7 @@ export const dataElectricity = {
 		{
 			id: 2,
 			key: '20',
-			left: 260,
+			left: 210, // 260 - 50
 			top: 450,
 			width: 80,
 			heigth: 80,
@@ -35,7 +35,7 @@ export const dataElectricity = {
 		{
 			id: 3,
 			key: '21',
-			left: 1205,
+			left: 1155, // 1205 - 50
 			top: 280,
 			width: 80,
 			heigth: 80,
@@ -51,7 +51,7 @@ export const dataElectricity = {
 		{
 			id: 4,
 			key: '22',
-			left: 1005,
+			left: 955, // 1005 - 50
 			top: 280,
 			width: 80,
 			heigth: 80,
@@ -67,7 +67,7 @@ export const dataElectricity = {
 		{
 			id: 5,
 			key: '23',
-			left: 805,
+			left: 755, // 805 - 50
 			top: 280,
 			width: 80,
 			heigth: 80,
@@ -83,7 +83,7 @@ export const dataElectricity = {
 		{
 			id: 6,
 			key: '24',
-			left: 606,
+			left: 556, // 606 - 50
 			top: 280,
 			width: 80,
 			heigth: 80,
@@ -99,7 +99,7 @@ export const dataElectricity = {
 		{
 			id: 7,
 			key: '25',
-			left: 358,
+			left: 308, // 358 - 50
 			top: 280,
 			width: 80,
 			heigth: 80,
@@ -115,7 +115,7 @@ export const dataElectricity = {
 		{
 			id: 8,
 			key: '26',
-			left: 120,
+			left: 70, // 120 - 50
 			top: 280,
 			width: 80,
 			heigth: 80,
@@ -131,7 +131,7 @@ export const dataElectricity = {
 		{
 			id: 9,
 			key: '1',
-			left: 774,
+			left: 724, // 774 - 50
 			top: 22,
 			width: 80,
 			heigth: 80,
@@ -147,7 +147,7 @@ export const dataElectricity = {
 		{
 			id: 10,
 			key: '2',
-			left: 495,
+			left: 445, // 495 - 50
 			top: 22,
 			width: 80,
 			heigth: 80,
@@ -163,7 +163,7 @@ export const dataElectricity = {
 		{
 			id: 11,
 			key: '27',
-			left: 261,
+			left: 211, // 261 - 50
 			top: 583,
 			width: 80,
 			heigth: 80,
@@ -179,7 +179,7 @@ export const dataElectricity = {
 		{
 			id: 12,
 			key: '28',
-			left: 121,
+			left: 71, // 121 - 50
 			top: 387,
 			width: 80,
 			heigth: 80,
@@ -195,7 +195,7 @@ export const dataElectricity = {
 		{
 			id: 13,
 			key: '29',
-			left: 608,
+			left: 558, // 608 - 50
 			top: 387,
 			width: 80,
 			heigth: 80,
@@ -211,7 +211,7 @@ export const dataElectricity = {
 		{
 			id: 14,
 			key: '30',
-			left: 807,
+			left: 757, // 807 - 50
 			top: 387,
 			width: 80,
 			heigth: 80,
@@ -227,7 +227,7 @@ export const dataElectricity = {
 		{
 			id: 15,
 			key: '31',
-			left: 1008,
+			left: 958, // 1008 - 50
 			top: 387,
 			width: 80,
 			heigth: 80,
@@ -243,7 +243,7 @@ export const dataElectricity = {
 		{
 			id: 16,
 			key: '32',
-			left: 1207,
+			left: 1157, // 1207 - 50
 			top: 387,
 			width: 80,
 			heigth: 80,
@@ -259,7 +259,7 @@ export const dataElectricity = {
 		{
 			id: 17,
 			key: '33',
-			left: 440,
+			left: 390, // 440 - 50
 			top: 583,
 			width: 80,
 			heigth: 80,
@@ -279,7 +279,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 25,
-			points: [398, 442, 300, 442, 300, 460],
+			points: [348, 442, 250, 442, 250, 460], // [398, 442, 300, 442, 300, 460]
 			text: 'union 1 alimentador 2 este',
 		},
 		{
@@ -287,16 +287,16 @@ export const dataElectricity = {
 			key: 'linea_1',
 			type: 'line',
 			key_objet: 2,
-			points: [534, 85, 534, 155, 679, 155],
+			points: [484, 85, 484, 155, 629, 155], // [534, 85, 534, 155, 679, 155]
 			text: 'union transfo 1',
 		},
-		{ id: 58, key: 'linea_2', type: 'line', key_objet: -1, points: [108, 256, 1288, 256], text: 'Barra' },
+		{ id: 58, key: 'linea_2', type: 'line', key_objet: -1, points: [58, 256, 1238, 256], text: 'Barra' }, // [108, 256, 1288, 256]
 		{
 			id: 60,
 			key: 'linea_2',
 			type: 'line',
 			key_objet: -1,
-			points: [159, 257, 159, 290],
+			points: [109, 257, 109, 290], // [159, 257, 159, 290]
 			text: 'linea 1 alimentador 1 este',
 		},
 		{
@@ -304,7 +304,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 26,
-			points: [159, 352, 159, 405],
+			points: [109, 352, 109, 405], // [159, 352, 159, 405]
 			text: 'linea 2 alimentador 1 este',
 		},
 		{
@@ -312,19 +312,19 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 1,
-			points: [815, 85, 815, 155, 679, 155],
+			points: [765, 85, 765, 155, 629, 155], // [815, 85, 815, 155, 679, 155]
 			text: 'union trafo 2',
 		},
-		{ id: 68, key: 'linea_2', type: 'line', key_objet: -1, points: [397, 254, 397, 290], text: 'linea 1 alimen 2' },
-		{ id: 70, key: 'linea_2', type: 'line', key_objet: 25, points: [397, 350, 397, 439], text: 'linea 3 alimen 2' },
-		{ id: 71, key: 'linea_2', type: 'line', key_objet: 20, points: [299, 522, 299, 600], text: 'linea 1 D20' },
-		{ id: 73, key: 'linea_2', type: 'line', key_objet: 19, points: [477, 522, 477, 600], text: 'linea 1 D30' },
+		{ id: 68, key: 'linea_2', type: 'line', key_objet: -1, points: [347, 254, 347, 290], text: 'linea 1 alimen 2' }, // [397, 254, 397, 290]
+		{ id: 70, key: 'linea_2', type: 'line', key_objet: 25, points: [347, 350, 347, 439], text: 'linea 3 alimen 2' }, // [397, 350, 397, 439]
+		{ id: 71, key: 'linea_2', type: 'line', key_objet: 20, points: [249, 522, 249, 600], text: 'linea 1 D20' }, // [299, 522, 299, 600]
+		{ id: 73, key: 'linea_2', type: 'line', key_objet: 19, points: [427, 522, 427, 600], text: 'linea 1 D30' }, // [477, 522, 477, 600]
 		{
 			id: 75,
 			key: 'linea_2',
 			type: 'line',
 			key_objet: -1,
-			points: [645, 255, 645, 290],
+			points: [595, 255, 595, 290], // [645, 255, 645, 290]
 			text: 'linea 1 distr 1 este',
 		},
 		{
@@ -332,7 +332,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 24,
-			points: [645, 352, 645, 405],
+			points: [595, 352, 595, 405], // [645, 352, 645, 405]
 			text: 'linea 2 distr 1 este',
 		},
 		{
@@ -340,7 +340,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: -1,
-			points: [845, 257, 845, 290],
+			points: [795, 257, 795, 290], // [845, 257, 845, 290]
 			text: 'linea 1 distr 2 este',
 		},
 		{
@@ -348,7 +348,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 23,
-			points: [845, 352, 845, 405],
+			points: [795, 352, 795, 405], // [845, 352, 845, 405]
 			text: 'linea 2 distr 2 este',
 		},
 		{
@@ -356,7 +356,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: -1,
-			points: [1045, 257, 1045, 290],
+			points: [995, 257, 995, 290], // [1045, 257, 1045, 290]
 			text: 'linea 1 distr 3 este',
 		},
 		{
@@ -364,7 +364,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 22,
-			points: [1045, 352, 1045, 405],
+			points: [995, 352, 995, 405], // [1045, 352, 1045, 405]
 			text: 'linea 2 distr 3 este',
 		},
 		{
@@ -372,7 +372,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: -1,
-			points: [1245, 257, 1245, 290],
+			points: [1195, 257, 1195, 290], // [1245, 257, 1245, 290]
 			text: 'linea 1 distr 4 este',
 		},
 		{
@@ -380,7 +380,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 21,
-			points: [1245, 352, 1245, 405],
+			points: [1195, 352, 1195, 405], // [1245, 352, 1245, 405]
 			text: 'linea 2 distr 4 este',
 		},
 		{
@@ -388,7 +388,7 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: 25,
-			points: [398, 442, 477, 442, 477, 460],
+			points: [348, 442, 427, 442, 427, 460], // [398, 442, 477, 442, 477, 460]
 			text: 'union 2 alimentador 2 este',
 		},
 		{
@@ -396,10 +396,10 @@ export const dataElectricity = {
 			key: 'linea_2',
 			type: 'line',
 			key_objet: -1,
-			points: [677, 156, 677, 255],
+			points: [627, 156, 627, 255], // [677, 156, 677, 255]
 			text: 'union trafos con barra',
 		},
-		{ id: 85, key: 'linea_2', type: 'line', key_objet: 2, points: [535, 0, 535, 39], text: 'trafo 1 entrada' },
-		{ id: 86, key: 'linea_2', type: 'line', key_objet: 1, points: [814, 0, 814, 39], text: 'trafo 2 entrada' },
+		{ id: 85, key: 'linea_2', type: 'line', key_objet: 2, points: [485, 0, 485, 39], text: 'trafo 1 entrada' }, // [535, 0, 535, 39]
+		{ id: 86, key: 'linea_2', type: 'line', key_objet: 1, points: [764, 0, 764, 39], text: 'trafo 2 entrada' }, // [814, 0, 814, 39]
 	],
 }

@@ -5,13 +5,19 @@
 	font-style: normal;
 }
 
+@font-face {
+	font-family: 'Digital';
+	src: url('../../font/ds_digital/DS-DIGIT.TTF') format('truetype');
+}
+
 .namePopUp {
-	text-shadow: 1px 1px 3px #000000;
+	font-family: 'Digital';
+	font-size: 1.2rem !important;
+	text-shadow: 1px 1px 1px #565656;
 }
 .textoPopUp {
-	font-family: 'Jersey';
+	font-family: 'Digital';
 	font-size: 1.3rem !important;
-	/* text-shadow: 1px 1px 3px #aeaeae; */
 }
 
 .marcador_ubicacion_map {
@@ -86,4 +92,10 @@
 }
 .leaflet-popup-tip {
 	display: none !important;
+}
+
+.leaflet-tooltip {
+	background-color: #ffffff00 !important;
+	box-shadow: 0px 0px 0px transparent !important;
+	border: 0px !important;
 }

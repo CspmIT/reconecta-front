@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { Navigate, Outlet } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import style from '../utils/style.module.css'
 import NavBarCustom from '../../NavBarCustom/views'
 import { MainContext } from '../../../context/MainContext'

@@ -1,28 +1,43 @@
-import { Tab, Tabs } from '@mui/material'
+import { Tab, Tabs, IconButton } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import { useContext, useEffect, useState } from 'react'
 import { CustomTabPanel, a11yProps } from '../components/PanelTab'
 import { MainContext } from '../../../context/MainContext'
+import { useNavigate } from 'react-router-dom'
 
 function TabDinamic({ ...props }) {
-	const [value, setValue] = useState(0)
+	const navigate = useNavigate()
+	const { tabs, setTabs, tabCurrent, setTabCurrent, setTabActive } = useContext(MainContext)
+	const [value, setValue] = useState(tabCurrent)
 	const handleChange = (event, newValue) => {
 		setValue(newValue)
+		setTabCurrent(newValue)
 	}
-	const { setTabActive } = useContext(MainContext)
-	useEffect(() => {
-		if (props?.tabs?.length > 0 && props.pag === true) {
-			setTabActive(props.tabs.length)
+
+	const handleRemoveTab = (indexToRemove) => {
+		setTabs(tabs.filter((_, index) => index !== indexToRemove))
+		if (value >= indexToRemove && value > 0) {
+			setValue(value - 1)
+			setTabCurrent(value - 1)
 		}
-	}, [props?.tabs?.length])
+	}
 
 	const classTabs =
-		' !border-solid !border-gray-200 !rounded-t-xl !max-w-full !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
+		'!border-solid !border-gray-200 !rounded-t-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
 	const classTabStatus = [
-		[' !bg-white !border-r-2  !border-t-2 !border-l-2 dark:!bg-zinc-500 '],
-		[' !border-b-2 !bg-gray-300 dark:!bg-zinc-700 '],
+		['!bg-white !border-r-2 !border-t-2 !border-l-2 dark:!bg-zinc-500 '],
+		['!border-b-2 !bg-gray-300 dark:!bg-zinc-700 '],
 	]
+	useEffect(() => {
+		if (tabs.length == 0) {
+			navigate('/Home')
+		}
+		if (tabs.length > 0 && props.pag === true) {
+			setTabActive(tabs.length)
+		}
+	}, [tabs])
 	return (
-		<div className='w-full max-w-[94.5vw] mr-3 !rounded-xl flex flex-col items-center '>
+		<div className={`w-full max-w-[94.5vw] mr-3 !rounded-xl flex flex-col items-center`}>
 			<Tabs
 				className='flex w-full '
 				indicatorColor='transparent'
@@ -30,21 +45,30 @@ function TabDinamic({ ...props }) {
 				onChange={handleChange}
 				aria-label='basic tabs example'
 			>
-				{props?.tabs?.map((item, index) => {
+				{tabs.map((item, index) => {
 					return (
 						<Tab
 							key={index}
-							className={`flex-grow ${classTabStatus[value == index ? 0 : 1]} ${classTabs}`}
-							label={item.name}
+							className={`flex-grow  relative !max-w-80 ${
+								classTabStatus[value === index ? 0 : 1]
+							} ${classTabs}`}
+							label={
+								<div className='pl-2 flex items-center justify-between w-full'>
+									<span>{item.name}</span>
+									<a onClick={() => handleRemoveTab(index)} className=''>
+										<CloseIcon fontSize='small' />
+									</a>
+								</div>
+							}
 							{...a11yProps(index)}
 						/>
 					)
 				})}
 			</Tabs>
 			<div
-				className={` bg-white dark:!bg-zinc-500 w-full h-full flex-col justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700`}
+				className={`bg-white dark:!bg-zinc-500 w-full h-full flex-col justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700`}
 			>
-				{props?.tabs?.map((item, index) => {
+				{tabs.map((item, index) => {
 					return (
 						<CustomTabPanel
 							key={index}

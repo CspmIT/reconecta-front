@@ -1,27 +1,71 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import { useEffect } from 'react'
-
-function GrafTensiones() {
+import HighchartsAccessibility from 'highcharts/modules/accessibility'
+HighchartsAccessibility(Highcharts)
+import { useContext, useEffect } from 'react'
+import { MainContext } from '../../../context/MainContext'
+function GrafTensiones({ data, title }) {
+	const { darkMode } = useContext(MainContext)
 	const options = {
 		chart: {
 			type: 'line',
+			backgroundColor: null,
 		},
+
 		title: {
-			text: 'Grafico de Barra2',
+			text: title,
+			style: {
+				color: darkMode ? 'white' : 'black',
+			},
 		},
 		legend: {
 			enabled: false,
 		},
 		xAxis: {
-			visible: true,
+			categories: [
+				'Enero',
+				'Febrero',
+				'Marzo',
+				'Abril',
+				'Mayo',
+				'Junio',
+				'Julio',
+				'Agosto',
+				'Septiembre',
+				'Octubre',
+				'Noviembre',
+				'Diciembre',
+			],
+			title: {
+				style: {
+					color: darkMode ? 'white' : 'black',
+				},
+			},
+			lineColor: darkMode ? 'white' : 'black',
+			tickColor: darkMode ? 'white' : 'black',
+			labels: {
+				style: {
+					color: darkMode ? 'white' : 'black',
+				},
+			},
 		},
 		yAxis: {
-			visible: true,
+			title: {
+				style: {
+					color: darkMode ? 'white' : 'black',
+				},
+			},
+			lineColor: darkMode ? 'white' : 'black',
+			tickColor: darkMode ? 'white' : 'black',
+			labels: {
+				style: {
+					color: darkMode ? 'white' : 'black',
+				},
+			},
 		},
 		series: [
 			{
-				data: [3, 2, 3, 5, 10, 8, 9, 3, 5],
+				data,
 			},
 		],
 	}

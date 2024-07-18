@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import '../utils/css/styleDiagram.modules.css'
 import ModalDetail from './ModalDetail'
+import { Button, IconButton } from '@mui/material'
+import { BiWindowOpen } from 'react-icons/bi'
 // import ModalDetail from './ModalDetail'
 function DetailMeter({ position, data }) {
 	const { x, y } = position
@@ -18,10 +20,16 @@ function DetailMeter({ position, data }) {
 			<div
 				className='absolute rounded-lg p-0 w-36 border-2 border-gray-900 overflow-hidden'
 				style={{ left: `${x}px`, top: `${y}px` }}
-				onClick={handleShowModal}
 			>
-				<div className='bg-slate-400 border-b-2 border-gray-900 p-2'>
-					<p className='nameDetail !m-0 text-lg text-white !lowercase font-semibold'>{name}</p>
+				<div className='bg-slate-400 border-b-2 border-gray-900 p-2 flex justify-between'>
+					<p className='nameDetail !m-0 text-lg text-white text-center !lowercase font-semibold'>{name}</p>
+					<IconButton
+						onClick={handleShowModal}
+						size='small'
+						className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
+					>
+						<BiWindowOpen />
+					</IconButton>
 				</div>
 				<div className='bg-slate-800 flex text-green-400 pl-1 justify-between items-center'>
 					<p className='!m-0 w-full font-bold text-center !mr-3 textoMva'>{Mva}</p>

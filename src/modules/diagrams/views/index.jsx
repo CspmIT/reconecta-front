@@ -3,18 +3,17 @@ import GrafTensiones from '../components/GrafTensiones'
 
 const Diagrams = () => {
 	return (
-		<div className='flex flex-col w-full'>
-			{/* <div className='flex w-full h-36 bg-gray-200 gap-3'>
-				<div className='w-1/2 flex'>
-					<GrafTensiones />
+		<div className='w-full flex flex-row justify-center text-black dark:text-white relative mt-2 gap-2'>
+			<div className='w-9/12 shadow-md h-min flex-row flex flex-wrap justify-between rounded-md bg-[#CFC4BE] dark:bg-[#303b41] pt-4'>
+				<DiagramElectricity />
+			</div>
+			<div className='w-3/12 flex flex-col'>
+				<div className='bg-white shadow-md dark:bg-gray-800 rounded-md mb-2 h-full flex justify-center items-center p-2'>
+					<GrafTensiones data={[13, 5, 7, 9, 0, 11, 9, 8, 15]} title={'Grafico 1'} key={1} />
 				</div>
-				<div className='w-1/2 flex'>
-					<GrafTensiones />
-				</div>
-			</div> */}
-			<div className='w-full flex flex-row justify-center text-black dark:text-white relative mt-2'>
-				<div className='w-full h-min flex-row flex flex-wrap justify-between rounded-md bg-slate-50 dark:bg-gray-800 p-4 pb-8'>
-					<DiagramElectricity />
+
+				<div className='bg-white shadow-md dark:bg-gray-800 rounded-md h-full flex justify-center items-center p-2'>
+					<GrafTensiones data={[3, 2, 3, 5, 10, 8, 9, 3, 5]} title={'Grafico 2'} key={2} />
 				</div>
 			</div>
 		</div>

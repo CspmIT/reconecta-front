@@ -1,26 +1,24 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
 import MainContent from './modules/core/views'
-import DashBoard from '../src/modules/dashBoard/views/index'
-import Map from './modules/map/views'
-import TabDinamic from './modules/tabs/views'
-// import Login from './modules/login/views'
-import Profile from './modules/profile/views'
-import Board from './modules/board/views'
-// import ForgeViewer from './modules/visualizerAutocad/views'
-import Notification from './modules/Notification'
 import { ThemeProvider, createTheme } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
 import { MainContext } from './context/MainContext'
+// import { RoutesContext } from './context/RoutesContext'
+
 import LoginApp from './modules/LoginApp/view'
 import ListClients from './modules/LoginApp/view/ListClient'
-import Home from './modules/home/views'
+import DashBoard from './modules/dashBoard/views'
+import Map from './modules/map/views'
 import Alert from './modules/alert/views'
 import Diagrams from './modules/diagrams/views'
+import TabDinamic from './modules/tabs/views'
+import Notification from './modules/Notification'
+import Board from './modules/board/views'
+import Profile from './modules/profile/views'
+import Home from './modules/home/views'
 
 function App() {
-	const { darkMode, tabs } = useContext(MainContext)
-
-	// const [userRoutes, setUserRoutes] = useState([])
+	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
 		{ path: '/ListClients', element: <ListClients /> },
@@ -32,12 +30,11 @@ function App() {
 		{ path: '/Alert', element: <Alert /> },
 		{ path: '/Diagram', element: <Diagrams /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
-		{ path: '/tabs', element: <TabDinamic tabs={tabs} /> },
+		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/profile', element: <Profile /> },
 	]
-
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({
 		palette: {
@@ -62,6 +59,7 @@ function App() {
 					{loginRoutes.map((route) => (
 						<Route key={route.path} path={route.path} element={route.element} />
 					))}
+
 					<Route element={<MainContent />}>
 						{userRoutes.map((route) => (
 							<Route key={route.path} path={route.path} element={route.element} />

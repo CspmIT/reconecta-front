@@ -28,7 +28,7 @@ import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
-	const { tabActive } = useContext(MainContext)
+	const { tabActive, tabs } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
 	const location = useLocation().pathname.split('/')[1] || '/DashBoard'
@@ -159,6 +159,9 @@ function NavBarCustom() {
 					<Divider />
 					<List>
 						{menuSideBar.map((item, index) => {
+							if (tabs.length == 0 && item.link == 'tabs') {
+								return ''
+							}
 							return (
 								<Fragment key={index}>
 									<ListItem disablePadding sx={{ display: 'block' }}>

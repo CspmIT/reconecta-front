@@ -9,14 +9,23 @@ const redIcon = (nro) =>
 		html: `<span class="marcador_ubicacion_map" style="background: red;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
 
-const blueIcon = (nro) =>
+const magentaIcon = (nro) =>
 	new L.divIcon({
 		iconSize: [25, 41],
 		iconAnchor: [12, 41],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-blue',
-		html: `<span class="marcador_ubicacion_map" style="background: blue;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<span class="marcador_ubicacion_map" style="background: magenta;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+	})
+const grayIcon = (nro) =>
+	new L.divIcon({
+		iconSize: [25, 41],
+		iconAnchor: [12, 41],
+		popupAnchor: [1, -34],
+		shadowSize: [41, 41],
+		className: 'leaflet-marker-icon-blue',
+		html: `<span class="marcador_ubicacion_map" style="background: gray;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
 const greenIcon = (nro) =>
 	new L.divIcon({
@@ -24,17 +33,17 @@ const greenIcon = (nro) =>
 		iconAnchor: [12, 41],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
-		className: 'leaflet-marker-icon-green',
+		className: 'leaflet-marker-icon-blue',
 		html: `<span class="marcador_ubicacion_map" style="background: green;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
 
 export const markersRecloser = [
 	{
-		id: 1,
+		id: 2,
 		icon: redIcon(2),
 		alert: true,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 2',
 			number: 2,
 			VL1: 1045,
 			VL2: 200,
@@ -45,11 +54,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 18,
 		icon: redIcon(18),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 18',
 			number: 18,
 			VL1: 1045,
 			VL2: 200,
@@ -59,11 +68,11 @@ export const markersRecloser = [
 		lng: -61.96580886840821,
 	},
 	{
-		id: 1,
+		id: 19,
 		icon: redIcon(19),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 19',
 			number: 19,
 			VL1: 1045,
 			VL2: 200,
@@ -78,7 +87,7 @@ export const markersRecloser = [
 		icon: redIcon(1),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 1',
 			number: 1,
 			VL1: 1045,
 			VL2: 200,
@@ -89,11 +98,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 15,
 		icon: redIcon(15),
 		alert: true,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 15',
 			number: 15,
 			VL1: 1045,
 			VL2: 200,
@@ -104,11 +113,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 17,
 		icon: greenIcon(17),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 17',
 			number: 17,
 			VL1: 1045,
 			VL2: 200,
@@ -119,11 +128,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 16,
 		icon: redIcon(16),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 16',
 			number: 16,
 			VL1: 1045,
 			VL2: 200,
@@ -134,11 +143,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 14,
 		icon: redIcon(14),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 14',
 			number: 14,
 			VL1: 1045,
 			VL2: 200,
@@ -149,11 +158,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 6,
 		icon: redIcon(6),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 6',
 			number: 6,
 			VL1: 1045,
 			VL2: 200,
@@ -164,11 +173,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 10,
 		icon: redIcon(10),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 10',
 			number: 10,
 			VL1: 1045,
 			VL2: 200,
@@ -179,11 +188,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 11,
 		icon: redIcon(11),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 11',
 			number: 11,
 			VL1: 1045,
 			VL2: 200,
@@ -194,11 +203,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 12,
 		icon: redIcon(12),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 12',
 			number: 12,
 			VL1: 1045,
 			VL2: 200,
@@ -209,11 +218,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
-		icon: redIcon(20),
+		id: 20,
+		icon: grayIcon(20),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 20',
 			number: 20,
 			VL1: 1045,
 			VL2: 200,
@@ -224,11 +233,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 8,
 		icon: redIcon(8),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 8',
 			number: 8,
 			VL1: 1045,
 			VL2: 200,
@@ -239,11 +248,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
-		icon: redIcon(7),
+		id: 7,
+		icon: magentaIcon(7),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 7',
 			number: 7,
 			VL1: 1045,
 			VL2: 200,
@@ -254,11 +263,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 9,
 		icon: redIcon(9),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 9',
 			number: 9,
 			VL1: 1045,
 			VL2: 200,
@@ -269,11 +278,11 @@ export const markersRecloser = [
 	},
 
 	{
-		id: 1,
+		id: 13,
 		icon: greenIcon(13),
 		alert: false,
 		info: {
-			name: 'San Juan',
+			name: 'San Juan 13',
 			number: 13,
 			VL1: 1045,
 			VL2: 200,
