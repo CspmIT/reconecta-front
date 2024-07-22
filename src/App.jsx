@@ -16,7 +16,7 @@ import Notification from './modules/Notification'
 import Board from './modules/board/views'
 import Profile from './modules/profile/views'
 import Home from './modules/home/views'
-
+import './App.css'
 function App() {
 	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [

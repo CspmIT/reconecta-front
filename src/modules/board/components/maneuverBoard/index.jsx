@@ -1,25 +1,32 @@
 import React from 'react'
-import TimePickerCustom from '../../../../components/TimePickerCustom'
 import TableCustom from '../../../../components/TableCustom'
-import { Button } from '@mui/material'
-
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { columnManeuver } from '../../utils/ColumnsManeuver'
+import { rowManeuver } from '../../utils/objects'
 const ManeuverBoard = () => {
 	return (
 		<div className='w-full'>
-			<div className='w-full flex flex-row justify-center items-center'>
-				<div className='w-1/6 text-center mx-5'>
-					<TimePickerCustom text='Fecha de Inicio' />
-				</div>
-				<div className='w-1/6 text-center mx-5'>
-					<TimePickerCustom text='Fecha de Fin' />
-				</div>
-				<div className='w-1/6'>
-					<Button className='bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded w-1/2'>
-						Filtrar
-					</Button>
-				</div>
-			</div>
-			<TableCustom columns={[]} data={[]} />
+			<LocalizationProvider dateAdapter={AdapterDayjs}>
+				<TableCustom
+					data={rowManeuver}
+					columns={columnManeuver}
+					density='comfortable'
+					header={{
+						background: 'rgb(190 190 190)',
+						fontSize: '18px',
+						fontWeight: 'bold',
+					}}
+					toolbarClass={{ background: 'rgb(190 190 190)' }}
+					body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
+					footer={{ background: 'rgb(190 190 190)' }}
+					pageSize={10}
+					topToolbar
+					hide
+					sort
+					pagination
+				/>
+			</LocalizationProvider>
 		</div>
 	)
 }

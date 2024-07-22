@@ -1,15 +1,3 @@
-@font-face {
-	font-family: 'Jersey';
-	src: url('../../font/Orbitron/static/Orbitron-SemiBold.ttf') format('truetype');
-	font-weight: normal;
-	font-style: normal;
-}
-
-@font-face {
-	font-family: 'Digital';
-	src: url('../../font/ds_digital/DS-DIGIT.TTF') format('truetype');
-}
-
 .namePopUp {
 	font-family: 'Digital';
 	font-size: 1.2rem !important;

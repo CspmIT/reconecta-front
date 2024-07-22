@@ -3,66 +3,14 @@ import TableCustom from '../../../components/TableCustom'
 import { columns } from '../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../storage/storage'
+import { recloser } from '../../board/utils/objects'
 
-function TableRecloser() {
+function TableRecloser({ ...props }) {
 	const [reclosers, setReclosers] = useState([])
 	const navigate = useNavigate()
 	const getdisplay = () => {
 		setReclosers([
-			{
-				Nro_recloser: 0,
-				Name: 'Marconi esq. Libertador',
-				Nro_Serie: '01A1212030522',
-				type_recloser: 1,
-				status: 1,
-				online: 0,
-				alarm_recloser: 0,
-			},
-			{
-				Nro_recloser: 10,
-				Name: 'Maunier',
-				Nro_Serie: '0311720010029',
-				type_recloser: 1,
-				status: 0,
-				online: 1,
-				alarm_recloser: 1,
-			},
-			{
-				Nro_recloser: 102,
-				Name: 'Adeco Agro',
-				Nro_Serie: '18164214001',
-				type_recloser: 1,
-				status: 0,
-				online: 1,
-				alarm_recloser: 1,
-			},
-			{
-				Nro_recloser: 11,
-				Name: 'Blangetti',
-				Nro_Serie: '0311720010019',
-				type_recloser: 1,
-				status: 0,
-				online: 1,
-				alarm_recloser: 1,
-			},
-			{
-				Nro_recloser: 14,
-				Name: 'Milessi',
-				Nro_Serie: '03117191020611',
-				type_recloser: 1,
-				status: 0,
-				online: 1,
-				alarm_recloser: 1,
-			},
-			{
-				Nro_recloser: 6,
-				Name: 'Dos Hermanos',
-				Nro_Serie: '03117191020647',
-				type_recloser: 1,
-				status: 0,
-				online: 1,
-				alarm_recloser: 1,
-			},
+			...recloser,
 			{
 				Nro_recloser: 'SETA 1',
 				Name: 'SETA 1',
@@ -85,7 +33,9 @@ function TableRecloser() {
 	useEffect(() => {
 		getdisplay()
 	}, [])
+
 	const [visibility, setVisibility] = useState(storage.get('visibility'))
+
 	const handleColumnVisibilityChange = (newVisibility) => {
 		const change = newVisibility()
 		setVisibility((prevVisibility) => ({
@@ -98,12 +48,14 @@ function TableRecloser() {
 			...change,
 		})
 	}
-
+	// const openNewTab = (data) => {
+	// 	props.newTab(data)
+	// }
 	return (
 		<div className='pb-5'>
 			<TableCustom
 				data={reclosers}
-				columns={columns(changeAlarm, navigate)}
+				columns={columns(changeAlarm, navigate, props.newTab)}
 				density='comfortable'
 				header={{
 					background: 'rgb(190 190 190)',
