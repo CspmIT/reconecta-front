@@ -8,7 +8,7 @@ import EventBoard from '../eventBoard'
 import CardBoard from '../cardBoard'
 import AnalyticsBoard from '../analyticsBoard'
 import ManeuverBoard from '../maneuverBoard'
-import { MainContext } from '../../../../context/MainContext'
+import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import { recloser } from '../../utils/objects'
@@ -46,7 +46,13 @@ const DataBoard = () => {
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
-					<Button className='!ml-3' color='warning' title='Editar Reconectador' variant='contained'>
+					<Button
+						onClick={() => navigate('/AbmRecloser/' + info.id)}
+						className='!ml-3'
+						color='warning'
+						title='Editar Reconectador'
+						variant='contained'
+					>
 						<FaEdit />
 					</Button>
 				</div>

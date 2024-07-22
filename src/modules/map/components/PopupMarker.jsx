@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import CustomPopUp from './CustomPopUp'
 import { yellowIcon } from '../utils/js/markerClass'
 import { MainContext } from '../../../context/MainContext'
-import Board from '../../board/views'
+import Board from '../../recloser/board/views'
 
 const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawnItems }) => {
 	const markerRef = useRef(null)

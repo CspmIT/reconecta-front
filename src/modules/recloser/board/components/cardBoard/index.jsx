@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import CardCustom from '../../../../components/CardCustom'
+import CardCustom from '../../../../../components/CardCustom'
 import { FaChartArea, FaPowerOff, FaTachometerAlt } from 'react-icons/fa'
 import { BsFiles } from 'react-icons/bs'
 

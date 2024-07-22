@@ -3,7 +3,7 @@ import TableCustom from '../../../components/TableCustom'
 import { columns } from '../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../storage/storage'
-import { recloser } from '../../board/utils/objects'
+import { recloser } from '../../recloser/board/utils/objects'
 
 function TableRecloser({ ...props }) {
 	const [reclosers, setReclosers] = useState([])

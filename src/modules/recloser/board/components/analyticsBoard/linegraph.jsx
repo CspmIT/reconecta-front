@@ -1,7 +1,7 @@
 import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 import React, { useContext } from 'react'
-import { MainContext } from '../../../../context/MainContext'
+import { MainContext } from '../../../../../context/MainContext'
 
 const Linegraph = ({ ...props }) => {
 	const { darkMode } = useContext(MainContext)

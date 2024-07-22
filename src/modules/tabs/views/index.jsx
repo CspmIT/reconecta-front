@@ -2,8 +2,8 @@ import { Tab, Tabs, IconButton } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useContext, useEffect, useState } from 'react'
 import { CustomTabPanel, a11yProps } from '../components/PanelTab'
-import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
+import { MainContext } from '../../../context/MainContext'
 
 function TabDinamic({ ...props }) {
 	const navigate = useNavigate()
@@ -17,8 +17,8 @@ function TabDinamic({ ...props }) {
 	const handleRemoveTab = (indexToRemove) => {
 		setTabs(tabs.filter((_, index) => index !== indexToRemove))
 		if (value >= indexToRemove && value > 0) {
-			setValue(value - 1)
 			setTabCurrent(value - 1)
+			setValue(value - 1)
 		}
 	}
 
@@ -36,7 +36,6 @@ function TabDinamic({ ...props }) {
 			setTabActive(tabs.length)
 		}
 	}, [tabs])
-	console.log(tabs)
 	return (
 		<div className={`w-full max-w-[94.5vw] mr-3 !rounded-xl flex flex-col items-center`}>
 			<Tabs

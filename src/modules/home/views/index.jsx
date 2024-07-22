@@ -3,7 +3,7 @@ import Grafs from '../components/Grafs'
 import TableRecloser from '../components/TableRecloser'
 import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
-import Board from '../../board/views'
+import Board from '../../recloser/board/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)

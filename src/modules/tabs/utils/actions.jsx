@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import { MainContext } from '../../../context/MainContext'
-import Board from '../../board/views'
 import { useNavigate } from 'react-router-dom'
+import Board from '../../recloser/board/views'
 
 export const newTabBoard = (id) => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)

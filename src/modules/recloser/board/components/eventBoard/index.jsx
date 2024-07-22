@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import TableCustom from '../../../../components/TableCustom'
+import TableCustom from '../../../../../components/TableCustom'
 import { FormLabel } from '@mui/material'
 import Swal from 'sweetalert2'
 import { dataCritics } from '../../utils/objects'
-import { columnsCriticos } from '../../../alert/utils/columnTbl'
+import { columnsCriticos } from '../../../../alert/utils/columnTbl'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 

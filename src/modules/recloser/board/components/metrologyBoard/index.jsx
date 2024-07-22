@@ -1,6 +1,6 @@
 import React from 'react'
 import { boardMetrology } from '../../utils/objects'
-import CardCustom from '../../../../components/CardCustom'
+import CardCustom from '../../../../../components/CardCustom'
 
 const MetrologyBoard = () => {
 	return (
