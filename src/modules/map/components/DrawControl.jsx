@@ -1,47 +1,41 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import L from 'leaflet'
 import { useMap } from 'react-leaflet'
 import PopupMarker from './PopupMarker'
-import markerCustom, { workIcon } from '../utils/js/markerClass'
+import markerCustom, { redIcon, workIcon } from '../utils/js/markerClass'
 
-function DrawControl({ polylines, markers }) {
+function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 	const map = useMap()
-	const [createdMarkers, setCreatedMarkers] = useState([])
-
-	const drawnItems = new L.FeatureGroup()
-	const markersList = new L.FeatureGroup()
-	const polylineList = []
+	const [createdMarkers, setCreatedMarkers] = useState(markers)
+	const drawnItemsRef = useRef(new L.FeatureGroup())
+	const markersListRef = useRef(new L.FeatureGroup())
+	const polylineListRef = useRef([])
 
 	useEffect(() => {
+		const drawnItems = drawnItemsRef.current
+		const markersList = markersListRef.current
+		const polylineList = polylineListRef.current
+
 		map.addLayer(drawnItems)
 		map.addLayer(markersList)
 
-		polylines.forEach((poly) => {
-			const borderPolyline = L.polyline(poly.points, {
-				color: '#0000006e',
-				weight: 6, // Ancho del borde
+		if (polylines?.length) {
+			polylines.forEach((poly) => {
+				const borderPolyline = L.polyline(poly.points, {
+					color: '#0000006e',
+					weight: 6,
+				})
+
+				const polyline = L.polyline(poly.points, {
+					color: '#f65353',
+					weight: 3,
+				})
+
+				drawnItems.addLayer(borderPolyline)
+				drawnItems.addLayer(polyline)
+				polylineList.push({ borderPolyline, polyline })
 			})
-
-			const polyline = L.polyline(poly.points, {
-				color: '#f65353',
-				weight: 3, // Ancho del borde
-			})
-
-			drawnItems.addLayer(borderPolyline)
-			drawnItems.addLayer(polyline)
-			polylineList.push({ borderPolyline, polyline })
-		})
-
-		// const layerControl = L.control.layers(
-		// 	null,
-		// 	{
-		// 		Reconectadores: markersList,
-		// 		Lines: drawnItems,
-		// 	},
-		// 	{
-		// 		collapsed: true,
-		// 	}
-		// )
+		}
 
 		const drawControl = new L.Control.Draw({
 			edit: {
@@ -49,35 +43,39 @@ function DrawControl({ polylines, markers }) {
 			},
 			position: 'topright',
 			draw: {
-				polyline: true,
+				polyline: false,
 				polygon: false,
 				circle: false,
 				rectangle: false,
 				marker: {
-					icon: workIcon(),
+					icon: redIcon(''),
 				},
 				circlemarker: false,
 			},
 		})
+		if (editor) {
+			map.addControl(drawControl)
+		}
 
-		// map.addControl(layerControl)
-		map.addControl(drawControl)
-
-		map.on(L.Draw.Event.CREATED, function (event) {
+		const handleDrawCreated = (event) => {
 			const layer = event.layer
 			if (event.layerType === 'marker') {
 				const { lat, lng } = layer.getLatLng()
-				const newMarker = new markerCustom('', lat, lng, 4) // Ajusta el número de opción aquí
-				setCreatedMarkers((prevMarkers) => [...prevMarkers, newMarker])
+				const newMarker = new markerCustom('', lat, lng, 1)
+				if (getLatLngMarker) {
+					getLatLngMarker(lat, lng)
+				}
+				setCreatedMarkers([newMarker])
+				// Add the marker to the drawnItems group to enable editing
+				// drawnItems.addLayer(layer)
 			} else {
 				drawnItems.addLayer(layer)
 			}
-			// adjustMapView()
-		})
+		}
 
-		map.on('draw:edited', function (event) {
+		const handleDrawEdited = (event) => {
 			const layers = event.layers
-			layers.eachLayer(function (layer) {
+			layers.eachLayer((layer) => {
 				if (layer instanceof L.Polyline) {
 					const updatedLatLngs = layer.getLatLngs()
 					polylineList.forEach((pair) => {
@@ -87,7 +85,7 @@ function DrawControl({ polylines, markers }) {
 
 							const newBorderPolyline = L.polyline(updatedLatLngs, {
 								color: '#0000006e',
-								weight: 6, // Ancho del borde
+								weight: 6,
 							})
 
 							const newPolyline = L.polyline(updatedLatLngs, {
@@ -103,51 +101,49 @@ function DrawControl({ polylines, markers }) {
 						}
 					})
 				}
+				if (layer instanceof L.Marker) {
+					const { lat, lng } = layer.getLatLng()
+					const newMarker = new markerCustom('', lat, lng, 1)
+					if (getLatLngMarker) {
+						getLatLngMarker(lat, lng)
+					}
+					setCreatedMarkers([newMarker])
+				}
 			})
-		})
-
-		// adjustMapView()
-	}, [map, polylines, markers])
-
-	const adjustMapView = () => {
-		const bounds = new L.LatLngBounds()
-		markers.forEach((marker) => {
-			bounds.extend([marker.lat, marker.lng])
-		})
-		polylines.forEach((poly) => {
-			poly.points.forEach((point) => {
-				bounds.extend(point)
-			})
-		})
-		if (bounds.isValid()) {
-			map.fitBounds(bounds)
 		}
-	}
+		const handleDrawDelete = () => {
+			setCreatedMarkers([])
+			drawnItems.clearLayers()
+			getLatLngMarker(null, null)
+		}
+		map.on(L.Draw.Event.CREATED, handleDrawCreated)
+		map.on('draw:edited', handleDrawEdited)
+		map.on('draw:deleted', handleDrawDelete)
+
+		return () => {
+			map.removeControl(drawControl)
+			map.removeLayer(drawnItems)
+			map.removeLayer(markersList)
+			map.off(L.Draw.Event.CREATED, handleDrawCreated)
+			map.off('draw:edited', handleDrawEdited)
+			map.off('draw:deleted', handleDrawDelete)
+		}
+	}, [map, polylines, editor])
+
 	return (
 		<>
-			{markers.map((marker, index) => (
-				<PopupMarker
-					key={index}
-					id={marker.id}
-					position={[marker.lat, marker.lng]}
-					icon={marker.icon}
-					alert={marker.alert}
-					popupData={marker.info}
-					drawnItems={drawnItems}
-					layerControl={markersList}
-				/>
-			))}
-			{createdMarkers.map((marker, index) => (
-				<PopupMarker
-					key={index}
-					id={marker.id}
-					position={[marker.lat, marker.lng]}
-					icon={marker.icon}
-					popupData={marker.info}
-					drawnItems={drawnItems}
-					layerControl={markersList}
-				/>
-			))}
+			{createdMarkers &&
+				createdMarkers.map((marker, index) => (
+					<PopupMarker
+						key={index}
+						id={marker.id}
+						position={[marker.lat, marker.lng]}
+						icon={marker.icon}
+						popupData={marker.info}
+						drawnItems={drawnItemsRef.current}
+						layerControl={markersListRef.current}
+					/>
+				))}
 		</>
 	)
 }

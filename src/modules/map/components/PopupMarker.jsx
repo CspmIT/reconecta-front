@@ -1,10 +1,10 @@
 import { useContext, useEffect, useRef } from 'react'
-import { Marker, Popup, Tooltip } from 'react-leaflet'
+import { Marker, Tooltip } from 'react-leaflet'
 import { useNavigate } from 'react-router-dom'
 import CustomPopUp from './CustomPopUp'
 import { yellowIcon } from '../utils/js/markerClass'
 import { MainContext } from '../../../context/MainContext'
-import Board from '../../board/views'
+import Board from '../../recloser/board/views'
 
 const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawnItems }) => {
 	const markerRef = useRef(null)
@@ -16,6 +16,7 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 			const marker = markerRef.current
 			drawnItems.addLayer(marker)
 			layerControl.addLayer(marker)
+			if (popupData.name == 'nuevo') return
 			const handleMouseClick = () => {
 				setTabs((prevTabs) => [
 					...prevTabs,
@@ -73,12 +74,13 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 			}
 		}
 	}, [alert, icon, id])
-
 	return (
 		<Marker ref={markerRef} position={position} icon={icon}>
-			<Tooltip permanent={false}>
-				<CustomPopUp content={popupData} />
-			</Tooltip>
+			{popupData.name != 'nuevo' && (
+				<Tooltip permanent={false}>
+					<CustomPopUp content={popupData} />
+				</Tooltip>
+			)}
 		</Marker>
 	)
 }

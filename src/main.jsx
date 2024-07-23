@@ -6,9 +6,11 @@ import { MainProvider } from './context/MainContext'
 import { TabProvider } from './context/TabContext'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-	<TabProvider>
-		<MainProvider>
-			<App />
-		</MainProvider>
-	</TabProvider>
+	<React.StrictMode>
+		<TabProvider>
+			<MainProvider>
+				<App />
+			</MainProvider>
+		</TabProvider>
+	</React.StrictMode>
 )

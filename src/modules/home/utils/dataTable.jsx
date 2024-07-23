@@ -1,13 +1,9 @@
-import { Button, FormControlLabel, IconButton, Popper, Switch } from '@mui/material'
-import { CheckCircleSharp, Circle, ContentPaste, Delete, Edit, ErrorSharp, ListRounded, OpenInNew } from '@mui/icons-material'
+import { FormControlLabel, IconButton, Switch } from '@mui/material'
+import { CheckCircleSharp, Circle, ErrorSharp } from '@mui/icons-material'
 import { BiWindowOpen } from 'react-icons/bi'
-import { FaDoorOpen } from 'react-icons/fa'
-import { IoEnter } from 'react-icons/io5'
-import { useState } from 'react'
-import { useEffect } from 'react'
-import { useRef } from 'react'
-import { Navigate } from 'react-router-dom'
+
 import { storage } from '../../../storage/storage'
+import { newTabBoard } from '../../tabs/utils/actions'
 const TypeRecloser = {
 	1: 'Reconectador',
 	2: 'Medidor',
@@ -22,7 +18,8 @@ const edit = (row) => {
 const deleteRecloser = (row) => {
 	console.log(row.id)
 }
-export const columns = (changeAlarm, navigate) => [
+
+export const columns = (changeAlarm, navigate, newTab) => [
 	{
 		header: 'Nº',
 		accessorKey: 'Nro_recloser',
@@ -132,7 +129,7 @@ export const columns = (changeAlarm, navigate) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			return (
-				<IconButton onClick={() => navigate(`/board/${row.id}`)} className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
+				<IconButton onClick={() => newTab(row.original)} className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
 					<BiWindowOpen />
 				</IconButton>
 			)
