@@ -1,14 +1,5 @@
 import { Button, FormControlLabel, IconButton, Popper, Switch } from '@mui/material'
-import {
-	CheckCircleSharp,
-	Circle,
-	ContentPaste,
-	Delete,
-	Edit,
-	ErrorSharp,
-	ListRounded,
-	OpenInNew,
-} from '@mui/icons-material'
+import { CheckCircleSharp, Circle, ContentPaste, Delete, Edit, ErrorSharp, ListRounded, OpenInNew } from '@mui/icons-material'
 import { BiWindowOpen } from 'react-icons/bi'
 import { FaDoorOpen } from 'react-icons/fa'
 import { IoEnter } from 'react-icons/io5'
@@ -21,6 +12,7 @@ const TypeRecloser = {
 	1: 'Reconectador',
 	2: 'Medidor',
 	3: 'Sub-Estación',
+	4: 'Analizador de red',
 }
 
 const edit = (row) => {
@@ -66,11 +58,14 @@ export const columns = (changeAlarm, navigate) => [
 				label: 'Sub-Estación',
 				value: 3,
 			},
+			{
+				label: 'Analizador de red',
+				value: 4,
+			},
 		],
 		filterFn: (row, id, filterValue) => {
 			const filter = storage.get('filter')
-			const filterType_recloser =
-				filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
+			const filterType_recloser = filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
 			if (filterValue !== filterType_recloser) {
 				if (filter?.length > 0) {
 					filter.splice(filter.indexOf(filterType_recloser), 1)
@@ -110,15 +105,7 @@ export const columns = (changeAlarm, navigate) => [
 		enableColumnFilter: false,
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
-			return (
-				<div className='flex items-center w-full'>
-					{row.original?.online > 0 ? (
-						<CheckCircleSharp color='success' className='!text-3xl' />
-					) : (
-						<ErrorSharp color='warning' className='!text-3xl' />
-					)}
-				</div>
-			)
+			return <div className='flex items-center w-full'>{row.original?.online > 0 ? <CheckCircleSharp color='success' className='!text-3xl' /> : <ErrorSharp color='warning' className='!text-3xl' />}</div>
 		},
 	},
 	{
@@ -130,13 +117,7 @@ export const columns = (changeAlarm, navigate) => [
 		Cell: ({ row }) => {
 			return (
 				<FormControlLabel
-					control={
-						<Switch
-							checked={row.original?.alarm_recloser > 0 ? true : false}
-							onChange={() => changeAlarm(row.original.Nro_Serie)}
-							name={row.original.name}
-						/>
-					}
+					control={<Switch checked={row.original?.alarm_recloser > 0 ? true : false} onChange={() => changeAlarm(row.original.Nro_Serie)} name={row.original.name} />}
 					label={row.original?.alarm_recloser ? 'Activada' : 'Desactivada'}
 				/>
 			)
@@ -151,10 +132,7 @@ export const columns = (changeAlarm, navigate) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			return (
-				<IconButton
-					onClick={() => navigate(`/board/${row.id}`)}
-					className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
-				>
+				<IconButton onClick={() => navigate(`/board/${row.id}`)} className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
 					<BiWindowOpen />
 				</IconButton>
 			)

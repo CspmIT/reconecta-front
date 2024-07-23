@@ -72,15 +72,20 @@ function TableRecloser() {
 				online: 1,
 				alarm_recloser: 1,
 			},
+			{
+				Nro_recloser: 'POWERMETER 1',
+				Name: 'Analizador interno',
+				Nro_Serie: '00002114',
+				type_recloser: 4,
+				status: 0,
+				online: 1,
+				alarm_recloser: 1,
+			},
 		])
 	}
 
 	const changeAlarm = (Nro_Serie) => {
-		setReclosers((prevReclosers) =>
-			prevReclosers.map((recloser) =>
-				recloser.Nro_Serie === Nro_Serie ? { ...recloser, alarm_recloser: !recloser.alarm_recloser } : recloser
-			)
-		)
+		setReclosers((prevReclosers) => prevReclosers.map((recloser) => (recloser.Nro_Serie === Nro_Serie ? { ...recloser, alarm_recloser: !recloser.alarm_recloser } : recloser)))
 	}
 	useEffect(() => {
 		getdisplay()

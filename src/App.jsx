@@ -16,6 +16,7 @@ import Notification from './modules/Notification'
 import Board from './modules/board/views'
 import Profile from './modules/profile/views'
 import Home from './modules/home/views'
+import AnalyzerBoard from './modules/analyzer/board/views'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -33,6 +34,7 @@ function App() {
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
+		{ path: '/Analyzer/:id', element: <AnalyzerBoard /> },
 		{ path: '/profile', element: <Profile /> },
 	]
 	//Incorporo el theme de mui
