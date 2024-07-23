@@ -30,7 +30,7 @@ const componentMap = [
 	},
 	{
 		name: 'MapPrueba',
-		link: () => import('../../../../src/modules/map/components/MapPrueba'),
+		link: () => import('../../map/components/MapCustom'),
 	},
 ]
 

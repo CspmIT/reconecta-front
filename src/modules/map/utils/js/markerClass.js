@@ -76,7 +76,7 @@ class markerCustom {
 			name: 'nuevo',
 		}
 	) {
-		this.id = id || 0
+		this.id = id || ''
 		this.lat = lat
 		this.lng = lng
 		this.info = info
