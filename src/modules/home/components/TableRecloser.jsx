@@ -4,6 +4,8 @@ import { columns } from '../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../storage/storage'
 import { recloser } from '../../recloser/board/utils/objects'
+import { Button, IconButton, Menu, MenuItem } from '@mui/material'
+import { Add } from '@mui/icons-material'
 
 function TableRecloser({ ...props }) {
 	const [reclosers, setReclosers] = useState([])
@@ -48,9 +50,18 @@ function TableRecloser({ ...props }) {
 			...change,
 		})
 	}
-	// const openNewTab = (data) => {
-	// 	props.newTab(data)
-	// }
+	const [anchorEl, setAnchorEl] = useState(null)
+	const open = Boolean(anchorEl)
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget)
+	}
+	const changeView = (nameView) => {
+		navigate(`/Abm/${nameView}`)
+	}
+	const handleClose = () => {
+		setAnchorEl(null)
+	}
+
 	return (
 		<div className='pb-5'>
 			<TableCustom
@@ -69,6 +80,33 @@ function TableRecloser({ ...props }) {
 					boxShadow: `1px 1px 8px 0px #00000046`,
 					borderRadius: '0.75rem',
 				}}
+				btnCustomToolbar={
+					<div>
+						<IconButton
+							id='basic-button'
+							aria-controls={open ? 'basic-menu' : undefined}
+							aria-haspopup='true'
+							aria-expanded={open ? 'true' : undefined}
+							onClick={handleClick}
+						>
+							<Add />
+						</IconButton>
+						<Menu
+							id='basic-menu'
+							anchorEl={anchorEl}
+							open={open}
+							onClose={handleClose}
+							MenuListProps={{
+								'aria-labelledby': 'basic-button',
+							}}
+						>
+							<MenuItem onClick={() => changeView('recloser')}>Reconectador</MenuItem>
+							<MenuItem onClick={() => changeView('meter')}>Medidor</MenuItem>
+							<MenuItem onClick={() => changeView('subStation')}>Sub Estación</MenuItem>
+							<MenuItem onClick={() => changeView('networkAnalyzer')}>Analizador de Red</MenuItem>
+						</Menu>
+					</div>
+				}
 				topToolbar
 				copy
 				grouping

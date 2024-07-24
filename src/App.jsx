@@ -34,7 +34,8 @@ function App() {
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
-		{ path: '/AbmRecloser/:id', element: <AbmRecloser /> },
+		{ path: '/Abm/:name', element: <AbmRecloser /> },
+		{ path: '/Abm/:name/:id', element: <AbmRecloser /> },
 		{ path: '/profile', element: <Profile /> },
 	]
 	//Incorporo el theme de mui

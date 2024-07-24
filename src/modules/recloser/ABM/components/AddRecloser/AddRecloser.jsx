@@ -25,7 +25,7 @@ function AddRecloser({ register, errors, setValue }) {
 	return (
 		<>
 			<div className='mt-3'>
-				<p className='w-full text-center text-2xl'>Activo</p>
+				<p className='w-full text-center text-2xl'>Reconectador</p>
 			</div>
 			<div className='w-full mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3'>
 				<div className='w-full'>
