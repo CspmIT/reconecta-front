@@ -5,6 +5,7 @@ const MainContext = createContext()
 function MainProvider({ children }) {
 	const [darkMode, setDarkMode] = useState(false)
 	const [user, setUser] = useState(false)
+	const [infoNav, setInfoNav] = useState('')
 	const [tabActive, setTabActive] = useState(0)
 	const [tabs, setTabs] = useState([])
 	const [tabCurrent, setTabCurrent] = useState(0)
@@ -17,6 +18,8 @@ function MainProvider({ children }) {
 	return (
 		<MainContext.Provider
 			value={{
+				infoNav,
+				setInfoNav,
 				tabCurrent,
 				setTabCurrent,
 				tabActive,

@@ -1,6 +1,6 @@
 import { MenuItem, TextField } from '@mui/material'
 import { useState } from 'react'
-import { markersRecloser } from '../../../../map/utils/js/markers'
+import { markersRecloser } from '../../../map/utils/js/markers'
 
 function AddEntity({ register, errors, setValue, addMarker, enableMarkers }) {
 	const [typeEntity, setTypeEntity] = useState(0)

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../components/TableCustom'
 import { columns } from '../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
@@ -6,6 +6,7 @@ import { storage } from '../../../storage/storage'
 import { recloser } from '../../recloser/board/utils/objects'
 import { Button, IconButton, Menu, MenuItem } from '@mui/material'
 import { Add } from '@mui/icons-material'
+import { MainContext } from '../../../context/MainContext'
 
 function TableRecloser({ ...props }) {
 	const [reclosers, setReclosers] = useState([])
@@ -55,7 +56,9 @@ function TableRecloser({ ...props }) {
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget)
 	}
+	const { setInfoNav } = useContext(MainContext)
 	const changeView = (nameView) => {
+		setInfoNav(nameView)
 		navigate(`/Abm/${nameView}`)
 	}
 	const handleClose = () => {

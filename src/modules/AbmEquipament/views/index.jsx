@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form'
-import CardCustom from '../../../../components/CardCustom'
+import CardCustom from '../../../components/CardCustom'
 import { Button } from '@mui/material'
 import AddRecloser from '../components/AddRecloser/AddRecloser'
 import Swal from 'sweetalert2'
@@ -7,9 +7,11 @@ import AddEntity from '../components/AddEntity/AddEntity'
 import AddMarkerMap from '../components/Map/AddMarkerMap'
 import { useState } from 'react'
 import { markersExist } from '../utils/js/markersExist'
-import { grayIcon, redIcon } from '../../../map/utils/js/markerClass'
+import { grayIcon, redIcon } from '../../map/utils/js/markerClass'
+import { useParams } from 'react-router-dom'
 
-function AbmRecloser({ activo = null }) {
+function AbmEquipament() {
+	const { name } = useParams(['name'])
 	const [listMarkers, setListMarkers] = useState([])
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const {
@@ -30,6 +32,7 @@ function AbmRecloser({ activo = null }) {
 			setListMarkers(markersExist)
 		} else {
 			setListMarkers([])
+			setSelectMarkers([])
 		}
 	}
 	const addMarker = (data) => {
@@ -59,7 +62,7 @@ function AbmRecloser({ activo = null }) {
 						selectMarkers={selectMarkers}
 						listMarkers={listMarkers}
 					/>
-					{activo != 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
+					{name == 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
 					<div className='w-full flex justify-center mt-5'>
 						<Button type='submit' variant='contained'>
 							Guardar
@@ -71,4 +74,4 @@ function AbmRecloser({ activo = null }) {
 	)
 }
 
-export default AbmRecloser
+export default AbmEquipament

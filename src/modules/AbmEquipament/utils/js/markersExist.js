@@ -1,4 +1,4 @@
-import { grayIcon } from '../../../../map/utils/js/markerClass'
+import { grayIcon } from '../../../map/utils/js/markerClass'
 
 export const markersExist = [
 	{

@@ -1,17 +1,22 @@
-import React, { useContext } from 'react'
-import { Outlet } from 'react-router-dom'
+import React, { useContext, useEffect } from 'react'
+import { Outlet, useLocation } from 'react-router-dom'
 import style from '../utils/style.module.css'
 import NavBarCustom from '../../NavBarCustom/views'
 import { MainContext } from '../../../context/MainContext'
 import Footer from '../components/Footer'
 const MainContent = () => {
-	const { user } = useContext(MainContext)
+	const { user, setInfoNav } = useContext(MainContext)
+	const location = useLocation()
 	// const authUser = storage.get('usuario')
 	// console.log(authUser)
 	// if (user) {
 	// 	return <Navigate to='/login' />
 	// }
-
+	useEffect(() => {
+		if (!location.pathname.includes('/Abm/')) {
+			setInfoNav('')
+		}
+	}, [location])
 	return (
 		<>
 			<div className='pt-16 !min-h-screen absolute w-full bg-gray-200 dark:bg-gray-700 '>

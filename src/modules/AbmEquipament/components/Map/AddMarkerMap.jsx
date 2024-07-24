@@ -1,13 +1,13 @@
 import { TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
-import MapCustom from '../../../../map/components/MapCustom'
+import MapCustom from '../../../map/components/MapCustom'
 function AddMarkerMap({ register, errors, setValue, selectMarkers, listMarkers }) {
 	const [latValue, setLatValue] = useState(selectMarkers.lat)
 	const [lngValue, setLngValue] = useState(selectMarkers.lng)
 	const center = [-30.680865, -62.011055]
 	const getLatLngMarker = (lat, lng) => {
-		setLngValue(lat)
-		setLatValue(lng)
+		setLngValue(lng)
+		setLatValue(lat)
 	}
 	useEffect(() => {
 		const validation = lngValue === undefined ? false : true

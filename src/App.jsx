@@ -17,7 +17,7 @@ import Profile from './modules/profile/views'
 import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/board/views'
-import AbmRecloser from './modules/recloser/ABM/views'
+import AbmEquipament from './modules/AbmEquipament/views'
 function App() {
 	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [
@@ -34,8 +34,8 @@ function App() {
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
-		{ path: '/Abm/:name', element: <AbmRecloser /> },
-		{ path: '/Abm/:name/:id', element: <AbmRecloser /> },
+		{ path: '/Abm/:name', element: <AbmEquipament /> },
+		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
 		{ path: '/profile', element: <Profile /> },
 	]
 	//Incorporo el theme de mui
