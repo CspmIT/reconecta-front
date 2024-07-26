@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import CardBoard from '../cardBoard'
 import HistoryBoard from '../historyBoard'
 import GraphicBoard from '../GraphicBoard'
+import MetrologyBoard from '../metrologyBoard'
 // import { recloser } from '../../utils/objects'
 
 const DataBoard = () => {
@@ -68,7 +69,10 @@ const DataBoard = () => {
 				<CardBoard onCardSelect={handleCardSelect} />
 			</div>
 			<div className='w-full'>
-				{selectedCardId === 1 && <div>Card 1</div>}
+				<hr className='my-4 border-slate-400 dark:border-slate-200' />
+			</div>
+			<div className='w-full'>
+				{selectedCardId === 1 && <MetrologyBoard />}
 				{selectedCardId === 2 && <GraphicBoard />}
 				{selectedCardId === 3 && <HistoryBoard />}
 			</div>
