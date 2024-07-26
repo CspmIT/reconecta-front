@@ -4,6 +4,7 @@ import TableRecloser from '../components/TableRecloser'
 import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
 import Board from '../../recloser/board/views'
+import AnalyzerBoard from '../../analyzer/board/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -22,6 +23,11 @@ const Home = () => {
 		3: (
 			<>
 				<Board />
+			</>
+		),
+		4: (
+			<>
+				<AnalyzerBoard />
 			</>
 		),
 	}
