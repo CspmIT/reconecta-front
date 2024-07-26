@@ -1,16 +1,14 @@
+import { useState, useEffect } from 'react'
 import { MapContainer, TileLayer, LayersControl } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-// import 'leaflet.fullscreen/Control.FullScreen.js'
-// import 'leaflet.fullscreen/Control.FullScreen.css'
 import '../utils/css/marker.modules.css'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet-draw'
-
-// import FullScreenControl from './FullScreen'
 import DrawControl from './DrawControl'
 import 'react-toastify/dist/ReactToastify.css'
 import '../utils/css/toastCustom.modules.css'
 import '../utils/css/AlertSwal.modules.css'
+
 function MapCustom({
 	center,
 	id,
@@ -21,10 +19,15 @@ function MapCustom({
 	editor = false,
 	getLatLngMarker = false,
 }) {
+	const [mapKey, setMapKey] = useState(id)
+	useEffect(() => {
+		setMapKey(`${id}-${Date.now()}`)
+	}, [markers, id])
+
 	return (
 		<>
 			<MapContainer
-				key={id}
+				key={mapKey}
 				center={center}
 				preferCanvas={true}
 				zoom={zoom}

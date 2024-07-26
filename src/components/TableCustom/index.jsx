@@ -141,6 +141,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 					...prop.toolbarClass,
 				}}
 			>
+				{prop.btnCustomToolbar && prop.btnCustomToolbar}
 				<MRT_GlobalFilterTextField placeholder='Escriba su busqueda' table={table} />
 				{prop.getPage && prop.checkAlert && (
 					<IconButton

@@ -16,7 +16,7 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 			const marker = markerRef.current
 			drawnItems.addLayer(marker)
 			layerControl.addLayer(marker)
-			if (popupData.name == 'nuevo') return
+			if (Object.keys(popupData).length <= 1) return
 			const handleMouseClick = () => {
 				setTabs((prevTabs) => [
 					...prevTabs,
@@ -76,7 +76,7 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 	}, [alert, icon, id])
 	return (
 		<Marker ref={markerRef} position={position} icon={icon}>
-			{popupData.name != 'nuevo' && (
+			{Object.keys(popupData).length > 1 && (
 				<Tooltip permanent={false}>
 					<CustomPopUp content={popupData} />
 				</Tooltip>

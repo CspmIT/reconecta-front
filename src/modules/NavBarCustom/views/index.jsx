@@ -16,7 +16,7 @@ import DropdownImage from '../../core/components/DropdownImage'
 import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import ButtonModeDark from '../../core/components/ButtonModeDark'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { FaMapMarkedAlt, FaCogs, FaProjectDiagram } from 'react-icons/fa'
+import { FaMapMarkedAlt, FaCogs, FaProjectDiagram, FaFile } from 'react-icons/fa'
 import { RiAlertFill, RiDashboardFill, RiRemoteControl2Fill } from 'react-icons/ri'
 import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
@@ -28,7 +28,7 @@ import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
-	const { tabActive, tabs } = useContext(MainContext)
+	const { tabActive, tabs, infoNav } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
 	const location = useLocation().pathname.split('/')[1] || '/DashBoard'
@@ -111,11 +111,19 @@ function NavBarCustom() {
 				</Badge>
 			),
 		},
+		{
+			name: 'ABM Equipos',
+			link: `Abm/${infoNav}`,
+			icon: <FaFile className='dark:text-white text-3xl' />,
+		},
 	]
 	useEffect(() => {
 		setButtonActive(location)
 		if (location === '/DashBoard') {
 			setButtonActive('Home')
+		}
+		if (location === 'Abm') {
+			setButtonActive('Abm/' + infoNav)
 		}
 	}, [location])
 
@@ -160,6 +168,10 @@ function NavBarCustom() {
 					<List>
 						{menuSideBar.map((item, index) => {
 							if (tabs.length == 0 && item.link == 'tabs') {
+								return ''
+							}
+							console.log(item.link)
+							if (item.link == 'Abm/') {
 								return ''
 							}
 							return (

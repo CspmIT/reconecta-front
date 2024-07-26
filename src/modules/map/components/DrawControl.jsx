@@ -129,6 +129,9 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 			map.off('draw:deleted', handleDrawDelete)
 		}
 	}, [map, polylines, editor])
+	useEffect(() => {
+		setCreatedMarkers(markers)
+	}, [markers])
 
 	return (
 		<>

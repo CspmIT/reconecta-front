@@ -17,7 +17,7 @@ import Profile from './modules/profile/views'
 import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/board/views'
-import AbmRecloser from './modules/recloser/ABM/views'
+import AbmEquipament from './modules/AbmEquipament/views'
 import AnalyzerBoard from './modules/analyzer/board/views'
 
 function App() {
@@ -36,7 +36,8 @@ function App() {
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
-		{ path: '/AbmRecloser/:id', element: <AbmRecloser /> },
+		{ path: '/Abm/:name', element: <AbmEquipament /> },
+		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
 		{ path: '/Analyzer/:id', element: <AnalyzerBoard /> },
 		{ path: '/profile', element: <Profile /> },
 	]
