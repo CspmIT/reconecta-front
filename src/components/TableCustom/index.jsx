@@ -11,14 +11,13 @@ import {
 } from 'material-react-table'
 import NoRegisterTable from './NoRegisterTable'
 import { storage } from '../../storage/storage'
-import { Box, Button, IconButton, Tooltip } from '@mui/material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import { PiBroomFill } from 'react-icons/pi'
 import { useEffect } from 'react'
-import { FaLaravel } from 'react-icons/fa'
 const TableCustom = ({ data, columns, ...prop }) => {
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {
-			if (columns.some((col) => col.accessorKey === item.name)) {
+			if (columns?.some((col) => col.accessorKey === item.name)) {
 				acc = { id: item.name, value: item.value }
 			}
 			return acc

@@ -1,10 +1,11 @@
 import { MenuItem, TextField } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { markersRecloser } from '../../../map/utils/js/markers'
 
-function AddEntity({ register, errors, setValue, addMarker, enableMarkers }) {
+function AddEntity({ register, errors, setValue, addMarker, enableMarkers, setSelectMarkers }) {
 	const [typeEntity, setTypeEntity] = useState(0)
 	const existEntity = (status) => {
+		setSelectMarkers([])
 		setTypeEntity(status)
 		enableMarkers(status)
 	}
@@ -13,7 +14,11 @@ function AddEntity({ register, errors, setValue, addMarker, enableMarkers }) {
 		setValue('markerEntity', e.target.value)
 		addMarker(e.target.value)
 	}
-
+	useEffect(() => {
+		if (typeEntity) {
+			addMarker('')
+		}
+	}, [typeEntity])
 	return (
 		<>
 			<p className='w-full text-center text-2xl mb-3'>Entidad</p>
@@ -40,11 +45,9 @@ function AddEntity({ register, errors, setValue, addMarker, enableMarkers }) {
 							error={errors.name_entity ? true : false}
 							type='text'
 							label={`Nombre`}
-							id='name_entity'
 							{...register('name_entity', { required: 'El Campo es requerido' })}
 							className='w-full'
 							helperText={errors.name_entity && errors.name_entity.message}
-							// defaultValue={editProfile ? userData.name_entity : ''}
 						/>
 					</div>
 					<div className='w-full'>
@@ -52,23 +55,19 @@ function AddEntity({ register, errors, setValue, addMarker, enableMarkers }) {
 							error={errors.number_entity ? true : false}
 							type='text'
 							label={`Numero`}
-							id='name_entity'
 							{...register('number_entity', { required: 'El Campo es requerido' })}
 							className='w-full'
 							helperText={errors.number_entity && errors.number_entity.message}
-							// defaultValue={editProfile ? userData.number_entity : ''}
 						/>
 					</div>
 					<div className='w-full'>
 						<TextField
 							error={errors.description_entity ? true : false}
 							type='text'
-							id='description_entity'
 							label={`Descripción`}
 							{...register('description_entity', { required: 'El Campo es requerido' })}
 							className='w-full'
 							helperText={errors.description_entity && errors.description_entity.message}
-							// defaultValue={editProfile ? userData.number_entity : ''}
 						/>
 					</div>
 				</div>
@@ -78,13 +77,11 @@ function AddEntity({ register, errors, setValue, addMarker, enableMarkers }) {
 						error={errors.markerEntity ? true : false}
 						select
 						label={`Entidad`}
-						id='markerEntity'
 						name='markerEntity'
 						{...register('markerEntity', { required: 'El campo es requerido', onChange: (e) => change(e) })}
 						className='w-1/3'
 						defaultValue={''}
 						helperText={errors.markerEntity && errors.markerEntity.message}
-						// value={typeEntity}
 					>
 						<MenuItem value={''}>
 							<em>Seleccionar Entidad</em>

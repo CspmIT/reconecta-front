@@ -4,7 +4,7 @@ import { columns } from '../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../storage/storage'
 import { recloser } from '../../recloser/board/utils/objects'
-import { Button, IconButton, Menu, MenuItem } from '@mui/material'
+import { IconButton, Menu, MenuItem } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../context/MainContext'
 
@@ -110,7 +110,8 @@ function TableRecloser({ ...props }) {
 						>
 							<MenuItem onClick={() => changeView('recloser')}>Reconectador</MenuItem>
 							<MenuItem onClick={() => changeView('meter')}>Medidor</MenuItem>
-							<MenuItem onClick={() => changeView('subStation')}>Sub Estación</MenuItem>
+							<MenuItem onClick={() => changeView('subStationUrban')}>Sub Estación</MenuItem>
+							<MenuItem onClick={() => changeView('subStationRural')}>Sub Estación Rural</MenuItem>
 							<MenuItem onClick={() => changeView('networkAnalyzer')}>Analizador de Red</MenuItem>
 						</Menu>
 					</div>
