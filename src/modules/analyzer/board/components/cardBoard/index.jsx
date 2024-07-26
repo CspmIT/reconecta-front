@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import CardCustom from '../../../../../components/CardCustom'
-import { FaChartArea, FaTachometerAlt, FaWrench } from 'react-icons/fa'
+import { FaChartArea, FaHistory, FaTachometerAlt } from 'react-icons/fa'
 
 const CardBoard = ({ onCardSelect }) => {
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	const boardCards = [
-		{ id: 1, name: 'METROLOGÍA INSTANTANEA', icon: <FaTachometerAlt /> },
+		{ id: 1, name: 'METROLOGÍA', icon: <FaTachometerAlt /> },
 		{ id: 2, name: 'CURVA DE CARGA', icon: <FaChartArea /> },
-		{ id: 3, name: 'MANIOBRAS', icon: <FaWrench /> },
+		{ id: 3, name: 'HISTORICOS', icon: <FaHistory /> },
 	]
 	const handleCard = (id) => {
 		const newSelectedCardId = id === selectedCardId ? null : id

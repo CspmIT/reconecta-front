@@ -5,6 +5,8 @@ import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import CardBoard from '../cardBoard'
+import HistoryBoard from '../historyBoard'
+import GraphicBoard from '../GraphicBoard'
 // import { recloser } from '../../utils/objects'
 
 const DataBoard = () => {
@@ -64,6 +66,11 @@ const DataBoard = () => {
 			</div>
 			<div className='p-3'>
 				<CardBoard onCardSelect={handleCardSelect} />
+			</div>
+			<div className='w-full'>
+				{selectedCardId === 1 && <div>Card 1</div>}
+				{selectedCardId === 2 && <GraphicBoard />}
+				{selectedCardId === 3 && <HistoryBoard />}
 			</div>
 		</div>
 	)
