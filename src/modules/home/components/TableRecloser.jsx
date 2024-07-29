@@ -104,14 +104,9 @@ function TableRecloser({ ...props }) {
 						>
 							<MenuItem onClick={() => changeView('recloser')}>Reconectador</MenuItem>
 							<MenuItem onClick={() => changeView('meter')}>Medidor</MenuItem>
-<<<<<<< HEAD
 							<MenuItem onClick={() => changeView('subStationUrban')}>Sub Estación</MenuItem>
 							<MenuItem onClick={() => changeView('subStationRural')}>Sub Estación Rural</MenuItem>
-							<MenuItem onClick={() => changeView('networkAnalyzer')}>Analizador de Red</MenuItem>
-=======
-							<MenuItem onClick={() => changeView('subStation')}>Sub Estación</MenuItem>
 							<MenuItem onClick={() => changeView('netAnalyzer')}>Analizador de Red</MenuItem>
->>>>>>> 417a5dc046d3f69debd59b9f69030b09377e0f6d
 						</Menu>
 					</div>
 				}

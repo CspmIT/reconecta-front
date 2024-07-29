@@ -9,13 +9,10 @@ import { useEffect, useState } from 'react'
 import { markersExist } from '../utils/js/markersExist'
 import { grayIcon, redIcon } from '../../map/utils/js/markerClass'
 import { useParams } from 'react-router-dom'
-<<<<<<< HEAD
 import AddSubStationRural from '../components/AddSubStationRural/AddSubStationRural'
 import AddMeter from '../components/AddMeter/AddMeter'
 import AddSubStationUrban from '../components/AddSubStationUrban'
-=======
 import AddNetAnalyzer from '../components/AddNetAnalyzer/AddNetAnalyzer'
->>>>>>> 417a5dc046d3f69debd59b9f69030b09377e0f6d
 
 function AbmEquipament() {
 	const { name } = useParams(['name'])
@@ -72,47 +69,13 @@ function AbmEquipament() {
 		<CardCustom className={' w-full rounded-md text-black'}>
 			<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
 				<div className='w-full flex-row gap-3 mb-5'>
-<<<<<<< HEAD
-					<AddEntity
-						register={register}
-						errors={errors}
-						setValue={setValue}
-						addMarker={addMarker}
-						enableMarkers={enableMarkers}
-						setSelectMarkers={setSelectMarkers}
-					/>
-					<AddMarkerMap
-						register={register}
-						errors={errors}
-						setValue={setValue}
-						selectMarkers={selectMarkers}
-						setSelectMarkers={setSelectMarkers}
-						listMarkers={listMarkers}
-					/>
+					<AddEntity register={register} errors={errors} setValue={setValue} addMarker={addMarker} enableMarkers={enableMarkers} setSelectMarkers={setSelectMarkers} />
+					<AddMarkerMap register={register} errors={errors} setValue={setValue} selectMarkers={selectMarkers} setSelectMarkers={setSelectMarkers} listMarkers={listMarkers} />
 					{name == 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
 					{name == 'meter' && <AddMeter register={register} errors={errors} setValue={setValue} />}
-					{name == 'subStationUrban' && (
-						<AddSubStationUrban
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							clearErrors={clearErrors}
-						/>
-					)}
-					{name == 'subStationRural' && (
-						<AddSubStationRural
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							clearErrors={clearErrors}
-						/>
-					)}
-=======
-					{name !== 'netAnalyzer' && <AddEntity register={register} errors={errors} setValue={setValue} addMarker={addMarker} enableMarkers={enableMarkers} />}
-					{name !== 'netAnalyzer' && <AddMarkerMap register={register} errors={errors} setValue={setValue} selectMarkers={selectMarkers} listMarkers={listMarkers} />}
-					{name == 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
+					{name == 'subStationUrban' && <AddSubStationUrban register={register} errors={errors} setValue={setValue} clearErrors={clearErrors} />}
+					{name == 'subStationRural' && <AddSubStationRural register={register} errors={errors} setValue={setValue} clearErrors={clearErrors} />}
 					{name == 'netAnalyzer' && <AddNetAnalyzer register={register} errors={errors} setValue={setValue} />}
->>>>>>> 417a5dc046d3f69debd59b9f69030b09377e0f6d
 					<div className='w-full flex justify-center mt-5'>
 						<Button type='submit' variant='contained'>
 							Guardar
