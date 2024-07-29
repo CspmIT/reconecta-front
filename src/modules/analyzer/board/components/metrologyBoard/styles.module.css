@@ -1,0 +1,21 @@
+.linea_rama {
+	display: block;
+	width: 1em;
+	border-bottom: 2px solid #b94949;
+	border-left: 2px solid #b94949;
+	height: 75%;
+}
+
+.linea_seguimiento {
+	display: block;
+	width: 1em;
+	border-left: 2px solid #b94949;
+	height: 75%;
+}
+
+.linea_vertical_continua {
+	display: block;
+	width: 1em;
+	border-left: 2px solid #b94949;
+	height: 100%;
+}

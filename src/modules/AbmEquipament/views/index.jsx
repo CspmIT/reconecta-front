@@ -9,6 +9,7 @@ import { useState } from 'react'
 import { markersExist } from '../utils/js/markersExist'
 import { grayIcon, redIcon } from '../../map/utils/js/markerClass'
 import { useParams } from 'react-router-dom'
+import AddNetAnalyzer from '../components/AddNetAnalyzer/AddNetAnalyzer'
 
 function AbmEquipament() {
 	const { name } = useParams(['name'])
@@ -48,21 +49,10 @@ function AbmEquipament() {
 		<CardCustom className={' w-full rounded-md text-black'}>
 			<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
 				<div className='w-full flex-row gap-3 mb-5'>
-					<AddEntity
-						register={register}
-						errors={errors}
-						setValue={setValue}
-						addMarker={addMarker}
-						enableMarkers={enableMarkers}
-					/>
-					<AddMarkerMap
-						register={register}
-						errors={errors}
-						setValue={setValue}
-						selectMarkers={selectMarkers}
-						listMarkers={listMarkers}
-					/>
+					{name !== 'netAnalyzer' && <AddEntity register={register} errors={errors} setValue={setValue} addMarker={addMarker} enableMarkers={enableMarkers} />}
+					{name !== 'netAnalyzer' && <AddMarkerMap register={register} errors={errors} setValue={setValue} selectMarkers={selectMarkers} listMarkers={listMarkers} />}
 					{name == 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
+					{name == 'netAnalyzer' && <AddNetAnalyzer register={register} errors={errors} setValue={setValue} />}
 					<div className='w-full flex justify-center mt-5'>
 						<Button type='submit' variant='contained'>
 							Guardar
