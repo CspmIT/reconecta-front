@@ -122,8 +122,11 @@ function NavBarCustom() {
 		if (location === '/DashBoard') {
 			setButtonActive('Home')
 		}
-		if (location === 'Abm') {
+		if (infoNav != '') {
 			setButtonActive('Abm/' + infoNav)
+		}
+		if (location.includes('Abm') && !infoNav[0]) {
+			navigate('Home')
 		}
 	}, [location])
 
@@ -170,7 +173,6 @@ function NavBarCustom() {
 							if (tabs.length == 0 && item.link == 'tabs') {
 								return ''
 							}
-							console.log(item.link)
 							if (item.link == 'Abm/') {
 								return ''
 							}

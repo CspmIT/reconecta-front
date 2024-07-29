@@ -1,19 +1,11 @@
 import { TextField } from '@mui/material'
-import { useEffect, useState } from 'react'
 import MapCustom from '../../../map/components/MapCustom'
-function AddMarkerMap({ register, errors, setValue, selectMarkers, listMarkers }) {
-	const [latValue, setLatValue] = useState(selectMarkers.lat)
-	const [lngValue, setLngValue] = useState(selectMarkers.lng)
+function AddMarkerMap({ register, errors, listMarkers, setSelectMarkers }) {
 	const center = [-30.680865, -62.011055]
 	const getLatLngMarker = (lat, lng) => {
-		setLngValue(lng)
-		setLatValue(lat)
+		setSelectMarkers({ lat, lng })
 	}
-	useEffect(() => {
-		const validation = lngValue === undefined ? false : true
-		setValue('lng_marker', lngValue || selectMarkers.lng, { shouldValidate: validation ? true : false })
-		setValue('lat_marker', latValue || selectMarkers.lat, { shouldValidate: validation ? true : false })
-	}, [lngValue, latValue, selectMarkers])
+
 	return (
 		<>
 			<div
@@ -23,17 +15,15 @@ function AddMarkerMap({ register, errors, setValue, selectMarkers, listMarkers }
 			>
 				<TextField
 					id='lat_marker'
-					type='hidden'
+					type='text'
 					className='!hidden'
 					{...register('lat_marker', { required: 'Debe agregar una ubicación' })}
-					value={latValue || ''}
 				/>
 				<TextField
 					id='lng_marker'
-					type='hidden'
+					type='text'
 					className='!hidden'
 					{...register('lng_marker', { required: 'Debe agregar una ubicación' })}
-					value={lngValue || ''}
 				/>
 				<MapCustom
 					center={center}
@@ -45,7 +35,7 @@ function AddMarkerMap({ register, errors, setValue, selectMarkers, listMarkers }
 				/>
 			</div>
 			<p className='text-red-500 text-xs mt-2 ml-3'>
-				{(errors.lat_marker || errors.lng_marker) && (errors.lat_marker.message || errors.lng_marker.message)}
+				{(errors.lat_marker || errors.lng_marker) && 'Debe agregar una ubicación'}
 			</p>
 		</>
 	)
