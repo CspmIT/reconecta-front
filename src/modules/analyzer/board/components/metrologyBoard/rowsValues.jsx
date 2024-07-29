@@ -2,7 +2,7 @@ import React from 'react'
 
 const RowsValues = ({ ...props }) => {
 	return (
-		<div className='w-4/6 flex flex-row justify-center'>
+		<div className='w-4/6 flex flex-row justify-center items-center'>
 			<div className='w-1/4 text-center'>
 				<b>{...props.valueR || '-'}</b>
 			</div>

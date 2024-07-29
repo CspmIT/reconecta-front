@@ -90,13 +90,7 @@ function TableRecloser({ ...props }) {
 				}}
 				btnCustomToolbar={
 					<div>
-						<IconButton
-							id='basic-button'
-							aria-controls={open ? 'basic-menu' : undefined}
-							aria-haspopup='true'
-							aria-expanded={open ? 'true' : undefined}
-							onClick={handleClick}
-						>
+						<IconButton id='basic-button' aria-controls={open ? 'basic-menu' : undefined} aria-haspopup='true' aria-expanded={open ? 'true' : undefined} onClick={handleClick}>
 							<Add />
 						</IconButton>
 						<Menu
@@ -110,9 +104,14 @@ function TableRecloser({ ...props }) {
 						>
 							<MenuItem onClick={() => changeView('recloser')}>Reconectador</MenuItem>
 							<MenuItem onClick={() => changeView('meter')}>Medidor</MenuItem>
+<<<<<<< HEAD
 							<MenuItem onClick={() => changeView('subStationUrban')}>Sub Estación</MenuItem>
 							<MenuItem onClick={() => changeView('subStationRural')}>Sub Estación Rural</MenuItem>
 							<MenuItem onClick={() => changeView('networkAnalyzer')}>Analizador de Red</MenuItem>
+=======
+							<MenuItem onClick={() => changeView('subStation')}>Sub Estación</MenuItem>
+							<MenuItem onClick={() => changeView('netAnalyzer')}>Analizador de Red</MenuItem>
+>>>>>>> 417a5dc046d3f69debd59b9f69030b09377e0f6d
 						</Menu>
 					</div>
 				}
