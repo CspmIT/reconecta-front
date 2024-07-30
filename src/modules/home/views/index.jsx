@@ -5,6 +5,7 @@ import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
 import Board from '../../recloser/board/views'
 import AnalyzerBoard from '../../analyzer/board/views'
+import BoardMeter from '../../meter/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -17,7 +18,7 @@ const Home = () => {
 		),
 		2: (
 			<>
-				<Board />
+				<BoardMeter />
 			</>
 		),
 		3: (
