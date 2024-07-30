@@ -16,7 +16,7 @@ function TabsMeter({ tabs }) {
 
 	return (
 		<>
-			<div className={`w-full max-w-[94.5vw] mr-3 !rounded-xl flex flex-col items-center`}>
+			<div className={`w-full  mr-3 !rounded-xl flex flex-col items-center`}>
 				<Tabs
 					className='flex w-full '
 					indicatorColor='transparent'
@@ -28,7 +28,7 @@ function TabsMeter({ tabs }) {
 						return (
 							<Tab
 								key={index}
-								className={`flex-grow  relative !max-w-80 ${
+								className={`flex-grow  relative ${
 									classTabStatus[value === index ? 0 : 1]
 								} ${classTabs}`}
 								label={<p className='text-black w-full text-center'>{item.title}</p>}

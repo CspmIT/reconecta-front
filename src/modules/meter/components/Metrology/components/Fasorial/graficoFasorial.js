@@ -197,14 +197,13 @@ export const getFasorial = () => {
 	return {
 		chart: {
 			polar: true,
-			type: 'line',
 			numberFormatter: function () {
-				var ret = Highcharts.numberFormat.apply(0, arguments)
-				var cantidad_chart = Highcharts.charts.length - 1
-				var puntos = Highcharts.charts[cantidad_chart].series
+				let ret = Highcharts.numberFormat.apply(0, arguments)
+				let cantidad_chart = Highcharts.charts.length - 1
+				let puntos = Highcharts.charts[cantidad_chart].series
 				return converters.fa(ret, puntos)
 			},
-			backgroundColor: '#eaeaea',
+			backgroundColor: '#ffffff00',
 			events: {
 				fullscreenOpen: function () {
 					this.update({
@@ -240,7 +239,7 @@ export const getFasorial = () => {
 			gridLineColor: '#68606096',
 			labels: {
 				formatter: function () {
-					var label = this.axis.defaultLabelFormatter.call(this)
+					let label = this.axis.defaultLabelFormatter.call(this)
 					label = label * -1
 					return label
 				},
@@ -259,10 +258,10 @@ export const getFasorial = () => {
 		},
 		tooltip: {
 			formatter: function () {
-				var heading = this.series.pointInterval
-				var L_diff = ''
-				uni = 'V'
-				var value = Highcharts.numberFormat(this.y, 0)
+				let heading = this.series.pointInterval
+				let L_diff = ''
+				let uni = 'V'
+				let value = Highcharts.numberFormat(this.y, 0)
 				heading = heading * -1
 				if (this.series.name == 'I1') {
 					if (heading > 90) {
@@ -304,13 +303,13 @@ export const getFasorial = () => {
 			buttons: {
 				contextButton: {
 					theme: {
-						fill: '#eaeaea',
+						fill: '#ffffff',
 					},
 				},
 			},
 		},
 		plotOptions: {
-			background: '#68606096',
+			background: '#ffffffff',
 			series: {
 				dataLabels: {
 					enabled: true,
