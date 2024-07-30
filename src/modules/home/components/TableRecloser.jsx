@@ -32,6 +32,15 @@ function TableRecloser({ ...props }) {
 				online: 1,
 				alarm_recloser: 1,
 			},
+			{
+				Nro_recloser: 'SETA 64',
+				Name: 'SETA 64',
+				Nro_Serie: '36106348',
+				type_recloser: 3,
+				status: 0,
+				online: 1,
+				alarm_recloser: 1,
+			},
 		])
 	}
 
