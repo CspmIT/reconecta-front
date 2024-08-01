@@ -4,6 +4,9 @@ import { FaEdit, FaRedo } from 'react-icons/fa'
 import Header from '../Header'
 import CardBoard from '../CardBoard'
 import Metrology from '../Metrology'
+import LoadCurve from '../LoadCurve'
+import QualityTension from '../QualityTension'
+import HistoryMeter from '../HistoryMeter'
 
 function DataBoardMeter() {
 	const [selectedCardId, setSelectedCardId] = useState(null)
@@ -37,9 +40,9 @@ function DataBoardMeter() {
 			<CardBoard onCardSelect={handleCardSelect} />
 			<div className='p-3'>
 				{selectedCardId === 1 ? <Metrology /> : null}
-				{/* {selectedCardId === 2 ? <EventBoard /> : null}
-				{selectedCardId === 3 ? <AnalyticsBoard /> : null}
-				{selectedCardId === 4 ? <ManeuverBoard /> : null} */}
+				{selectedCardId === 2 ? <LoadCurve /> : null}
+				{selectedCardId === 3 ? <QualityTension /> : null}
+				{selectedCardId === 4 ? <HistoryMeter /> : null}
 			</div>
 		</div>
 	)

@@ -5,6 +5,13 @@ import { MainContext } from '../../context/MainContext'
 
 const GrafLinea = ({ ...props }) => {
 	const { darkMode } = useContext(MainContext)
+	let ticksGraf = new Array()
+	ticksGraf.push(0.75)
+	let valorBase = 0.715
+	for (let i = 0; i <= 10; i++) {
+		ticksGraf.push(valorBase + 0.035)
+		valorBase = valorBase + 0.035
+	}
 	const options = {
 		chart: {
 			backgroundColor: darkMode ? '#373638' : 'white',
@@ -31,10 +38,11 @@ const GrafLinea = ({ ...props }) => {
 					color: darkMode ? 'white' : 'black',
 				},
 			},
+			...props.configxAxis,
 		},
 		yAxis: {
 			title: {
-				text: 'Valores',
+				text: '',
 			},
 			visible: true,
 			labels: {
@@ -42,6 +50,7 @@ const GrafLinea = ({ ...props }) => {
 					color: darkMode ? 'white' : 'black',
 				},
 			},
+			...props.configyAxis,
 		},
 		series: props.seriesData.map((item) => {
 			return {

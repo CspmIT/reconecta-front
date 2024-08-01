@@ -1,0 +1,18 @@
+export const dataTable = [
+	{ description: 'Tensión L1', cod: '1.1.32.7.0.255', value: '7860 V' },
+	{ description: 'Tensión L2', cod: '1.1.52.7.0.255', value: '7812 V' },
+	{ description: 'Tensión L3', cod: '1.1.72.7.0.255', value: '7788 V' },
+	{ description: 'Corriente L1', cod: '1.1.31.7.0.255', value: '485 A' },
+	{ description: 'Corriente L2', cod: '1.1.51.7.0.255', value: '500 A' },
+	{ description: 'Corriente L3', cod: '1.1.71.7.0.255', value: '495 A' },
+	{ description: 'Cos ϕ L1', cod: '1.1.33.7.0.255', value: '1' },
+	{ description: 'Cos ϕ L2', cod: '1.1.53.7.0.255', value: '1' },
+	{ description: 'Cos ϕ L3', cod: '1.1.73.7.0.255', value: '1' },
+	{ description: 'Frecuencia', cod: '1.1.14.7.0.255', value: '49.97 Hz' },
+	{ description: 'Ángulo Corriente / Tensión L1', cod: '1.1.81.7.40.255', value: '4.4°' },
+	{ description: 'Ángulo Corriente / Tensión L2', cod: '1.1.81.7.51.255', value: '4.4°' },
+	{ description: 'Ángulo Corriente / Tensión L3', cod: '1.1.81.7.62.255', value: '5.6°' },
+	{ description: 'Ángulo Tensión L2 a L1', cod: '1.1.81.7.10.255', value: '119.6°' },
+	{ description: 'Ángulo Tensión L3 a L2', cod: '1.1.81.7.21.255', value: '120.1°' },
+	{ description: 'Ángulo Tensión L1 a L3', cod: '1.1.81.7.02.255', value: '120.3°' },
+]
