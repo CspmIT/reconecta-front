@@ -14,7 +14,44 @@ import { storage } from '../../storage/storage'
 import { Box, IconButton, Tooltip } from '@mui/material'
 import { PiBroomFill } from 'react-icons/pi'
 import { useEffect } from 'react'
+import { SiMicrosoftexcel } from 'react-icons/si'
+import { mkConfig, generateCsv, download } from 'export-to-csv'
+import { jsPDF } from 'jspdf'
+import autoTable from 'jspdf-autotable'
+import { FaFilePdf } from 'react-icons/fa'
+
+const csvConfig = mkConfig({
+	fieldSeparator: ',',
+	decimalSeparator: '.',
+	useKeysAsHeaders: true,
+})
+
 const TableCustom = ({ data, columns, ...prop }) => {
+	// // exportar en excel por linea
+	// const handleExportRows = (rows) => {
+	// 	const rowData = rows.map((row) => row.original)
+	// 	const csv = generateCsv(csvConfig)(rowData)
+	// 	download(csvConfig)(csv)
+	// }
+	// exportar en excel toda la info
+	const handleExportData = () => {
+		const csv = generateCsv(csvConfig)(data)
+		download(csvConfig)(csv)
+	}
+
+	// Exportado de pdf
+	const handleExportRowsPdf = (rows) => {
+		const doc = new jsPDF()
+		const tableData = rows.map((row) => Object.values(row.original))
+		const tableHeaders = columns.map((c) => c.header)
+
+		autoTable(doc, {
+			head: [tableHeaders],
+			body: tableData,
+		})
+
+		doc.save('mrt-pdf-example.pdf')
+	}
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {
 			if (columns?.some((col) => col.accessorKey === item.name)) {
@@ -94,7 +131,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		// habilita hacer drag and drop aunque faltan otras opciones para que funcione al 100%
 		enableColumnDragging: false,
 		// habilita el poder filtrar por todas las columnas
-		enableColumnFilters: true,
+		enableColumnFilters: prop.filter || false,
 		// activa un boton que te genera un modal para editar el campo en la tabla, pero hay que combinarlo con otra funcion para el guardado, actualizacion, etc.
 		enableEditing: false,
 		// permite agrupar por columnas
@@ -113,6 +150,8 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		muiTableHeadRowProps: {
 			sx: {
 				backgroundColor: 'transparent',
+				boxShadow: 'none',
+				border: 'none',
 			},
 		},
 
@@ -141,6 +180,33 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				}}
 			>
 				{prop.btnCustomToolbar && prop.btnCustomToolbar}
+				{prop.exportExcel && (
+					<IconButton
+						onClick={() => handleExportData()}
+						table={table}
+						title='Exportar a excel'
+						sx={{
+							color: 'green',
+						}}
+					>
+						<SiMicrosoftexcel />
+					</IconButton>
+				)}
+
+				{prop.exportPdf && (
+					<IconButton
+						// si se descomenta este y se comenta el otro onclick se puede hacer que sea por linea la descarga, pero no tengo tiempo para hacerlo ahora
+						// onClick={() => handleExportRows(table.getRowModel().rows)}
+						onClick={() => handleExportRowsPdf(table.getPrePaginationRowModel().rows)}
+						table={table}
+						title='Exportar a PDF'
+						sx={{
+							color: 'red',
+						}}
+					>
+						<FaFilePdf />
+					</IconButton>
+				)}
 				<MRT_GlobalFilterTextField placeholder='Escriba su busqueda' table={table} />
 				{prop.getPage && prop.checkAlert && (
 					<IconButton
@@ -159,9 +225,10 @@ const TableCustom = ({ data, columns, ...prop }) => {
 					</IconButton>
 				)}
 				<MRT_ToggleGlobalFilterButton title='Buscar' table={table} />
-				<MRT_ToggleFiltersButton title='Filtrar' table={table} />
-				<MRT_ShowHideColumnsButton title='Mostras/Ocultar Columnas' table={table} />
-				<MRT_ToggleDensePaddingButton title='Densidad' table={table} />
+				{prop.filter && <MRT_ToggleFiltersButton title='Filtrar' table={table} />}
+
+				{prop.hide && <MRT_ShowHideColumnsButton title='Mostras/Ocultar Columnas' table={table} />}
+				{prop.density && <MRT_ToggleDensePaddingButton title='Densidad' table={table} />}
 
 				{/* descomentar si queremos hacer un fullScreen en la tabla */}
 				{/* <MRT_ToggleFullScreenButton table={table} /> */}

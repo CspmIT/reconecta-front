@@ -5,6 +5,7 @@ import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
 import Board from '../../recloser/board/views'
 import AnalyzerBoard from '../../analyzer/board/views'
+import BoardMeter from '../../meter/views'
 import SubstationUrbanBoard from '../../substation/views'
 
 const Home = () => {
@@ -18,7 +19,7 @@ const Home = () => {
 		),
 		2: (
 			<>
-				<Board />
+				<BoardMeter />
 			</>
 		),
 		3: (
