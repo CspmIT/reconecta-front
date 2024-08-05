@@ -18,6 +18,8 @@ import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/board/views'
 import AbmEquipament from './modules/AbmEquipament/views'
+import AnalyzerBoard from './modules/analyzer/board/views'
+import Perfils from './modules/Config/Perfils'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -33,6 +35,7 @@ function App() {
 		{ path: '/Diagram', element: <Diagrams /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
+		{ path: '/config/profile', element: <Perfils /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/Abm/:name', element: <AbmEquipament /> },

@@ -53,23 +53,6 @@ function NavBarCustom() {
 	const menuSideBar = [
 		{ name: 'Alertas', link: 'Alert', icon: <RiAlertFill className=' text-3xl' /> },
 		{ name: 'Dashboard', link: 'Home', icon: <RiDashboardFill className=' text-3xl' /> },
-		// {
-		// 	name: 'Tablero',
-		// 	link: 'Board',
-		// 	icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 	submenus: [
-		// 		{
-		// 			name: 'Perfil2',
-		// 			link: 'config/profile',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 		{
-		// 			name: 'Cuenta2',
-		// 			link: 'config/account',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 	],
-		// },
 		{
 			name: 'Mapa',
 			link: 'map',
@@ -80,28 +63,23 @@ function NavBarCustom() {
 			link: 'Diagram',
 			icon: <FaProjectDiagram className=' text-3xl' />,
 		},
-		// {
-		// 	name: 'Notificaciones',
-		// 	link: 'notificaciones',
-		// 	icon: <NotificationAdd className='dark:text-white text-3xl' />,
-		// },
-		// {
-		// 	name: 'Configuración',
-		// 	link: 'config',
-		// 	icon: <FaCogs className='dark:text-white text-3xl' />,
-		// 	submenus: [
-		// 		{
-		// 			name: 'Perfil',
-		// 			link: 'config/profile2',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 		{
-		// 			name: 'Cuenta',
-		// 			link: 'config/account2',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 	],
-		// },
+		{
+			name: 'Configuración',
+			link: 'config',
+			icon: <FaCogs className='dark:text-white text-3xl' />,
+			submenus: [
+				{
+					name: 'Perfiles',
+					link: 'config/profile',
+					icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+				},
+				// {
+				// 	name: 'Cuenta',
+				// 	link: 'config/account2',
+				// 	icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+				// },
+			],
+		},
 		{
 			name: 'Paginas',
 			link: 'tabs',

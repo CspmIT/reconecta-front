@@ -26,7 +26,7 @@ function TabDinamic({ ...props }) {
 		'!border-solid !border-gray-200 !rounded-t-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
 	const classTabStatus = [
 		['!bg-white !border-r-2 !border-t-2 !border-l-2 dark:!bg-zinc-500 '],
-		['!border-b-2 !bg-gray-300 dark:!bg-zinc-700 '],
+		['!border-b-2 !bg-gray-300 dark:!bg-zinc-700 hover:dark:!bg-zinc-500 hover:!bg-zinc-400 '],
 	]
 	useEffect(() => {
 		if (tabs.length == 0) {
@@ -37,7 +37,7 @@ function TabDinamic({ ...props }) {
 		}
 	}, [tabs])
 	return (
-		<div className={`w-full max-w-[94.5vw] mr-3 !rounded-xl flex flex-col items-center`}>
+		<div className={`w-full max-w-[94.5vw] !mr-3 !rounded-xl flex flex-col items-center`}>
 			<Tabs
 				className='flex w-full '
 				indicatorColor='transparent'

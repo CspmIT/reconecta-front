@@ -1,9 +1,8 @@
 import { FormControlLabel, IconButton, Switch } from '@mui/material'
 import { CheckCircleSharp, Circle, ErrorSharp } from '@mui/icons-material'
 import { BiWindowOpen } from 'react-icons/bi'
+import { storage } from '../../../../storage/storage'
 
-import { storage } from '../../../storage/storage'
-import { newTabBoard } from '../../tabs/utils/actions'
 const TypeRecloser = {
 	1: 'Reconectador',
 	2: 'Medidor',
@@ -11,16 +10,7 @@ const TypeRecloser = {
 	4: 'Analizador de red',
 	5: 'Sub-Estación Rural',
 }
-
-const edit = (row) => {
-	console.log(row.id)
-}
-
-const deleteRecloser = (row) => {
-	console.log(row.id)
-}
-
-export const columns = (changeAlarm, navigate, newTab) => [
+export const ColumnsRecloser = (changeAlarm, newTab) => [
 	{
 		header: 'Nº',
 		accessorKey: 'Nro_recloser',
@@ -154,83 +144,4 @@ export const columns = (changeAlarm, navigate, newTab) => [
 			)
 		},
 	},
-	// {
-	// 	header: '',
-	// 	accessorKey: 'options',
-	// 	size: 10,
-	// 	enableSorting: false,
-	// 	enableColumnFilter: false,
-	// 	enableClickToCopy: false,
-	// 	Cell: ({ row }) => {
-	// 		const popperRef = useRef(null)
-	// 		const popperRef2 = useRef(null)
-	// 		const handleClickOutside = (event) => {
-	// 			if (
-	// 				popperRef2.current &&
-	// 				!popperRef2.current.contains(event.target) &&
-	// 				popperRef.current &&
-	// 				!popperRef.current.contains(event.target)
-	// 			) {
-	// 				setAnchorEl(null)
-	// 			}
-	// 		}
-
-	// 		useEffect(() => {
-	// 			document.addEventListener('mousedown', handleClickOutside)
-	// 			return () => {
-	// 				document.removeEventListener('mousedown', handleClickOutside)
-	// 			}
-	// 		}, [])
-
-	// 		const [anchorEl, setAnchorEl] = useState(null)
-	// 		const open = Boolean(anchorEl)
-	// 		const handleClick = (event) => {
-	// 			setAnchorEl(anchorEl ? null : event.currentTarget)
-	// 		}
-
-	// 		const handleClose = () => {
-	// 			setAnchorEl(null)
-	// 		}
-	// 		return (
-	// 			<>
-	// 				<IconButton ref={popperRef2} aria-describedby={row.id} onClick={handleClick}>
-	// 					<ListRounded color='info' />
-	// 				</IconButton>
-	// 				<Popper
-	// 					ref={popperRef}
-	// 					id={row.id}
-	// 					className='bg-[#f0f0f0] rounded-md shadow-md flex flex-col justify-start'
-	// 					placement='left-start'
-	// 					open={open}
-	// 					anchorEl={anchorEl}
-	// 				>
-	// 					<Button
-	// 						variant='text'
-	// 						className='!justify-start !text-black'
-	// 						type='button'
-	// 						onClick={() => {
-	// 							handleClose()
-	// 							edit(row)
-	// 						}}
-	// 					>
-	// 						<Edit color='warning' className='mr-2' />
-	// 						Editar
-	// 					</Button>
-	// 					<Button
-	// 						variant='text'
-	// 						className='!justify-start !text-black'
-	// 						type='button'
-	// 						onClick={() => {
-	// 							handleClose()
-	// 							deleteRecloser(row)
-	// 						}}
-	// 					>
-	// 						<Delete color='error' className='mr-2' />
-	// 						Eliminar
-	// 					</Button>
-	// 				</Popper>
-	// 			</>
-	// 		)
-	// 	},
-	// },
 ]

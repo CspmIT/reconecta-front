@@ -2,7 +2,7 @@ import { Tab, Tabs } from '@mui/material'
 import { useState } from 'react'
 import { CustomTabPanel, a11yProps } from './PanelTab'
 
-function TabsMeter({ tabs }) {
+function TabsHome({ tabs }) {
 	const [value, setValue] = useState(0)
 	const handleChange = (event, newValue) => {
 		setValue(newValue)
@@ -16,7 +16,7 @@ function TabsMeter({ tabs }) {
 
 	return (
 		<>
-			<div className={`w-full mr-3 !rounded-xl flex flex-col items-start`}>
+			<div className={`w-full !rounded-xl flex flex-col items-start`}>
 				<Tabs
 					// className='flex w-full'
 					indicatorColor='transparent'
@@ -28,7 +28,7 @@ function TabsMeter({ tabs }) {
 						return (
 							<Tab
 								key={index}
-								className={`flex-grow !mr-1 relative ${
+								className={`flex-grow !mr-1 relative  k ${
 									classTabStatus[value === index ? 0 : 1]
 								} ${classTabs}`}
 								label={<p className='text-black dark:text-white w-full text-center'>{item.title}</p>}
@@ -58,4 +58,4 @@ function TabsMeter({ tabs }) {
 	)
 }
 
-export default TabsMeter
+export default TabsHome
