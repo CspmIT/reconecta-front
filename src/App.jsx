@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import MainContent from './modules/core/views'
 import { ThemeProvider, createTheme } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
@@ -13,13 +13,13 @@ import Alert from './modules/alert/views'
 import Diagrams from './modules/diagrams/views'
 import TabDinamic from './modules/tabs/views'
 import Notification from './modules/Notification'
-import Profile from './modules/profile/views'
 import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/board/views'
 import AbmEquipament from './modules/AbmEquipament/views'
 import AnalyzerBoard from './modules/analyzer/board/views'
-import Perfils from './modules/Config/Perfils'
+import ConfigMenu from './modules/Config/view'
+import Profile from './modules/profile/views'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -35,7 +35,7 @@ function App() {
 		{ path: '/Diagram', element: <Diagrams /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
-		{ path: '/config/profile', element: <Perfils /> },
+		{ path: '/config/menu', element: <ConfigMenu /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/Abm/:name', element: <AbmEquipament /> },

@@ -26,6 +26,7 @@ import { InsertChart, NotificationAdd } from '@mui/icons-material'
 import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
+import { BsFillMenuButtonWideFill } from 'react-icons/bs'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
 	const { tabActive, tabs, infoNav } = useContext(MainContext)
@@ -69,9 +70,9 @@ function NavBarCustom() {
 			icon: <FaCogs className='dark:text-white text-3xl' />,
 			submenus: [
 				{
-					name: 'Perfiles',
-					link: 'config/profile',
-					icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
+					name: 'Menu',
+					link: 'config/menu',
+					icon: <BsFillMenuButtonWideFill className='dark:text-white text-2xl my-1' />,
 				},
 				// {
 				// 	name: 'Cuenta',

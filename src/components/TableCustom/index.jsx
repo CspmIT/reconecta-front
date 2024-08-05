@@ -115,7 +115,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				},
 			},
 		},
-		muiTableContainerProps: { sx: { maxHeight: prop.pagination ? 500 : 50000 } },
+		muiTableContainerProps: { sx: { maxHeight: prop.pagination ? 'auto' : 50000 } },
 		// HABILITACION DE ROWS
 		enableBatchRowSelection: prop.checkbox ?? false,
 		enableMultiRowSelection: prop.checkbox ?? false,

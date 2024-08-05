@@ -43,7 +43,6 @@ const Home = () => {
 		),
 	}
 	const newTabBoard = (data) => {
-		console.log('hola')
 		setTabs((prevTabs) => [
 			...prevTabs,
 			{
