@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 import Board from '../../recloser/board/views'
 import AnalyzerBoard from '../../analyzer/board/views'
 import BoardMeter from '../../meter/views'
-import SubstationUrbanBoard from '../../substation/views'
+import SubstationUrbanBoard from '../../substationUrban/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
