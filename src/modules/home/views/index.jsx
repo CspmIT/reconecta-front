@@ -12,6 +12,7 @@ import TableSubStationUrban from '../components/Tables/TableSubStationUrban'
 import TableSubStationRural from '../components/Tables/TableSubStationRural'
 import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
+import SubstationRuralBoard from '../../substationRural/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -32,19 +33,18 @@ const Home = () => {
 				<SubstationUrbanBoard />
 			</>
 		),
+		5: (
+			<>
+				<SubstationRuralBoard />
+			</>
+		),
 		4: (
 			<>
 				<AnalyzerBoard />
 			</>
 		),
-		5: (
-			<>
-				<Board />
-			</>
-		),
 	}
 	const newTabBoard = (data) => {
-		console.log('hola')
 		setTabs((prevTabs) => [
 			...prevTabs,
 			{
@@ -64,6 +64,11 @@ const Home = () => {
 			component: <TableRecloser newTab={newTabBoard} />,
 		},
 		{
+			id: 4,
+			title: 'Medidores',
+			component: <TableMeter newTab={newTabBoard} />,
+		},
+		{
 			id: 2,
 			title: 'Sub Estación Urbana',
 			component: <TableSubStationUrban newTab={newTabBoard} />,
@@ -72,11 +77,6 @@ const Home = () => {
 			id: 3,
 			title: 'Sub Estación Rural',
 			component: <TableSubStationRural newTab={newTabBoard} />,
-		},
-		{
-			id: 4,
-			title: 'Medidores',
-			component: <TableMeter newTab={newTabBoard} />,
 		},
 		{
 			id: 5,

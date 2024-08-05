@@ -18,7 +18,6 @@ import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/board/views'
 import AbmEquipament from './modules/AbmEquipament/views'
-import AnalyzerBoard from './modules/analyzer/board/views'
 import Perfils from './modules/Config/Perfils'
 
 function App() {
