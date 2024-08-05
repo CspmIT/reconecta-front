@@ -40,7 +40,6 @@ function App() {
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/Abm/:name', element: <AbmEquipament /> },
 		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
-		{ path: '/Analyzer/:id', element: <AnalyzerBoard /> },
 		{ path: '/profile', element: <Profile /> },
 	]
 	//Incorporo el theme de mui

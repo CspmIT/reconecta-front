@@ -6,11 +6,13 @@ import { useNavigate } from 'react-router-dom'
 import Board from '../../recloser/board/views'
 import AnalyzerBoard from '../../analyzer/board/views'
 import BoardMeter from '../../meter/views'
+import SubstationUrbanBoard from '../../substationUrban/views'
 import TabsHome from '../components/TabHome'
 import TableSubStationUrban from '../components/Tables/TableSubStationUrban'
 import TableSubStationRural from '../components/Tables/TableSubStationRural'
 import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
+import SubstationRuralBoard from '../../substationRural/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -28,17 +30,17 @@ const Home = () => {
 		),
 		3: (
 			<>
-				<Board />
+				<SubstationUrbanBoard />
+			</>
+		),
+		5: (
+			<>
+				<SubstationRuralBoard />
 			</>
 		),
 		4: (
 			<>
 				<AnalyzerBoard />
-			</>
-		),
-		5: (
-			<>
-				<Board />
 			</>
 		),
 	}
@@ -62,6 +64,11 @@ const Home = () => {
 			component: <TableRecloser newTab={newTabBoard} />,
 		},
 		{
+			id: 4,
+			title: 'Medidores',
+			component: <TableMeter newTab={newTabBoard} />,
+		},
+		{
 			id: 2,
 			title: 'Sub Estación Urbana',
 			component: <TableSubStationUrban newTab={newTabBoard} />,
@@ -70,11 +77,6 @@ const Home = () => {
 			id: 3,
 			title: 'Sub Estación Rural',
 			component: <TableSubStationRural newTab={newTabBoard} />,
-		},
-		{
-			id: 4,
-			title: 'Medidores',
-			component: <TableMeter newTab={newTabBoard} />,
 		},
 		{
 			id: 5,
