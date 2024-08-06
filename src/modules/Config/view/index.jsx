@@ -8,6 +8,7 @@ import { ColumnsProfile } from '../utils/DataTable/ColumnsProfile'
 import { ColumnsUser } from '../utils/DataTable/ColumnsUsers'
 import { listUsers } from '../utils/DataTable/dataUser'
 import EditMenu from '../components/EditMenu/EditMenu'
+import { profilePermission, userPermission } from '../utils/DataMenu/permisos'
 
 function ConfigMenu() {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -20,7 +21,7 @@ function ConfigMenu() {
 				name: 'Edicion Menu Usuario',
 				id: data.id,
 				link: '/userEdit',
-				component: <EditMenu data={data} />,
+				component: <EditMenu data={data} permission={userPermission} />,
 			},
 		])
 		setTabCurrent(tabs.length)
@@ -33,7 +34,7 @@ function ConfigMenu() {
 				name: 'Edicion Menu Perfil',
 				id: data.id,
 				link: '/userEdit',
-				component: <EditMenu data={data} />,
+				component: <EditMenu data={data} permission={profilePermission} />,
 			},
 		])
 		setTabCurrent(tabs.length)

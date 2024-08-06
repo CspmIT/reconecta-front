@@ -1,17 +1,14 @@
 import { Accordion, AccordionSummary, AccordionDetails, Checkbox, Typography, List, ListItem } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 
-function MenuItems({ items, expandedAccordions, handleAccordionChange, selectedMenus, handleCheckboxChange }) {
-	const calculateCheckboxState = (menu) => {
-		const subMenusSelected = menu.subMenus.map((sub) => selectedMenus[sub.id] || false)
-		const allSelected = subMenusSelected.every(Boolean)
-		const noneSelected = subMenusSelected.every((selected) => !selected)
-		return {
-			checked: allSelected,
-			indeterminate: !allSelected && !noneSelected,
-		}
-	}
-
+function MenuItems({
+	items,
+	expandedAccordions,
+	handleAccordionChange,
+	selectedMenus,
+	handleCheckboxChange,
+	calculateCheckboxState,
+}) {
 	return items.map((item) => {
 		const number = 240 - parseInt(item.level) * 20
 		const isExpanded = expandedAccordions[item.id] || false
@@ -57,6 +54,7 @@ function MenuItems({ items, expandedAccordions, handleAccordionChange, selectedM
 										handleAccordionChange={handleAccordionChange}
 										selectedMenus={selectedMenus}
 										handleCheckboxChange={handleCheckboxChange}
+										calculateCheckboxState={calculateCheckboxState}
 									/>
 								</List>
 							</AccordionDetails>
