@@ -75,6 +75,8 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 					anchorEl={anchorEl}
 				>
 					{item.submenus?.map((item, index) => {
+						console.log(item.link)
+						console.log(buttonActive)
 						return (
 							<MenuItem
 								className={`gap-3  ${

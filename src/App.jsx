@@ -18,8 +18,9 @@ import './App.css'
 import Board from './modules/recloser/board/views'
 import AbmEquipament from './modules/AbmEquipament/views'
 import AnalyzerBoard from './modules/analyzer/board/views'
-import ConfigMenu from './modules/Config/view'
+import ConfigMenu from './modules/configMenu/view'
 import Profile from './modules/profile/views'
+import ConfigSecurity from './modules/configSecurity/views'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -35,6 +36,7 @@ function App() {
 		{ path: '/Diagram', element: <Diagrams /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
+		{ path: '/config/security', element: <ConfigSecurity /> },
 		{ path: '/config/menu', element: <ConfigMenu /> },
 		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },

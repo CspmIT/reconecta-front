@@ -12,6 +12,7 @@ const MainContent = () => {
 	// if (user) {
 	// 	return <Navigate to='/login' />
 	// }
+	console.log(user)
 	useEffect(() => {
 		if (!location.pathname.includes('/Abm/')) {
 			setInfoNav('')
