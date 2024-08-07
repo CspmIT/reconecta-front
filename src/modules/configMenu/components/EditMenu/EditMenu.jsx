@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { Accordion, AccordionSummary, AccordionDetails, Checkbox, Typography, List, Button } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { menus } from '../../utils/DataMenu/menus'
+import { menus2 } from '../../utils/DataMenu/menus'
 import MenuItems from './components/MenuItems'
 import Swal from 'sweetalert2'
 import { MainContext } from '../../../../context/MainContext'
@@ -22,8 +22,8 @@ const EditMenu = ({ data, permission }) => {
 		setSelectedMenus(initialSelection)
 	}, [permission])
 	const handleCheckboxChange = (id, subMenus) => {
-		const updateSelection = (menus, isSelected) => {
-			return menus.reduce((acc, menu) => {
+		const updateSelection = (menus2, isSelected) => {
+			return menus2.reduce((acc, menu) => {
 				acc[menu.id] = isSelected
 				if (menu.subMenus) {
 					Object.assign(acc, updateSelection(menu.subMenus, isSelected))
@@ -76,7 +76,7 @@ const EditMenu = ({ data, permission }) => {
 		}
 	}
 
-	const groupedMenus = menus.reduce((acc, menu) => {
+	const groupedMenus = menus2.reduce((acc, menu) => {
 		const groupMenuId = parseInt(menu.group_menu)
 		if (!acc[groupMenuId]) {
 			acc[groupMenuId] = { ...menu, subMenus: [] }

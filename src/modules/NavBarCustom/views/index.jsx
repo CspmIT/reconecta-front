@@ -170,7 +170,7 @@ function NavBarCustom() {
 										) : (
 											<Link to={item.link} className={` text-black dark:text-white`}>
 												<ListItemButton
-													className={item.link === 'Alert' ? styles.backgroundAlert : ''}
+													className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 													sx={{
 														minHeight: 48,
 														justifyContent: open ? 'initial' : 'center',
