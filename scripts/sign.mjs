@@ -9,13 +9,13 @@ let binaryPath
 // Asigna la ruta del binario según el sistema operativo
 switch (platform) {
 	case 'win32':
-		binaryPath = 'src-tauri/target/release/bundle/msi/your_app.msi'
+		binaryPath = 'src-tauri/target/release/bundle/msi/Reconecta.msi'
 		break
 	case 'linux':
-		binaryPath = 'src-tauri/target/release/bundle/appimage/your_app.AppImage'
+		binaryPath = 'src-tauri/target/release/bundle/appimage/Reconecta.AppImage'
 		break
 	case 'darwin':
-		binaryPath = 'src-tauri/target/release/bundle/dmg/your_app.dmg'
+		binaryPath = 'src-tauri/target/release/bundle/dmg/Reconecta.dmg'
 		break
 	default:
 		throw new Error('Unsupported platform: ' + platform)
