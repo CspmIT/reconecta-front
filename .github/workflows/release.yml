@@ -3,12 +3,12 @@ name: Release
 on:
   push:
     branches:
-      - master 
+      - master
     tags:
       - 'v*'
 
 jobs:
-  release:
+  build-and-sign:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -29,8 +29,11 @@ jobs:
       - name: Build Tauri application
         run: npm run build
 
+      - name: Decode private key
+        run: echo "${{ secrets.TAURI_PRIVATE_KEY_BASE64 }}" | base64 -d > src-tauri/keys/keyPrivate.pem
+
       - name: Sign binaries
-        run: npx tauri signer sign --private-key ${{ secrets.PRIVATE_KEY }} 
+        run: node scripts/sign.js
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
