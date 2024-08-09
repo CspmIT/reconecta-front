@@ -48,10 +48,7 @@
 				"icons/128x128@2x.png",
 				"icons/icon.icns",
 				"icons/icon.ico"
-			],
-			"linux": {
-				"sign_command": "gpg --batch --yes --passphrase-file password.txt --pinentry-mode loopback --sign --output signed_file --detach-sig private_key.pem"
-			}
+			]
 		}
 	}
 }
