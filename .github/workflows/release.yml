@@ -33,7 +33,7 @@ jobs:
         run: echo "${{ secrets.TAURI_PRIVATE_KEY_BASE64 }}" | base64 -d > src-tauri/keys/keyPrivate.pem
 
       - name: Sign binaries
-        run:  node scripts/sign.cjs
+        run:  node scripts/sign.mjs
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
