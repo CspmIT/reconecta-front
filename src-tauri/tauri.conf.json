@@ -6,8 +6,8 @@
 		"distDir": "../dist"
 	},
 	"package": {
-		"productName": "reconecta-desktop",
-		"version": "0.0.0"
+		"productName": "Reconecta",
+		"version": "1.0.0"
 	},
 	"tauri": {
 		"allowlist": {
@@ -21,16 +21,22 @@
 		},
 		"windows": [
 			{
-				"title": "reconecta-desktop",
-				"width": 800,
-				"height": 600,
-				"minWidth": 800,
+				"title": "Reconecta",
+				"width": 1024,
+				"height": 768,
+				"minWidth": 1024,
 				"minHeight": 600,
 				"resizable": true
 			}
 		],
 		"security": {
 			"csp": null
+		},
+		"updater": {
+			"active": true,
+			"endpoints": ["https://your-update-server.com/api/v1/update/{{target}}/{{current_version}}"],
+			"dialog": true,
+			"pubkey": "your-public-key-here"
 		},
 		"bundle": {
 			"active": true,

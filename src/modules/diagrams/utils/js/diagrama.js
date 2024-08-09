@@ -1,7 +1,7 @@
 import { storage } from '../../../../storage/storage'
 import { datosInflux } from '../objects/datosInflux'
 
-export const draw = (data, elem, context) => {
+export const draw = async (data, elem, context) => {
 	const arrayObjetos = data.Objetos
 	const arrayLineas = data.Lineas
 	let maxX = 0
@@ -18,13 +18,28 @@ export const draw = (data, elem, context) => {
 	elem.height = maxY + 250
 	context.clearRect(0, 0, elem.width, elem.height)
 	const darkMode = storage.get('dark')
-	arrayObjetos.forEach((item) => {
+
+	// const isTauri = typeof window.__TAURI_IPC__ !== 'undefined'
+
+	for (const item of arrayObjetos) {
 		if (item.type === 'img') {
-			const img = new Image()
-			img.src =
+			let imgPath
+			// if (isTauri) {
+			// 	const { join } = await import('@tauri-apps/api/path')
+			// 	imgPath =
+			// 		item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
+			// 			? await join('src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png')
+			// 			: await join(`src/modules/diagrams/utils/asset/img/electricity/${item.pic}`)
+			// } else {
+			// Asumir que las imágenes están disponibles en una carpeta `public` o similar en la web
+			imgPath =
 				item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
-					? 'src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png'
-					: `src/modules/diagrams/utils/asset/img/electricity/${item.pic}`
+					? 'assets/img/electricity/aperturaCFlecha.png'
+					: `assets/img/electricity/${item.pic}`
+			// }
+
+			const img = new Image()
+			img.src = imgPath
 
 			img.onload = () => {
 				if (!darkMode) {
@@ -36,7 +51,7 @@ export const draw = (data, elem, context) => {
 				context.filter = 'none'
 			}
 		}
-	})
+	}
 }
 
 export const select_color = (color) => {
