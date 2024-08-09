@@ -21,8 +21,26 @@ import AnalyzerBoard from './modules/analyzer/board/views'
 import ConfigMenu from './modules/configMenu/view'
 import Profile from './modules/profile/views'
 import ConfigSecurity from './modules/configSecurity/views'
-
+import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 function App() {
+	async function updateApp() {
+		const { shouldUpdate, manifest } = await checkUpdate()
+
+		if (shouldUpdate) {
+			// Notificar al usuario sobre la actualización
+			console.log(`Nueva versión disponible: ${manifest.version}`)
+
+			// Instalar la actualización
+			await installUpdate()
+			// Reiniciar la aplicación
+			await relaunch()
+		}
+	}
+
+	useEffect(() => {
+		updateApp()
+	}, [])
+
 	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
