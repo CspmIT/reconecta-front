@@ -1,6 +1,6 @@
-const os = require('os')
-const { execSync } = require('child_process')
-const path = require('path')
+import os from 'os'
+import { execSync } from 'child_process'
+import path from 'path'
 
 // Determina el sistema operativo
 const platform = os.platform()
@@ -9,13 +9,13 @@ let binaryPath
 // Asigna la ruta del binario según el sistema operativo
 switch (platform) {
 	case 'win32':
-		binaryPath = 'src-tauri/target/release/bundle/msi/Reconecta.msi'
+		binaryPath = 'src-tauri/target/release/bundle/msi/your_app.msi'
 		break
 	case 'linux':
-		binaryPath = 'src-tauri/target/release/bundle/appimage/Reconecta.AppImage'
+		binaryPath = 'src-tauri/target/release/bundle/appimage/your_app.AppImage'
 		break
 	case 'darwin':
-		binaryPath = 'src-tauri/target/release/bundle/dmg/Reconecta.dmg'
+		binaryPath = 'src-tauri/target/release/bundle/dmg/your_app.dmg'
 		break
 	default:
 		throw new Error('Unsupported platform: ' + platform)
