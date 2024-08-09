@@ -36,7 +36,7 @@
 			"active": true,
 			"endpoints": ["https://api.github.com/repos/{usuario}/{repositorio}/releases/latest"],
 			"dialog": true,
-			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDRCOTkzMkVERkVBNTU4REEKUldUYVdLWCs3VEtaUzVVNHBTVUs5V282Z0FIbXdUY2JaVzJzV2FSaWlZSHJLZHhoRDE3dlhidTcK"
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGOEZGM0IwOUE0QTlBRkIKUldUN21rcWFzUE9QenhLS1ptTE1hNHNNdVBmc2dXZ201WGRxSGliYjk1UzNRQ01LYmQ2WmtIUXoK"
 		},
 		"bundle": {
 			"active": true,
