@@ -30,7 +30,7 @@ jobs:
         run: npm run build
 
       - name: Sign binaries
-        run: tauri sign --private-key ${{ secrets.PRIVATE_KEY }}
+        run: npx tauri sign --private-key ${{ secrets.PRIVATE_KEY }} 
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
