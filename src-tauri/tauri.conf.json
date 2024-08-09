@@ -6,8 +6,8 @@
 		"distDir": "../dist"
 	},
 	"package": {
-		"productName": "Reconecta",
-		"version": "1.0.0"
+		"productName": "reconecta-desktop",
+		"version": "0.0.0"
 	},
 	"tauri": {
 		"allowlist": {
@@ -21,7 +21,7 @@
 		},
 		"windows": [
 			{
-				"title": "Reconecta",
+				"title": "reconecta-desktop",
 				"width": 1024,
 				"height": 768,
 				"minWidth": 1024,
@@ -34,14 +34,14 @@
 		},
 		"updater": {
 			"active": true,
-			"endpoints": ["https://api.github.com/repos/{usuario}/{repositorio}/releases/latest"],
+			"endpoints": ["https://api.github.com/repos/CspmIT/Reconecta_front/releases/latest"],
 			"dialog": true,
 			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGOEZGM0IwOUE0QTlBRkIKUldUN21rcWFzUE9QenhLS1ptTE1hNHNNdVBmc2dXZ201WGRxSGliYjk1UzNRQ01LYmQ2WmtIUXoK"
 		},
 		"bundle": {
 			"active": true,
 			"targets": "all",
-			"identifier": "reconecta.cooptech.com.ar",
+			"identifier": "com.cooptech.reconecta",
 			"icon": [
 				"icons/32x32.png",
 				"icons/128x128.png",
