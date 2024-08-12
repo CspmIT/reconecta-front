@@ -36,7 +36,7 @@
 			"active": true,
 			"endpoints": ["https://api.github.com/repos/CspmIT/Reconecta_front/releases/latest"],
 			"dialog": true,
-			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENGOEZGM0IwOUE0QTlBRkIKUldUN21rcWFzUE9QenhLS1ptTE1hNHNNdVBmc2dXZ201WGRxSGliYjk1UzNRQ01LYmQ2WmtIUXoK"
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEEyQjU2ODZCMTA2M0EzRDQKUldUVW8yTVFhMmkxb3V3WFdoaWpsOTZ0NzdSWHA2eUlrQmpHOUxrb2hxVlhKL1YxVzhHSDh1SVkK"
 		},
 		"bundle": {
 			"active": true,

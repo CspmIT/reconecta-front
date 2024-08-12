@@ -48,19 +48,19 @@ jobs:
               run: npm install
 
             - name: Set up TAURI_PRIVATE_KEY
-              run: echo "${{ secrets.TAURI_PRIVATE_KEY }}" > private_key.pem
+              run: echo "${{ secrets.TAURI_PRIVATE_KEY }}" > src-tauri/keys/myapp.key
 
-            - name: Set up TAURI_PASSWORD
-              run: echo "${{ secrets.TAURI_PASSWORD }}" > password.txt
+            - name: Set up TAURI_KEY_PASSWORD
+              run: echo "${{ secrets.TAURI_KEY_PASSWORD }}" > src-tauri/keys/password.key.pub
 
             - name: Set up TAURI_PUBLIC_KEY
-              run: echo "${{ secrets.TAURI_PUBLIC_KEY }}" > public_key.pem
+              run: echo "${{ secrets.TAURI_PUBLIC_KEY }}" > src-tauri/keys/myapp.key.pub
 
             - uses: tauri-apps/tauri-action@v0
               env:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
-                  TAURI_PASSWORD: ${{ secrets.TAURI_PASSWORD }}
+                  TAURI_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
               with:
                   tagName: app-v__VERSION__
                   releaseName: 'App v__VERSION__'
