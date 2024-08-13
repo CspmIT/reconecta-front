@@ -110,7 +110,6 @@ function NavBarCustom() {
 	}, [location, locationTAbs])
 
 	const activeButton = (id) => {
-		console.log(id)
 		setButtonActive(id)
 		navigate(id)
 	}

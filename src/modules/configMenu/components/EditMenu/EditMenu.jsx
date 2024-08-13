@@ -1,5 +1,14 @@
 import { useContext, useEffect, useState } from 'react'
-import { Accordion, AccordionSummary, AccordionDetails, Checkbox, Typography, List, Button } from '@mui/material'
+import {
+	Accordion,
+	AccordionSummary,
+	AccordionDetails,
+	Checkbox,
+	Typography,
+	List,
+	Button,
+	ListItem,
+} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { menus2 } from '../../utils/DataMenu/menus'
 import MenuItems from './components/MenuItems'
@@ -121,7 +130,7 @@ const EditMenu = ({ data, permission }) => {
 					const number = 240 - parseInt(groupMenu.level) * 10
 					const isExpanded = expandedAccordions[groupMenu.id] || false
 					const { checked, indeterminate } = calculateCheckboxState(groupMenu)
-					return (
+					return groupMenu.subMenus.length > 0 ? (
 						<Accordion
 							key={groupMenu.id}
 							expanded={isExpanded}
@@ -162,6 +171,18 @@ const EditMenu = ({ data, permission }) => {
 								</List>
 							</AccordionDetails>
 						</Accordion>
+					) : (
+						<ListItem className='flex !items-center !w-full !pl-10' key={groupMenu.id}>
+							<Checkbox
+								checked={checked}
+								indeterminate={indeterminate}
+								onClick={(event) => {
+									event.stopPropagation()
+									handleCheckboxChange(groupMenu.id, groupMenu.subMenus)
+								}}
+							/>
+							<Typography className='flex items-center text-black'>{groupMenu.name}</Typography>
+						</ListItem>
 					)
 				})}
 			</div>

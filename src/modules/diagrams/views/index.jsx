@@ -4,7 +4,7 @@ import GrafTensiones from '../components/GrafTensiones'
 const Diagrams = () => {
 	return (
 		<div className='w-full flex flex-row justify-center text-black dark:text-white relative mt-2 gap-2'>
-			<div className='w-9/12 shadow-md h-min flex-row flex flex-wrap justify-between rounded-md bg-[#CFC4BE] dark:bg-[#303b41] pt-4'>
+			<div className='w-9/12 shadow-md  overflow-hidden !h-[100vh] relative rounded-md bg-[#CFC4BE] dark:bg-[#303b41] pt-4'>
 				<DiagramElectricity />
 			</div>
 			<div className='w-3/12 flex flex-col'>

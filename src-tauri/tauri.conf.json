@@ -6,7 +6,7 @@
 		"distDir": "../dist"
 	},
 	"package": {
-		"productName": "reconecta-desktop",
+		"productName": "Reconecta",
 		"version": "0.0.0"
 	},
 	"tauri": {
@@ -21,10 +21,10 @@
 		},
 		"windows": [
 			{
-				"title": "reconecta-desktop",
+				"title": "Reconecta",
 				"width": 1024,
 				"height": 768,
-				"minWidth": 1024,
+				"minWidth": 1020,
 				"minHeight": 600,
 				"resizable": true
 			}
