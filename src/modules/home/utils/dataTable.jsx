@@ -12,13 +12,9 @@ const TypeRecloser = {
 	5: 'Sub-Estación Rural',
 }
 
-const edit = (row) => {
-	console.log(row.id)
-}
+const edit = (row) => {}
 
-const deleteRecloser = (row) => {
-	console.log(row.id)
-}
+const deleteRecloser = (row) => {}
 
 export const columns = (changeAlarm, navigate, newTab) => [
 	{

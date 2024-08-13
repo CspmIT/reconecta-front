@@ -14,8 +14,6 @@ function Notification() {
 			vapidKey: 'BHMQ3KSUNfj4j3qTUVadPqOPjaejIzsVHXq7-owOLLnEsnZD3GfhGWstVMp0LhZEG_XdZ_-CXXqDyqJVsYfgXGE',
 		}).catch((error) => console.log('Error:', error))
 		if (token) {
-			console.log(`El Token es ${token}`)
-			alert(`El Token es ${token}`)
 			setTokenView(token)
 		}
 		if (!token) {

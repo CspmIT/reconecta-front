@@ -1,6 +1,26 @@
 import { storage } from '../../../../storage/storage'
 import { datosInflux } from '../objects/datosInflux'
+export const calcScale = (data, elem) => {
+	const arrayLineas = data.Lineas
+	let maxX = 0
+	let maxY = 0
 
+	for (const linea of arrayLineas) {
+		for (let j = 0; j < linea.points.length; j += 2) {
+			maxX = Math.max(maxX, linea.points[j])
+			maxY = Math.max(maxY, linea.points[j + 1])
+		}
+	}
+
+	elem.width = maxX + 100
+	elem.height = maxY + 250
+	if (elem.width > window.innerWidth * 0.666) {
+		const scale = ((elem.width * 100) / (window.innerWidth * 0.666) - 100) / 100
+		return parseFloat(scale.toFixed(2))
+	}
+
+	return 1
+}
 export const draw = async (data, elem, context) => {
 	const arrayObjetos = data.Objetos
 	const arrayLineas = data.Lineas
@@ -24,19 +44,10 @@ export const draw = async (data, elem, context) => {
 	for (const item of arrayObjetos) {
 		if (item.type === 'img') {
 			let imgPath
-			// if (isTauri) {
-			// 	const { join } = await import('@tauri-apps/api/path')
-			// 	imgPath =
-			// 		item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
-			// 			? await join('src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png')
-			// 			: await join(`src/modules/diagrams/utils/asset/img/electricity/${item.pic}`)
-			// } else {
-			// Asumir que las imágenes están disponibles en una carpeta `public` o similar en la web
 			imgPath =
 				item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
 					? 'assets/img/electricity/aperturaCFlecha.png'
 					: `assets/img/electricity/${item.pic}`
-			// }
 
 			const img = new Image()
 			img.src = imgPath
