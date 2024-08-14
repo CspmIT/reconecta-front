@@ -7,7 +7,7 @@
 	},
 	"package": {
 		"productName": "Reconecta",
-		"version": "0.0.0"
+		"version": "1.0.0"
 	},
 	"tauri": {
 		"allowlist": {
@@ -24,7 +24,7 @@
 				"title": "Reconecta",
 				"width": 1024,
 				"height": 768,
-				"minWidth": 1020,
+				"minWidth": 1024,
 				"minHeight": 600,
 				"resizable": true
 			}

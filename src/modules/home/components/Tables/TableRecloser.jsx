@@ -13,37 +13,7 @@ function TableRecloser({ ...props }) {
 	const [reclosers, setReclosers] = useState([])
 	const navigate = useNavigate()
 	const getdisplay = () => {
-		setReclosers([
-			...recloser,
-			// {
-			// 	Nro_recloser: 'SETA 1',
-			// 	Name: 'SETA 1',
-			// 	Nro_Serie: '36037636',
-			// 	type_recloser: 2,
-			// 	status: 0,
-			// 	online: 1,
-			// 	alarm_recloser: 1,
-			// },
-			// {
-			// 	id: 1,
-			// 	Nro_recloser: 'BE1',
-			// 	Name: 'BE1',
-			// 	type_recloser: 5,
-			// 	Nro_Serie: '',
-			// 	status: 0,
-			// 	online: 1,
-			// 	alarm_recloser: 1,
-			// },
-			// {
-			// 	Nro_recloser: 'POWERMETER 1',
-			// 	Name: 'Analizador interno',
-			// 	Nro_Serie: '00002114',
-			// 	type_recloser: 4,
-			// 	status: 0,
-			// 	online: 1,
-			// 	alarm_recloser: 1,
-			// },
-		])
+		setReclosers([...recloser])
 	}
 
 	const changeAlarm = (Nro_Serie) => {
