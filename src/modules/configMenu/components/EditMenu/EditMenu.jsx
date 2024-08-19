@@ -31,8 +31,8 @@ const EditMenu = ({ data, permission }) => {
 		setSelectedMenus(initialSelection)
 	}, [permission])
 	const handleCheckboxChange = (id, subMenus) => {
-		const updateSelection = (menus2, isSelected) => {
-			return menus2.reduce((acc, menu) => {
+		const updateSelection = (menus, isSelected) => {
+			return menus.reduce((acc, menu) => {
 				acc[menu.id] = isSelected
 				if (menu.subMenus) {
 					Object.assign(acc, updateSelection(menu.subMenus, isSelected))
@@ -85,7 +85,7 @@ const EditMenu = ({ data, permission }) => {
 		}
 	}
 
-	const groupedMenus = menus2.reduce((acc, menu) => {
+	const groupedMenus = menus.reduce((acc, menu) => {
 		const groupMenuId = parseInt(menu.group_menu)
 		if (!acc[groupMenuId]) {
 			acc[groupMenuId] = { ...menu, subMenus: [] }

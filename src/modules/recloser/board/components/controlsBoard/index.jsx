@@ -5,7 +5,7 @@ import { boardControls } from '../../utils/objects'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Swal from 'sweetalert2'
 import { controls } from '../../utils/controlsRecloser'
-import { Edit, Key, Lock, LockOpen } from '@mui/icons-material'
+import { ContentCopy, Edit, Key, Lock, LockOpen } from '@mui/icons-material'
 
 import EditControls from './EditControls'
 
@@ -108,7 +108,7 @@ const ControlsBoard = ({ info }) => {
 		// falta realizar el guardado cuando se realice el backend
 	}
 	return (
-		<div>
+		<>
 			<div className='w-full my-3 text-center relative'>
 				<b className='text-xl mr-3'>Controles</b>
 				<Button size='large' variant='contained' type='button' onClick={() => enableControl()}>
@@ -136,7 +136,7 @@ const ControlsBoard = ({ info }) => {
 										<label>
 											<b className='mr-2'>{boardcontrol.name}</b>
 										</label>
-										<label className='inline-flex items-center cursor-pointer'>
+										<label className='inline-flex items-center cursor-pointer relative'>
 											<input
 												disabled={!enabled}
 												type='checkbox'
@@ -180,22 +180,20 @@ const ControlsBoard = ({ info }) => {
 								className='!w-full'
 								aria-controls={`panel-content`}
 							>
-								<Typography className='flex items-center justify-center w-full'>Mas</Typography>
+								<Typography className='flex items-center justify-center w-full'>Avanzado</Typography>
 							</AccordionSummary>
-							<AccordionDetails
-								className={`!w-full grid grid-cols-4 gap-3 border-0 border-t-2 border-solid border-white`}
-							>
+							<AccordionDetails className={`!w-full grid grid-cols-4 gap-3`}>
 								{controlAdvance.map((boardcontrol, index) => (
 									<div
 										key={index}
-										className='flex  p-3 rounded-md items-center justify-between bg-gray-300 '
+										className='flex p-3 rounded-md items-center justify-between bg-gray-300 '
 									>
 										{boardcontrol.type === 'switch' ? (
 											<>
 												<label>
 													<b className='mr-2'>{boardcontrol.name}</b>
 												</label>
-												<label className='inline-flex items-center cursor-pointer'>
+												<label className='inline-flex items-center cursor-pointer relative'>
 													<input
 														disabled={!enabled}
 														type='checkbox'
@@ -236,7 +234,7 @@ const ControlsBoard = ({ info }) => {
 					</div>
 				</>
 			)}
-		</div>
+		</>
 	)
 }
 
