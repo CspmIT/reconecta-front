@@ -13,11 +13,13 @@ import AddSubStationRural from '../components/AddSubStationRural/AddSubStationRu
 import AddMeter from '../components/AddMeter/AddMeter'
 import AddSubStationUrban from '../components/AddSubStationUrban'
 import AddNetAnalyzer from '../components/AddNetAnalyzer/AddNetAnalyzer'
+import { getRecloser } from '../components/AddRecloser/actions'
 
 function AbmEquipament() {
-	const { name } = useParams(['name'])
+	const { name, id } = useParams()
 	const [listMarkers, setListMarkers] = useState([])
 	const [selectMarkers, setSelectMarkers] = useState([])
+	const [dataEdit, setDataEdit] = useState([])
 	const {
 		register,
 		setValue,
@@ -64,32 +66,49 @@ function AbmEquipament() {
 			setValue('lat_marker', null)
 		}
 	}, [selectMarkers])
+	const getDataEdit = async (name, id) => {
+		switch (name) {
+			case 'recloser':
+				setDataEdit(await getRecloser(id))
+				break
 
+			default:
+				break
+		}
+	}
+	useEffect(() => {
+		if (id) {
+			getDataEdit(name, id)
+		}
+	}, [])
 	return (
 		<CardCustom className={' w-full rounded-md text-black'}>
 			<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
 				<div className='w-full flex-row gap-3 mb-5'>
 					{name !== 'netAnalyzer' && (
-						<AddEntity
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							addMarker={addMarker}
-							enableMarkers={enableMarkers}
-							setSelectMarkers={setSelectMarkers}
-						/>
+						<>
+							<AddEntity
+								register={register}
+								errors={errors}
+								setValue={setValue}
+								addMarker={addMarker}
+								dataEdit={dataEdit}
+								enableMarkers={enableMarkers}
+								setSelectMarkers={setSelectMarkers}
+							/>
+							<AddMarkerMap
+								register={register}
+								errors={errors}
+								setValue={setValue}
+								selectMarkers={selectMarkers}
+								setSelectMarkers={setSelectMarkers}
+								listMarkers={listMarkers}
+							/>
+						</>
 					)}
-					{name !== 'netAnalyzer' && (
-						<AddMarkerMap
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							selectMarkers={selectMarkers}
-							setSelectMarkers={setSelectMarkers}
-							listMarkers={listMarkers}
-						/>
+					{name == 'recloser' && (
+						<AddRecloser register={register} errors={errors} dataEdit={dataEdit} setValue={setValue} />
 					)}
-					{name == 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
 					{name == 'meter' && <AddMeter register={register} errors={errors} setValue={setValue} />}
 					{name == 'subStationUrban' && (
 						<AddSubStationUrban

@@ -36,7 +36,11 @@ const DataBoard = () => {
 			setInfo(recloser.filter((item) => item.id == data.id)[0])
 		}
 	}, [data])
-
+	const { setInfoNav } = useContext(MainContext)
+	const editRecloser = (info) => {
+		setInfoNav([info])
+		navigate('/Abm/recloser/' + info.id)
+	}
 	return (
 		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
 			<div className='flex flex-row relative justify-between mb-8'>
@@ -48,7 +52,7 @@ const DataBoard = () => {
 						<FaRedo />
 					</Button>
 					<Button
-						onClick={() => navigate('/AbmRecloser/' + info.id)}
+						onClick={() => editRecloser(info)}
 						className='!ml-3'
 						color='warning'
 						title='Editar Reconectador'
