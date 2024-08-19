@@ -28,48 +28,60 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		accessorKey: 'Nro_Serie',
 		muiFilterTextFieldProps: { placeholder: 'Num. de Serie' },
 	},
+	// {
+	// 	header: 'Tipo',
+	// 	accessorKey: 'type_recloser',
+	// 	filterVariant: 'multi-select',
+	// 	muiFilterTextFieldProps: { placeholder: 'Tipo' },
+	// 	filterSelectOptions: [
+	// 		{
+	// 			label: 'Reconectador',
+	// 			value: 1,
+	// 		},
+	// 		{
+	// 			label: 'Medidor',
+	// 			value: 2,
+	// 		},
+	// 		{
+	// 			label: 'Sub-Estación',
+	// 			value: 3,
+	// 		},
+	// 		{
+	// 			label: 'Analizador de red',
+	// 			value: 4,
+	// 		},
+	// 	],
+	// 	filterFn: (row, id, filterValue) => {
+	// 		const filter = storage.get('filter')
+	// 		const filterType_recloser =
+	// 			filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
+	// 		if (filterValue !== filterType_recloser) {
+	// 			if (filter?.length > 0) {
+	// 				filter.splice(filter.indexOf(filterType_recloser), 1)
+	// 				storage.set('filter', [...filter, { name: 'type_recloser', value: filterValue }])
+	// 			} else {
+	// 				storage.set('filter', [{ name: 'type_recloser', value: filterValue }])
+	// 			}
+	// 		}
+	// 		if (!filterValue || filterValue.length === 0) {
+	// 			return true
+	// 		}
+	// 		return filterValue.includes(row.getValue(id))
+	// 	},
+	// 	Cell: ({ row }) => {
+	// 		return TypeRecloser[row.original.type_recloser] || 'indefinido'
+	// 	},
+	// },
 	{
-		header: 'Tipo',
-		accessorKey: 'type_recloser',
-		filterVariant: 'multi-select',
-		muiFilterTextFieldProps: { placeholder: 'Tipo' },
-		filterSelectOptions: [
-			{
-				label: 'Reconectador',
-				value: 1,
-			},
-			{
-				label: 'Medidor',
-				value: 2,
-			},
-			{
-				label: 'Sub-Estación',
-				value: 3,
-			},
-			{
-				label: 'Analizador de red',
-				value: 4,
-			},
-		],
-		filterFn: (row, id, filterValue) => {
-			const filter = storage.get('filter')
-			const filterType_recloser =
-				filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
-			if (filterValue !== filterType_recloser) {
-				if (filter?.length > 0) {
-					filter.splice(filter.indexOf(filterType_recloser), 1)
-					storage.set('filter', [...filter, { name: 'type_recloser', value: filterValue }])
-				} else {
-					storage.set('filter', [{ name: 'type_recloser', value: filterValue }])
-				}
-			}
-			if (!filterValue || filterValue.length === 0) {
-				return true
-			}
-			return filterValue.includes(row.getValue(id))
-		},
+		header: 'Marca',
+		accessorKey: 'brand',
+		muiFilterTextFieldProps: { placeholder: 'Marca' },
 		Cell: ({ row }) => {
-			return TypeRecloser[row.original.type_recloser] || 'indefinido'
+			return (
+				<div className='flex items-center w-full'>
+					<p className='m-0 p-0 ml-2 text-base'>{`${row.original.brand} - ${row.original.version}`}</p>
+				</div>
+			)
 		},
 	},
 	{

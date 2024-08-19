@@ -2,7 +2,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 
 function ContainerDnd({ id, children, title }) {
-	const { attributes, setNodeRef, listeners, transform, transition, isDragging } = useSortable({
+	const { attributes, setNodeRef, transform, transition } = useSortable({
 		id: id,
 		data: {
 			type: 'container',
@@ -24,7 +24,7 @@ function ContainerDnd({ id, children, title }) {
 					<h1 className='text-gray-800 text-xl'>{title}</h1>
 				</div>
 			</div>
-			{children}
+			<div className='flex flex-col gap-y-4'>{children}</div>
 		</div>
 	)
 }

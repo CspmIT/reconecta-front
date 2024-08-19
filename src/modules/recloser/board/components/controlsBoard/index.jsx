@@ -1,11 +1,11 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, IconButton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { FaLock, FaLockOpen } from 'react-icons/fa'
+import { FaCheck, FaLock, FaLockOpen } from 'react-icons/fa'
 import { boardControls } from '../../utils/objects'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Swal from 'sweetalert2'
 import { controls } from '../../utils/controlsRecloser'
-import { Edit, Lock, LockOpen } from '@mui/icons-material'
+import { Edit, Key, Lock, LockOpen } from '@mui/icons-material'
 
 import EditControls from './EditControls'
 
@@ -93,132 +93,144 @@ const ControlsBoard = ({ info }) => {
 			setEnabled(false)
 		}
 	}, [countdown])
+
+	const editControls = () => {
+		if (!edit) {
+			setEdit((edit) => !edit)
+		} else {
+			console.log('hola')
+			console.log(controls)
+			setEdit((edit) => !edit)
+		}
+	}
+	const setContainer = (data) => {
+		console.log(data)
+		// falta realizar el guardado cuando se realice el backend
+	}
 	return (
 		<div>
-			<div className='w-full my-3 text-start relative'>
+			<div className='w-full my-3 text-center relative'>
 				<b className='text-xl mr-3'>Controles</b>
 				<Button size='large' variant='contained' type='button' onClick={() => enableControl()}>
 					{enabled ? <LockOpen className='!text-xl' /> : <Lock className='!text-xl' />}
 				</Button>
 				<IconButton
-					className='!absolute right-5 !bg-yellow-300 hover:!bg-yellow-400 shadow-slate-400 shadow-md'
+					className={`!absolute right-5 ${
+						!edit ? '!bg-yellow-300 hover:!bg-yellow-400' : ' !bg-green-300 hover:!bg-green-400 '
+					}  shadow-slate-400 shadow-md`}
 					type='button'
-					onClick={() => setEdit((edit) => !edit)}
+					onClick={editControls}
 				>
-					<Edit className='!text-xl' />
+					{!edit ? <Edit className='!text-xl' /> : <FaCheck className='!text-xl' />}
 				</IconButton>
 			</div>
 			{edit ? (
-				<EditControls controls={controls} info={info} enabled={enabled} />
+				<EditControls controls={controls} info={info} setContainer={setContainer} />
 			) : (
 				<>
-					<div className='w-full flex flex-row flex-wrap justify-between'>
-						{controlBasic.map((boardcontrol, index) =>
-							boardcontrol.type === 'switch' ? (
-								<div
-									key={index}
-									className='w-1/4 flex flex-row justify-center items-center text-center my-3'
-								>
-									<label>
-										<b className='mr-2'>{boardcontrol.name}</b>
-									</label>
-									<label className='inline-flex items-center cursor-pointer'>
-										<input
-											disabled={!enabled}
-											type='checkbox'
-											checked={!!controlBasic[boardcontrol.field]}
-											id={boardcontrol.field}
-											onClick={() => toggleCheck(boardcontrol.field)}
-											className='sr-only peer'
-										/>
-										<div className="relative w-14 h-7 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-									</label>
-								</div>
-							) : (
-								<div key={index} className='w-1/4 text-center my-3'>
-									<label>
-										<b className='mr-2'>{boardcontrol.name}</b>
-									</label>
-									<div className='flex flex-row justify-center'>
-										{Array.from({ length: 4 }, (_, i) => (
-											<span
-												className={`${
-													i + 1 === controlBasic[boardcontrol.field]
-														? 'bg-blue-600'
-														: 'bg-slate-400'
-												} mx-2 text-white rounded-[50%] w-[28px] h-[27px] flex pl-[10px] pt-[3px] cursor-pointer`}
-												key={i}
-												onClick={() => setCircleValue(boardcontrol.field, i + 1)}
-											>
-												{i + 1}
-											</span>
-										))}
-									</div>
-								</div>
-							)
-						)}
+					<div className='grid grid-cols-4 gap-3'>
+						{controlBasic.map((boardcontrol, index) => (
+							<div key={index} className='flex  p-3 rounded-md items-center justify-between bg-gray-300 '>
+								{boardcontrol.type === 'switch' ? (
+									<>
+										<label>
+											<b className='mr-2'>{boardcontrol.name}</b>
+										</label>
+										<label className='inline-flex items-center cursor-pointer'>
+											<input
+												disabled={!enabled}
+												type='checkbox'
+												checked={!!controlBasic[boardcontrol.field]}
+												id={boardcontrol.field}
+												onClick={() => toggleCheck(boardcontrol.field)}
+												className='sr-only peer'
+											/>
+											<div className="relative w-14 h-7 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+										</label>
+									</>
+								) : (
+									<>
+										<label>
+											<b className='mr-2'>{boardcontrol.name}</b>
+										</label>
+										<div className='flex flex-row justify-center'>
+											{Array.from({ length: 4 }, (_, i) => (
+												<span
+													className={`${
+														i + 1 === controlBasic[boardcontrol.field]
+															? 'bg-blue-600'
+															: 'bg-slate-400'
+													} mx-2 text-white rounded-[50%] w-[28px] h-[27px] flex pl-[10px] pt-[3px] cursor-pointer`}
+													key={i}
+													onClick={() => setCircleValue(boardcontrol.field, i + 1)}
+												>
+													{i + 1}
+												</span>
+											))}
+										</div>
+									</>
+								)}
+							</div>
+						))}
 					</div>
-					<div className='w-full flex flex-row flex-wrap justify-between'>
-						<Accordion
-							// key={groupMenu.id}
-							// onChange={handleAccordionChange(groupMenu.id)}
-							className='!w-full !shadow-none border-2 border-solid border-white'
-						>
+					<div className='w-full flex mt-4'>
+						<Accordion className='!w-full !shadow-none border-2 border-solid border-white'>
 							<AccordionSummary
 								expandIcon={<ExpandMoreIcon />}
 								className='!w-full'
 								aria-controls={`panel-content`}
-								// id={`panel${groupMenu.id}-header`}
 							>
 								<Typography className='flex items-center justify-center w-full'>Mas</Typography>
 							</AccordionSummary>
 							<AccordionDetails
-								className={`!w-full flex flex-wrap  border-0 border-t-2 border-solid border-white`}
+								className={`!w-full grid grid-cols-4 gap-3 border-0 border-t-2 border-solid border-white`}
 							>
-								{controlAdvance.map((boardcontrol, index) =>
-									boardcontrol.type === 'switch' ? (
-										<div
-											key={index}
-											className='w-1/4 flex flex-row justify-center items-center text-center my-3'
-										>
-											<label>
-												<b className='mr-2'>{boardcontrol.name}</b>
-											</label>
-											<label className='inline-flex items-center cursor-pointer'>
-												<input
-													disabled={!enabled}
-													type='checkbox'
-													checked={!!controlBasic[boardcontrol.field]}
-													id={boardcontrol.field}
-													onClick={() => toggleCheck(boardcontrol.field)}
-													className='sr-only peer'
-												/>
-												<div className="relative w-14 h-7 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
-											</label>
-										</div>
-									) : (
-										<div key={index} className='w-1/4 text-center my-3'>
-											<label>
-												<b className='mr-2'>{boardcontrol.name}</b>
-											</label>
-											<div className='flex flex-row justify-center'>
-												{Array.from({ length: 4 }, (_, i) => (
-													<span
-														className={`${
-															i + 1 === controlBasic[boardcontrol.field]
-																? 'bg-blue-600'
-																: 'bg-slate-400'
-														} mx-2 text-white rounded-[50%] w-[28px] h-[27px] flex pl-[10px] pt-[3px] cursor-pointer`}
-														key={i}
-														onClick={() => setCircleValue(boardcontrol.field, i + 1)}
-													>
-														{i + 1}
-													</span>
-												))}
-											</div>
-										</div>
-									)
-								)}
+								{controlAdvance.map((boardcontrol, index) => (
+									<div
+										key={index}
+										className='flex  p-3 rounded-md items-center justify-between bg-gray-300 '
+									>
+										{boardcontrol.type === 'switch' ? (
+											<>
+												<label>
+													<b className='mr-2'>{boardcontrol.name}</b>
+												</label>
+												<label className='inline-flex items-center cursor-pointer'>
+													<input
+														disabled={!enabled}
+														type='checkbox'
+														checked={!!controlBasic[boardcontrol.field]}
+														id={boardcontrol.field}
+														onClick={() => toggleCheck(boardcontrol.field)}
+														className='sr-only peer'
+													/>
+													<div className="relative w-14 h-7 bg-gray-400 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+												</label>
+											</>
+										) : (
+											<>
+												<label>
+													<b className='mr-2'>{boardcontrol.name}</b>
+												</label>
+												<div className='flex flex-row justify-center'>
+													{Array.from({ length: 4 }, (_, i) => (
+														<span
+															className={`${
+																i + 1 === controlBasic[boardcontrol.field]
+																	? 'bg-blue-600'
+																	: 'bg-slate-400'
+															} mx-2 text-white rounded-[50%] w-[28px] h-[27px] flex pl-[10px] pt-[3px] cursor-pointer`}
+															key={i}
+															onClick={() => setCircleValue(boardcontrol.field, i + 1)}
+														>
+															{i + 1}
+														</span>
+													))}
+												</div>
+											</>
+										)}
+									</div>
+								))}
 							</AccordionDetails>
 						</Accordion>
 					</div>

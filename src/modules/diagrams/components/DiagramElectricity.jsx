@@ -12,20 +12,35 @@ function DiagramElectricity() {
 
 	const [details, setDetails] = useState([])
 
-	const [zoom, setZoom] = useState(3)
-	const changezoom = () => {
-		if (window.innerWidth <= 1024) {
-			setZoom(0)
-			return
-		}
-		if (window.innerWidth <= 1280) {
-			setZoom(1)
-			return
-		}
-		if (window.innerWidth >= 1300) {
-			setZoom(3)
-		}
+	const [zoom, setZoom] = useState(0)
+
+	const scaleSettings = [
+		{ width: 640, scale: 'scale-[0.33]', translate: '-translate-x-44 -translate-y-52' },
+		{ width: 768, scale: 'scale-[0.40]', translate: '-translate-x-44 -translate-y-48' },
+		{ width: 1024, scale: 'scale-[0.53]', translate: '-translate-x-40 -translate-y-48' },
+		{ width: 1280, scale: 'scale-[0.67]', translate: '-translate-x-36 -translate-y-36' },
+		{ width: 1366, scale: 'scale-[0.71]', translate: '-translate-x-36 -translate-y-28' },
+		{ width: 1440, scale: 'scale-[0.75]', translate: '-translate-x-32 -translate-y-24' },
+		{ width: 1600, scale: 'scale-[0.83]', translate: '-translate-x-24 -translate-y-16' },
+		{ width: 1920, scale: 'scale-[1.00]', translate: ' ' },
+		{ width: 2560, scale: 'scale-[1.33]', translate: 'translate-x-72 translate-y-40' },
+		{ width: 3840, scale: 'scale-[2.00]', translate: 'translate-x-40 translate-y-40' },
+		{ width: Infinity, scale: 'scale-[2.00]', translate: 'translate-x-40 translate-y-40' },
+	]
+
+	const changeZoom = () => {
+		const matchedSetting = scaleSettings.find((setting) => window.innerWidth <= setting.width)
+		const matchedIndex = scaleSettings.indexOf(matchedSetting)
+
+		setZoom(matchedIndex)
 	}
+
+	useEffect(() => {
+		window.addEventListener('resize', changeZoom)
+		changeZoom() // Llama inicialmente para establecer el valor correcto según la resolución actual
+
+		return () => window.removeEventListener('resize', changeZoom)
+	}, [])
 
 	useEffect(() => {
 		const detail = getDataDetail(dataElectricity)
@@ -41,7 +56,6 @@ function DiagramElectricity() {
 			draw(dataElectricity, canvas, context)
 			draw_line(dataElectricity, context, 1)
 			textosAdd(dataElectricity, context)
-			changezoom()
 		}
 	}, [canvas, darkMode])
 
@@ -63,17 +77,9 @@ function DiagramElectricity() {
 			clearInterval(intervalId)
 		}
 	}, [canvas])
-	const scale = ['scale-[0.52]', 'scale-[0.65]', 'scale-[0.75]', ' ']
 
-	const traslate = [
-		'-translate-x-40 -translate-y-52',
-		'-translate-x-36 -translate-y-36',
-		'-translate-x-28 -translate-y-24',
-		' ',
-	]
-	console.log(zoom)
 	return (
-		<div id='div_canvas' className={`${scale[zoom]} ${traslate[zoom]} `}>
+		<div id='div_canvas' className={`${scaleSettings[zoom].scale} ${scaleSettings[zoom].translate} `}>
 			<canvas ref={canvasRef} id='canvas' className='z-40'></canvas>
 			{details.map((detail, index) => (
 				<DetailMeter key={index} position={detail.position} data={detail.data} />

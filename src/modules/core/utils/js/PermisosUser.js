@@ -1,6 +1,6 @@
 export const userPermisos = [
 	{ id: 1, path: '/map', status: 1 },
-	{ id: 2, path: '/Alert', status: 0 },
+	{ id: 2, path: '/Alert', status: 1 },
 	{ id: 3, path: '/Diagram', status: 1 },
 	{ id: 4, path: '/tabs', status: 1 },
 	{ id: 5, path: '/config/security', status: 1 },

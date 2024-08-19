@@ -10,7 +10,7 @@ import {
 	ListItem,
 } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { menus2 } from '../../utils/DataMenu/menus'
+import { menus } from '../../utils/DataMenu/menus'
 import MenuItems from './components/MenuItems'
 import Swal from 'sweetalert2'
 import { MainContext } from '../../../../context/MainContext'
