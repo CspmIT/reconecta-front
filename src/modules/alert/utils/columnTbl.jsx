@@ -18,7 +18,7 @@ export const columnsCriticos = [
 	{
 		header: 'Nombre',
 		accessorKey: 'Name',
-		muiFilterTextFieldProps: { placeholder: 'Name' },
+		muiFilterTextFieldProps: { placeholder: 'Nombre' },
 	},
 	{
 		header: 'Evento',
