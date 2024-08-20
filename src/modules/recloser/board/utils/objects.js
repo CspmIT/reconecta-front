@@ -1,16 +1,16 @@
 export const boardStatus = [
-	{ id: 1, field: 'Alarm', name: 'Alarma' },
-	{ id: 2, field: 'Alert', name: 'Alerta' },
-	{ id: 3, field: 'MalFunction', name: 'Mal Función' },
-	{ id: 4, field: 'Block', name: 'Bloqueo' },
+	{ id: 1, field: 'alarm', name: 'Alarma' },
+	{ id: 2, field: 'advr', name: 'Alerta' },
+	{ id: 3, field: 'fail', name: 'Mal Función' },
+	{ id: 4, field: 'blck', name: 'Bloqueo' },
 ]
 
 export const boardFields = [
-	{ id: 1, field: 'Name', name: 'Nombre' },
-	{ id: 2, field: 'Nro_recloser', name: 'Número' },
-	{ id: 3, field: 'Nro_Serie', name: 'Nro de serie' },
-	{ id: 4, field: 'Alim', name: 'Alimentación' },
-	{ id: 5, field: 'Mod', name: 'MODO' },
+	{ id: 1, field: 'name', name: 'Nombre' },
+	{ id: 2, field: 'num_recloser', name: 'Número' },
+	{ id: 3, field: 'serial', name: 'Nro de serie' },
+	{ id: 4, field: 'brand', name: 'Fabricante' },
+	{ id: 5, field: 'ac', name: 'Alimentación' },
 ]
 
 export const boardControls = [

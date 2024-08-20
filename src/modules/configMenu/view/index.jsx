@@ -15,29 +15,39 @@ function ConfigMenu() {
 	const navigate = useNavigate()
 
 	const editUser = (data) => {
-		setTabs((prevTabs) => [
-			...prevTabs,
-			{
-				name: 'Edicion Menu Usuario',
-				id: data.id,
-				link: '/userEdit',
-				component: <EditMenu data={data} permission={userPermission} />,
-			},
-		])
-		setTabCurrent(tabs.length)
+		const existingTabIndex = tabs.findIndex((tab) => tab.name === `Edicion Menu de:${data.last_name}`)
+		if (existingTabIndex !== -1) {
+			setTabCurrent(existingTabIndex)
+		} else {
+			setTabs((prevTabs) => [
+				...prevTabs,
+				{
+					name: `Edicion Menu de:${data.last_name}`,
+					id: data.id,
+					link: '/userEdit',
+					component: <EditMenu data={data} permission={userPermission} />,
+				},
+			])
+			setTabCurrent(tabs.length)
+		}
 		navigate('/tabs')
 	}
 	const editProfile = (data) => {
-		setTabs((prevTabs) => [
-			...prevTabs,
-			{
-				name: 'Edicion Menu Perfil',
-				id: data.id,
-				link: '/userEdit',
-				component: <EditMenu data={data} permission={profilePermission} />,
-			},
-		])
-		setTabCurrent(tabs.length)
+		const existingTabIndex = tabs.findIndex((tab) => tab.name === `Edicion Menu Perfil ${data.name}`)
+		if (existingTabIndex !== -1) {
+			setTabCurrent(existingTabIndex)
+		} else {
+			setTabs((prevTabs) => [
+				...prevTabs,
+				{
+					name: `Edicion Menu Perfil ${data.name}`,
+					id: data.id,
+					link: '/userEdit',
+					component: <EditMenu data={data} permission={profilePermission} />,
+				},
+			])
+			setTabCurrent(tabs.length)
+		}
 		navigate('/tabs')
 	}
 

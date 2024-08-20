@@ -3,23 +3,27 @@ import TableCustom from '../../../../components/TableCustom'
 import { columns } from '../../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { recloser } from '../../../recloser/board/utils/objects'
+// import { recloser } from '../../../recloser/board/utils/objects'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
+import { request } from '../../../../utils/js/request'
 
 function TableRecloser({ ...props }) {
 	const [reclosers, setReclosers] = useState([])
 	const navigate = useNavigate()
-	const getdisplay = () => {
-		setReclosers([...recloser])
+	const getdisplay = async () => {
+		const recloser = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/getAllReclosers`, 'GET')
+		setReclosers([...recloser.data])
 	}
 
 	const changeAlarm = (Nro_Serie) => {
 		setReclosers((prevReclosers) =>
 			prevReclosers.map((recloser) =>
-				recloser.Nro_Serie === Nro_Serie ? { ...recloser, alarm_recloser: !recloser.alarm_recloser } : recloser
+				recloser.serial === Nro_Serie
+					? { ...recloser, status_alarm_recloser: !recloser.status_alarm_recloser }
+					: recloser
 			)
 		)
 	}

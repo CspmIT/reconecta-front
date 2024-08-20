@@ -66,7 +66,7 @@ function TableAnalyzer({ ...props }) {
 					borderRadius: '0.75rem',
 				}}
 				btnCustomToolbar={
-					<IconButton id='basic-button' onClick={() => changeView('networkAnalyzer')}>
+					<IconButton id='basic-button' onClick={() => changeView('netAnalyzer')}>
 						<Add />
 					</IconButton>
 				}

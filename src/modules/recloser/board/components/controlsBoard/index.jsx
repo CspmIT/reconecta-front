@@ -44,9 +44,9 @@ const ControlsBoard = ({ info }) => {
 		}
 	}
 	useEffect(() => {
-		if (Object.keys(info).length) {
-			setControlBasic(controls[info.brand][info.version].basic)
-			setControlAdvance(controls[info.brand][info.version].advance)
+		if (info) {
+			setControlBasic(controls[info.recloser.brand][info.recloser.brand == 'NOJA' ? 'RC_10' : 'RC_01'].basic)
+			setControlAdvance(controls[info.recloser.brand][info.recloser.brand == 'NOJA' ? 'RC_10' : 'RC_01'].advance)
 		}
 	}, [info])
 

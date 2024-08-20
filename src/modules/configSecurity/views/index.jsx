@@ -11,16 +11,22 @@ function ConfigSecurity() {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
 	const navigate = useNavigate()
 	const editUserRecloser = (data) => {
-		setTabs((prevTabs) => [
-			...prevTabs,
-			{
-				name: 'Edicion Usuario de Reconecta',
-				id: data.id,
-				link: '/editUserRecloser',
-				component: <EditUserRecloser data={data} />,
-			},
-		])
-		setTabCurrent(tabs.length)
+		const existingTabIndex = tabs.findIndex((tab) => tab.name === `Edicion de: ${data.last_name}`)
+		if (existingTabIndex !== -1) {
+			setTabCurrent(existingTabIndex)
+		} else {
+			setTabs((prevTabs) => [
+				...prevTabs,
+				{
+					name: `Edicion de: ${data.last_name}`,
+					id: data.id,
+					link: '/editUserRecloser',
+					component: <EditUserRecloser data={data} />,
+				},
+			])
+
+			setTabCurrent(tabs.length)
+		}
 		navigate('/tabs')
 	}
 

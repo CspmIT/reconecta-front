@@ -11,20 +11,26 @@ import ManeuverBoard from '../maneuverBoard'
 import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
-import { recloser } from '../../utils/objects'
-import { Edit } from '@mui/icons-material'
+import { request } from '../../../../../utils/js/request'
 
 const DataBoard = () => {
 	const [selectedCardId, setSelectedCardId] = useState(null)
-	const [info, setInfo] = useState([])
+	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
 	const handleCardSelect = (id) => {
 		setSelectedCardId(id)
 	}
 	const { tabCurrent, tabs } = useContext(MainContext)
-
 	const [data] = useState(tabs[tabCurrent] || null)
+
+	const getDataRecloser = async (id) => {
+		const recloser = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/getDataRecloser?id=${id}`, 'GET')
+		console.log(recloser)
+		setInfo(recloser.data)
+	}
+
 	useEffect(() => {
+		console.log(data)
 		if (!data) {
 			Swal.fire({
 				title: 'Atención!',
@@ -33,13 +39,13 @@ const DataBoard = () => {
 			})
 			navigate('/Home')
 		} else {
-			setInfo(recloser.filter((item) => item.id == data.id)[0])
+			getDataRecloser(data.id)
 		}
 	}, [data])
 	const { setInfoNav } = useContext(MainContext)
 	const editRecloser = (info) => {
 		setInfoNav([info])
-		navigate('/Abm/recloser/' + info.id)
+		navigate('/Abm/recloser/' + info.recloser.id)
 	}
 	return (
 		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
