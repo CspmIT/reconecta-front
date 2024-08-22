@@ -9,7 +9,7 @@ const ManeuverBoard = () => {
 		<div className='w-full'>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TableCustom
-					data={rowManeuver}
+					data={[]}
 					columns={columnManeuver}
 					density='comfortable'
 					header={{
