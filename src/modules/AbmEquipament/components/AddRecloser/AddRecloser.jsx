@@ -1,26 +1,46 @@
 import { ListSubheader, MenuItem, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
+import { getRecloser } from './actions'
 
-function AddRecloser({ register, errors, setValue }) {
+function AddRecloser({ register, errors, setValue, dataEdit }) {
 	const [nameVersion, setnameVersion] = useState('')
+	const [info, setInfo] = useState([])
+	const [versionSelected, setVersionSelected] = useState('')
 	const versiones = [
-		{ id: 1, recloser: 'NOJA', version: '01' },
-		{ id: 2, recloser: 'NOJA', version: '10' },
-		{ id: 3, recloser: 'COOPER', version: '4' },
-		{ id: 4, recloser: 'COOPER', version: '5' },
-		{ id: 5, recloser: 'COOPER', version: '6' },
-		{ id: 6, recloser: 'ABM', version: '1' },
+		{ id: 1, brand: 'NOJA', version: 'RC_01' },
+		{ id: 2, brand: 'NOJA', version: 'RC_10' },
+		{ id: 3, brand: 'COOPER', version: 'f4' },
+		{ id: 4, brand: 'COOPER', version: 'f5' },
+		{ id: 5, brand: 'COOPER', version: 'f6' },
+		{ id: 6, brand: 'ABM', version: '1' },
 	]
 	const changeVersion = (value) => {
-		const version = versiones.find((item) => item.id == value)
-		setValue('name_version', version?.recloser || '')
-		setValue('version', version?.id || '')
-		setnameVersion(version?.recloser || '')
+		const version = versiones.find((item) => item.version == value)
+		setValue('version', value)
+		setValue('brand', version?.brand || '')
+		setnameVersion(version?.brand || '')
+		setVersionSelected(value)
 	}
 	const [erroresStatus, setErroresStatus] = useState(errors)
 	useEffect(() => {
 		setErroresStatus(errors)
 	}, [errors])
+	useEffect(() => {
+		if (dataEdit) {
+			setInfo(dataEdit)
+		}
+	}, [dataEdit])
+
+	useEffect(() => {
+		if (info.length > 0) {
+			for (const item of Object.keys(info[0])) {
+				setValue(item, info[0][item])
+				if (item === 'version') {
+					changeVersion(info[0][item])
+				}
+			}
+		}
+	}, [info])
 
 	return (
 		<>
@@ -30,12 +50,13 @@ function AddRecloser({ register, errors, setValue }) {
 			<div className='w-full mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3'>
 				<div className='w-full'>
 					<TextField
-						error={erroresStatus.nro_serie ? true : false}
+						error={erroresStatus.Nro_Serie ? true : false}
 						type='text'
 						label='Nro Serie'
-						{...register('nro_serie', { required: 'El campo es requerido' })}
+						{...register('Nro_Serie', { required: 'El campo es requerido' })}
 						className='w-full'
-						helperText={erroresStatus.nro_serie && erroresStatus.nro_serie.message}
+						helperText={erroresStatus.Nro_Serie && erroresStatus.Nro_Serie.message}
+						defaultValue={info[0]?.Nro_Serie || ''}
 					/>
 				</div>
 				<div className='w-full'>
@@ -43,9 +64,10 @@ function AddRecloser({ register, errors, setValue }) {
 						type='text'
 						label='Nombre Version'
 						disabled={true}
-						id='name_version'
-						{...register('name_version')}
+						id='brand'
+						{...register('brand')}
 						className={`w-1/2 !text-black ${nameVersion == '' ? '!hidden' : ''}`}
+						defaultValue={info[0]?.brand || ''}
 					/>
 					<TextField
 						error={erroresStatus.version ? true : false}
@@ -56,22 +78,22 @@ function AddRecloser({ register, errors, setValue }) {
 							required: 'El campo es requerido',
 							onChange: (e) => changeVersion(e.target.value),
 						})}
-						className={`${nameVersion == '' ? 'w-full' : 'w-1/2'}`}
+						className={`${nameVersion === '' ? 'w-full' : 'w-1/2'}`}
 						helperText={erroresStatus.version && erroresStatus.version.message}
-						defaultValue={''}
+						value={versionSelected}
 					>
 						<MenuItem value=''>
 							<em>Versiones</em>
 						</MenuItem>
 						<ListSubheader>NOJA</ListSubheader>
-						<MenuItem value={1}>01</MenuItem>
-						<MenuItem value={2}>10</MenuItem>
+						<MenuItem value={'RC_01'}>RC_01</MenuItem>
+						<MenuItem value={'RC_10'}>RC_10</MenuItem>
 						<ListSubheader>COOPER</ListSubheader>
-						<MenuItem value={3}>4</MenuItem>
-						<MenuItem value={4}>5</MenuItem>
-						<MenuItem value={5}>6</MenuItem>
+						<MenuItem value={'f4'}>f4</MenuItem>
+						<MenuItem value={'f5'}>f5</MenuItem>
+						<MenuItem value={'f6'}>f6</MenuItem>
 						<ListSubheader>ABM</ListSubheader>
-						<MenuItem value={6}>1</MenuItem>
+						<MenuItem value={'1'}>1</MenuItem>
 					</TextField>
 				</div>
 				<div className='w-full'>

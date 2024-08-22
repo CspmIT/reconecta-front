@@ -1,49 +1,54 @@
 {
-  "build": {
-    "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist"
-  },
-  "package": {
-    "productName": "reconecta-desktop",
-    "version": "0.0.0"
-  },
-  "tauri": {
-    "allowlist": {
-      "dialog": {
-        "all": true
-      },
-      "shell": {
-        "all": false,
-        "open": true
-      }
-    },
-    "windows": [
-      
-      {
-        "title": "reconecta-desktop",
-        "width": 800,
-        "height": 600,
-        "minWidth": 800,
-        "minHeight": 600,
-        "resizable": true
-      }
-    ],
-    "security": {
-      "csp": null
-    },
-    "bundle": {
-      "active": true,
-      "targets": "all",
-      "identifier": "com.tauri.dev",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ]
-    }
-  }
+	"build": {
+		"beforeDevCommand": "npm run dev",
+		"beforeBuildCommand": "npm run build",
+		"devPath": "http://localhost:1420",
+		"distDir": "../dist"
+	},
+	"package": {
+		"productName": "Reconecta",
+		"version": "1.0.0"
+	},
+	"tauri": {
+		"allowlist": {
+			"dialog": {
+				"all": true
+			},
+			"shell": {
+				"all": false,
+				"open": true
+			}
+		},
+		"windows": [
+			{
+				"title": "Reconecta",
+				"width": 1024,
+				"height": 768,
+				"minWidth": 1024,
+				"minHeight": 600,
+				"resizable": true
+			}
+		],
+		"security": {
+			"csp": null
+		},
+		"updater": {
+			"active": true,
+			"endpoints": ["https://api.github.com/repos/CspmIT/Reconecta_front/releases/latest"],
+			"dialog": true,
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEEyQjU2ODZCMTA2M0EzRDQKUldUVW8yTVFhMmkxb3V3WFdoaWpsOTZ0NzdSWHA2eUlrQmpHOUxrb2hxVlhKL1YxVzhHSDh1SVkK"
+		},
+		"bundle": {
+			"active": true,
+			"targets": "all",
+			"identifier": "com.cooptech.reconecta",
+			"icon": [
+				"icons/32x32.png",
+				"icons/128x128.png",
+				"icons/128x128@2x.png",
+				"icons/icon.icns",
+				"icons/icon.ico"
+			]
+		}
+	}
 }

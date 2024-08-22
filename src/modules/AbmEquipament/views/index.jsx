@@ -13,11 +13,13 @@ import AddSubStationRural from '../components/AddSubStationRural/AddSubStationRu
 import AddMeter from '../components/AddMeter/AddMeter'
 import AddSubStationUrban from '../components/AddSubStationUrban'
 import AddNetAnalyzer from '../components/AddNetAnalyzer/AddNetAnalyzer'
+import { getRecloser } from '../components/AddRecloser/actions'
 
 function AbmEquipament() {
-	const { name } = useParams(['name'])
+	const { name, id } = useParams()
 	const [listMarkers, setListMarkers] = useState([])
 	const [selectMarkers, setSelectMarkers] = useState([])
+	const [dataEdit, setDataEdit] = useState([])
 	const {
 		register,
 		setValue,
@@ -28,7 +30,6 @@ function AbmEquipament() {
 
 	const onSubmit = async (data) => {
 		try {
-			console.log(data)
 			Swal.fire({ title: 'Perfecto!', icon: 'success', text: 'Recloser agregado correctamente' })
 		} catch (e) {
 			console.log(e)
@@ -54,6 +55,7 @@ function AbmEquipament() {
 		setListMarkers(markersActive)
 	}
 	useEffect(() => {
+		if (name === 'netAnalyzer') return
 		if (selectMarkers?.lat) {
 			clearErrors('lng_marker')
 			clearErrors('lat_marker')
@@ -64,18 +66,69 @@ function AbmEquipament() {
 			setValue('lat_marker', null)
 		}
 	}, [selectMarkers])
+	const getDataEdit = async (name, id) => {
+		switch (name) {
+			case 'recloser':
+				setDataEdit(await getRecloser(id))
+				break
 
+			default:
+				break
+		}
+	}
+	useEffect(() => {
+		if (id) {
+			getDataEdit(name, id)
+		}
+	}, [])
 	return (
 		<CardCustom className={' w-full rounded-md text-black'}>
 			<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
 				<div className='w-full flex-row gap-3 mb-5'>
-					<AddEntity register={register} errors={errors} setValue={setValue} addMarker={addMarker} enableMarkers={enableMarkers} setSelectMarkers={setSelectMarkers} />
-					<AddMarkerMap register={register} errors={errors} setValue={setValue} selectMarkers={selectMarkers} setSelectMarkers={setSelectMarkers} listMarkers={listMarkers} />
-					{name == 'recloser' && <AddRecloser register={register} errors={errors} setValue={setValue} />}
+					{name !== 'netAnalyzer' && (
+						<>
+							<AddEntity
+								register={register}
+								errors={errors}
+								setValue={setValue}
+								addMarker={addMarker}
+								dataEdit={dataEdit}
+								enableMarkers={enableMarkers}
+								setSelectMarkers={setSelectMarkers}
+							/>
+							<AddMarkerMap
+								register={register}
+								errors={errors}
+								setValue={setValue}
+								selectMarkers={selectMarkers}
+								setSelectMarkers={setSelectMarkers}
+								listMarkers={listMarkers}
+							/>
+						</>
+					)}
+					{name == 'recloser' && (
+						<AddRecloser register={register} errors={errors} dataEdit={dataEdit} setValue={setValue} />
+					)}
 					{name == 'meter' && <AddMeter register={register} errors={errors} setValue={setValue} />}
-					{name == 'subStationUrban' && <AddSubStationUrban register={register} errors={errors} setValue={setValue} clearErrors={clearErrors} />}
-					{name == 'subStationRural' && <AddSubStationRural register={register} errors={errors} setValue={setValue} clearErrors={clearErrors} />}
-					{name == 'netAnalyzer' && <AddNetAnalyzer register={register} errors={errors} setValue={setValue} />}
+					{name == 'subStationUrban' && (
+						<AddSubStationUrban
+							register={register}
+							errors={errors}
+							setValue={setValue}
+							clearErrors={clearErrors}
+						/>
+					)}
+					{name == 'subStationRural' && (
+						<AddSubStationRural
+							register={register}
+							errors={errors}
+							setValue={setValue}
+							clearErrors={clearErrors}
+						/>
+					)}
+					{name == 'netAnalyzer' && (
+						<AddNetAnalyzer register={register} errors={errors} setValue={setValue} />
+					)}
 					<div className='w-full flex justify-center mt-5'>
 						<Button type='submit' variant='contained'>
 							Guardar

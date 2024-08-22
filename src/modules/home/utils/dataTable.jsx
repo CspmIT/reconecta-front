@@ -9,15 +9,12 @@ const TypeRecloser = {
 	2: 'Medidor',
 	3: 'Sub-Estación',
 	4: 'Analizador de red',
+	5: 'Sub-Estación Rural',
 }
 
-const edit = (row) => {
-	console.log(row.id)
-}
+const edit = (row) => {}
 
-const deleteRecloser = (row) => {
-	console.log(row.id)
-}
+const deleteRecloser = (row) => {}
 
 export const columns = (changeAlarm, navigate, newTab) => [
 	{
@@ -62,7 +59,8 @@ export const columns = (changeAlarm, navigate, newTab) => [
 		],
 		filterFn: (row, id, filterValue) => {
 			const filter = storage.get('filter')
-			const filterType_recloser = filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
+			const filterType_recloser =
+				filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
 			if (filterValue !== filterType_recloser) {
 				if (filter?.length > 0) {
 					filter.splice(filter.indexOf(filterType_recloser), 1)
@@ -102,7 +100,15 @@ export const columns = (changeAlarm, navigate, newTab) => [
 		enableColumnFilter: false,
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
-			return <div className='flex items-center w-full'>{row.original?.online > 0 ? <CheckCircleSharp color='success' className='!text-3xl' /> : <ErrorSharp color='warning' className='!text-3xl' />}</div>
+			return (
+				<div className='flex items-center w-full'>
+					{row.original?.online > 0 ? (
+						<CheckCircleSharp color='success' className='!text-3xl' />
+					) : (
+						<ErrorSharp color='warning' className='!text-3xl' />
+					)}
+				</div>
+			)
 		},
 	},
 	{
@@ -114,7 +120,13 @@ export const columns = (changeAlarm, navigate, newTab) => [
 		Cell: ({ row }) => {
 			return (
 				<FormControlLabel
-					control={<Switch checked={row.original?.alarm_recloser > 0 ? true : false} onChange={() => changeAlarm(row.original.Nro_Serie)} name={row.original.name} />}
+					control={
+						<Switch
+							checked={row.original?.alarm_recloser > 0 ? true : false}
+							onChange={() => changeAlarm(row.original.Nro_Serie)}
+							name={row.original.name}
+						/>
+					}
 					label={row.original?.alarm_recloser ? 'Activada' : 'Desactivada'}
 				/>
 			)
@@ -129,7 +141,10 @@ export const columns = (changeAlarm, navigate, newTab) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			return (
-				<IconButton onClick={() => newTab(row.original)} className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
+				<IconButton
+					onClick={() => newTab(row.original)}
+					className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
+				>
 					<BiWindowOpen />
 				</IconButton>
 			)

@@ -1,7 +1,27 @@
 import { storage } from '../../../../storage/storage'
 import { datosInflux } from '../objects/datosInflux'
+export const calcScale = (data, elem) => {
+	const arrayLineas = data.Lineas
+	let maxX = 0
+	let maxY = 0
 
-export const draw = (data, elem, context) => {
+	for (const linea of arrayLineas) {
+		for (let j = 0; j < linea.points.length; j += 2) {
+			maxX = Math.max(maxX, linea.points[j])
+			maxY = Math.max(maxY, linea.points[j + 1])
+		}
+	}
+
+	elem.width = maxX + 100
+	elem.height = maxY + 250
+	if (elem.width > window.innerWidth * 0.666) {
+		const scale = ((elem.width * 100) / (window.innerWidth * 0.666) - 100) / 100
+		return parseFloat(scale.toFixed(2))
+	}
+
+	return 1
+}
+export const draw = async (data, elem, context) => {
 	const arrayObjetos = data.Objetos
 	const arrayLineas = data.Lineas
 	let maxX = 0
@@ -18,13 +38,19 @@ export const draw = (data, elem, context) => {
 	elem.height = maxY + 250
 	context.clearRect(0, 0, elem.width, elem.height)
 	const darkMode = storage.get('dark')
-	arrayObjetos.forEach((item) => {
+
+	// const isTauri = typeof window.__TAURI_IPC__ !== 'undefined'
+
+	for (const item of arrayObjetos) {
 		if (item.type === 'img') {
-			const img = new Image()
-			img.src =
+			let imgPath
+			imgPath =
 				item.color_object === 'red' && item.pic === 'aperturaCFlecha.png'
-					? 'src/modules/diagrams/utils/asset/img/electricity/aperturaCFlecha.png'
-					: `src/modules/diagrams/utils/asset/img/electricity/${item.pic}`
+					? 'assets/img/electricity/aperturaCFlecha.png'
+					: `assets/img/electricity/${item.pic}`
+
+			const img = new Image()
+			img.src = imgPath
 
 			img.onload = () => {
 				if (!darkMode) {
@@ -36,7 +62,7 @@ export const draw = (data, elem, context) => {
 				context.filter = 'none'
 			}
 		}
-	})
+	}
 }
 
 export const select_color = (color) => {

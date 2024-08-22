@@ -12,6 +12,7 @@ import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import { recloser } from '../../utils/objects'
+import { Edit } from '@mui/icons-material'
 
 const DataBoard = () => {
 	const [selectedCardId, setSelectedCardId] = useState(null)
@@ -35,7 +36,11 @@ const DataBoard = () => {
 			setInfo(recloser.filter((item) => item.id == data.id)[0])
 		}
 	}, [data])
-
+	const { setInfoNav } = useContext(MainContext)
+	const editRecloser = (info) => {
+		setInfoNav([info])
+		navigate('/Abm/recloser/' + info.id)
+	}
 	return (
 		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
 			<div className='flex flex-row relative justify-between mb-8'>
@@ -47,7 +52,7 @@ const DataBoard = () => {
 						<FaRedo />
 					</Button>
 					<Button
-						onClick={() => navigate('/AbmRecloser/' + info.id)}
+						onClick={() => editRecloser(info)}
 						className='!ml-3'
 						color='warning'
 						title='Editar Reconectador'

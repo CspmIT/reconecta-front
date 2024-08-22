@@ -22,16 +22,18 @@ import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
-import { InsertChart, NotificationAdd } from '@mui/icons-material'
+import { InsertChart, NotificationAdd, Security } from '@mui/icons-material'
 import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
+import { BsFillMenuButtonWideFill } from 'react-icons/bs'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
 	const { tabActive, tabs, infoNav } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
-	const location = useLocation().pathname.split('/')[1] || '/DashBoard'
+	const locationTAbs = useLocation().pathname.split('/')[1] || '/DashBoard'
+	const location = useLocation().pathname
 	const [buttonActive, setButtonActive] = useState(location)
 	const handleDrawerOpen = () => {
 		setOpen(true)
@@ -51,60 +53,37 @@ function NavBarCustom() {
 		}
 	}, [])
 	const menuSideBar = [
-		{ name: 'Alertas', link: 'Alert', icon: <RiAlertFill className=' text-3xl' /> },
-		{ name: 'Dashboard', link: 'Home', icon: <RiDashboardFill className=' text-3xl' /> },
-		// {
-		// 	name: 'Tablero',
-		// 	link: 'Board',
-		// 	icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 	submenus: [
-		// 		{
-		// 			name: 'Perfil2',
-		// 			link: 'config/profile',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 		{
-		// 			name: 'Cuenta2',
-		// 			link: 'config/account',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 	],
-		// },
+		{ name: 'Alertas', link: '/Alert', icon: <RiAlertFill className=' text-3xl' /> },
+		{ name: 'Dashboard', link: '/Home', icon: <RiDashboardFill className=' text-3xl' /> },
 		{
 			name: 'Mapa',
-			link: 'map',
+			link: '/map',
 			icon: <FaMapMarkedAlt className=' text-3xl' />,
 		},
 		{
 			name: 'Diagram',
-			link: 'Diagram',
+			link: '/Diagram',
 			icon: <FaProjectDiagram className=' text-3xl' />,
 		},
-		// {
-		// 	name: 'Notificaciones',
-		// 	link: 'notificaciones',
-		// 	icon: <NotificationAdd className='dark:text-white text-3xl' />,
-		// },
-		// {
-		// 	name: 'Configuración',
-		// 	link: 'config',
-		// 	icon: <FaCogs className='dark:text-white text-3xl' />,
-		// 	submenus: [
-		// 		{
-		// 			name: 'Perfil',
-		// 			link: 'config/profile2',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 		{
-		// 			name: 'Cuenta',
-		// 			link: 'config/account2',
-		// 			icon: <RiRemoteControl2Fill className='dark:text-white text-3xl' />,
-		// 		},
-		// 	],
-		// },
+		{
+			name: 'Configuración',
+			icon: <FaCogs className='dark:text-white text-3xl' />,
+			submenus: [
+				{
+					name: 'Seguridad',
+					link: '/config/security',
+					icon: <Security className='dark:text-white text-2xl my-1' />,
+				},
+				{
+					name: 'Menu',
+					link: '/config/menu',
+					icon: <BsFillMenuButtonWideFill className='dark:text-white text-2xl my-1' />,
+				},
+			],
+		},
 		{
 			name: 'Paginas',
-			link: 'tabs',
+			link: '/tabs',
 			icon: (
 				<Badge badgeContent={tabActive} color='primary'>
 					<PiTabsFill className='dark:text-white text-3xl' />
@@ -113,7 +92,7 @@ function NavBarCustom() {
 		},
 		{
 			name: 'ABM Equipos',
-			link: `Abm/${infoNav}`,
+			link: `/Abm/${infoNav}`,
 			icon: <FaFile className='dark:text-white text-3xl' />,
 		},
 	]
@@ -123,12 +102,12 @@ function NavBarCustom() {
 			setButtonActive('Home')
 		}
 		if (infoNav != '') {
-			setButtonActive('Abm/' + infoNav)
+			setButtonActive('/Abm/' + infoNav)
 		}
-		if (location.includes('Abm') && !infoNav[0]) {
+		if (locationTAbs.includes('Abm') && !infoNav[0]) {
 			navigate('Home')
 		}
-	}, [location])
+	}, [location, locationTAbs])
 
 	const activeButton = (id) => {
 		setButtonActive(id)
@@ -170,10 +149,10 @@ function NavBarCustom() {
 					<Divider />
 					<List>
 						{menuSideBar.map((item, index) => {
-							if (tabs.length == 0 && item.link == 'tabs') {
+							if (tabs.length == 0 && item.link == '/tabs') {
 								return ''
 							}
-							if (item.link == 'Abm/') {
+							if (item.link == '/Abm/') {
 								return ''
 							}
 							return (
@@ -190,7 +169,7 @@ function NavBarCustom() {
 										) : (
 											<Link to={item.link} className={` text-black dark:text-white`}>
 												<ListItemButton
-													className={item.link === 'Alert' ? styles.backgroundAlert : ''}
+													className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 													sx={{
 														minHeight: 48,
 														justifyContent: open ? 'initial' : 'center',

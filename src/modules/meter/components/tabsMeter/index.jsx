@@ -1,5 +1,5 @@
 import { Tab, Tabs } from '@mui/material'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { CustomTabPanel, a11yProps } from './PanelTab'
 
 function TabsMeter({ tabs }) {
@@ -11,14 +11,14 @@ function TabsMeter({ tabs }) {
 		'!border-solid !border-gray-200 !rounded-t-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
 	const classTabStatus = [
 		['!bg-white !border-r-2 !border-t-2 !border-l-2 dark:!bg-zinc-500 '],
-		['!border-b-2 !bg-gray-300 dark:!bg-zinc-700 '],
+		['!border-b-2 !bg-gray-300 dark:!bg-zinc-700 hover:dark:!bg-zinc-500 hover:!bg-zinc-400 '],
 	]
 
 	return (
 		<>
-			<div className={`w-full max-w-[94.5vw] mr-3 !rounded-xl flex flex-col items-center`}>
+			<div className={`w-full mr-3 !rounded-xl flex flex-col items-start`}>
 				<Tabs
-					className='flex w-full '
+					// className='flex w-full'
 					indicatorColor='transparent'
 					value={value}
 					onChange={handleChange}
@@ -28,10 +28,10 @@ function TabsMeter({ tabs }) {
 						return (
 							<Tab
 								key={index}
-								className={`flex-grow  relative !max-w-80 ${
+								className={`flex-grow !mr-1 relative ${
 									classTabStatus[value === index ? 0 : 1]
 								} ${classTabs}`}
-								label={<p className='text-black w-full text-center'>{item.title}</p>}
+								label={<p className='text-black dark:text-white w-full text-center'>{item.title}</p>}
 								{...a11yProps(index)}
 							/>
 						)
