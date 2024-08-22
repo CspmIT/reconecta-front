@@ -10,20 +10,39 @@ const HeaderBoard = ({ info }) => {
 			if (info.online === 0) {
 				setStatusReco(2)
 			} else {
-				setStatusReco(info.status)
+				setStatusReco(info.recloser?.status_recloser)
 			}
 		}
 	}, [info])
 	return (
 		<div className='w-full flex flex-row justify-around items-center'>
 			<div className='w-1/4 px-3'>
-				{boardFields.map((item, i) => (
-					<div className='flex flex-row my-1' key={i}>
-						<h3 className='ml-5'>
-							{item.name}: <b>{info ? info[`${item.field}`] : 'S/D'}</b>
-						</h3>
-					</div>
-				))}
+				{boardFields.map((item, i) => {
+					return (
+						<div className='flex flex-row my-1' key={i}>
+							<h3 className='ml-5'>
+								{info?.recloser[`${item.field}`] ? (
+									<>
+										{item.name}: <b>{info ? info?.recloser[`${item.field}`] : 'S/D'}</b>
+									</>
+								) : (
+									<>
+										{item.name}:
+										{item.field == 'ac' ? (
+											info?.instantaneo[item.field]?.[0].value ? (
+												<b className='text-red-500 text-xl'> Red Electrica</b>
+											) : (
+												<b className='text-green-500 text-xl'> Batería</b>
+											)
+										) : (
+											info?.instantaneo[item.field]?.[0].value
+										)}
+									</>
+								)}
+							</h3>
+						</div>
+					)
+				})}
 			</div>
 			<div className='w-2/4 flex flex-row justify-center'>
 				<div
@@ -46,22 +65,16 @@ const HeaderBoard = ({ info }) => {
 				{boardStatus.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
-							<FaCircle color={info ? (info[`${item.field}`] === 0 ? 'red' : 'black') : 'black'} />
+							<FaCircle
+								color={
+									info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'
+								}
+							/>
 							<h3 className='ml-3'>{item.name}</h3>
 						</div>
 					)
 				})}
 			</div>
-			{/* <div className='w-1/4 flex justify-end items-end flex-col pr-10'>
-				{boardStatus.map((item, i) => {
-					return (
-						<div className='flex flex-row my-1' key={i}>
-							<h3 className='mr-3'>{item.name}</h3>
-							<FaCircle color={info ? (info[`${item.field}`] === 0 ? 'red' : 'black') : 'black'} />
-						</div>
-					)
-				})}
-			</div> */}
 		</div>
 	)
 }

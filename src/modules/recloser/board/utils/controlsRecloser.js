@@ -2,20 +2,20 @@ export const controls = {
 	NOJA: {
 		RC_10: {
 			basic: [
-				{ id: 1, field: 'GRP', name: 'Grupo activo', type: 'circles' },
-				{ id: 2, field: 'PROT', name: 'Protección', type: 'switch' },
-				{ id: 3, field: 'AR', name: 'Recierre', type: 'switch' },
-				{ id: 4, field: 'EF', name: 'Falla a tierra', type: 'switch' },
+				{ id: 1, field: 'grp', name: 'Grupo activo', type: 'circles' },
+				{ id: 2, field: 'prot', name: 'Protección', type: 'switch' },
+				{ id: 3, field: 'ar', name: 'Recierre', type: 'switch' },
+				{ id: 4, field: 'ef', name: 'Falla a tierra', type: 'switch' },
 			],
 			advance: [
-				{ id: 5, field: 'CLP', type: 'switch', name: 'Carga en frío' },
-				{ id: 6, field: 'SEF', type: 'switch', name: 'Falla a tierra sensible' },
-				{ id: 7, field: 'customs', type: 'switch', name: 'Línea energizada ' },
+				{ id: 5, field: 'clp', type: 'switch', name: 'Carga en frío' },
+				{ id: 6, field: 'sef', type: 'switch', name: 'Falla a tierra sensible' },
+				{ id: 7, field: 'll', type: 'switch', name: 'Línea energizada ' },
 				{ id: 8, field: 'customs', type: 'switch', name: 'Bloqueo Carga Viva' },
 				{ id: 9, field: 'customs', type: 'switch', name: 'Cierre Bloqueado por Lógica' },
 				{ id: 10, field: 'customs', type: 'switch', name: 'Modo Secuencia Corta' },
 				{ id: 11, field: 'customs', type: 'switch', name: 'Sub tensión' },
-				{ id: 12, field: 'DR', type: 'switch', name: 'Disparo rápidos' },
+				{ id: 12, field: 'customs', type: 'switch', name: 'Disparo rápidos' },
 				{ id: 13, field: 'customs', type: 'switch', name: 'Sobre tensión' },
 				{ id: 14, field: 'customs', type: 'switch', name: 'Sub frecuencia' },
 				{ id: 15, field: 'customs', type: 'switch', name: 'Sobre frecuencia' },
@@ -38,15 +38,15 @@ export const controls = {
 		},
 		RC_01: {
 			basic: [
-				{ id: 1, field: 'GRP', name: 'Grupo activo', type: 'circles' },
-				{ id: 2, field: 'PROT', name: 'Protección', type: 'switch' },
-				{ id: 3, field: 'AR', name: 'Recierre', type: 'switch' },
-				{ id: 4, field: 'EF', name: 'Falla a tierra', type: 'switch' },
+				{ id: 1, field: 'grp', name: 'Grupo activo', type: 'circles' },
+				{ id: 2, field: 'prot', name: 'Protección', type: 'switch' },
+				{ id: 3, field: 'ar', name: 'Recierre', type: 'switch' },
+				{ id: 4, field: 'ef', name: 'Falla a tierra', type: 'switch' },
 			],
 			advance: [
-				{ id: 6, field: 'SEF', type: 'switch', name: 'Falla a tierra sensible' },
-				{ id: 5, field: 'CLP', type: 'switch', name: 'Carga en frío' },
-				{ id: 7, field: 'customs', type: 'switch', name: 'Línea viva ' },
+				{ id: 6, field: 'sef', type: 'switch', name: 'Falla a tierra sensible' },
+				{ id: 5, field: 'clp', type: 'switch', name: 'Carga en frío' },
+				{ id: 7, field: 'll', type: 'switch', name: 'Línea viva ' },
 				{ id: 8, field: 'customs', type: 'switch', name: 'Sub tensión' },
 				{ id: 8, field: 'customs', type: 'switch', name: 'Sub frecuencia' },
 				{ id: 10, field: 'customs', type: 'switch', name: 'Restauración Automática de Suministro' },
@@ -56,15 +56,15 @@ export const controls = {
 	COOPER: {
 		f5: {
 			basic: [
-				{ id: 1, field: 'GRP', name: 'Grupo activo', type: 'circles' },
-				{ id: 3, field: 'AR', name: 'Recierre', type: 'switch' },
-				{ id: 4, field: 'EF', name: 'Falla a tierra', type: 'switch' },
+				{ id: 1, field: 'grp', name: 'Grupo activo', type: 'circles' },
+				{ id: 3, field: 'ar', name: 'Recierre', type: 'switch' },
+				{ id: 4, field: 'ef', name: 'Falla a tierra', type: 'switch' },
 				{ id: 2, field: 'customs', type: 'switch', name: 'Sobre Corriente' },
 			],
 			advance: [
-				{ id: 6, field: 'SEF', type: 'switch', name: 'Falla a tierra sensible' },
-				{ id: 5, field: 'CLP', type: 'switch', name: 'Carga en frío' },
-				{ id: 7, field: 'customs', type: 'switch', name: 'Línea energizada ' },
+				{ id: 6, field: 'sef', type: 'switch', name: 'Falla a tierra sensible' },
+				{ id: 5, field: 'clp', type: 'switch', name: 'Carga en frío' },
+				{ id: 7, field: 'll', type: 'switch', name: 'Línea energizada ' },
 				{ id: 8, field: 'customs', type: 'switch', name: 'Disparo por Tensión' },
 				{ id: 9, field: 'customs', type: 'switch', name: 'Disparo por Frecuencia' },
 				{ id: 10, field: 'customs', type: 'switch', name: 'Rearmado por tensión-frecuencia' },

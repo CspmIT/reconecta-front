@@ -11,19 +11,23 @@ import ManeuverBoard from '../maneuverBoard'
 import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
-import { recloser } from '../../utils/objects'
-import { Edit } from '@mui/icons-material'
+import { request } from '../../../../../utils/js/request'
 
 const DataBoard = () => {
 	const [selectedCardId, setSelectedCardId] = useState(null)
-	const [info, setInfo] = useState([])
+	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
 	const handleCardSelect = (id) => {
 		setSelectedCardId(id)
 	}
 	const { tabCurrent, tabs } = useContext(MainContext)
-
 	const [data] = useState(tabs[tabCurrent] || null)
+
+	const getDataRecloser = async (id) => {
+		const recloser = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/getDataRecloser?id=${id}`, 'GET')
+		setInfo(recloser.data)
+	}
+
 	useEffect(() => {
 		if (!data) {
 			Swal.fire({
@@ -33,13 +37,13 @@ const DataBoard = () => {
 			})
 			navigate('/Home')
 		} else {
-			setInfo(recloser.filter((item) => item.id == data.id)[0])
+			getDataRecloser(data.id)
 		}
 	}, [data])
 	const { setInfoNav } = useContext(MainContext)
 	const editRecloser = (info) => {
 		setInfoNav([info])
-		navigate('/Abm/recloser/' + info.id)
+		navigate('/Abm/recloser/' + info.recloser.id)
 	}
 	return (
 		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
@@ -70,8 +74,8 @@ const DataBoard = () => {
 			</div>
 			<CardBoard onCardSelect={handleCardSelect} />
 			<div className='p-3'>
-				{selectedCardId === 1 ? <MetrologyBoard info={info} /> : null}
-				{selectedCardId === 2 ? <EventBoard info={info} /> : null}
+				{selectedCardId === 1 ? <MetrologyBoard idRecloser={info.recloser?.id || null} /> : null}
+				{selectedCardId === 2 ? <EventBoard idRecloser={info.recloser?.id || null} /> : null}
 				{selectedCardId === 3 ? <AnalyticsBoard info={info} /> : null}
 				{selectedCardId === 4 ? <ManeuverBoard info={info} /> : null}
 			</div>

@@ -18,20 +18,25 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 			layerControl.addLayer(marker)
 			if (Object.keys(popupData).length <= 1) return
 			const handleMouseClick = () => {
-				setTabs((prevTabs) => [
-					...prevTabs,
-					{
-						name: popupData.name,
-						id: id,
-						link: '/board',
-						component: (
-							<>
-								<Board />
-							</>
-						),
-					},
-				])
-				setTabCurrent(tabs.length)
+				const existingTabIndex = tabs.findIndex((tab) => tab.name === popupData.name)
+				if (existingTabIndex !== -1) {
+					setTabCurrent(existingTabIndex)
+				} else {
+					setTabs((prevTabs) => [
+						...prevTabs,
+						{
+							name: popupData.name,
+							id: id,
+							link: '/board',
+							component: (
+								<>
+									<Board />
+								</>
+							),
+						},
+					])
+					setTabCurrent(tabs.length)
+				}
 				navigate('/tabs')
 			}
 			const handleMouseOver = () => {

@@ -17,7 +17,7 @@ import SubstationRuralBoard from '../../substationRural/views'
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
 	const navigate = useNavigate()
-	const typeEquipment = (key, id) => {
+	const typeEquipment = (key) => {
 		let component
 		switch (key) {
 			case 1:
@@ -41,16 +41,21 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
-		setTabs((prevTabs) => [
-			...prevTabs,
-			{
-				name: data.Name,
-				id: data.id,
-				link: '/board',
-				component: typeEquipment(data.type_recloser, data.id),
-			},
-		])
-		setTabCurrent(tabs.length)
+		const existingTabIndex = tabs.findIndex((tab) => tab.name === data.name)
+		if (existingTabIndex !== -1) {
+			setTabCurrent(existingTabIndex)
+		} else {
+			setTabs((prevTabs) => [
+				...prevTabs,
+				{
+					name: data.name,
+					id: data.id,
+					link: '/board',
+					component: typeEquipment(data.type_recloser),
+				},
+			])
+			setTabCurrent(tabs.length)
+		}
 		navigate('/tabs')
 	}
 	const tabsHome = [
