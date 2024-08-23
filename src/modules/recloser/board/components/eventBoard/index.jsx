@@ -111,6 +111,7 @@ const EventBoard = ({ idRecloser }) => {
 						fontWeight: 'bold',
 					}}
 					toolbarClass={{ background: 'rgb(190 190 190)' }}
+					bodyContent={{ fontSize: '16px' }}
 					body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
 					footer={{ background: 'rgb(190 190 190)' }}
 					ChangeColorRow={ChangeColorRow}
