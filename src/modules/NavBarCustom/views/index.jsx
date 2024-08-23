@@ -11,6 +11,7 @@ import {
 	List,
 	Toolbar,
 	Badge,
+	useMediaQuery
 } from '@mui/material'
 import DropdownImage from '../../core/components/DropdownImage'
 import { Fragment, useContext, useEffect, useRef, useState } from 'react'
@@ -35,6 +36,7 @@ function NavBarCustom() {
 	const locationTAbs = useLocation().pathname.split('/')[1] || '/DashBoard'
 	const location = useLocation().pathname
 	const [buttonActive, setButtonActive] = useState(location)
+	const isMobile = useMediaQuery('(max-width: 600px)');
 	const handleDrawerOpen = () => {
 		setOpen(true)
 	}
@@ -125,6 +127,7 @@ function NavBarCustom() {
 						sx={{
 							marginRight: 5,
 							boxShadow: 'none',
+							...(isMobile && { display: 'none' }),
 							...(open && { display: 'none' }),
 						}}
 					>
@@ -139,15 +142,41 @@ function NavBarCustom() {
 					</div>
 				</Toolbar>
 			</AppBarCustom>
-			<DrawerCustom variant='permanent' open={open} ref={NavBarRef}>
-				<div className='bg-white dark:bg-gray-800 h-full'>
-					<DrawerHeaderCustom>
+			<DrawerCustom variant='permanent' open={open} ref={NavBarRef} sx={{
+				...(isMobile && {
+					position: 'fixed',
+					bottom: 0,
+					width: '100%',
+					height: '10vh',
+					zIndex: 1200,
+					'& .MuiDrawer-paper': {
+						position: 'absolute',
+						bottom: 0,
+						width: '100%',
+						height: '10vh',
+						display: 'flex',
+						flexDirection: 'row',
+						justifyContent: 'space-around',
+						padding: '0',
+					},
+				}),
+			}}>
+				<div className='bg-white dark:bg-gray-800 h-full w-full sm:w-auto'>
+					<DrawerHeaderCustom style={{ display: isMobile ? 'none' : ''}}>
 						<IconButton onClick={handleDrawerClose}>
 							<ChevronLeftIcon className='dark:text-white' />
 						</IconButton>
 					</DrawerHeaderCustom>
 					<Divider />
-					<List>
+					<List sx={{
+						...(isMobile && {
+							display: 'flex',
+							flexDirection: 'row',
+							justifyContent: 'center',
+							width: '100%',
+							padding: 0,
+						}),
+					}}>
 						{menuSideBar.map((item, index) => {
 							if (tabs.length == 0 && item.link == '/tabs') {
 								return ''
@@ -157,7 +186,15 @@ function NavBarCustom() {
 							}
 							return (
 								<Fragment key={index}>
-									<ListItem disablePadding sx={{ display: 'block' }}>
+									<ListItem disablePadding sx={{
+										...(isMobile && {
+											flexGrow: 1,
+											flexBasis: 0,
+											justifyContent: 'center',
+											display: 'flex'
+										}),
+
+									}} >
 										{item.submenus ? (
 											<SubMenuCustom
 												item={item}
@@ -172,16 +209,17 @@ function NavBarCustom() {
 													className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 													sx={{
 														minHeight: 48,
-														justifyContent: open ? 'initial' : 'center',
+														justifyContent: !isMobile && open ? 'initial' : 'center',
 														px: 2.5,
 														py: 1.8,
+
 													}}
 													onClick={() => activeButton(item.link)}
 												>
 													<ListItemIcon
 														sx={{
 															minWidth: 0,
-															mr: open ? 3 : 'auto',
+															mr: !isMobile && open ? 3 : 'auto',
 															justifyContent: 'center',
 															color: buttonActive == item.link ? 'blue' : '',
 														}}
@@ -191,8 +229,9 @@ function NavBarCustom() {
 													<ListItemText
 														primary={item.name}
 														sx={{
-															opacity: open ? 1 : 0,
+															opacity: !isMobile && open ? 1 : 0,
 															color: buttonActive == item.link ? 'blue' : '',
+															display: isMobile ? 'none !important' : 'block'
 														}}
 													/>
 												</ListItemButton>

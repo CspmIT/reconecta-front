@@ -1,10 +1,11 @@
-import { Collapse, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Popper } from '@mui/material'
+import { Collapse, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Popper, useMediaQuery } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
 const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [openSub, setOpenSub] = useState(item.submenus.some((value) => value.link == buttonActive))
+	const isMobile = useMediaQuery('(max-width: 600px)');
 	const handleClose = () => {
 		setAnchorEl(null)
 		setOpenSub(false)
@@ -22,22 +23,31 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 	}, [openSideBar, buttonActive])
 	return (
 		<>
-			<ListItemButton onClick={(evento) => handleOpen(evento)}>
+			<ListItemButton onClick={(evento) => handleOpen(evento)} sx={{
+				minHeight: isMobile ? 60 : 48,
+				justifyContent: isMobile ? 'center' : 'flex-start'
+			}}>
 				<ListItemIcon
-					className={`${
-						item.submenus.some((value) => value.link == buttonActive)
-							? ' !text-blue-500 dark:!text-blue-500'
-							: ''
-					}`}
+					className={`${item.submenus.some((value) => value.link == buttonActive)
+						? ' !text-blue-500 dark:!text-blue-500'
+						: ''
+						}`}
+						sx={{
+							...(isMobile && {
+								minWidth: 'auto !important'
+							})
+						}}
+
 				>
 					{item.icon}
 				</ListItemIcon>
-				<ListItemText
-					className={`${
-						item.submenus.some((value) => value.link == buttonActive)
-							? ' !text-blue-500 dark:!text-blue-500'
-							: ''
-					}`}
+				<ListItemText sx={{
+					display: isMobile ? 'none !important' : 'block'
+				}}
+					className={`${item.submenus.some((value) => value.link == buttonActive)
+						? ' !text-blue-500 dark:!text-blue-500'
+						: ''
+						}`}
 					primary={item.name}
 				/>
 			</ListItemButton>
@@ -48,16 +58,14 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 							<ListItemButton key={index} onClick={() => activeButton(submenu.link)}>
 								<Link to={submenu.link} className='text-black dark:text-white flex pl-5'>
 									<ListItemIcon
-										className={`${
-											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
-										}`}
+										className={`${buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+											}`}
 									>
 										{submenu.icon}
 									</ListItemIcon>
 									<ListItemText
-										className={`${
-											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
-										}`}
+										className={`${buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+											}`}
 										primary={submenu.name}
 									/>
 								</Link>
@@ -73,13 +81,18 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 					placement='left-start'
 					open={openSub}
 					anchorEl={anchorEl}
+					sx={{
+						...(isMobile && {
+							transform: 'translate3d(-50px, -65px, 0px) !important',
+							position: isMobile ? 'fixed !important' : 'absolute !important'
+						})
+					}}
 				>
 					{item.submenus?.map((item, index) => {
 						return (
 							<MenuItem
-								className={`gap-3  ${
-									buttonActive === item.link ? ' !text-blue-500' : ' !text-gray-500'
-								}`}
+								className={`gap-3  ${buttonActive === item.link ? ' !text-blue-500' : ' !text-gray-500'
+									}`}
 								key={index}
 								onClick={() => activeButton(item.link)}
 							>

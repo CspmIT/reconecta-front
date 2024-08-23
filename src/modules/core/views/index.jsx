@@ -28,7 +28,7 @@ const MainContent = () => {
 		<>
 			<div className='pt-16 !min-h-screen absolute w-full bg-gray-200 dark:bg-gray-700 '>
 				<NavBarCustom />
-				<div className={`pl-20 pr-4 pt-4 pb-20 z-10 flex relative ${style.boxMain}`}>
+				<div className={`sm:pl-20 pl-4 pr-4 pt-4 pb-20 z-10 flex relative ${style.boxMain}`}>
 					<Outlet />
 				</div>
 				<Footer />
