@@ -53,7 +53,7 @@ export const boardMetrology = [
 	},
 	{
 		id: 3,
-		name: 'Tensión SRT',
+		name: 'Tensión RST',
 		children: [
 			{ name: 'R', field: 'V_f_SRT_0', unit: 'V' },
 			{ name: 'RS', field: 'V_L_SRT_0', unit: 'V' },

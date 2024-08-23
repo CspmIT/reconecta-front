@@ -76,7 +76,7 @@ const DataBoard = () => {
 			<div className='p-3'>
 				{selectedCardId === 1 ? <MetrologyBoard idRecloser={info.recloser?.id || null} /> : null}
 				{selectedCardId === 2 ? <EventBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 3 ? <AnalyticsBoard info={info} /> : null}
+				{selectedCardId === 3 ? <AnalyticsBoard idRecloser={info.recloser?.id || null} /> : null}
 				{selectedCardId === 4 ? <ManeuverBoard info={info} /> : null}
 			</div>
 		</div>
