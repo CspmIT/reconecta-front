@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { requestLogin } from '../utils/requesLogin'
 import { storage } from '../utils/storage'
+import Swal from 'sweetalert2'
 
 const LoginCooptech = () => {
 	const navigate = useNavigate()
@@ -17,7 +18,7 @@ const LoginCooptech = () => {
 			}
 			storage.set('tokenCooptech', token)
 			const decodedToken = jwtDecode(token)
-			const url = import.meta.env.VITE_APP_BACK_OFIVIR + '/loginCooptech'
+			const url = import.meta.env.VITE_APP_BACK + '/loginCooptech'
 			const info = {
 				email: decodedToken.email,
 				tokenCooptech: decodedToken.token,
@@ -34,7 +35,14 @@ const LoginCooptech = () => {
 			})
 			localStorage.setItem('usuario', JSON.stringify(decoded))
 			navigate('/')
-		} catch (error) {}
+		} catch (error) {
+			Swal.fire('Atencion', error.response?.data?.error || error.response?.data || error.message, 'error')
+			Cookies.remove('token')
+			storage.remove('usuario')
+			storage.remove('tokenCooptech')
+			navigate('/login')
+			return false
+		}
 	}
 	validateUserCooptech()
 	return <></>

@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { FaUser, FaSignOutAlt } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const DropdownImage = ({ props }) => {
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
 	const dropdownRef = useRef(null) // Referencia al dropdown
-	// const navigator = useNavigate()
+	const navigator = useNavigate()
 	const toggleDropdown = () => {
 		setDropdownOpen(!isDropdownOpen)
 	}
 
 	const handleLogout = () => {
-		localStorage.removeItem('usuario')
+		localStorage.clear()
+		navigator('/')
 	}
 
 	useEffect(() => {
@@ -20,7 +21,6 @@ const DropdownImage = ({ props }) => {
 				setDropdownOpen(false)
 			}
 		}
-
 		// Agregar el escuchador de eventos al montar el componente
 		document.addEventListener('mousedown', handleClickOutside)
 		return () => {
@@ -56,15 +56,11 @@ const DropdownImage = ({ props }) => {
 					tabIndex='-1'
 				>
 					<div className='py-1' role='none'>
-						<Link to={'/profile'}>
-							<a
-								className='px-2 py-1 flex items-center w-full md:w-auto hover:bg-gray-200 pl-4 dark:text-white dark:hover:bg-gray-700'
-								role='menuitem'
-								tabIndex='-1'
-								id='user-menu-item-0'
-							>
-								<FaUser className='mr-2' /> Perfil
-							</a>
+						<Link
+							to={'/profile'}
+							className='px-2 py-1 flex items-center w-full md:w-auto hover:bg-gray-200 pl-4 dark:text-white dark:hover:bg-gray-700'
+						>
+							<FaUser className='mr-2' /> Perfil
 						</Link>
 						<a
 							href='#'

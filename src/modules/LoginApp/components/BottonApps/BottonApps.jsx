@@ -9,7 +9,9 @@ function BottonApps() {
 	const [products, setProducts] = useState([])
 	const handleClick = async (event) => {
 		setAnchorEl(anchorEl ? null : event.currentTarget)
-		setProducts(await getProductActive())
+		if (!anchorEl && event.currentTarget) {
+			setProducts(await getProductActive())
+		}
 	}
 	const open = Boolean(anchorEl)
 	const id = open ? 'simple-popper' : undefined
@@ -56,7 +58,7 @@ function BottonApps() {
 			<Popper className='z-50 p-3' id={id} open={open} anchorEl={anchorEl} transition placement={'bottom-end'}>
 				{({ TransitionProps }) => (
 					<Fade {...TransitionProps} timeout={350}>
-						<ul className=' rounded-lg p-2 !shadow-gray-500 grid grid-cols-3 max-sm:grid-cols-2 !shadow-lg border-gray-200 border-2 bg-white'>
+						<ul className=' rounded-lg p-2 !shadow-gray-500 dark:!shadow-gray-900 grid grid-cols-3 max-sm:grid-cols-2 !shadow-lg border-gray-200 dark:border-gray-700 border-2 bg-white dark:bg-gray-700 '>
 							{products.map((item, index) => {
 								return (
 									<li
@@ -65,11 +67,17 @@ function BottonApps() {
 											if (item.profile !== 0) reDirection(item.name)
 										}}
 										className={`${
-											item.profile !== 0 && 'hover:bg-slate-200 hover:cursor-pointer'
+											item.profile !== 0 &&
+											'hover:bg-slate-200 dark:hover:bg-slate-900 hover:cursor-pointer'
 										}   select-none rounded-lg p-3  max-h-[13vh]transition-colors flex flex-col justify-center items-center`}
 									>
-										<img className={`${item.profile === 0 && 'opacity-15'} max-w-[10vw] max-sm:max-w-[20vw] max-h-[10vh]`} src={getLogo(item.name)} />
-										<p className='m-0 p-0'>{item.name}</p>
+										<img
+											className={`${
+												item.profile === 0 && 'opacity-15'
+											} max-w-[10vw] max-sm:max-w-[20vw] max-h-[10vh]`}
+											src={getLogo(item.name)}
+										/>
+										<p className='m-0 p-0 text-black dark:text-white'>{item.name}</p>
 									</li>
 								)
 							})}

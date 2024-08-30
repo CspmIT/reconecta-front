@@ -7,6 +7,7 @@ import { IconButton } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { ColumnsUrban } from '../../utils/ColumnsTables/ColumnsStationUrban'
+import { request } from '../../../../utils/js/request'
 
 function TableSubStationUrban({ ...props }) {
 	const [subStations, setSubStations] = useState([])
@@ -54,20 +55,41 @@ function TableSubStationUrban({ ...props }) {
 			},
 		])
 	}
+	const getColumns = async () => {
+		try {
+			const user = storage.get('usuario').sub
+			const data = {
+				table_name: 'sub_urban',
+				id_user: user,
+			}
+			const column = await request(`${import.meta.env.VITE_APP_BACK}/getColumnsTable`, 'POST', data)
+			const visibility = column.data.reduce((acc, item) => {
+				acc[item.name] = item.status
+				return acc
+			}, {})
+			storage.set('visibilitySubstationUrb', visibility)
+			setVisibility(visibility)
+		} catch (error) {
+			storage.remove('visibilitySubstationUrb')
+			console.error('Error fetching columns:', error)
+		}
+	}
+	const [visibility, setVisibility] = useState(getColumns)
 
-	const [visibility, setVisibility] = useState(storage.get('visibilitySubstationUrb'))
-
-	const handleColumnVisibilityChange = (newVisibility) => {
+	const handleColumnVisibilityChange = async (newVisibility) => {
 		const change = newVisibility()
 		setVisibility((prevVisibility) => ({
 			...prevVisibility,
 			...change,
 		}))
 		const listVisibility = storage.get('visibilitySubstationUrb')
-		storage.set('visibilitySubstationUrb', {
+		const columns = {
 			...listVisibility,
 			...change,
-		})
+		}
+		storage.set('visibilitySubstationUrb', columns)
+		const data = { table: 'sub_urban', columns: columns }
+		await request(`${import.meta.env.VITE_APP_BACK}/saveConfigTable`, 'POST', data)
 	}
 
 	useEffect(() => {

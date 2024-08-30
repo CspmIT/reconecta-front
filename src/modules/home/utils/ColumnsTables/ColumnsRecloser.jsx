@@ -1,15 +1,7 @@
 import { FormControlLabel, IconButton, Switch } from '@mui/material'
 import { CheckCircleSharp, Circle, ErrorSharp } from '@mui/icons-material'
 import { BiWindowOpen } from 'react-icons/bi'
-import { storage } from '../../../../storage/storage'
 
-const TypeRecloser = {
-	1: 'Reconectador',
-	2: 'Medidor',
-	3: 'Sub-Estación',
-	4: 'Analizador de red',
-	5: 'Sub-Estación Rural',
-}
 export const ColumnsRecloser = (changeAlarm, newTab) => [
 	{
 		header: 'Nº',
@@ -28,50 +20,6 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		accessorKey: 'serial',
 		muiFilterTextFieldProps: { placeholder: 'Num. de Serie' },
 	},
-	// {
-	// 	header: 'Tipo',
-	// 	accessorKey: 'type_recloser',
-	// 	filterVariant: 'multi-select',
-	// 	muiFilterTextFieldProps: { placeholder: 'Tipo' },
-	// 	filterSelectOptions: [
-	// 		{
-	// 			label: 'Reconectador',
-	// 			value: 1,
-	// 		},
-	// 		{
-	// 			label: 'Medidor',
-	// 			value: 2,
-	// 		},
-	// 		{
-	// 			label: 'Sub-Estación',
-	// 			value: 3,
-	// 		},
-	// 		{
-	// 			label: 'Analizador de red',
-	// 			value: 4,
-	// 		},
-	// 	],
-	// 	filterFn: (row, id, filterValue) => {
-	// 		const filter = storage.get('filter')
-	// 		const filterType_recloser =
-	// 			filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
-	// 		if (filterValue !== filterType_recloser) {
-	// 			if (filter?.length > 0) {
-	// 				filter.splice(filter.indexOf(filterType_recloser), 1)
-	// 				storage.set('filter', [...filter, { name: 'type_recloser', value: filterValue }])
-	// 			} else {
-	// 				storage.set('filter', [{ name: 'type_recloser', value: filterValue }])
-	// 			}
-	// 		}
-	// 		if (!filterValue || filterValue.length === 0) {
-	// 			return true
-	// 		}
-	// 		return filterValue.includes(row.getValue(id))
-	// 	},
-	// 	Cell: ({ row }) => {
-	// 		return TypeRecloser[row.original.type_recloser] || 'indefinido'
-	// 	},
-	// },
 	{
 		header: 'Marca',
 		accessorKey: 'type_recloser',
