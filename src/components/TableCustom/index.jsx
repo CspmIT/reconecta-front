@@ -275,7 +275,6 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		paginationDisplayMode: 'pages',
 
 		// ------------------------------------
-
 		// clases para el body de la tabla(muiTableBodyCellProps, muiTableBodyProps, muiTableBodyRowProps)
 		muiTableBodyRowProps: ({ row }) => ({
 			sx: {
@@ -286,6 +285,8 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		muiTableBodyCellProps: ({ row }) => ({
 			sx: {
 				color: prop.ChangeColorRow ? prop.ChangeColorRow(row) && 'black' : undefined,
+
+				...prop.bodyContent,
 			},
 		}),
 		muiTableBodyProps: {

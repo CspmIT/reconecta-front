@@ -1,3 +1,4 @@
+import axios from 'axios'
 import Axios from 'axios'
 
 export const request = async (url, method, data = false) => {

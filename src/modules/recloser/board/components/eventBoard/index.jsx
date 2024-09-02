@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 import TableCustom from '../../../../../components/TableCustom'
 import { FormLabel } from '@mui/material'
 import Swal from 'sweetalert2'
-import { dataCritics } from '../../utils/objects'
-import { columnsCriticos } from '../../../../alert/utils/columnTbl'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-
-const EventBoard = ({ info }) => {
-	const [rowCriticos, setRowCriticos] = useState(dataCritics.filter((item) => item.Nro_recloser == info.Nro_recloser))
+import { request } from '../../../../../utils/js/request'
+import { ColumnsEvent } from './ColumnsEvent'
+import { backend } from '../../../../../utils/routes/app.routes'
+const EventBoard = ({ idRecloser }) => {
+	const [rowCriticos, setRowCriticos] = useState([])
 	const [bottonCheck, setBottonCheck] = useState(false)
 
 	const ChangeColorRow = (row) => {
@@ -53,6 +53,42 @@ const EventBoard = ({ info }) => {
 		})
 	}
 
+	const getEvents = async (id) => {
+		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/listEvents?id=${id}`, 'GET')
+		if (!Object.keys(data).length) {
+			Swal.fire({
+				title: 'Atención!',
+				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
+				icon: 'error',
+			})
+			return
+		}
+		const rows = data.data.map((item) => {
+			return {
+				dateAlert: item.time.value,
+				event: `${item.variable.value} - ${item.event.value}`,
+				infoAdd: ' ',
+				statusAlert: 0,
+			}
+		})
+		setRowCriticos(rows)
+	}
+	useEffect(() => {
+		if (!idRecloser) {
+			Swal.fire({
+				title: 'Atención!',
+				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
+				icon: 'error',
+			})
+		} else {
+			getEvents(idRecloser)
+			const intervalId = setInterval(() => {
+				getEvents(idRecloser)
+			}, 15000)
+			return () => clearInterval(intervalId)
+		}
+	}, [idRecloser])
+
 	useEffect(() => {
 		if (rowCriticos.some((row) => row.statusAlert === 1)) {
 			setBottonCheck(true)
@@ -68,7 +104,7 @@ const EventBoard = ({ info }) => {
 				<TableCustom
 					getPage={checkAlertCriticas}
 					data={rowCriticos}
-					columns={columnsCriticos}
+					columns={ColumnsEvent()}
 					density='comfortable'
 					header={{
 						background: 'rgb(190 190 190)',
@@ -76,6 +112,7 @@ const EventBoard = ({ info }) => {
 						fontWeight: 'bold',
 					}}
 					toolbarClass={{ background: 'rgb(190 190 190)' }}
+					bodyContent={{ fontSize: '16px' }}
 					body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
 					footer={{ background: 'rgb(190 190 190)' }}
 					ChangeColorRow={ChangeColorRow}
@@ -83,6 +120,7 @@ const EventBoard = ({ info }) => {
 					checkAlert={bottonCheck}
 					topToolbar
 					hide
+					filter
 					sort
 					pagination
 				/>

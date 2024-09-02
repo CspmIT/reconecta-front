@@ -37,9 +37,11 @@ const GrafLinea = ({ ...props }) => {
 				style: {
 					color: darkMode ? 'white' : 'black',
 				},
+				...props.labelxAxis,
 			},
 			...props.configxAxis,
 		},
+
 		yAxis: {
 			title: {
 				text: '',
@@ -58,6 +60,7 @@ const GrafLinea = ({ ...props }) => {
 				data: item.data,
 			}
 		}),
+		...props.tooltip,
 	}
 	return (
 		<div className='mb-3'>

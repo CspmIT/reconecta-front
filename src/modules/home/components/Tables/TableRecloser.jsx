@@ -1,59 +1,79 @@
 import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
-import { columns } from '../../utils/dataTable'
-import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { recloser } from '../../../recloser/board/utils/objects'
-import { IconButton, Menu, MenuItem } from '@mui/material'
+import { Button, IconButton } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
+import { request } from '../../../../utils/js/request'
+import { useNavigate } from 'react-router-dom'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TableRecloser({ ...props }) {
+	const { setInfoNav } = useContext(MainContext)
 	const [reclosers, setReclosers] = useState([])
 	const navigate = useNavigate()
-	const getdisplay = () => {
-		setReclosers([...recloser])
+	const getdisplay = async () => {
+		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getAllReclosers`, 'GET')
+		setReclosers([...recloser.data])
 	}
 
 	const changeAlarm = (Nro_Serie) => {
 		setReclosers((prevReclosers) =>
 			prevReclosers.map((recloser) =>
-				recloser.Nro_Serie === Nro_Serie ? { ...recloser, alarm_recloser: !recloser.alarm_recloser } : recloser
+				recloser.serial === Nro_Serie
+					? { ...recloser, status_alarm_recloser: !recloser.status_alarm_recloser }
+					: recloser
 			)
 		)
 	}
-	useEffect(() => {
-		getdisplay()
-	}, [])
 
-	const [visibility, setVisibility] = useState(storage.get('visibilityRecloser'))
+	const getColumns = async () => {
+		try {
+			const user = storage.get('usuario').sub
+			const data = {
+				table_name: 'recloser',
+				id_user: user,
+			}
+			const column = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getColumnsTable`, 'POST', data)
+			const visibility = column.data.reduce((acc, item) => {
+				acc[item.name] = item.status
+				return acc
+			}, {})
+			storage.set('visibilityRecloser', visibility)
+			setVisibility(visibility)
+		} catch (error) {
+			storage.remove('visibilityRecloser')
+			console.error('Error fetching columns:', error)
+		}
+	}
 
-	const handleColumnVisibilityChange = (newVisibility) => {
+	const [visibility, setVisibility] = useState(getColumns)
+
+	const handleColumnVisibilityChange = async (newVisibility) => {
 		const change = newVisibility()
 		setVisibility((prevVisibility) => ({
 			...prevVisibility,
 			...change,
 		}))
 		const listVisibility = storage.get('visibilityRecloser')
-		storage.set('visibilityRecloser', {
+		const columns = {
 			...listVisibility,
 			...change,
-		})
+		}
+		storage.set('visibilityRecloser', columns)
+		const data = { table: 'recloser', columns: columns }
+		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
-	// const [anchorEl, setAnchorEl] = useState(null)
-	// const open = Boolean(anchorEl)
-	// const handleClick = (event) => {
-	// 	setAnchorEl(event.currentTarget)
-	// }
-	const { setInfoNav } = useContext(MainContext)
+
 	const changeView = (nameView) => {
 		setInfoNav(nameView)
 		navigate(`/Abm/${nameView}`)
 	}
-	// const handleClose = () => {
-	// 	setAnchorEl(null)
-	// }
+
+	useEffect(() => {
+		getdisplay()
+	}, [])
 
 	return (
 		<div className='pb-5 w-full'>
@@ -74,37 +94,12 @@ function TableRecloser({ ...props }) {
 					borderRadius: '0.75rem',
 				}}
 				btnCustomToolbar={
-					// <div>
-					<IconButton
-						id='basic-button'
-						// aria-controls={open ? 'basic-menu' : undefined}
-						// aria-haspopup='true'
-						// aria-expanded={open ? 'true' : undefined}
-						onClick={() => changeView('recloser')}
-					>
+					<IconButton id='basic-button' onClick={() => changeView('recloser')}>
 						<Add />
 					</IconButton>
-					//  <Menu
-					// 	id='basic-menu'
-					// 	anchorEl={anchorEl}
-					// 	open={open}
-					// 	onClose={handleClose}
-					// 	MenuListProps={{
-					// 		'aria-labelledby': 'basic-button',
-					// 	}}
-					// >
-					// 	<MenuItem onClick={() => changeView('recloser')}>Reconectador</MenuItem>
-					// 	<MenuItem onClick={() => changeView('meter')}>Medidor</MenuItem>
-					// 	<MenuItem onClick={() => changeView('subStationUrban')}>Sub Estación</MenuItem>
-					// 	<MenuItem onClick={() => changeView('subStationRural')}>Sub Estación Rural</MenuItem>
-					// 	<MenuItem onClick={() => changeView('networkAnalyzer')}>Analizador de Red</MenuItem>
-					// </Menu>
-					// </div>
 				}
 				topToolbar
 				copy
-				// grouping
-				// filter
 				hide
 				sort
 				pagination
