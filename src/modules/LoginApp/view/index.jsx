@@ -13,6 +13,7 @@ import { storage } from '../utils/storage'
 import { getImgApp } from '../utils/images'
 import { jwtDecode } from 'jwt-decode'
 import styles from '../utils/style.module.css'
+import { backend } from '../../../utils/routes/app.routes'
 function LoginApp() {
 	const {
 		register,
@@ -41,7 +42,7 @@ function LoginApp() {
 	const onSubmit = async (data) => {
 		try {
 			if (recovery) {
-				const url = import.meta.env.VITE_APP_BACK_COOPTECH + '/password_recover'
+				const url = backend.Cooptech + '/password_recover'
 				await requestLogin(url, 'POST', data)
 				Swal.fire({
 					icon: 'success',
@@ -49,7 +50,7 @@ function LoginApp() {
 					text: `Se ha enviado un correo a ${data.email}, para restablecer su contraseña`,
 				})
 			} else {
-				const url = import.meta.env.VITE_APP_BACK_COOPTECH + '/login'
+				const url = backend.Cooptech + '/login'
 				const responseData = await requestLogin(url, 'POST', data)
 				console.log(responseData)
 				storage.set('usuario', responseData)

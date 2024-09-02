@@ -7,13 +7,14 @@ import { MainContext } from '../../../../context/MainContext'
 import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
 import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TableRecloser({ ...props }) {
 	const { setInfoNav } = useContext(MainContext)
 	const [reclosers, setReclosers] = useState([])
 	const navigate = useNavigate()
 	const getdisplay = async () => {
-		const recloser = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/getAllReclosers`, 'GET')
+		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getAllReclosers`, 'GET')
 		setReclosers([...recloser.data])
 	}
 
@@ -34,7 +35,7 @@ function TableRecloser({ ...props }) {
 				table_name: 'recloser',
 				id_user: user,
 			}
-			const column = await request(`${import.meta.env.VITE_APP_BACK}/getColumnsTable`, 'POST', data)
+			const column = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getColumnsTable`, 'POST', data)
 			const visibility = column.data.reduce((acc, item) => {
 				acc[item.name] = item.status
 				return acc
@@ -62,7 +63,7 @@ function TableRecloser({ ...props }) {
 		}
 		storage.set('visibilityRecloser', columns)
 		const data = { table: 'recloser', columns: columns }
-		await request(`${import.meta.env.VITE_APP_BACK}/saveConfigTable`, 'POST', data)
+		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
 
 	const changeView = (nameView) => {

@@ -8,6 +8,7 @@ import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { ColumnsUrban } from '../../utils/ColumnsTables/ColumnsStationUrban'
 import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TableSubStationUrban({ ...props }) {
 	const [subStations, setSubStations] = useState([])
@@ -62,7 +63,7 @@ function TableSubStationUrban({ ...props }) {
 				table_name: 'sub_urban',
 				id_user: user,
 			}
-			const column = await request(`${import.meta.env.VITE_APP_BACK}/getColumnsTable`, 'POST', data)
+			const column = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getColumnsTable`, 'POST', data)
 			const visibility = column.data.reduce((acc, item) => {
 				acc[item.name] = item.status
 				return acc
@@ -89,7 +90,7 @@ function TableSubStationUrban({ ...props }) {
 		}
 		storage.set('visibilitySubstationUrb', columns)
 		const data = { table: 'sub_urban', columns: columns }
-		await request(`${import.meta.env.VITE_APP_BACK}/saveConfigTable`, 'POST', data)
+		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
 
 	useEffect(() => {

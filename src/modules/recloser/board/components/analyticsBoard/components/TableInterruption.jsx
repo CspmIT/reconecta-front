@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import TableCustom from '../../../../../../components/TableCustom'
 import { request } from '../../../../../../utils/js/request'
 import { ColumnTableInt } from '../utils/ColumnTableInt'
+import { backend } from '../../../../../../utils/routes/app.routes'
 
 function TableInterruption({ idRecloser }) {
 	const [dataInterruption, setDataInterruption] = useState([])
 
 	const getEvents = async (id) => {
-		const data = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/interruptions?id=${id}`, 'GET')
+		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/interruptions?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',

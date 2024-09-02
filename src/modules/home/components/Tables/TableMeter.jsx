@@ -8,6 +8,7 @@ import { MainContext } from '../../../../context/MainContext'
 import { deviceSubStation, devices, listMeters } from '../../utils/dataTables/dataMeter'
 import { ColumnsMeter } from '../../utils/ColumnsTables/ColumnsMeter'
 import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TableMeter({ ...props }) {
 	const [meters, setMeters] = useState([])
@@ -60,7 +61,7 @@ function TableMeter({ ...props }) {
 				table_name: 'meter',
 				id_user: user,
 			}
-			const column = await request(`${import.meta.env.VITE_APP_BACK}/getColumnsTable`, 'POST', data)
+			const column = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getColumnsTable`, 'POST', data)
 			const visibility = column.data.reduce((acc, item) => {
 				acc[item.name] = item.status
 				return acc
@@ -86,7 +87,7 @@ function TableMeter({ ...props }) {
 		}
 		storage.set('visibilityMeter', columns)
 		const data = { table: 'meter', columns: columns }
-		await request(`${import.meta.env.VITE_APP_BACK}/saveConfigTable`, 'POST', data)
+		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
 
 	useEffect(() => {

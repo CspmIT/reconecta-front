@@ -1,10 +1,11 @@
 import { useEffect, useState, useContext } from 'react'
 import { request } from '../../../../../../utils/js/request'
 import GrafLinea from '../../../../../../components/Graphs/linechart'
+import { backend } from '../../../../../../utils/routes/app.routes'
 function GrafCorriente({ idRecloser }) {
 	const [dataGraf, setDataGraf] = useState([])
 	const getTensionABC = async (id) => {
-		const data = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/corrientesGraf?id=${id}`, 'GET')
+		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',

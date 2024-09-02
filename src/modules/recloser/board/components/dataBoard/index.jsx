@@ -12,6 +12,7 @@ import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import { request } from '../../../../../utils/js/request'
+import { backend } from '../../../../../utils/routes/app.routes'
 
 const DataBoard = () => {
 	const [selectedCardId, setSelectedCardId] = useState(null)
@@ -24,7 +25,7 @@ const DataBoard = () => {
 	const [data] = useState(tabs[tabCurrent] || null)
 
 	const getDataRecloser = async (id) => {
-		const recloser = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/getDataRecloser?id=${id}`, 'GET')
+		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${id}`, 'GET')
 		setInfo(recloser.data)
 	}
 

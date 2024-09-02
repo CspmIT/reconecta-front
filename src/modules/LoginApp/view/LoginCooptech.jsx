@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode'
 import { requestLogin } from '../utils/requesLogin'
 import { storage } from '../utils/storage'
 import Swal from 'sweetalert2'
+import { backend } from '../../../utils/routes/app.routes'
 
 const LoginCooptech = () => {
 	const navigate = useNavigate()
@@ -18,7 +19,7 @@ const LoginCooptech = () => {
 			}
 			storage.set('tokenCooptech', token)
 			const decodedToken = jwtDecode(token)
-			const url = import.meta.env.VITE_APP_BACK + '/loginCooptech'
+			const url = backend[`${import.meta.env.VITE_APP_NAME}`] + '/loginCooptech'
 			const info = {
 				email: decodedToken.email,
 				tokenCooptech: decodedToken.token,

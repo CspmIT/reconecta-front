@@ -1,32 +1,27 @@
 import AppsIcon from '@mui/icons-material/Apps'
 import { Fade, IconButton, Popper } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
-import { storage } from '../../utils/storage'
 import { getProductActive } from '../../utils/login'
 import { getLogo } from '../../utils/images'
+import { front } from '../../../../utils/routes/app.routes'
+import Cookies from 'js-cookie'
 function BottonApps() {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [products, setProducts] = useState([])
 	const handleClick = async (event) => {
 		setAnchorEl(anchorEl ? null : event.currentTarget)
 		if (!anchorEl && event.currentTarget) {
-			setProducts(await getProductActive())
+			const listProducts = await getProductActive()
+			setProducts(listProducts)
 		}
 	}
 	const open = Boolean(anchorEl)
 	const id = open ? 'simple-popper' : undefined
 	const reDirection = (key) => {
-		const urlMap = {
-			'Oficina Virtual': import.meta.env.VITE_OFIVIR_URL,
-			Reconecta: import.meta.env.VITE_RECONECTA_URL,
-			'Mas Agua': import.meta.env.VITE_MASAGUA_URL,
-			Centinela: import.meta.env.VITE_CENTINELA_URL,
-			Cloud: import.meta.env.VITE_CLOUD_URL,
-			Provision: import.meta.env.VITE_PROVISION_URL,
-		}
-		const url = urlMap[key]
+		console.log(key)
+		const url = front[key]
 		if (!url) throw new Error('No se encontró la Aplicación...')
-		const tokencooptech = storage.get('tokenCooptech')
+		const tokencooptech = Cookies.get('token')
 		window.location.href = `${url}/LoginCooptech/${tokencooptech}`
 	}
 	const dropdownRef = useRef(null) // Referencia al dropdown
