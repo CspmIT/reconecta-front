@@ -15,15 +15,17 @@ import { request } from '../../../../../utils/js/request'
 import { backend } from '../../../../../utils/routes/app.routes'
 
 const DataBoard = () => {
-	const [selectedCardId, setSelectedCardId] = useState(null)
 	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
+	const { tabCurrent, tabs, setTabs } = useContext(MainContext)
+	const [data] = useState(tabs[tabCurrent] || null)
+	const [selectedCardId, setSelectedCardId] = useState(null)
+
 	const handleCardSelect = (id) => {
+		tabs[tabCurrent].ActionOpen = id
+		setTabs(tabs)
 		setSelectedCardId(id)
 	}
-	const { tabCurrent, tabs } = useContext(MainContext)
-	const [data] = useState(tabs[tabCurrent] || null)
-
 	const getDataRecloser = async (id) => {
 		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${id}`, 'GET')
 		setInfo(recloser.data)
@@ -41,6 +43,11 @@ const DataBoard = () => {
 			getDataRecloser(data.id)
 		}
 	}, [data])
+	useEffect(() => {
+		if (info) {
+			setSelectedCardId(data.ActionOpen)
+		}
+	}, [info])
 	const { setInfoNav } = useContext(MainContext)
 	const editRecloser = (info) => {
 		setInfoNav([info])
@@ -56,13 +63,7 @@ const DataBoard = () => {
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
-					<Button
-						onClick={() => editRecloser(info)}
-						className='!ml-3'
-						color='warning'
-						title='Editar Reconectador'
-						variant='contained'
-					>
+					<Button onClick={() => editRecloser(info)} className='!ml-3' color='warning' title='Editar Reconectador' variant='contained'>
 						<FaEdit />
 					</Button>
 				</div>
@@ -73,7 +74,7 @@ const DataBoard = () => {
 			<div className='mb-4'>
 				<ControlsBoard info={info} />
 			</div>
-			<CardBoard onCardSelect={handleCardSelect} />
+			<CardBoard onCardSelect={handleCardSelect} selectedCard={selectedCardId} />
 			<div className='p-3'>
 				{selectedCardId === 1 ? <MetrologyBoard idRecloser={info.recloser?.id || null} /> : null}
 				{selectedCardId === 2 ? <EventBoard idRecloser={info.recloser?.id || null} /> : null}

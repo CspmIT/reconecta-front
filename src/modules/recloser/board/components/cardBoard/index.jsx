@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CardCustom from '../../../../../components/CardCustom'
 import { FaChartArea, FaPowerOff, FaTachometerAlt } from 'react-icons/fa'
 import { BsFiles } from 'react-icons/bs'
 
-const CardBoard = ({ onCardSelect }) => {
-	const [selectedCardId, setSelectedCardId] = useState(null)
+const CardBoard = ({ onCardSelect, selectedCard }) => {
+	const [selectedCardId, setSelectedCardId] = useState(selectedCard)
 	const boardCards = [
 		{ id: 1, name: 'METROLOGÍA', icon: <FaTachometerAlt /> },
 		{ id: 2, name: 'EVENTOS', icon: <BsFiles /> },
@@ -16,22 +16,16 @@ const CardBoard = ({ onCardSelect }) => {
 		setSelectedCardId(newSelectedCardId)
 		onCardSelect(newSelectedCardId)
 	}
-
 	return (
 		<div className='flex flex-row justify-between select-none'>
 			{boardCards.map((card, i) => (
 				<div className='w-1/4 py-5 flex flex-row justify-center' key={i}>
 					<CardCustom
 						className={`w-5/6 h-full py-5 cursor-pointer ${
-							selectedCardId === card.id
-								? 'outline outline-4 outline-blue-500'
-								: 'hover:outline hover:outline-4 hover:outline-blue-500'
+							selectedCardId == card.id || selectedCard == card.id ? 'outline outline-4 outline-blue-500' : 'hover:outline hover:outline-4 hover:outline-blue-500'
 						}`}
 					>
-						<div
-							onClick={() => handleCard(card.id)}
-							className='w-full flex flex-col items-center font-bold'
-						>
+						<div onClick={() => handleCard(card.id)} className='w-full flex flex-col items-center font-bold'>
 							<div className='text-2xl text-blue-600'>{card.icon}</div>
 							<div className='text-xl mt-3 font-sans'>{card.name}</div>
 						</div>
