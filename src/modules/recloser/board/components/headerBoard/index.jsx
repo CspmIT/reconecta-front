@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { FaCircle } from 'react-icons/fa'
-import { boardStatus, boardFields, recloser } from '../../utils/objects'
+import { boardStatus, boardFields } from '../../utils/objects'
 
 const HeaderBoard = ({ info }) => {
 	const [statusReco, setStatusReco] = useState(null)
@@ -47,17 +47,11 @@ const HeaderBoard = ({ info }) => {
 			<div className='w-2/4 flex flex-row justify-center'>
 				<div
 					className={`rounded-full grid min-w-40 max-w-40 min-h-40 max-h-40  ${
-						statusReco === 0
-							? 'bg-red-500 shadow-red-700'
-							: statusReco === 1
-							? 'bg-green-500 shadow-green-700'
-							: 'bg-yellow-500 shadow-yellow-700'
+						statusReco === 0 ? 'bg-red-500 shadow-red-700' : statusReco === 1 ? 'bg-green-500 shadow-green-700' : 'bg-yellow-500 shadow-yellow-700'
 					} justify-center items-center shadow-md `}
 				>
-					<div className='text-center grid cursor-pointer bg-white rounded-full min-w-28 max-w-28 min-h-28 max-h-28 items-center shadow-md shadow-slate-500'>
-						<b className='text-black'>
-							{statusReco === 0 ? 'CERRADO' : statusReco === 1 ? 'ABIERTO' : 'SIN SEÑAL'}
-						</b>
+					<div onClick={() => alert('habilitacion y ejecucion')} className='text-center grid cursor-pointer bg-white rounded-full min-w-28 max-w-28 min-h-28 max-h-28 items-center shadow-md shadow-slate-500'>
+						<b className='text-black'>{statusReco === 0 ? 'CERRADO' : statusReco === 1 ? 'ABIERTO' : 'SIN SEÑAL'}</b>
 					</div>
 				</div>
 			</div>
@@ -65,11 +59,7 @@ const HeaderBoard = ({ info }) => {
 				{boardStatus.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
-							<FaCircle
-								color={
-									info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'
-								}
-							/>
+							<FaCircle color={info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'} />
 							<h3 className='ml-3'>{item.name}</h3>
 						</div>
 					)
