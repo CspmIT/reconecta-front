@@ -26,6 +26,7 @@ const DataBoard = () => {
 	const getDataRecloser = async (id) => {
 		const recloser = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/getDataRecloser?id=${id}`, 'GET')
 		setInfo(recloser.data)
+		setSelectedCardId(1)
 	}
 
 	useEffect(() => {
@@ -72,13 +73,7 @@ const DataBoard = () => {
 			<div className='mb-4'>
 				<ControlsBoard info={info} />
 			</div>
-			<CardBoard onCardSelect={handleCardSelect} />
-			<div className='p-3'>
-				{selectedCardId === 1 ? <MetrologyBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 2 ? <EventBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 3 ? <AnalyticsBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 4 ? <ManeuverBoard info={info} /> : null}
-			</div>
+			<CardBoard onCardSelect={handleCardSelect} info={info} />
 		</div>
 	)
 }

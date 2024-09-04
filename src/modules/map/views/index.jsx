@@ -53,9 +53,9 @@ function Map() {
 		return () => window.removeEventListener('resize', changeZoom)
 	}, [])
 	return (
-		<div className={`!min-h-[90vh] relative w-full flex`}>
+		<div className={`!min-h-[90vh] relative w-full flex flex-wrap pb-3`}>
 			<ToastContainer className={'absolute top-0'} stacked />
-			<div className='!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 w-1/2'>
+			<div className='!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 md:w-1/2 w-full'>
 				<MapCustom
 					id={1}
 					center={center}
@@ -65,7 +65,7 @@ function Map() {
 					polylines={polylines}
 				/>
 			</div>
-			<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 w-1/2'>
+			<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 md:w-1/2 w-full'>
 				<MapCustom
 					id={2}
 					center={centerCity}

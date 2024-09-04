@@ -1,6 +1,7 @@
-import { Circle, Edit } from '@mui/icons-material'
+import { Add, Circle, Edit } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
-import { BiWindowOpen } from 'react-icons/bi'
+import { FaKey } from "react-icons/fa";
+
 const profile = {
 	1: 'Super Admin',
 	2: 'Moderador',
@@ -25,6 +26,20 @@ export const ColumnsUser = (editUser) => [
 		accessorKey: 'id_profile',
 		Cell: ({ row }) => {
 			return <p className='m-0 p-0 ml-2 text-base'>{`${profile[row.original?.id_profile]}`}</p>
+		},
+	},
+	{
+		header: 'Clave de Operación', 
+		accessorKey: 'password',
+		Cell: ({ row }) => {
+			return (
+				<div className='flex items-center'>
+					<p className='m-0 p-0 mr-5 text-base'>{row.original?.password ? '••••••••' : ''}</p>
+					<IconButton className=' !text-black !shadow-md'>
+						{row.original?.password ? <FaKey  />  : <Add />}
+					</IconButton>
+				</div>
+			)
 		},
 	},
 	{

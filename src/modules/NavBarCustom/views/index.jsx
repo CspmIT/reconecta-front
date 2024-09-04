@@ -23,7 +23,7 @@ import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
-import { InsertChart, NotificationAdd, Security } from '@mui/icons-material'
+import { MdNotificationsActive } from "react-icons/md";
 import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
@@ -72,14 +72,14 @@ function NavBarCustom() {
 			icon: <FaCogs className='dark:text-white text-3xl' />,
 			submenus: [
 				{
-					name: 'Seguridad',
-					link: '/config/security',
-					icon: <Security className='dark:text-white text-2xl my-1' />,
-				},
-				{
-					name: 'Menu',
+					name: 'Accesos',
 					link: '/config/menu',
 					icon: <BsFillMenuButtonWideFill className='dark:text-white text-2xl my-1' />,
+				},
+				{
+					name: 'Notificaciones',
+					link: '/config/menu',
+					icon: <MdNotificationsActive  className='dark:text-white text-2xl my-1' />,
 				},
 			],
 		},
