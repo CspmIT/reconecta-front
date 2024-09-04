@@ -38,7 +38,7 @@ function ListClients() {
 			id_user: user.id,
 			cliente: user.cliente.find((item) => item.selected === true),
 		})
-		const product = await getProduct('Oficina Virtual', data, user.id)
+		const product = await getProduct(import.meta.env.VITE_APP_NAME, data, user.id)
 		if (!product) {
 			throw new Error('No se encontro productos relacionados con el usuario')
 		}

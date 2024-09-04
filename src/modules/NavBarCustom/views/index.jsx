@@ -28,6 +28,7 @@ import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
 import { BsFillMenuButtonWideFill } from 'react-icons/bs'
+import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
 	const { tabActive, tabs, infoNav } = useContext(MainContext)
@@ -137,6 +138,7 @@ function NavBarCustom() {
 						Reconecta
 					</Typography>
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
+						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
 					</div>

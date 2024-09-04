@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { DndContext, DragOverlay, useSensor, useSensors } from '@dnd-kit/core'
+import { DndContext, DragOverlay, rectIntersection, useSensor, useSensors } from '@dnd-kit/core'
 import { SortableContext, sortableKeyboardCoordinates } from '@dnd-kit/sortable'
-import { closestCorners, KeyboardSensor, PointerSensor } from '@dnd-kit/core'
+import { KeyboardSensor, PointerSensor } from '@dnd-kit/core'
 import ContainerDnd from './ContainerDnd'
 import ItemsDnD from './ItemsDnd'
 import { findItemById, handleDragMove, handleDragStart, handleDragEnd } from './utils/js/dndHandlers'
@@ -39,7 +39,7 @@ function DndComponent({ controls, setContainer }) {
 	return (
 		<DndContext
 			sensors={sensors}
-			collisionDetection={closestCorners}
+			collisionDetection={rectIntersection}
 			onDragStart={(event) => handleDragStart(event, setActiveId)}
 			onDragMove={(event) => handleDragMove(event, containers, setContainers)}
 			onDragEnd={(event) => handleDragEnd(event, containers, setContainers, setContainer, setActiveId)}
@@ -51,7 +51,7 @@ function DndComponent({ controls, setContainer }) {
 							<div className='grid grid-cols-4 gap-3'>
 								<SortableContext items={container.items.map((item) => item.id)}>
 									{container.items.map((item) => (
-										<div key={item.id} className='w-full'>
+										<div key={item.id} className={`w-full ${(!item.enabled || item.status == 'sin Datos') && '!opacity-25'}`}>
 											<ItemsDnD key={item.id} id={item.id} control={item} />
 										</div>
 									))}
@@ -60,11 +60,7 @@ function DndComponent({ controls, setContainer }) {
 						</ContainerDnd>
 					))}
 				</SortableContext>
-				<DragOverlay>
-					{activeId && findItemById(activeId, containers)?.item && (
-						<ItemsDnD id={activeId} control={findItemById(activeId, containers).item} />
-					)}
-				</DragOverlay>
+				<DragOverlay>{activeId && findItemById(activeId, containers)?.item && <ItemsDnD id={activeId} control={findItemById(activeId, containers).item} />}</DragOverlay>
 			</div>
 		</DndContext>
 	)

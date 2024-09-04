@@ -22,6 +22,7 @@ import ConfigMenu from './modules/configMenu/view'
 import Profile from './modules/profile/views'
 import ConfigSecurity from './modules/configSecurity/views'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
+import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 function App() {
 	// async function updateApp() {
 	// 	const { shouldUpdate, manifest } = await checkUpdate()
@@ -45,6 +46,7 @@ function App() {
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
 		{ path: '/ListClients', element: <ListClients /> },
+		{ path: '/LoginCooptech/:token', element: <LoginCooptech /> },
 	]
 	const userRoutes = [
 		{ path: '/*', element: <Home /> },

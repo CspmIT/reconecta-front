@@ -1,15 +1,7 @@
 import { FormControlLabel, IconButton, Switch } from '@mui/material'
 import { CheckCircleSharp, Circle, ErrorSharp } from '@mui/icons-material'
 import { BiWindowOpen } from 'react-icons/bi'
-import { storage } from '../../../../storage/storage'
 
-const TypeRecloser = {
-	1: 'Reconectador',
-	2: 'Medidor',
-	3: 'Sub-Estación',
-	4: 'Analizador de red',
-	5: 'Sub-Estación Rural',
-}
 export const ColumnsRecloser = (changeAlarm, newTab) => [
 	{
 		header: 'Nº',
@@ -28,50 +20,6 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		accessorKey: 'serial',
 		muiFilterTextFieldProps: { placeholder: 'Num. de Serie' },
 	},
-	// {
-	// 	header: 'Tipo',
-	// 	accessorKey: 'type_recloser',
-	// 	filterVariant: 'multi-select',
-	// 	muiFilterTextFieldProps: { placeholder: 'Tipo' },
-	// 	filterSelectOptions: [
-	// 		{
-	// 			label: 'Reconectador',
-	// 			value: 1,
-	// 		},
-	// 		{
-	// 			label: 'Medidor',
-	// 			value: 2,
-	// 		},
-	// 		{
-	// 			label: 'Sub-Estación',
-	// 			value: 3,
-	// 		},
-	// 		{
-	// 			label: 'Analizador de red',
-	// 			value: 4,
-	// 		},
-	// 	],
-	// 	filterFn: (row, id, filterValue) => {
-	// 		const filter = storage.get('filter')
-	// 		const filterType_recloser =
-	// 			filter?.length > 0 ? filter.filter((item) => item.name === 'type_recloser')[0] : []
-	// 		if (filterValue !== filterType_recloser) {
-	// 			if (filter?.length > 0) {
-	// 				filter.splice(filter.indexOf(filterType_recloser), 1)
-	// 				storage.set('filter', [...filter, { name: 'type_recloser', value: filterValue }])
-	// 			} else {
-	// 				storage.set('filter', [{ name: 'type_recloser', value: filterValue }])
-	// 			}
-	// 		}
-	// 		if (!filterValue || filterValue.length === 0) {
-	// 			return true
-	// 		}
-	// 		return filterValue.includes(row.getValue(id))
-	// 	},
-	// 	Cell: ({ row }) => {
-	// 		return TypeRecloser[row.original.type_recloser] || 'indefinido'
-	// 	},
-	// },
 	{
 		header: 'Marca',
 		accessorKey: 'type_recloser',
@@ -79,13 +27,13 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		Cell: ({ row }) => {
 			let brand
 			switch (row.original.type_recloser) {
-				case 0:
+				case 1:
 					brand = 'NOJA'
 					break
-				case 1:
+				case 2:
 					brand = 'COOPER'
 					break
-				case 2:
+				case 3:
 					brand = 'ABM'
 					break
 				default:
@@ -110,9 +58,7 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 			return (
 				<div className='flex items-center w-full'>
 					<Circle color={row.original?.status_recloser > 0 ? 'success' : 'error'} />
-					<p className='m-0 p-0 ml-2 text-base'>{`${
-						row.original?.status_recloser > 0 ? 'Abierto' : 'Cerrado'
-					}`}</p>
+					<p className='m-0 p-0 ml-2 text-base'>{`${row.original?.status_recloser > 0 ? 'Abierto' : 'Cerrado'}`}</p>
 				</div>
 			)
 		},
@@ -124,15 +70,7 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		enableColumnFilter: false,
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
-			return (
-				<div className='flex items-center w-full'>
-					{row.original?.online > 0 ? (
-						<CheckCircleSharp color='success' className='!text-3xl' />
-					) : (
-						<ErrorSharp color='warning' className='!text-3xl' />
-					)}
-				</div>
-			)
+			return <div className='flex items-center w-full'>{row.original?.online > 0 ? <CheckCircleSharp color='success' className='!text-3xl' /> : <ErrorSharp color='warning' className='!text-3xl' />}</div>
 		},
 	},
 	{
@@ -144,13 +82,7 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		Cell: ({ row }) => {
 			return (
 				<FormControlLabel
-					control={
-						<Switch
-							checked={row.original?.status_alarm_recloser > 0 ? true : false}
-							onChange={() => changeAlarm(row.original.serial)}
-							name={row.original.name}
-						/>
-					}
+					control={<Switch checked={row.original?.status_alarm_recloser > 0 ? true : false} onChange={() => changeAlarm(row.original.serial)} name={row.original.name} />}
 					label={row.original?.status_alarm_recloser ? 'Activada' : 'Desactivada'}
 				/>
 			)
@@ -166,10 +98,7 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		Cell: ({ row }) => {
 			row.original.type_recloser = 1
 			return (
-				<IconButton
-					onClick={() => newTab(row.original)}
-					className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
-				>
+				<IconButton onClick={() => newTab(row.original)} className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
 					<BiWindowOpen />
 				</IconButton>
 			)

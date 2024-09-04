@@ -7,6 +7,8 @@ import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { deviceSubStation, devices, listMeters } from '../../utils/dataTables/dataMeter'
 import { ColumnsMeter } from '../../utils/ColumnsTables/ColumnsMeter'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TableMeter({ ...props }) {
 	const [meters, setMeters] = useState([])
@@ -52,19 +54,40 @@ function TableMeter({ ...props }) {
 		setMeters(metersList)
 	}
 
-	const [visibility, setVisibility] = useState(storage.get('visibilityMeter'))
-
-	const handleColumnVisibilityChange = (newVisibility) => {
+	const getColumns = async () => {
+		try {
+			const user = storage.get('usuario').sub
+			const data = {
+				table_name: 'meter',
+				id_user: user,
+			}
+			const column = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getColumnsTable`, 'POST', data)
+			const visibility = column.data.reduce((acc, item) => {
+				acc[item.name] = item.status
+				return acc
+			}, {})
+			storage.set('visibilityMeter', visibility)
+			setVisibility(visibility)
+		} catch (error) {
+			storage.remove('visibilityMeter')
+			console.error('Error fetching columns:', error)
+		}
+	}
+	const [visibility, setVisibility] = useState(getColumns)
+	const handleColumnVisibilityChange = async (newVisibility) => {
 		const change = newVisibility()
 		setVisibility((prevVisibility) => ({
 			...prevVisibility,
 			...change,
 		}))
 		const listVisibility = storage.get('visibilityMeter')
-		storage.set('visibilityMeter', {
+		const columns = {
 			...listVisibility,
 			...change,
-		})
+		}
+		storage.set('visibilityMeter', columns)
+		const data = { table: 'meter', columns: columns }
+		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
 
 	useEffect(() => {

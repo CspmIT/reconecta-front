@@ -15,7 +15,7 @@ export const request = async (url, method, data = false) => {
 		})
 		return response
 	} catch (error) {
-		if (error.response.status === 500) {
+		if (error.response?.status === 500) {
 			let messageError = ''
 			const errors = error.response.data
 			for (const key in errors) {

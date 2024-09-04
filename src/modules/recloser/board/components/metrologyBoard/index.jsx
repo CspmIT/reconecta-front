@@ -3,11 +3,15 @@ import { boardMetrology } from '../../utils/objects'
 import CardCustom from '../../../../../components/CardCustom'
 import { request } from '../../../../../utils/js/request'
 import Swal from 'sweetalert2'
+import { backend } from '../../../../../utils/routes/app.routes'
 
 const MetrologyBoard = ({ idRecloser }) => {
 	const [dataMetrology, setDataMetrology] = useState({})
 	const getDataMetrology = async (id) => {
-		const data = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/metrologiaIntantanea?id=${id}`, 'GET')
+		const data = await request(
+			`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${id}`,
+			'GET'
+		)
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',

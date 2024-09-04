@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
-import { columns } from '../../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
 import { IconButton } from '@mui/material'
@@ -8,6 +7,8 @@ import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { ColumnsRural } from '../../utils/ColumnsTables/ColumnsStationRural'
 import { dataUser, substation } from '../../utils/dataTables/dataRural'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TableSubStationRural({ ...props }) {
 	const [subStations, setSubStations] = useState([])
@@ -19,20 +20,41 @@ function TableSubStationRural({ ...props }) {
 		})
 		setSubStations(Station)
 	}
+	const getColumns = async () => {
+		try {
+			const user = storage.get('usuario').sub
+			const data = {
+				table_name: 'sub_rural',
+				id_user: user,
+			}
+			const column = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getColumnsTable`, 'POST', data)
+			const visibility = column.data.reduce((acc, item) => {
+				acc[item.name] = item.status
+				return acc
+			}, {})
+			storage.set('visibilitySubstationRural', visibility)
+			setVisibility(visibility)
+		} catch (error) {
+			storage.remove('visibilitySubstationRural')
+			console.error('Error fetching columns:', error)
+		}
+	}
+	const [visibility, setVisibility] = useState(getColumns)
 
-	const [visibility, setVisibility] = useState(storage.get('visibilitySubstationRural'))
-
-	const handleColumnVisibilityChange = (newVisibility) => {
+	const handleColumnVisibilityChange = async (newVisibility) => {
 		const change = newVisibility()
 		setVisibility((prevVisibility) => ({
 			...prevVisibility,
 			...change,
 		}))
 		const listVisibility = storage.get('visibilitySubstationRural')
-		storage.set('visibilitySubstationRural', {
+		const columns = {
 			...listVisibility,
 			...change,
-		})
+		}
+		storage.set('visibilitySubstationRural', columns)
+		const data = { table: 'sub_rural', columns: columns }
+		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
 
 	useEffect(() => {

@@ -6,6 +6,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { request } from '../../../../../utils/js/request'
 import { ColumnsEvent } from './ColumnsEvent'
+import { backend } from '../../../../../utils/routes/app.routes'
 const EventBoard = ({ idRecloser }) => {
 	const [rowCriticos, setRowCriticos] = useState([])
 	const [bottonCheck, setBottonCheck] = useState(false)
@@ -53,7 +54,7 @@ const EventBoard = ({ idRecloser }) => {
 	}
 
 	const getEvents = async (id) => {
-		const data = await request(`${import.meta.env.VITE_APP_BACK_RECONECTA}/listEvents?id=${id}`, 'GET')
+		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/listEvents?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
