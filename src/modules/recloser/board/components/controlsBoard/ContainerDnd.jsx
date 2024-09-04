@@ -24,7 +24,7 @@ function ContainerDnd({ id, children, title }) {
 					<h1 className='text-gray-800 text-xl'>{title}</h1>
 				</div>
 			</div>
-			<div className='flex flex-col gap-y-4'>{children}</div>
+			<div className='flex flex-col gap-y-4 w-full'>{children}</div>
 		</div>
 	)
 }
