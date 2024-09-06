@@ -20,6 +20,7 @@ import AbmEquipament from './modules/AbmEquipament/views'
 import AnalyzerBoard from './modules/analyzer/board/views'
 import ConfigMenu from './modules/configMenu/view'
 import Profile from './modules/profile/views'
+import Notifications from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
@@ -63,6 +64,7 @@ function App() {
 		{ path: '/Abm/:name', element: <AbmEquipament /> },
 		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
 		{ path: '/profile', element: <Profile /> },
+		{ path: '/config/notifications', element: <Notifications /> },
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

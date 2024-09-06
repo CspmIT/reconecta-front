@@ -100,31 +100,34 @@ const EventBoard = ({ idRecloser }) => {
 			<div className='relative flex justify-between items-center mb-4'>
 				<FormLabel className='w-full text-center !text-2xl'>Evento Criticos</FormLabel>
 			</div>
-			<LocalizationProvider dateAdapter={AdapterDayjs}>
-				<TableCustom
-					getPage={checkAlertCriticas}
-					data={rowCriticos}
-					columns={ColumnsEvent()}
-					density='comfortable'
-					header={{
-						background: 'rgb(190 190 190)',
-						fontSize: '18px',
-						fontWeight: 'bold',
-					}}
-					toolbarClass={{ background: 'rgb(190 190 190)' }}
-					bodyContent={{ fontSize: '16px' }}
-					body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-					footer={{ background: 'rgb(190 190 190)' }}
-					ChangeColorRow={ChangeColorRow}
-					pageSize={10}
-					checkAlert={bottonCheck}
-					topToolbar
-					hide
-					filter
-					sort
-					pagination
-				/>
-			</LocalizationProvider>
+			<div className='w-full max-w-full overflow-x-auto'>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<TableCustom
+						getPage={checkAlertCriticas}
+						data={rowCriticos}
+						columns={ColumnsEvent()}
+						density='comfortable'
+						header={{
+							background: 'rgb(190 190 190)',
+							fontSize: '18px',
+							fontWeight: 'bold',
+						}}
+						toolbarClass={{ background: 'rgb(190 190 190)' }}
+						bodyContent={{ fontSize: '16px' }}
+						body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
+						footer={{ background: 'rgb(190 190 190)' }}
+						ChangeColorRow={ChangeColorRow}
+						pageSize={10}
+						checkAlert={bottonCheck}
+						topToolbar
+						hide
+						filter
+						sort
+						pagination
+					/>
+				</LocalizationProvider>
+			</div>
+
 		</div>
 	)
 }

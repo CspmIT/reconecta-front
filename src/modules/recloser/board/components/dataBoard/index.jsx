@@ -60,7 +60,7 @@ const DataBoard = () => {
 				<div className='flex-grow flex justify-center'>
 					<h2 className='text-2xl'>Reconectador</h2>
 				</div>
-				<div className='absolute right-2'>
+				<div className='absolute right-2 top-8 md:top-0'>
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
@@ -75,7 +75,7 @@ const DataBoard = () => {
 			<div className='mb-4'>
 				<ControlsBoard info={info} />
 			</div>
-			<CardBoard onCardSelect={handleCardSelect} info={info} />
+			<CardBoard onCardSelect={handleCardSelect} selectedCardId={selectedCardId} info={info} />
 		</div>
 	)
 }

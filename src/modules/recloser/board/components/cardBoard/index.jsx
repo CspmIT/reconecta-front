@@ -7,7 +7,7 @@ import EventBoard from '../eventBoard';
 import AnalyticsBoard from '../analyticsBoard';
 import ManeuverBoard from '../maneuverBoard';
 
-function TabDinamic({ onCardSelect, info }) {
+function CardBoard({ onCardSelect, info }) {
   const [selectedCardId, setSelectedCardId] = useState(null);
   const boardCards = [
     { id: 1, name: 'METROLOGÍA', icon: <FaTachometerAlt /> },
@@ -23,6 +23,7 @@ function TabDinamic({ onCardSelect, info }) {
   };
 
   useEffect(() => {
+    console.log(info);
     setTimeout(() => {
       handleCard(1);
     }, 200)
@@ -43,10 +44,8 @@ function TabDinamic({ onCardSelect, info }) {
         {boardCards.map((item) => (
           <Tab
             key={item.id}
-            style={{ 
-              minWidth: 0
-            }}
-            className={`w-full h-36 ${selectedCardId == item.id ? '!bg-white' : '!bg-gray-300'}   !border-t-2 !border-l-2 !border-b-2 dark:!bg-zinc-500 min-w-0 ${classTabs} relative`}
+            style={{ minWidth: 0, height: '144px', width: '52px !important' }}
+            className={`w-full ${selectedCardId == item.id ? '!bg-white' : '!bg-gray-300'}   !border-t-2 !border-l-2 !border-b-2 dark:!bg-zinc-500 min-w-0 ${classTabs} relative`}
             onClick={() => handleCard(item.id)}
             label={
               <div
@@ -63,15 +62,14 @@ function TabDinamic({ onCardSelect, info }) {
           />
         ))}
       </Tabs>
-
-      <div className="flex-grow w-11/12 bg-white  dark:bg-zinc-500 mt-0.5 justify-center items-center border-2 border-t-0 border-l-0 p-4 rounded-r-2xl border-zinc-200 dark:border-gray-700">
-        {selectedCardId === 1 && <MetrologyBoard idRecloser={info.recloser?.id || null} />}
-        {selectedCardId === 2 && <EventBoard idRecloser={info.recloser?.id || null} />}
-        {selectedCardId === 3 && <AnalyticsBoard idRecloser={info.recloser?.id || null} />}
-        {selectedCardId === 4 && <ManeuverBoard info={info} />}
+      <div className="w-4/5 md:w-full bg-white dark:bg-zinc-500 mt-0.5 justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-0 py-3 rounded-r-2xl border-zinc-200 dark:border-gray-700">
+        {selectedCardId === 1 && <MetrologyBoard idRecloser={info?.recloser?.id || null} />}
+        {selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} />}
+        {selectedCardId === 3 && <AnalyticsBoard idRecloser={info?.recloser?.id || null} />}
+        {selectedCardId === 4 && <ManeuverBoard info={info || {}} />}
       </div>
     </div>
   );
 }
 
-export default TabDinamic;
+export default CardBoard;

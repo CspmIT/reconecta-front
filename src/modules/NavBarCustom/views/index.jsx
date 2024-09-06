@@ -79,7 +79,7 @@ function NavBarCustom() {
 				},
 				{
 					name: 'Notificaciones',
-					link: '/config/menu',
+					link: '/config/notifications',
 					icon: <MdNotificationsActive  className='dark:text-white text-2xl my-1' />,
 				},
 			],
