@@ -1,3 +1,4 @@
+import Cookies from 'js-cookie'
 import React, { useEffect, useRef, useState } from 'react'
 import { FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
@@ -12,6 +13,7 @@ const DropdownImage = ({ props }) => {
 
 	const handleLogout = () => {
 		localStorage.clear()
+		Cookies.remove('token')
 		navigator('/')
 	}
 

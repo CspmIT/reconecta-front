@@ -7,6 +7,7 @@ import Footer from '../components/Footer'
 import { userPermisos } from '../utils/js/PermisosUser'
 import Swal from 'sweetalert2'
 import { storage } from '../../../storage/storage'
+import Cookies from 'js-cookie'
 const MainContent = () => {
 	const { user, setInfoNav } = useContext(MainContext)
 	const location = useLocation()
@@ -16,6 +17,7 @@ const MainContent = () => {
 	useEffect(() => {
 		if (!authUser) {
 			localStorage.clear()
+			Cookies.remove('token')
 			navigate('/login')
 			return
 		}
