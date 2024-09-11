@@ -5,7 +5,7 @@ import { ColumnsTable, dataTable } from './utils/DataTable'
 import TableCustom from '../../../../../../components/TableCustom'
 function VoltageCurrent() {
 	return (
-		<>
+		<div className='w-full'>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TableCustom
 					data={dataTable}
@@ -31,7 +31,7 @@ function VoltageCurrent() {
 					pagination
 				/>
 			</LocalizationProvider>
-		</>
+		</div>
 	)
 }
 

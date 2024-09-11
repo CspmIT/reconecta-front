@@ -17,9 +17,9 @@ const CardBoard = ({ onCardSelect }) => {
 	}
 
 	return (
-		<div className='flex flex-row justify-between select-none'>
+		<div className='flex flex-wrap justify-between select-none'>
 			{boardCards.map((card, i) => (
-				<div className='w-1/4 py-5 flex flex-row justify-center' key={i}>
+				<div className='w-1/2 md:w-1/4 py-5 flex flex-row justify-center' key={i}>
 					<CardCustom
 						className={`w-5/6 h-full py-5 cursor-pointer ${
 							selectedCardId === card.id
@@ -31,9 +31,9 @@ const CardBoard = ({ onCardSelect }) => {
 							onClick={() => handleCard(card.id)}
 							className='w-full flex flex-col items-center font-bold'
 						>
-							<div className='text-3xl text-blue-600'>{card.icon}</div>
-							<div className='text-lg text-center mt-3 font-sans'>{card.title}</div>
-							<div className='text-lg text-center font-sans'>{card.subtitle}</div>
+							<div className='md:text-3xl text-blue-600'>{card.icon}</div>
+							<div className='text-sm lg:text-lg text-center mt-3 font-sans'>{card.title}</div>
+							<div className='text-sm lg:text-lg text-center font-sans'>{card.subtitle}</div>
 						</div>
 					</CardCustom>
 				</div>

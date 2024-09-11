@@ -16,11 +16,11 @@ const SubstationUrbanBoard = () => {
 						</div>
 					</div>
 					<HeaderBoard />
-					<div className='w-full flex flex-row justify-center'>
+					<div className='w-full flex flex-wrap justify-center'>
 						<DetailBoard />
 						<InstantValuesBoard />
 					</div>
-					<div className='w-full flex flex-row justify-center'>
+					<div className='w-full flex flex-wrap justify-center'>
 						<ChargeBoard />
 						<ComunicationBoard />
 					</div>

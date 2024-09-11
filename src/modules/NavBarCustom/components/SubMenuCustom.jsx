@@ -83,7 +83,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 					anchorEl={anchorEl}
 					sx={{
 						...(isMobile && {
-							transform: 'translate3d(-50px, -65px, 0px) !important',
+							transform: 'translate3d(-50px, -76px, 0px) !important',
 							position: isMobile ? 'fixed !important' : 'absolute !important'
 						})
 					}}

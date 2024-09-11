@@ -9,8 +9,6 @@ import { ColumnsUser } from '../utils/DataTable/ColumnsUsers'
 import { listUsers } from '../utils/DataTable/dataUser'
 import EditMenu from '../components/EditMenu/EditMenu'
 import { profilePermission, userPermission } from '../utils/DataMenu/permisos'
-import { Button, IconButton } from '@mui/material'
-import { Add, Edit } from '@mui/icons-material'
 
 function ConfigMenu() {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
