@@ -86,11 +86,11 @@ function TableSubStationRural({ ...props }) {
 					boxShadow: `1px 1px 8px 0px #00000046`,
 					borderRadius: '0.75rem',
 				}}
-				btnCustomToolbar={
-					<IconButton id='basic-button' onClick={() => changeView('subStationRural')}>
-						<Add />
-					</IconButton>
-				}
+				// btnCustomToolbar={
+				// 	<IconButton id='basic-button' onClick={() => changeView('subStationRural')}>
+				// 		<Add />
+				// 	</IconButton>
+				// }
 				topToolbar
 				copy
 				grouping

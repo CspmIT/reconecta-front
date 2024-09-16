@@ -54,7 +54,14 @@ export const grayIcon = (nro) =>
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-blue',
-		html: `<span class="marcador_ubicacion_map" style="background: gray;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative;">
+				<span class="marcador_ubicacion_map" style="background: gray;" >
+					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
+				</span>
+					<p class="sing">
+						${nro}
+					</p>
+				</div>`,
 	})
 
 const getIcon = (type, nro) => {

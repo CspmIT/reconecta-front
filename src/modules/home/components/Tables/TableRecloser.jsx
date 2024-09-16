@@ -8,6 +8,7 @@ import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
 import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
 import { backend } from '../../../../utils/routes/app.routes'
+import Swal from 'sweetalert2'
 
 function TableRecloser({ ...props }) {
 	const { setInfoNav } = useContext(MainContext)
@@ -15,7 +16,7 @@ function TableRecloser({ ...props }) {
 	const navigate = useNavigate()
 	const getdisplay = async () => {
 		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getAllReclosers`, 'GET')
-		setReclosers([...recloser.data])
+		setReclosers(recloser.data)
 	}
 
 	const changeAlarm = (Nro_Serie) => {
@@ -70,6 +71,59 @@ function TableRecloser({ ...props }) {
 		setInfoNav(nameView)
 		navigate(`/Abm/${nameView}`)
 	}
+	const deleteRecloser = async (data) => {
+		Swal.fire({
+			title: '¡Atención!',
+			text: '¿Que desea realizar?',
+			icon: 'question',
+			allowOutsideClick: false,
+			showDenyButton: true,
+			showCancelButton: true,
+			confirmButtonText: 'Eliminar',
+			denyButtonText: 'Desvincular',
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					data.status = 0
+					data.type_device = 1
+					const result = await request(
+						`${backend[`${import.meta.env.VITE_APP_NAME}`]}/deleteRecloser`,
+						'POST',
+						data
+					)
+					Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
+					getdisplay()
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Atención!',
+						text: 'Hubo un error al intentear eliminar el reconectador',
+						icon: 'warning',
+					})
+				}
+			}
+			if (result.isDenied) {
+				try {
+					data.status = 0
+					data.type_device = 1
+					const result = await request(
+						`${backend[`${import.meta.env.VITE_APP_NAME}`]}/unlinkRelation`,
+						'POST',
+						data
+					)
+					Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
+					getdisplay()
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Atención!',
+						text: 'Hubo un error al intentear desvincular el reconectador',
+						icon: 'warning',
+					})
+				}
+			}
+		})
+	}
 
 	useEffect(() => {
 		getdisplay()
@@ -79,7 +133,7 @@ function TableRecloser({ ...props }) {
 		<div className='pb-5 w-full'>
 			<TableCustom
 				data={reclosers}
-				columns={ColumnsRecloser(changeAlarm, props.newTab)}
+				columns={ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)}
 				density='comfortable'
 				header={{
 					background: 'rgb(190 190 190)',
@@ -93,11 +147,6 @@ function TableRecloser({ ...props }) {
 					boxShadow: `1px 1px 8px 0px #00000046`,
 					borderRadius: '0.75rem',
 				}}
-				btnCustomToolbar={
-					<IconButton id='basic-button' onClick={() => changeView('recloser')}>
-						<Add />
-					</IconButton>
-				}
 				topToolbar
 				copy
 				hide

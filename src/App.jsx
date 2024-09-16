@@ -23,6 +23,7 @@ import Profile from './modules/profile/views'
 import ConfigSecurity from './modules/configSecurity/views'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
+import AbmDevice from './modules/AbmDevice/views'
 function App() {
 	// async function updateApp() {
 	// 	const { shouldUpdate, manifest } = await checkUpdate()
@@ -62,6 +63,8 @@ function App() {
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/Abm/:name', element: <AbmEquipament /> },
 		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
+		{ path: '/AbmDevice/:name', element: <AbmDevice /> },
+		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
 	]
 	//Incorporo el theme de mui

@@ -7,7 +7,19 @@
 	font-family: 'Digital';
 	font-size: 1.3rem !important;
 }
-
+.sing {
+	position: absolute;
+	left: 2rem;
+	top: 0;
+	bottom: 0.7rem;
+	margin: auto;
+	height: fit-content;
+	padding: 0.25rem;
+	background: white;
+	border: 1px solid #aaaaaa;
+	border-radius: 12px;
+	box-shadow: 3px 1px 7px 0px #00000094;
+}
 .marcador_ubicacion_map {
 	width: 2rem;
 	height: 2rem;

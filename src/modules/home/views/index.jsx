@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import Grafs from '../components/Grafs'
 import TableRecloser from '../components/Tables/TableRecloser'
 import { MainContext } from '../../../context/MainContext'
@@ -13,6 +13,11 @@ import TableSubStationRural from '../components/Tables/TableSubStationRural'
 import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
 import SubstationRuralBoard from '../../substationRural/views'
+import TableNodo from '../components/Tables/TableNodo'
+import { Button, IconButton, MenuItem, Popper } from '@mui/material'
+import { PlusOne } from '@mui/icons-material'
+import { BiPlus } from 'react-icons/bi'
+import ButtonAddElement from '../components/ButtonAddElement'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -60,30 +65,35 @@ const Home = () => {
 	}
 	const tabsHome = [
 		{
+			id: 6,
+			title: 'Nodos',
+			component: <TableNodo />,
+		},
+		{
 			id: 1,
 			title: 'Reconectadores',
 			component: <TableRecloser newTab={newTabBoard} />,
 		},
-		{
-			id: 4,
-			title: 'Medidores',
-			component: <TableMeter newTab={newTabBoard} />,
-		},
-		{
-			id: 2,
-			title: 'Sub Estación Urbana',
-			component: <TableSubStationUrban newTab={newTabBoard} />,
-		},
-		{
-			id: 3,
-			title: 'Sub Estación Rural',
-			component: <TableSubStationRural newTab={newTabBoard} />,
-		},
-		{
-			id: 5,
-			title: 'Analizador de red',
-			component: <TableAnalyzer newTab={newTabBoard} />,
-		},
+		// {
+		// 	id: 4,
+		// 	title: 'Medidores',
+		// 	component: <TableMeter newTab={newTabBoard} />,
+		// },
+		// {
+		// 	id: 2,
+		// 	title: 'Sub Estación Urbana',
+		// 	component: <TableSubStationUrban newTab={newTabBoard} />,
+		// },
+		// {
+		// 	id: 3,
+		// 	title: 'Sub Estación Rural',
+		// 	component: <TableSubStationRural newTab={newTabBoard} />,
+		// },
+		// {
+		// 	id: 5,
+		// 	title: 'Analizador de red',
+		// 	component: <TableAnalyzer newTab={newTabBoard} />,
+		// },
 	]
 
 	return (
@@ -91,6 +101,7 @@ const Home = () => {
 			<div className='row gap-3 mb-5 px-3'>
 				<Grafs />
 			</div>
+			<ButtonAddElement />
 			<TabsHome tabs={tabsHome} />
 		</div>
 	)

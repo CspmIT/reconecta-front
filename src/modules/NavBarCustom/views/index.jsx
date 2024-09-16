@@ -17,12 +17,12 @@ import { Fragment, useContext, useEffect, useRef, useState } from 'react'
 import ButtonModeDark from '../../core/components/ButtonModeDark'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { FaMapMarkedAlt, FaCogs, FaProjectDiagram, FaFile } from 'react-icons/fa'
-import { RiAlertFill, RiDashboardFill, RiRemoteControl2Fill } from 'react-icons/ri'
+import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
 import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
-import { InsertChart, NotificationAdd, Security } from '@mui/icons-material'
+import { Security } from '@mui/icons-material'
 import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import { PiTabsFill } from 'react-icons/pi'
@@ -93,7 +93,7 @@ function NavBarCustom() {
 		},
 		{
 			name: 'ABM Equipos',
-			link: `/Abm/${infoNav}`,
+			link: `${infoNav}`,
 			icon: <FaFile className='dark:text-white text-3xl' />,
 		},
 	]
@@ -103,9 +103,9 @@ function NavBarCustom() {
 			setButtonActive('Home')
 		}
 		if (infoNav != '') {
-			setButtonActive('/Abm/' + infoNav)
+			setButtonActive(infoNav)
 		}
-		if (locationTAbs.includes('Abm') && !infoNav[0]) {
+		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && !infoNav[0]) {
 			navigate('Home')
 		}
 	}, [location, locationTAbs])
@@ -154,9 +154,12 @@ function NavBarCustom() {
 							if (tabs.length == 0 && item.link == '/tabs') {
 								return ''
 							}
-							if (item.link == '/Abm/') {
+							if (item.name == 'ABM Equipos' && item.link == '') {
 								return ''
 							}
+							// if (item.link == '/Abm/' || item.link == '/AbmDevice/') {
+							// 	return ''
+							// }
 							return (
 								<Fragment key={index}>
 									<ListItem disablePadding sx={{ display: 'block' }}>
