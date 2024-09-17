@@ -1,13 +1,14 @@
-import { Button } from '@mui/material'
 import MapCustom from '../components/MapCustom'
 import { ToastContainer, toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { markersRecloser } from '../utils/js/markers'
 import { polylines } from '../utils/js/polilines'
+import { request } from '../../../utils/js/request'
+import { backend } from '../../../utils/routes/app.routes'
+import markerCustom, { getIcon, grayIcon, greenIcon, yellowIcon } from '../utils/js/markerClass'
 function Map() {
 	const center = [-30.680865, -62.011055]
 	const centerCity = [-30.712865, -62.006255]
+	const [markersRecloser, setMarkersRecloser] = useState([])
 	// const navigate = useNavigate()
 	// const showToastMessage = () => {
 	// 	toast.warn(`Nueva Alerta para ID!`, {
@@ -51,6 +52,43 @@ function Map() {
 		changeZoom() // Llama inicialmente para establecer el valor correcto según la resolución actual
 
 		return () => window.removeEventListener('resize', changeZoom)
+	}, [])
+	const getdisplay = async () => {
+		try {
+			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
+			const markers = await Promise.all(
+				nodes.data.map(async (item) => {
+					const info = {
+						name: item.name,
+						number: item.number,
+					}
+					const recloser = item.node_history.filter((item) => item.type_device == 1)
+					const marker = new markerCustom(
+						item.id,
+						item.number,
+						item.lat_location,
+						item.lng_location,
+						3,
+						item.alert,
+						info,
+						recloser
+					)
+					if (recloser.length > 0) {
+						// Espera a que `fetchInfo()` termine
+						await marker.fetchInfo()
+					}
+					return marker
+				})
+			)
+			setMarkersRecloser(markers)
+		} catch (error) {
+			console.error('Error al obtener los nodos:', error)
+		}
+	}
+
+	useEffect(() => {
+		changeZoom()
+		getdisplay()
 	}, [])
 	return (
 		<div className={`!min-h-[90vh] relative w-full flex`}>
