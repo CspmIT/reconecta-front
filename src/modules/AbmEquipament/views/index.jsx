@@ -5,12 +5,9 @@ import Swal from 'sweetalert2'
 import AddNode from '../components/AddNode/AddNode'
 import AddMarkerMap from '../components/Map/AddMarkerMap'
 import { useEffect, useState } from 'react'
-import { markersExist } from '../utils/js/markersExist'
-import { grayIcon, redIcon } from '../../map/utils/js/markerClass'
 import { useNavigate, useParams } from 'react-router-dom'
 import AddSubStationRural from '../components/AddSubStationRural/AddSubStationRural'
 import AddSubStationUrban from '../components/AddSubStationUrban'
-import { saveRecloser, saveStationRural, saveStationUrban } from '../utils/js/saveActive'
 import AddElementElectric from '../components/AddElementElectric'
 import { getNode, getRecloser } from '../../AbmDevice/components/AddRecloser/actions'
 import { saveNode } from '../utils/js/nodeAction'
@@ -80,7 +77,6 @@ function AbmEquipament() {
 			getDataEdit(name, id)
 		}
 	}, [])
-	console.log(dataEdit)
 	return (
 		<div className={'w-full flex justify-center items-center rounded-md text-black'}>
 			<CardCustom className={'w-full rounded-md text-black'}>

@@ -62,7 +62,6 @@ function TableNodo({ ...props }) {
 		navigate(`/Abm/node/${data.id}`)
 	}
 	const deleteRecloser = async (data) => {
-		console.log(data)
 		// Swal.fire({
 		// 	title: '¡Atención!',
 		// 	text: '¿Que desea realizar?',
@@ -81,7 +80,6 @@ function TableNodo({ ...props }) {
 		// 				'POST',
 		// 				data
 		// 			)
-
 		// 			Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
 		// 			getdisplay()
 		// 		} catch (error) {

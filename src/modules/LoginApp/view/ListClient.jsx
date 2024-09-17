@@ -43,7 +43,6 @@ function ListClients() {
 			throw new Error('No se encontro productos relacionados con el usuario')
 		}
 		const schema = await schemaName(data, product.id_product)
-		console.log(schema)
 		const token = await logeoApp(usuario.id, schema)
 		navigate(`/LoginCooptech/${token.token}`)
 	}

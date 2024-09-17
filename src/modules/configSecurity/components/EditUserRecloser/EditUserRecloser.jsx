@@ -38,9 +38,7 @@ const EditUserRecloser = ({ data }) => {
 			navigate('/config/security')
 			setTabs(tabs.filter((_, index) => index !== tabCurrent))
 			setTabCurrent((prev) => prev - 1)
-		} catch (e) {
-			console.log(e)
-		}
+		} catch (e) {}
 	}
 	return (
 		<div className='w-full'>

@@ -18,7 +18,6 @@ function BottonApps() {
 	const open = Boolean(anchorEl)
 	const id = open ? 'simple-popper' : undefined
 	const reDirection = (key) => {
-		console.log(key)
 		const url = front[key]
 		if (!url) throw new Error('No se encontró la Aplicación...')
 		const tokencooptech = Cookies.get('token')

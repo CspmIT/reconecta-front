@@ -75,7 +75,6 @@ function LoginApp() {
 					const schema = await schemaName(responseData.cliente[0].id, product.id_product)
 					const token = await logeoApp(responseData.id, schema)
 					if (token.error) {
-						console.log(token)
 						Swal.fire('Atencion', token.error.message || token.error, 'error')
 						Cookies.remove('token')
 						storage.remove('usuario')
