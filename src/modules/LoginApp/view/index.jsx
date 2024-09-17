@@ -52,7 +52,6 @@ function LoginApp() {
 			} else {
 				const url = backend.Cooptech + '/login'
 				const responseData = await requestLogin(url, 'POST', data)
-				console.log(responseData)
 				storage.set('usuario', responseData)
 				storage.set('usuarioCooptech', {
 					token: responseData.token,

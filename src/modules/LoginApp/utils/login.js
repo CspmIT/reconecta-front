@@ -11,10 +11,11 @@ export const logeoApp = async (usuarioId, schema) => {
 		const info = {
 			email: user.data.email,
 			tokenCooptech: user.data.token_apps,
-			schemaName: schema,
+			schemaName: schema.schema_name,
+			influx_name: schema.influx_name,
 		}
-		const token = await request(urlToken, 'POST', info)
 
+		const token = await request(urlToken, 'POST', info)
 		return token.data
 	} catch (error) {
 		return { error: error }
@@ -24,7 +25,7 @@ export const schemaName = async (clientId, productId) => {
 	try {
 		const urlUser = backend.Cooptech + `/getSchemaProduct?clientId=${clientId}&productId=${productId}`
 		const Response = await requestAuth(urlUser, 'GET')
-		return Response.data[0].schema_name
+		return Response.data[0]
 	} catch (error) {
 		throw new Error('errores')
 	}
