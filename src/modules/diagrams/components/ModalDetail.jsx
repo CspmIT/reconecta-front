@@ -106,7 +106,7 @@ function ModalDetail({ data, close }) {
 			) : (
 				<div
 					onClick={(event) => event.stopPropagation()}
-					className={`bg-slate-200 relative p-3 rounded-xl w-2/6 h-64 flex flex-wrap justify-center items-center  ${
+					className={`bg-slate-200 relative p-3 rounded-xl w-11/12 sm:w-1/2 md:w-3/6 lg:w-2/6 h-64 flex flex-wrap justify-center items-center  ${
 						dataView?.status === 1
 							? 'border-red-500'
 							: dataView?.status === 2
@@ -127,7 +127,7 @@ function ModalDetail({ data, close }) {
 								)
 							})}
 							<Button
-								className='!bg-green-500 !text-white w-3/5 !text-base !text-left'
+								className='!bg-green-500 !text-white w-4/5 !text-base !text-left'
 								onClick={() => console.log('hola')}
 							>
 								<ContentPaste className='!mr-4' /> Medidor: {dataView.meter.num_serie}

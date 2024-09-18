@@ -24,7 +24,9 @@ const closedMixin = (theme) => ({
 	},
 })
 
-const DrawerCustom = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(({ theme, open }) => ({
+const DrawerCustom = styled(MuiDrawer, {
+	shouldForwardProp: (prop) => prop !== 'open',
+})(({ theme, open }) => ({
 	width: drawerWidth,
 	flexShrink: 0,
 	whiteSpace: 'nowrap',
@@ -37,6 +39,6 @@ const DrawerCustom = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== '
 		...closedMixin(theme),
 		'& .MuiDrawer-paper': closedMixin(theme),
 	}),
-}))
+}));
 
 export default DrawerCustom

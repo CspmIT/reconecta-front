@@ -3,7 +3,7 @@ import GrafAreaHome from './GrafAreaHome'
 function Grafs() {
 	return (
 		<>
-			<div className='chartContainer bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-1/5'>
+			<div className='chartContainer bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-full sm:w-[48%] lg:w-[19%] mb-4'>
 				<GrafAreaHome
 					numVal={4}
 					alert
@@ -12,7 +12,7 @@ function Grafs() {
 					colorStatus={'#0e8703'}
 				/>
 			</div>
-			<div className='chartContainer  bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-1/5'>
+			<div className='chartContainer bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-full sm:w-[48%] lg:w-[19%] mb-4'>
 				<GrafAreaHome
 					numVal={1}
 					title={'Reconectadores en alarma'}
@@ -20,7 +20,7 @@ function Grafs() {
 					colorStatus={'#FFC107'}
 				/>
 			</div>
-			<div className='chartContainer  bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-1/5'>
+			<div className='chartContainer bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-full sm:w-[48%] lg:w-[19%] mb-4'>
 				<GrafAreaHome
 					numVal={5}
 					title={'Equipos Offline'}
@@ -28,7 +28,7 @@ function Grafs() {
 					colorStatus={'#ff0707'}
 				/>
 			</div>
-			<div className='chartContainer  bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-1/5'>
+			<div className='chartContainer bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-full sm:w-[48%] lg:w-[19%] mb-4'>
 				<GrafAreaHome
 					numVal={4}
 					title={'Equipos sin alimentacion AC'}
@@ -36,7 +36,7 @@ function Grafs() {
 					colorStatus={'#ff0707'}
 				/>
 			</div>
-			<div className='chartContainer  bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-1/5'>
+			<div className='chartContainer bg-white dark:bg-gray-800 rounded-lg shadow-gray-500 shadow-md drop-shadow-md p-3 h-44 w-full sm:w-[48%] lg:w-[19%] mb-4'>
 				<GrafAreaHome
 					numVal={3}
 					title={'Cantidad total de activos'}
@@ -45,7 +45,6 @@ function Grafs() {
 				/>
 			</div>
 		</>
-	)
+	);
 }
-
 export default Grafs

@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import CardCustom from '../../../components/CardCustom'
 import TableCustom from '../../../components/TableCustom'
 import { MainContext } from '../../../context/MainContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { dataPerfils } from '../utils/DataTable/dataProfile'
 import { ColumnsProfile } from '../utils/DataTable/ColumnsProfile'
 import { ColumnsUser } from '../utils/DataTable/ColumnsUsers'
@@ -52,13 +52,9 @@ function ConfigMenu() {
 	}
 
 	return (
-		<CardCustom
-			className={
-				'w-full h-full flex flex-col items-center justify-center text-black dark:text-white relative p-3 rounded-md'
-			}
-		>
-			<div className='w-2/3 '>
-				<h1 className='text-2xl mb-3'>Perfiles</h1>
+		<CardCustom className={'w-full h-full flex flex-col items-center justify-center text-black dark:text-white relative p-3 rounded-md'}>
+			<div className='w-full  md:p-5'>
+				<h1 className='text-2xl mb-3'>Habilitaciones por Perfiles</h1>
 				<TableCustom
 					data={dataPerfils}
 					columns={ColumnsProfile(editProfile)}
@@ -77,8 +73,8 @@ function ConfigMenu() {
 					}}
 				/>
 			</div>
-			<div className=' w-2/3 mt-4'>
-				<h1 className='text-2xl mb-3'>Usuarios</h1>
+			<div className='w-full mt-4 md:p-5'>
+				<h1 className='text-2xl mb-3'>Habilitaciones por Usuarios</h1>
 				<TableCustom
 					data={listUsers}
 					columns={ColumnsUser(editUser)}

@@ -79,11 +79,13 @@ function DiagramElectricity() {
 	}, [canvas])
 
 	return (
-		<div id='div_canvas' className={`${scaleSettings[zoom].scale} ${scaleSettings[zoom].translate} `}>
-			<canvas ref={canvasRef} id='canvas' className='z-40'></canvas>
-			{details.map((detail, index) => (
-				<DetailMeter key={index} position={detail.position} data={detail.data} />
-			))}
+		<div className='w-full'>
+			<div id='div_canvas' className={`${scaleSettings[zoom].scale} ${scaleSettings[zoom].translate} `}>
+				<canvas ref={canvasRef} id='canvas' className='z-40'></canvas>
+				{details.map((detail, index) => (
+					<DetailMeter key={index} position={detail.position} data={detail.data} />
+				))}
+			</div>
 		</div>
 	)
 }

@@ -29,6 +29,7 @@ const DataBoard = () => {
 	const getDataRecloser = async (id) => {
 		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${id}`, 'GET')
 		setInfo(recloser.data)
+		setSelectedCardId(1)
 	}
 
 	useEffect(() => {
@@ -59,7 +60,7 @@ const DataBoard = () => {
 				<div className='flex-grow flex justify-center'>
 					<h2 className='text-2xl'>Reconectador</h2>
 				</div>
-				<div className='absolute right-2'>
+				<div className='absolute right-2 top-8 md:top-0'>
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
@@ -80,13 +81,7 @@ const DataBoard = () => {
 			<div className='mb-4'>
 				<ControlsBoard info={info} />
 			</div>
-			<CardBoard onCardSelect={handleCardSelect} selectedCard={selectedCardId} />
-			<div className='p-3'>
-				{selectedCardId === 1 ? <MetrologyBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 2 ? <EventBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 3 ? <AnalyticsBoard idRecloser={info.recloser?.id || null} /> : null}
-				{selectedCardId === 4 ? <ManeuverBoard info={info} /> : null}
-			</div>
+			<CardBoard onCardSelect={handleCardSelect} selectedCardId={selectedCardId} info={info} />
 		</div>
 	)
 }

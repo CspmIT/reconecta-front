@@ -15,8 +15,8 @@ const HeaderBoard = ({ info }) => {
 		}
 	}, [info])
 	return (
-		<div className='w-full flex flex-row justify-around items-center'>
-			<div className='w-1/4 px-3'>
+		<div className='w-full flex flex-wrap justify-around items-center'>
+			<div className='w-full md:w-1/4 px-3'>
 				{boardFields.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
@@ -44,7 +44,7 @@ const HeaderBoard = ({ info }) => {
 					)
 				})}
 			</div>
-			<div className='w-2/4 flex flex-row justify-center'>
+			<div className='w-full sm:w-2/4 flex flex-row justify-center'>
 				<div
 					className={`rounded-full grid min-w-40 max-w-40 min-h-40 max-h-40  ${
 						statusReco === 1
@@ -64,7 +64,7 @@ const HeaderBoard = ({ info }) => {
 					</div>
 				</div>
 			</div>
-			<div className='w-1/4'>
+			<div className='w-full sm:w-1/4'>
 				{boardStatus.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>

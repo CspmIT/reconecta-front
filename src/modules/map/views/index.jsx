@@ -1,11 +1,11 @@
 import MapCustom from '../components/MapCustom'
-import { ToastContainer, toast } from 'react-toastify'
+// import { ToastContainer, toast } from 'react-toastify'
 import { useEffect, useState } from 'react'
 import { polylines } from '../utils/js/polilines'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
-import markerCustom, { getIcon, grayIcon, greenIcon, yellowIcon } from '../utils/js/markerClass'
-import { Button, IconButton, Skeleton } from '@mui/material'
+import markerCustom from '../utils/js/markerClass'
+import { IconButton, Skeleton } from '@mui/material'
 import { Lock, LockOpen } from '@mui/icons-material'
 function Map() {
 	const center = [-30.680865, -62.011055]
@@ -93,9 +93,9 @@ function Map() {
 	return (
 		<>
 			{markersRecloser.length > 1 ? (
-				<div className={`!min-h-[90vh] relative w-full flex`}>
-					<ToastContainer className={'absolute top-0'} stacked />
-					<div className='!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 w-1/2 relative'>
+				<div className={`!min-h-[90vh] relative w-full flex flex-wrap pb-3`}>
+					{/* <ToastContainer className={'absolute top-0'} stacked /> */}
+					<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 w-1/2 relative'>
 						<IconButton className={`!absolute !top-5 !left-4 z-[9999] !bg-slate-300`} onClick={() => handleActiveZoom(1)}>
 							{zoomActive ? <Lock /> : <LockOpen />}
 						</IconButton>

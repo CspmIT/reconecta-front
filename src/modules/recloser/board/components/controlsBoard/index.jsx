@@ -132,7 +132,7 @@ const ControlsBoard = ({ info }) => {
 				<Button size='large' variant='contained' type='button' onClick={() => enableControl(contador, enabled, setEnabled)}>
 					{enabled ? <LockOpen className='!text-xl' /> : <Lock className='!text-xl' />}
 				</Button>
-				<IconButton className={`!absolute right-5 ${!edit ? '!bg-yellow-300 hover:!bg-yellow-400' : ' !bg-green-300 hover:!bg-green-400 '}  shadow-slate-400 shadow-md`} type='button' onClick={editControls}>
+				<IconButton className={`!absolute right-0 sm:right-5 ${!edit ? '!bg-yellow-300 hover:!bg-yellow-400' : ' !bg-green-300 hover:!bg-green-400 '}  shadow-slate-400 shadow-md`} type='button' onClick={editControls}>
 					{!edit ? <Edit className='!text-xl' /> : <FaCheck className='!text-xl' />}
 				</IconButton>
 			</div>
@@ -140,10 +140,10 @@ const ControlsBoard = ({ info }) => {
 				<DndComponent controls={{ Basic: controlBasic, Advance: controlAdvance }} setContainer={setContainer} />
 			) : (
 				<>
-					<div className='grid grid-cols-4 gap-3'>
+					<div className='flex flex-wrap gap-3'>
 						{controlBasic.map((boardcontrol, index) => {
 							return (
-								<div key={index} className={`flex p-3 ${(!boardcontrol.enabled || boardcontrol.status == 'sin Datos') && '!opacity-25'} rounded-md items-center justify-between bg-gray-300 `}>
+								<div key={index} className={`w-full sm:w-[48%] lg:w-[24%] flex p-3 ${(!boardcontrol.enabled || boardcontrol.status == 'sin Datos') && '!opacity-25'} rounded-md items-center justify-between bg-gray-300 `}>
 									{boardcontrol.type_input === 'switch' ? (
 										<ControlSwitch contador={contador} control={boardcontrol} enabled={enabled} />
 									) : (
@@ -158,10 +158,10 @@ const ControlsBoard = ({ info }) => {
 							<AccordionSummary expandIcon={<ExpandMoreIcon />} className='!w-full' aria-controls={`panel-content`}>
 								<Typography className='flex items-center justify-center w-full'>Avanzado</Typography>
 							</AccordionSummary>
-							<AccordionDetails className={`!w-full grid grid-cols-4 gap-3`}>
+							<AccordionDetails className={`flex flex-wrap gap-3`}>
 								{controlAdvance.map((boardcontrol, index) => {
 									return (
-										<div key={index} className={`flex p-3 ${(!boardcontrol.enabled || boardcontrol.status == 'sin Datos') && '!opacity-25'} rounded-md items-center justify-between bg-gray-300 `}>
+										<div key={index} className={`w-full sm:w-[48%] lg:w-[24%] flex p-3 ${(!boardcontrol.enabled || boardcontrol.status == 'sin Datos') && '!opacity-25'} rounded-md items-center justify-between bg-gray-300 `}>
 											{boardcontrol.type_input === 'switch' ? (
 												<ControlSwitch contador={contador} control={boardcontrol} enabled={enabled} />
 											) : (

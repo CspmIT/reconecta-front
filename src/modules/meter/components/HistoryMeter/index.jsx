@@ -29,15 +29,15 @@ function HistoryMeter() {
 	]
 	return (
 		<>
-			<div className='w-full flex justify-around relative py-5 mb-5 border-y-2 border-solid border-gray-300'>
-				<div>
+			<div className='w-full flex flex-wrap justify-around relative py-5 mb-5 border-y-2 border-solid border-gray-300'>
+				<div className='w-full md:w-1/2'>
 					<p>Causa del último reinicio:</p>
 					<p className='font-bold'>Finalización del periodo</p>
 					<p>
 						Número de reinicios: <span>24</span>
 					</p>
 				</div>
-				<div>
+				<div className='w-full md:w-1/2'>
 					<p>Fecha del último reinicio</p>
 					<p className='font-bold'>01/07/2024 00:00:00</p>
 					<p>
@@ -45,7 +45,7 @@ function HistoryMeter() {
 					</p>
 				</div>
 				<IconButton
-					className='!absolute !top-4 !right-11 !bg-blue-800 !text-white !p-3 !border-white !border-2 border-solid shadow-sm shadow-black'
+					className='!absolute !top-4 !right-0 md:!right-11 !bg-blue-800 !text-white !p-3 !border-white !border-2 border-solid shadow-sm shadow-black'
 					onClick={handleOpen}
 				>
 					<FaArrowRightArrowLeft size={25} />
@@ -58,61 +58,63 @@ function HistoryMeter() {
 				aria-labelledby='modal-modal-title'
 				aria-describedby='modal-modal-description'
 			>
-				<div className=' w-1/3 max-md:w-2/3 max-sm:w-full !absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 bg-white  rounded-md shadow-md'>
-					<div className='p-4 bg-[#243f8c] rounded-t-md relative'>
-						<h1 className='text-xl font-bold'>Resumen</h1>
-						<IconButton onClick={handleClose} className='!absolute !top-4 !right-4'>
-							<ImCross size={15} />
-						</IconButton>
-					</div>
-					<div className='flex flex-col text-black p-7 gap-4'>
-						<h1 className='font-bold text-blue-600'>FACTOR DE POTENCIA</h1>
-						<div className='flex justify-evenly'>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									MÍNIMA <span className='text-gray-700'>0.9157</span>
-								</p>
-								<p>24/06/2024 03:55:00</p>
-							</div>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									PROMEDIO <span className='text-gray-700'>0.9813</span>
-								</p>
-							</div>
+				<div className='w-full md:w-1/2 lg:w-1/3 !absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 p-2'>
+					<div className='bg-white rounded-md shadow-md w-full'>
+						<div className='p-4 bg-[#243f8c] rounded-t-md relative'>
+							<h1 className='text-xl font-bold'>Resumen</h1>
+							<IconButton onClick={handleClose} className='!absolute !top-4 !right-4'>
+								<ImCross size={15} />
+							</IconButton>
 						</div>
-						<h1 className='font-bold text-blue-600'>FRECUENCIA</h1>
-						<div className='flex justify-evenly gap-4'>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									MÍNIMA <span className='text-gray-700'>49.6Hz</span>
-								</p>
-								<p>20/06/2024 09:53:22</p>
+						<div className='flex flex-col text-black p-7 gap-4'>
+							<h1 className='font-bold text-blue-600'>FACTOR DE POTENCIA</h1>
+							<div className='flex justify-evenly'>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										MÍNIMA <span className='text-gray-700'>0.9157</span>
+									</p>
+									<p>24/06/2024 03:55:00</p>
+								</div>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										PROMEDIO <span className='text-gray-700'>0.9813</span>
+									</p>
+								</div>
 							</div>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									MÁXIMA <span className='text-gray-700'>50.3Hz</span>
-								</p>
-								<p>03/06/2024 02:10:24</p>
+							<h1 className='font-bold text-blue-600'>FRECUENCIA</h1>
+							<div className='flex justify-evenly gap-4'>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										MÍNIMA <span className='text-gray-700'>49.6Hz</span>
+									</p>
+									<p>20/06/2024 09:53:22</p>
+								</div>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										MÁXIMA <span className='text-gray-700'>50.3Hz</span>
+									</p>
+									<p>03/06/2024 02:10:24</p>
+								</div>
 							</div>
-						</div>
-						<h1 className='font-bold text-blue-600'>TEMPERATURA</h1>
-						<div className='flex justify-evenly'>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									MÍNIMA <span className='text-gray-700'>13ºC</span>
-								</p>
-								<p>29/06/2024 07:31:38</p>
-							</div>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									ACTUAL <span className='text-gray-700'>19ºC</span>
-								</p>
-							</div>
-							<div className='text-center'>
-								<p className='font-bold text-blue-600'>
-									MÁXIMA <span className='text-gray-700'>41ºC</span>
-								</p>
-								<p>12/06/2024 16:36:02</p>
+							<h1 className='font-bold text-blue-600'>TEMPERATURA</h1>
+							<div className='flex justify-evenly'>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										MÍNIMA <span className='text-gray-700'>13ºC</span>
+									</p>
+									<p>29/06/2024 07:31:38</p>
+								</div>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										ACTUAL <span className='text-gray-700'>19ºC</span>
+									</p>
+								</div>
+								<div className='text-center'>
+									<p className='font-bold text-blue-600'>
+										MÁXIMA <span className='text-gray-700'>41ºC</span>
+									</p>
+									<p>12/06/2024 16:36:02</p>
+								</div>
 							</div>
 						</div>
 					</div>

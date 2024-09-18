@@ -19,7 +19,7 @@ function DataBoardMeter() {
 				<div className='flex-grow flex justify-center'>
 					<h2 className='text-2xl'>Medidor</h2>
 				</div>
-				<div className='absolute right-2'>
+				<div className='absolute right-2 top-8 md:top-0'>
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>

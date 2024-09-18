@@ -4,7 +4,7 @@ import React from 'react'
 function Header() {
 	return (
 		<>
-			<div className='w-full mt-3 grid gap-3 grid-cols-2 px-4'>
+			<div className='w-full mt-3 grid gap-3 grid-cols-1 sm:grid-cols-2 px-4'>
 				<TextField type='text' label='Name' className='w-full' defaultValue={'SETA 1'} />
 				<TextField type='text' label='Nro Serie' className='w-full' defaultValue={'36037636'} />
 				<TextField
@@ -19,12 +19,12 @@ function Header() {
 				</div>
 			</div>
 			<div className='w-full flex justify-center items-center'>
-				<div className='w-2/4 border-2 border-solid border-slate-400 rounded-md flex p-4 mt-5'>
-					<div className='w-full'>
+				<div className='w-full sm:w-2/4 border-2 border-solid border-slate-400 rounded-md flex p-4 mt-5'>
+					<div className='w-full p-1'>
 						<p className='font-semibold w-full text-center'>Tensión de batería:</p>
 						<p className='font-semibold w-full text-center'>0 V</p>
 					</div>
-					<div className='w-full'>
+					<div className='w-full p-1'>
 						<p className='font-semibold w-full text-center'>Diferencia de Hora</p>
 						<p className='font-semibold w-full text-center'>00:01:38</p>
 					</div>
