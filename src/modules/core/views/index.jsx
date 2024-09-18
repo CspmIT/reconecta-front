@@ -15,7 +15,7 @@ const MainContent = () => {
 	const authUser = storage.get('usuario')
 
 	useEffect(() => {
-		if (!authUser) {
+		if (!authUser || !Cookies.get('token')) {
 			localStorage.clear()
 			Cookies.remove('token')
 			navigate('/login')

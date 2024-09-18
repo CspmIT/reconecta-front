@@ -1,6 +1,42 @@
 import axios from 'axios'
+import { storage } from '../../storage/storage'
+import Cookies from 'js-cookie'
 
 export const request = async (url, method, data = false) => {
+	if (!url || !method) {
+		throw new Error('URL o método no proporcionados')
+	}
+	const token = Cookies.get('token')
+	try {
+		const response = await axios({
+			method,
+			url,
+			data: data || {},
+			withCredentials: true,
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json',
+				Authorization: 'Bearer ' + token,
+			},
+		})
+		return response
+	} catch (error) {
+		if (error.response?.status === 500) {
+			let messageError = ''
+			const errors = error.response.data
+			for (const key in errors) {
+				if (Object.hasOwnProperty.call(errors, key)) {
+					messageError += ' ' + errors[key].message
+				}
+			}
+			throw messageError
+		} else {
+			throw error.response.data
+		}
+	}
+}
+
+export const requestPublic = async (url, method, data = false) => {
 	if (!url || !method) {
 		throw new Error('URL o método no proporcionados')
 	}

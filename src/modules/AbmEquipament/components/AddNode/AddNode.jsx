@@ -18,6 +18,15 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 		}))
 	}
 
+	const handleNumberChange = (e) => {
+		const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '')
+		setInfo((prev) => ({
+			...prev,
+			number: value,
+		}))
+		setValue('number', value)
+	}
+
 	const changeType = (status) => {
 		changeInfra(status)
 	}
@@ -25,71 +34,61 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 	useEffect(() => {
 		if (dataEdit) {
 			changeType(dataEdit.type)
-			for (const item of Object.keys(dataEdit)) {
-				if (item == 'id') {
-					setValue('id_node', dataEdit[item])
-				} else {
-					setValue(item, dataEdit[item])
-				}
+			for (const [key, value] of Object.entries(dataEdit)) {
+				setValue(key == 'id' ? 'id_node' : key, value || '')
 			}
 			setInfo(dataEdit)
 		}
 	}, [dataEdit])
-
+	console.log(info)
 	return (
 		<>
 			<p className='w-full text-center text-2xl mb-3'>Infraestructura</p>
 			<div className='w-full flex justify-center mb-5'>
 				<TextField
 					select
-					error={errors.type ? true : false}
-					label={`Tipo de Infraestructura`}
+					error={!!errors.type}
+					label='Tipo de Infraestructura'
 					{...register('type', { required: 'El Campo es requerido' })}
 					onChange={(e) => {
 						changeType(e.target.value)
 						handleChange(e)
 					}}
 					className='w-1/2'
-					value={info.type}
-					helperText={errors.type && errors.type.message}
+					value={info.type || ''}
+					helperText={errors.type?.message}
 					name='type'
 				>
-					<MenuItem key={0} value={''}>
+					<MenuItem key={0} value=''>
 						<em>Seleccionar tipo</em>
 					</MenuItem>
 					<MenuItem key={1} value={1}>
 						Nodo de Reconexión
 					</MenuItem>
-					{/* <MenuItem key={2} value={2}>
-						Sub Estación Rural
-					</MenuItem>
-					<MenuItem key={3} value={3}>
-						Sub Estación Urbana
-					</MenuItem> */}
 				</TextField>
 			</div>
 
 			<div className='w-full grid gap-3 md:grid-cols-2 lg:grid-cols-3'>
-				<TextField type='number' {...register('id_node')} className='!hidden' defaultValue={info.id} />
+				<TextField type='number' {...register('id_node')} className='!hidden' value={info.id || ''} />
 				<div className='w-full'>
 					<TextField
-						error={errors.name ? true : false}
+						error={!!errors.name}
 						type='text'
-						label={`Nombre`}
+						label='Nombre'
 						{...register('name', { required: 'El Campo es requerido' })}
 						className='w-full'
-						helperText={errors.name && errors.name.message}
-						value={info.name}
+						helperText={errors.name?.message}
+						value={info.name || ''}
 						onChange={handleChange}
 						name='name'
 					/>
 				</div>
 				<div className='w-full'>
 					<TextField
-						error={errors.number ? true : false}
+						error={!!errors.number}
 						type='text'
-						label={`matricula`}
-						disabled={Boolean(dataEdit.number)}
+						label='Matricula'
+						disabled={!!dataEdit.number}
 						{...register('number', {
 							required: 'El Campo es requerido',
 							pattern: {
@@ -98,27 +97,21 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 							},
 						})}
 						className='w-full'
-						helperText={errors.number && errors.number.message}
-						onChange={(e) => {
-							const value = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, '')
-							setInfo((prev) => ({
-								...prev,
-								number: value,
-							}))
-						}}
-						value={info.number}
+						helperText={errors.number?.message}
+						onChange={handleNumberChange}
+						value={info.number || ''}
 						name='number'
 					/>
 				</div>
 				<div className='w-full'>
 					<TextField
-						error={errors.description ? true : false}
+						error={!!errors.description}
 						type='text'
-						label={`Descripción`}
+						label='Descripción'
 						{...register('description')}
 						className='w-full'
-						helperText={errors.description && errors.description.message}
-						value={info.description}
+						helperText={errors.description?.message}
+						value={info.description || ''}
 						onChange={handleChange}
 						name='description'
 					/>

@@ -1,17 +1,13 @@
 import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
 import { storage } from '../../../../storage/storage'
-import { Button, IconButton } from '@mui/material'
-import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
-import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
 import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
 import { backend } from '../../../../utils/routes/app.routes'
-import Swal from 'sweetalert2'
 import { ColumnsNodo } from '../../utils/ColumnsTables/ColumnsNodo'
 
-function TableNodo({ ...props }) {
+function TableNodo() {
 	const { setInfoNav } = useContext(MainContext)
 	const [node, setNode] = useState([])
 	const navigate = useNavigate()
@@ -61,7 +57,7 @@ function TableNodo({ ...props }) {
 		setInfoNav([{ ...data, link: '/Abm/' }])
 		navigate(`/Abm/node/${data.id}`)
 	}
-	const deleteRecloser = async (data) => {
+	const deleteNodo = async (data) => {
 		// Swal.fire({
 		// 	title: '¡Atención!',
 		// 	text: '¿Que desea realizar?',
@@ -120,7 +116,7 @@ function TableNodo({ ...props }) {
 		<div className='pb-5 w-full'>
 			<TableCustom
 				data={node}
-				columns={ColumnsNodo(changeView, deleteRecloser)}
+				columns={ColumnsNodo(changeView, deleteNodo)}
 				density='comfortable'
 				header={{
 					background: 'rgb(190 190 190)',
