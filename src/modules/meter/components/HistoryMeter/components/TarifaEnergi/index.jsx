@@ -6,7 +6,7 @@ function TarifaEnergi() {
 	return (
 		<>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
-				<div className='w-3/4 max-lg:w-full flex flex-col gap-4'>
+				<div className='w-full max-lg:w-full flex flex-col gap-4'>
 					<div className='w-full'>
 						<p className='text-xl text-center font-bold w-full'>Registro de Tarifas de Energía</p>
 					</div>
@@ -27,7 +27,7 @@ function TarifaEnergi() {
 						footer={{ height: '0px' }}
 					/>
 				</div>
-				<div className='w-3/4 max-lg:w-full flex flex-col gap-4 mt-4'>
+				<div className='w-full max-lg:w-full flex flex-col gap-4 mt-4'>
 					<div className='w-full'>
 						<p className='text-xl text-center font-bold w-full'>Diferencia mensual de Tarifas de Energía</p>
 					</div>

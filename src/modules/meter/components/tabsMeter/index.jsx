@@ -1,12 +1,17 @@
-import { Tab, Tabs } from '@mui/material'
+import { MenuItem, Select, Tab, Tabs, useMediaQuery } from '@mui/material'
 import { useState } from 'react'
 import { CustomTabPanel, a11yProps } from './PanelTab'
 
 function TabsMeter({ tabs }) {
 	const [value, setValue] = useState(0)
+	const isSmallScreen = useMediaQuery('(max-width: 850px)')
 	const handleChange = (event, newValue) => {
 		setValue(newValue)
 	}
+
+	const handleSelectChange = (event) => {
+		setValue(event.target.value)
+	  }
 	const classTabs =
 		'!border-solid !border-gray-200 !rounded-t-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
 	const classTabStatus = [
@@ -17,26 +22,39 @@ function TabsMeter({ tabs }) {
 	return (
 		<>
 			<div className={`w-full mr-3 !rounded-xl flex flex-col items-start`}>
-				<Tabs
-					// className='flex w-full'
-					indicatorColor='transparent'
-					value={value}
-					onChange={handleChange}
-					aria-label='basic tabs example'
-				>
-					{tabs.map((item, index) => {
-						return (
-							<Tab
-								key={index}
-								className={`flex-grow !mr-1 relative ${
-									classTabStatus[value === index ? 0 : 1]
-								} ${classTabs}`}
-								label={<p className='text-black dark:text-white w-full text-center'>{item.title}</p>}
-								{...a11yProps(index)}
-							/>
-						)
-					})}
-				</Tabs>
+				{isSmallScreen ? (
+					<Select
+						value={value}
+						onChange={handleSelectChange}
+						className="w-full mb-4 bg-white dark:bg-zinc-700 dark:text-white rounded-lg"
+					>
+						{tabs.map((item, index) => (
+							<MenuItem key={index} value={index}>
+								{item.title}
+							</MenuItem>
+						))}
+					</Select>
+				) : (
+					<Tabs
+						// className='flex w-full'
+						indicatorColor='transparent'
+						value={value}
+						onChange={handleChange}
+						aria-label='basic tabs example'
+					>
+						{tabs.map((item, index) => {
+							return (
+								<Tab
+									key={index}
+									className={`flex-grow !mr-1 relative ${classTabStatus[value === index ? 0 : 1]
+										} ${classTabs}`}
+									label={<p className='text-black dark:text-white w-full text-center'>{item.title}</p>}
+									{...a11yProps(index)}
+								/>
+							)
+						})}
+					</Tabs>
+				)}
 				<div
 					className={`bg-white dark:!bg-zinc-500 w-full h-full flex-col justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700`}
 				>

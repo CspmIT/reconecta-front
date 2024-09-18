@@ -1,37 +1,86 @@
 import { TextField } from '@mui/material'
 import MapCustom from '../../../map/components/MapCustom'
-function AddMarkerMap({ register, errors, listMarkers, setSelectMarkers }) {
-	const center = [-30.680865, -62.011055]
+import { grayIcon } from '../../../map/utils/js/markerClass'
+import { useEffect, useState } from 'react'
+function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
+	const [centerMap, setCenterMap] = useState([-30.680865, -62.011055])
+	const [markerEdit, setMarkerEdit] = useState(false)
+	const [markerDraw, setMarkerDraw] = useState(false)
+	const [lng, setLng] = useState('')
+	const [lat, setLat] = useState('')
 	const getLatLngMarker = (lat, lng) => {
+		setLng(lng)
+		setLat(lat)
+		setCenterMap([lat, lng])
 		setSelectMarkers({ lat, lng })
 	}
-
+	const changeUbication = (lng, lat) => {
+		const ubication = {
+			icon: grayIcon(dataEdit.number || 'RE'),
+			info: {},
+			lat,
+			lng,
+		}
+		setCenterMap([lat, lng])
+		setMarkerDraw([ubication])
+	}
+	useEffect(() => {
+		if (lng && lat) {
+			changeUbication(lng, lat)
+		}
+	}, [lng, lat])
+	useEffect(() => {
+		if (dataEdit.lat_location && dataEdit.lng_location) {
+			getLatLngMarker(dataEdit.lat_location, dataEdit.lng_location)
+			setMarkerEdit(true)
+		}
+	}, [dataEdit])
 	return (
 		<>
+			<div className='row gap-3 my-3'>
+				<TextField
+					id='lat_marker'
+					type='number'
+					disabled={markerEdit}
+					className={`w-1/3 `}
+					label={`Latitud`}
+					{...register('lat_marker', { required: 'Debe agregar una ubicación' })}
+					error={errors.lat_marker ? true : false}
+					helperText={errors.lat_marker && errors.lat_marker.message}
+					onChange={(e) => {
+						setLat(e.target.value)
+						register('lat_marker').onChange(e)
+					}}
+					value={lat}
+				/>
+				<TextField
+					id='lng_marker'
+					type='number'
+					disabled={markerEdit}
+					className={`w-1/3 `}
+					label={`Logitud`}
+					{...register('lng_marker', { required: 'Debe agregar una ubicación' })}
+					error={errors.lng_marker ? true : false}
+					helperText={errors.lng_marker && errors.lng_marker.message}
+					onChange={(e) => {
+						setLng(e.target.value)
+						register('lng_marker').onChange(e)
+					}}
+					value={lng}
+				/>
+			</div>
 			<div
 				className={`!min-h-[inherit] h-[50vh] mt-3 w-full rounded-lg ${
 					errors.lat_marker || errors.lng_marker ? 'outline !outline-2 !outline-red-500' : ''
 				}`}
 			>
-				<TextField
-					id='lat_marker'
-					type='text'
-					className='!hidden'
-					{...register('lat_marker', { required: 'Debe agregar una ubicación' })}
-				/>
-				<TextField
-					id='lng_marker'
-					type='text'
-					className='!hidden'
-					{...register('lng_marker', { required: 'Debe agregar una ubicación' })}
-				/>
 				<MapCustom
-					center={center}
+					center={centerMap}
 					id={155}
-					editor={!listMarkers.length ? true : false}
+					editor={markerEdit ? false : true}
 					zoom={11}
 					getLatLngMarker={getLatLngMarker}
-					markers={listMarkers}
+					markers={markerDraw}
 				/>
 			</div>
 			<p className='text-red-500 text-xs mt-2 ml-3'>

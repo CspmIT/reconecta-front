@@ -25,7 +25,7 @@ function Metrology() {
 			id: 4,
 			title: 'Diagrama Fasorial',
 			component: (
-				<div className='flex justify-center'>
+				<div className='flex w-full  justify-center'>
 					<Fasorial />
 				</div>
 			),

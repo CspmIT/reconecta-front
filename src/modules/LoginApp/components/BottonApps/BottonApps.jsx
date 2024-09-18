@@ -18,7 +18,6 @@ function BottonApps() {
 	const open = Boolean(anchorEl)
 	const id = open ? 'simple-popper' : undefined
 	const reDirection = (key) => {
-		console.log(key)
 		const url = front[key]
 		if (!url) throw new Error('No se encontró la Aplicación...')
 		const tokencooptech = Cookies.get('token')
@@ -48,7 +47,7 @@ function BottonApps() {
 					handleClick(e)
 				}}
 			>
-				<AppsIcon></AppsIcon>
+				<AppsIcon sx={{ color: 'black' }} />
 			</IconButton>
 			<Popper className='z-50 p-3' id={id} open={open} anchorEl={anchorEl} transition placement={'bottom-end'}>
 				{({ TransitionProps }) => (
@@ -64,7 +63,7 @@ function BottonApps() {
 										className={`${
 											item.profile !== 0 &&
 											'hover:bg-slate-200 dark:hover:bg-slate-900 hover:cursor-pointer'
-										}   select-none rounded-lg p-3  max-h-[13vh]transition-colors flex flex-col justify-center items-center`}
+										}   select-none rounded-lg p-3  max-h-[13vh] transition-colors flex flex-col justify-center items-center`}
 									>
 										<img
 											className={`${

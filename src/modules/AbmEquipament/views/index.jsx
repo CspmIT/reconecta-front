@@ -1,23 +1,20 @@
 import { useForm } from 'react-hook-form'
 import CardCustom from '../../../components/CardCustom'
-import { Button, TextField } from '@mui/material'
-import AddRecloser from '../components/AddRecloser/AddRecloser'
+import { Button } from '@mui/material'
 import Swal from 'sweetalert2'
-import AddEntity from '../components/AddEntity/AddEntity'
+import AddNode from '../components/AddNode/AddNode'
 import AddMarkerMap from '../components/Map/AddMarkerMap'
 import { useEffect, useState } from 'react'
-import { markersExist } from '../utils/js/markersExist'
-import { grayIcon, redIcon } from '../../map/utils/js/markerClass'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import AddSubStationRural from '../components/AddSubStationRural/AddSubStationRural'
-import AddMeter from '../components/AddMeter/AddMeter'
 import AddSubStationUrban from '../components/AddSubStationUrban'
-import AddNetAnalyzer from '../components/AddNetAnalyzer/AddNetAnalyzer'
-import { getRecloser } from '../components/AddRecloser/actions'
+import AddElementElectric from '../components/AddElementElectric'
+import { getNode, getRecloser } from '../../AbmDevice/components/AddRecloser/actions'
+import { saveNode } from '../utils/js/nodeAction'
 
 function AbmEquipament() {
+	const navigate = useNavigate()
 	const { name, id } = useParams()
-	const [listMarkers, setListMarkers] = useState([])
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const [dataEdit, setDataEdit] = useState([])
 	const {
@@ -28,31 +25,22 @@ function AbmEquipament() {
 		handleSubmit,
 	} = useForm()
 
-	const onSubmit = async (data) => {
+	const onSubmit = async (info) => {
 		try {
+			await saveNode(info)
 			Swal.fire({ title: 'Perfecto!', icon: 'success', text: 'Recloser agregado correctamente' })
+			if (info.id_recloser != 0) {
+				navigate('/tabs')
+			} else {
+				navigate('/Home')
+			}
 		} catch (e) {
-			console.log(e)
+			Swal.fire({
+				title: '¡Atención!',
+				text: e.message,
+				icon: 'warning',
+			})
 		}
-	}
-
-	const enableMarkers = (action) => {
-		setSelectMarkers({ lat: null, lng: null })
-		if (action) {
-			setListMarkers(markersExist)
-		} else {
-			setListMarkers([])
-		}
-	}
-	//funcion para seleccionar un marcador en el mapa, desde el select
-	const addMarker = (data) => {
-		const { lat, lng } = listMarkers.filter((item) => item.id == data)[0] || { lat: null, lng: null }
-		setSelectMarkers({ lat, lng })
-		const markersActive = listMarkers.map((item) => {
-			item.icon = item.id == data ? redIcon(data) : grayIcon(item.id)
-			return item
-		})
-		setListMarkers(markersActive)
 	}
 	useEffect(() => {
 		if (name === 'netAnalyzer') return
@@ -71,10 +59,18 @@ function AbmEquipament() {
 			case 'recloser':
 				setDataEdit(await getRecloser(id))
 				break
+			case 'node':
+				setDataEdit(await getNode(id))
+				break
 
 			default:
 				break
 		}
+	}
+	const [infra, setInfra] = useState(null)
+	const changeInfra = (option) => {
+		setInfra(option)
+		setValue('type', option)
 	}
 	useEffect(() => {
 		if (id) {
@@ -82,61 +78,53 @@ function AbmEquipament() {
 		}
 	}, [])
 	return (
-		<CardCustom className={' w-full rounded-md text-black'}>
-			<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
-				<div className='w-full flex-row gap-3 mb-5'>
-					{name !== 'netAnalyzer' && (
-						<>
-							<AddEntity
+		<div className={'w-full flex justify-center items-center rounded-md text-black'}>
+			<CardCustom className={'w-full rounded-md text-black'}>
+				<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
+					<div className='w-full flex-row gap-3 mb-5'>
+						{name == 'node' && (
+							<>
+								<AddNode
+									register={register}
+									changeInfra={changeInfra}
+									errors={errors}
+									setValue={setValue}
+									dataEdit={dataEdit}
+								/>
+								<AddMarkerMap
+									register={register}
+									errors={errors}
+									dataEdit={dataEdit}
+									setSelectMarkers={setSelectMarkers}
+								/>
+							</>
+						)}
+						{infra == 'subStationUrban' && (
+							<AddSubStationUrban
 								register={register}
 								errors={errors}
 								setValue={setValue}
-								addMarker={addMarker}
-								dataEdit={dataEdit}
-								enableMarkers={enableMarkers}
-								setSelectMarkers={setSelectMarkers}
+								clearErrors={clearErrors}
 							/>
-							<AddMarkerMap
+						)}
+						{infra == 'subStationRural' && (
+							<AddSubStationRural
 								register={register}
 								errors={errors}
 								setValue={setValue}
-								selectMarkers={selectMarkers}
-								setSelectMarkers={setSelectMarkers}
-								listMarkers={listMarkers}
+								clearErrors={clearErrors}
 							/>
-						</>
-					)}
-					{name == 'recloser' && (
-						<AddRecloser register={register} errors={errors} dataEdit={dataEdit} setValue={setValue} />
-					)}
-					{name == 'meter' && <AddMeter register={register} errors={errors} setValue={setValue} />}
-					{name == 'subStationUrban' && (
-						<AddSubStationUrban
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							clearErrors={clearErrors}
-						/>
-					)}
-					{name == 'subStationRural' && (
-						<AddSubStationRural
-							register={register}
-							errors={errors}
-							setValue={setValue}
-							clearErrors={clearErrors}
-						/>
-					)}
-					{name == 'netAnalyzer' && (
-						<AddNetAnalyzer register={register} errors={errors} setValue={setValue} />
-					)}
-					<div className='w-full flex justify-center mt-5'>
-						<Button type='submit' variant='contained'>
-							Guardar
-						</Button>
+						)}
+						{infra && <AddElementElectric setValue={setValue} dataEdit={dataEdit} />}
+						<div className='w-full flex justify-center mt-5'>
+							<Button type='submit' variant='contained'>
+								Guardar
+							</Button>
+						</div>
 					</div>
-				</div>
-			</form>
-		</CardCustom>
+				</form>
+			</CardCustom>
+		</div>
 	)
 }
 

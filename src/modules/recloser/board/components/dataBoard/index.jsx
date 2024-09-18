@@ -52,7 +52,7 @@ const DataBoard = () => {
 	const { setInfoNav } = useContext(MainContext)
 	const editRecloser = (info) => {
 		setInfoNav([info])
-		navigate('/Abm/recloser/' + info.recloser.id)
+		navigate('/AbmDevice/recloser/' + info.recloser.id)
 	}
 	return (
 		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
@@ -64,7 +64,13 @@ const DataBoard = () => {
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
-					<Button onClick={() => editRecloser(info)} className='!ml-3' color='warning' title='Editar Reconectador' variant='contained'>
+					<Button
+						onClick={() => editRecloser(info)}
+						className='!ml-3'
+						color='warning'
+						title='Editar Reconectador'
+						variant='contained'
+					>
 						<FaEdit />
 					</Button>
 				</div>

@@ -15,7 +15,7 @@ const MainContent = () => {
 	const authUser = storage.get('usuario')
 
 	useEffect(() => {
-		if (!authUser) {
+		if (!authUser || !Cookies.get('token')) {
 			localStorage.clear()
 			Cookies.remove('token')
 			navigate('/login')
@@ -25,7 +25,7 @@ const MainContent = () => {
 			Swal.fire({ title: 'Atención!', icon: 'warning', text: 'No tenes accesso para esta vista', timer: 2000 })
 			navigate('/Home')
 		}
-		if (!location.pathname.includes('/Abm/')) {
+		if (!location.pathname.includes('/Abm/') && !location.pathname.includes('/AbmDevice/')) {
 			setInfoNav('')
 		}
 	}, [location])

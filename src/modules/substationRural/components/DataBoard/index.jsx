@@ -6,22 +6,22 @@ const DataBoard = ({ info }) => {
 	return (
 		<div className='w-full flex flex-row flex-wrap'>
 			<div className='w-full md:w-1/2 flex flex-col justify-around'>
-				<div>
+				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.name_station || ''} label='Sub Estación' />
 				</div>
-				<div>
+				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.potencia_transformador || ''} label='Potencia del transformador' />
 				</div>
-				<div>
+				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.power || ''} label='Tipo de alimentación' />
 				</div>
-				<div>
+				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.num_meter || ''} label='Número de Medidor' />
 				</div>
-				<div>
+				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.measurement_pat || ''} label='Medición PAT' />
 				</div>
-				<div>
+				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.user || ''} label='Nombre del cliente relacionado' />
 				</div>
 			</div>

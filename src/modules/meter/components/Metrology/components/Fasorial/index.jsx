@@ -11,12 +11,13 @@ function Fasorial() {
 	const optionsFasorial = getFasorial()
 	return (
 		<div className='flex flex-col w-full justify-center items-center'>
-			<HighchartsReact highcharts={Highcharts} options={optionsFasorial} />
-
+			<div className='flex flex-col w-full max-w-full justify-center items-center sm:w-3/4 md:w-1/2'>
+				<HighchartsReact highcharts={Highcharts} options={optionsFasorial} />
+			</div>
 			<p className='font-bold'>Relación de Transformación</p>
 			<p>Corriente: 2500 / 5</p>
 			<p>Tensión: 13200 / 110</p>
-			<div className='mt-3'>
+			<div className='mt-3 w-full'>
 				<TableCustom
 					data={dataTable}
 					columns={columns}

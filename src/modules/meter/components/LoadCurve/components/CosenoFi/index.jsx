@@ -5,7 +5,7 @@ import { ColumnsTable, dataTable } from './utils/DataTable'
 import TableCustom from '../../../../../../components/TableCustom'
 function CosenoFi() {
 	return (
-		<>
+		<div className='w-full'>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TableCustom
 					data={dataTable}
@@ -31,7 +31,7 @@ function CosenoFi() {
 					pagination
 				/>
 			</LocalizationProvider>
-		</>
+		</div>
 	)
 }
 

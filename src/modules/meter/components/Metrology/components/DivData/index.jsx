@@ -3,15 +3,15 @@ import { useState } from 'react'
 function DivData({ data }) {
 	const [see, setSee] = useState(false)
 	return (
-		<div className='relative flex justify-center'>
+		<div className='relative flex m-1  justify-center'>
 			<div
 				className='w-full flex flex-col justify-center items-center'
 				onMouseEnter={() => setSee(true)}
 				onMouseLeave={() => setSee(false)}
 			>
-				<p className='text-lg'>{data.title}</p>
-				<p className='text-base'>{data.ip}</p>
-				<p className='text-2xl font-bold'>
+				<p className='md:text-lg'>{data.title}</p>
+				<p className='text-sm md:text-base'>{data.ip}</p>
+				<p className='text-lg md:text-2xl font-bold'>
 					{data.value} {data.uni}
 				</p>
 			</div>

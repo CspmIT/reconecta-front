@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 function Curva() {
 	return (
-		<>
+		<div className='w-full'>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TableCustom
 					data={dataTable}
@@ -31,7 +31,7 @@ function Curva() {
 					pagination
 				/>
 			</LocalizationProvider>
-		</>
+		</div>
 	)
 }
 

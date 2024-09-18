@@ -197,6 +197,7 @@ export const getFasorial = () => {
 	return {
 		chart: {
 			polar: true,
+			width: window.innerWidth < 768 ? window.innerWidth * 0.5 : null,
 			numberFormatter: function () {
 				let ret = Highcharts.numberFormat.apply(0, arguments)
 				let cantidad_chart = Highcharts.charts.length - 1

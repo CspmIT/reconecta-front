@@ -1,19 +1,28 @@
 // MarkerOptions.js
 import L from 'leaflet'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 export const redIcon = (nro) =>
 	new L.divIcon({
 		iconSize: [25, 41],
-		iconAnchor: [12, 41],
+		iconAnchor: [10, 20],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-blue',
-		html: `<span class="marcador_ubicacion_map" style="background: red;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
+		<span class="marcador_ubicacion_map" style="background: red;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
+		</span>
+			<p class="sing">
+				${nro}
+			</p>
+		</div>`,
 	})
 export const workIcon = () =>
 	new L.divIcon({
 		iconSize: [25, 41],
-		iconAnchor: [12, 41],
+		iconAnchor: [10, 20],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-blue',
@@ -23,53 +32,86 @@ export const workIcon = () =>
 export const blueIcon = (nro) =>
 	new L.divIcon({
 		iconSize: [25, 41],
-		iconAnchor: [12, 41],
+		iconAnchor: [10, 20],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-blue',
-		html: `<span class="marcador_ubicacion_map" style="background: blue;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
+		<span class="marcador_ubicacion_map" style="background: blue;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
+		</span>
+			<p class="sing">
+				${nro}
+			</p>
+		</div>`,
 	})
 export const greenIcon = (nro) =>
 	new L.divIcon({
 		iconSize: [25, 41],
-		iconAnchor: [12, 41],
+		iconAnchor: [10, 20],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-green',
-		html: `<span class="marcador_ubicacion_map" style="background: green;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
+		<span class="marcador_ubicacion_map" style="background: green;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
+		</span>
+			<p class="sing">
+				${nro}
+			</p>
+		</div>`,
+		// html: `<span class="marcador_ubicacion_map" style="background: green;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
 export const yellowIcon = (nro) =>
 	new L.divIcon({
 		iconSize: [25, 41],
-		iconAnchor: [12, 41],
+		iconAnchor: [10, 20],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-green',
-		html: `<span class="marcador_ubicacion_map" style="background: yellow;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
+				<span class="marcador_ubicacion_map" style="background: yellow;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
+				</span>
+					<p class="sing">
+						${nro}
+					</p>
+				</div>`,
 	})
 export const grayIcon = (nro) =>
 	new L.divIcon({
 		iconSize: [25, 41],
-		iconAnchor: [12, 41],
+		iconAnchor: [10, 20],
 		popupAnchor: [1, -34],
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-blue',
-		html: `<span class="marcador_ubicacion_map" style="background: gray;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
+		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
+				<span class="marcador_ubicacion_map" style="background: gray;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
+				</span>
+					<p class="sing">
+						${nro}
+					</p>
+				</div>`,
 	})
 
-const getIcon = (type, nro) => {
-	switch (type) {
+export const getIcon = (status, nro) => {
+	switch (status) {
 		case 1:
-			//Reconectador
+			// Cerrado
 			return redIcon(nro)
 		case 2:
-			//Sub Estacion
-			return blueIcon(nro)
-		case 3:
-			//Medidor
+			// Abierto
 			return greenIcon(nro)
+
+		case 3:
+			// Sin Relacion
+			return grayIcon(nro)
 		case 4:
-			//marcador con icono de trabajador
+			// Alerta
+			return greenIcon(nro)
+		case 5:
+			// En Mantenimiento
 			return workIcon()
 		default:
 			return redIcon(nro) // valor predeterminado
@@ -78,19 +120,50 @@ const getIcon = (type, nro) => {
 class markerCustom {
 	constructor(
 		id = false,
+		number = '',
 		lat,
 		lng,
-		type = 1,
+		status = 3,
+		alert = false,
 		info = {
 			name: 'nuevo',
-		}
+			data: [],
+		},
+		recloser = []
 	) {
 		this.id = id || ''
 		this.lat = lat
 		this.lng = lng
 		this.info = info
-		this.icon = getIcon(type, this.id)
+		this.alert = alert
+		this.number = number
+		this.icon = getIcon(status, number)
+		this.recloser = recloser
+	}
+	async fetchInfo() {
+		try {
+			if (this.recloser.length > 0) {
+				// Reemplaza la URL con la API o endpoint que necesites
+				const response = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${this.recloser[0].id}`, 'GET')
+				if (response.status !== 200) {
+					throw new Error('Error al obtener la información')
+				}
+				const data = {
+					VL1: response.data.V_f_SRT_0?.[0].value || '',
+					VL2: response.data.V_f_SRT_1?.[0].value || '',
+					VL3: response.data.V_f_SRT_2?.[0].value || '',
+				}
+				this.info = { ...this.info, data: data }
+				const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${this.recloser[0].id}`, 'GET')
+				if (recloser.status !== 200) {
+					throw new Error('Error al obtener la información')
+				}
+				const status = recloser.data?.instantaneo?.['ac']?.[0]?.value ? 1 : recloser.data?.instantaneo?.['ac'] ? 2 : 3
+				this.icon = getIcon(status, this.number)
+			}
+		} catch (error) {
+			console.error('Error al obtener la información del marcador:', error)
+		}
 	}
 }
-
 export default markerCustom

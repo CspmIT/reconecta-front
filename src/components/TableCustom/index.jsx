@@ -86,9 +86,16 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	const pags = () => {
 		prop.getPage(table)
 	}
+	const localization = {
+		hideAll: 'Ocultar todo',
+		showAll: 'Mostrar todo',
+		// Puedes personalizar otros textos aquí si es necesario
+	}
+
 	const table = useMaterialReactTable({
 		columns,
 		data,
+		localization,
 		initialState: tableInitialState,
 		state: {
 			...columnVisibility,

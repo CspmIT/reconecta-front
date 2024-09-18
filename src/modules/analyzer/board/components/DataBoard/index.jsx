@@ -39,7 +39,7 @@ const DataBoard = () => {
 				<div className='flex-grow flex justify-center'>
 					<h2 className='text-2xl'>Analizador de red</h2>
 				</div>
-				<div className='absolute right-2'>
+				<div className='absolute right-2 top-8 md:top-0'>
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
@@ -48,14 +48,14 @@ const DataBoard = () => {
 					</Button>
 				</div>
 			</div>
-			<div className='flex flex-row justify-center w-full pt-5'>
-				<div className='w-1/6'>
+			<div className='flex flex-wrap justify-center w-full pt-5'>
+				<div className='w-full sm:w-1/6'>
 					<b>Marca: </b>
 				</div>
-				<div className='w-1/6'>
+				<div className='w-full sm:w-1/6'>
 					<b>Versión: </b>
 				</div>
-				<div className='w-1/6'>
+				<div className='w-full sm:w-1/6'>
 					<b>Nro de serie: </b>
 				</div>
 			</div>

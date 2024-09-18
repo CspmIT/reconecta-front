@@ -1,46 +1,54 @@
-import * as React from 'react';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import { IconButton } from '@mui/material';
-import { Edit } from '@mui/icons-material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList, IconButton } from '@mui/material';
+import { Edit, Delete as DeleteIcon } from '@mui/icons-material';
 import { FaCogs } from "react-icons/fa";
+import ModalData from './ModalData';
+import Swal from 'sweetalert2';
 
-export default function MenuListComposition(id) {
-  const [open, setOpen] = React.useState(false);
-  const anchorRef = React.useRef(null);
+export default function MenuListComposition({ id }) {
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+  const prevOpen = useRef(open);
+  const [openModal, setOpenModal] = useState(false);
 
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
-
-  const handleClose = (event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target)) {
-      return;
-    }
+  const handleClose = useCallback((event) => {
+    if (anchorRef.current && anchorRef.current.contains(event.target)) return;
     setOpen(false);
-  };
+  }, []);
 
-  function handleListKeyDown(event) {
-    if (event.key === 'Tab') {
+  const handleListKeyDown = useCallback((event) => {
+    if (event.key === 'Tab' || event.key === 'Escape') {
       event.preventDefault();
       setOpen(false);
-    } else if (event.key === 'Escape') {
-      setOpen(false);
     }
-  }
+  }, []);
 
-  const prevOpen = React.useRef(open);
-  React.useEffect(() => {
+  const handleEdit = useCallback((event) => {
+    handleClose(event);
+    setOpenModal(true);
+  }, []);
+
+  useEffect(() => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current.focus();
     }
     prevOpen.current = open;
   }, [open]);
+
+  const deleteEvent = () => {
+    Swal.fire({
+      title: "Atención!",
+      text: "¿Estás seguro de eliminar este evento?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        console.log('eliminar');
+      }
+    });
+  }
 
   return (
     <div>
@@ -50,7 +58,7 @@ export default function MenuListComposition(id) {
         aria-controls={open ? 'composition-menu' : undefined}
         aria-expanded={open ? 'true' : undefined}
         aria-haspopup="true"
-        onClick={handleToggle}
+        onClick={() => setOpen((prevOpen) => !prevOpen)}
         className='!bg-[#858796] hover:!bg-[#717384] !text-white !shadow-md'
       >
         <FaCogs />
@@ -62,22 +70,14 @@ export default function MenuListComposition(id) {
         placement="bottom-start"
         transition
         disablePortal={false}
-        modifiers={[
-          {
-            name: 'preventOverflow',
-            options: {
-              boundary: 'window',
-            },
-          },
-        ]}
-        style={{ zIndex: 9999, position: 'relative' }} 
+        modifiers={[{ name: 'preventOverflow', options: { boundary: 'window' } }]}
+        style={{ zIndex: 9999, position: 'relative' }}
       >
         {({ TransitionProps, placement }) => (
           <Grow
             {...TransitionProps}
             style={{
-              transformOrigin:
-                placement === 'bottom-start' ? 'left top' : 'left bottom',
+              transformOrigin: placement === 'bottom-start' ? 'left top' : 'left bottom',
             }}
           >
             <Paper>
@@ -88,11 +88,11 @@ export default function MenuListComposition(id) {
                   aria-labelledby="composition-button"
                   onKeyDown={handleListKeyDown}
                 >
-                  <MenuItem onClick={handleClose}>
-                    <Edit className='mr-2 text-yellow-500' />Editar
+                  <MenuItem onClick={handleEdit}>
+                    <Edit className='mr-2 text-yellow-500' /> Editar
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>
-                    <DeleteIcon className='mr-2 text-red-500' />Eliminar
+                  <MenuItem onClick={() => deleteEvent()}>
+                    <DeleteIcon className='mr-2 text-red-500' /> Eliminar
                   </MenuItem>
                 </MenuList>
               </ClickAwayListener>
@@ -100,6 +100,7 @@ export default function MenuListComposition(id) {
           </Grow>
         )}
       </Popper>
+      <ModalData setOpenModal={setOpenModal} openModal={openModal} />
     </div>
   );
 }

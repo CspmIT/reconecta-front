@@ -7,7 +7,7 @@ export const boardStatus = [
 
 export const boardFields = [
 	{ id: 1, field: 'name', name: 'Nombre' },
-	{ id: 2, field: 'num_recloser', name: 'Número' },
+	{ id: 2, field: 'number', name: 'Número' },
 	{ id: 3, field: 'serial', name: 'Nro de serie' },
 	{ id: 4, field: 'brand', name: 'Fabricante' },
 	{ id: 5, field: 'ac', name: 'Alimentación' },

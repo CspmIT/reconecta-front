@@ -24,6 +24,7 @@ const LoginCooptech = () => {
 				email: decodedToken.email,
 				tokenCooptech: decodedToken.token,
 				schemaName: decodedToken.schemaName,
+				influx_name: decodedToken.influx_name,
 			}
 			const responseData = await requestLogin(url, 'POST', info)
 			const decoded = jwtDecode(responseData.token)

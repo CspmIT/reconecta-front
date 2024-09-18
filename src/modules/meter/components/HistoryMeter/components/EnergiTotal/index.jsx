@@ -7,7 +7,7 @@ function EnergiTotal() {
 	return (
 		<>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
-				<div className='w-3/4 max-lg:w-full flex flex-col gap-4'>
+				<div className='w-full max-lg:w-full flex flex-col gap-4'>
 					<div className='w-full'>
 						<p className='text-xl text-center font-bold w-full'>Registro de Tarifas de Energía</p>
 					</div>

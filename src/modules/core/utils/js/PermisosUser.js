@@ -9,5 +9,7 @@ export const userPermisos = [
 	{ id: 8, path: '/board/:id', status: 1 },
 	{ id: 9, path: '/Abm/:name', status: 1 },
 	{ id: 10, path: '/Abm/:name/:id', status: 1 },
+	{ id: 9, path: '/AbmDevice/:name', status: 1 },
+	{ id: 10, path: '/AbmDevice/:name/:id', status: 1 },
 	{ id: 11, path: '/profile', status: 1 },
 ]

@@ -5,12 +5,12 @@ import { boardStatus, boardFields } from '../../utils/objects'
 const HeaderBoard = ({ info }) => {
 	const [statusReco, setStatusReco] = useState(null)
 	useEffect(() => {
-		// Los estados del reconectador son 0= cerrado,1= abierto y 2= Sin señal
+		// Los estados del reconectador son 0= abierto, 1= cerrado y 2= Sin señal
 		if (info) {
-			if (info.online === 0) {
+			if (info.instantaneo.length === 0) {
 				setStatusReco(2)
 			} else {
-				setStatusReco(info.recloser?.status_recloser)
+				setStatusReco(info.instantaneo?.['d/c'][0].value)
 			}
 		}
 	}, [info])
@@ -47,11 +47,20 @@ const HeaderBoard = ({ info }) => {
 			<div className='w-full sm:w-2/4 flex flex-row justify-center'>
 				<div
 					className={`rounded-full grid min-w-40 max-w-40 min-h-40 max-h-40  ${
-						statusReco === 0 ? 'bg-red-500 shadow-red-700' : statusReco === 1 ? 'bg-green-500 shadow-green-700' : 'bg-yellow-500 shadow-yellow-700'
+						statusReco === 1
+							? 'bg-red-500 shadow-red-700'
+							: statusReco === 0
+							? 'bg-green-500 shadow-green-700'
+							: 'bg-yellow-500 shadow-yellow-700'
 					} justify-center items-center shadow-md `}
 				>
-					<div onClick={() => alert('habilitacion y ejecucion')} className='text-center grid cursor-pointer bg-white rounded-full min-w-28 max-w-28 min-h-28 max-h-28 items-center shadow-md shadow-slate-500'>
-						<b className='text-black'>{statusReco === 0 ? 'CERRADO' : statusReco === 1 ? 'ABIERTO' : 'SIN SEÑAL'}</b>
+					<div
+						onClick={() => alert('habilitacion y ejecucion')}
+						className='text-center grid cursor-pointer bg-white rounded-full min-w-28 max-w-28 min-h-28 max-h-28 items-center shadow-md shadow-slate-500'
+					>
+						<b className='text-black'>
+							{statusReco === 1 ? 'CERRADO' : statusReco === 0 ? 'ABIERTO' : 'SIN SEÑAL'}
+						</b>
 					</div>
 				</div>
 			</div>
@@ -59,7 +68,11 @@ const HeaderBoard = ({ info }) => {
 				{boardStatus.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
-							<FaCircle color={info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'} />
+							<FaCircle
+								color={
+									info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'
+								}
+							/>
 							<h3 className='ml-3'>{item.name}</h3>
 						</div>
 					)

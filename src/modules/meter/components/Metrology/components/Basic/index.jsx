@@ -156,7 +156,7 @@ function Basic() {
 	]
 	return (
 		<>
-			<div className='w-full my-3 grid gap-3 grid-cols-4 px-4'>
+			<div className='w-full my-3 grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4 px-4'>
 				{dataTension.map((item, index) => (
 					<DivData key={index} data={item} />
 				))}
