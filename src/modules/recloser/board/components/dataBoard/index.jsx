@@ -3,11 +3,7 @@ import HeaderBoard from '../headerBoard'
 import { Button } from '@mui/material'
 import { FaEdit, FaRedo } from 'react-icons/fa'
 import ControlsBoard from '../controlsBoard'
-import MetrologyBoard from '../metrologyBoard'
-import EventBoard from '../eventBoard'
 import CardBoard from '../cardBoard'
-import AnalyticsBoard from '../analyticsBoard'
-import ManeuverBoard from '../maneuverBoard'
 import { MainContext } from '../../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
@@ -64,13 +60,7 @@ const DataBoard = () => {
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
-					<Button
-						onClick={() => editRecloser(info)}
-						className='!ml-3'
-						color='warning'
-						title='Editar Reconectador'
-						variant='contained'
-					>
+					<Button onClick={() => editRecloser(info)} className='!ml-3' color='warning' title='Editar Reconectador' variant='contained'>
 						<FaEdit />
 					</Button>
 				</div>
