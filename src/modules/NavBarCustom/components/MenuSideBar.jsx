@@ -1,7 +1,7 @@
-import { Security } from '@mui/icons-material'
 import { Badge } from '@mui/material'
 import { BsFillMenuButtonWideFill } from 'react-icons/bs'
 import { FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram } from 'react-icons/fa'
+import { MdNotificationsActive } from 'react-icons/md'
 import { PiTabsFill } from 'react-icons/pi'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
 
@@ -23,14 +23,14 @@ const MenuSideBar = (tabActive, infoNav) => [
 		icon: <FaCogs className='dark:text-white text-3xl' />,
 		submenus: [
 			{
-				name: 'Seguridad',
-				link: '/config/security',
-				icon: <Security className='dark:text-white text-2xl my-1' />,
-			},
-			{
-				name: 'Menu',
+				name: 'Accesos',
 				link: '/config/menu',
 				icon: <BsFillMenuButtonWideFill className='dark:text-white text-2xl my-1' />,
+			},
+			{
+				name: 'Notificaciones',
+				link: '/config/notifications',
+				icon: <MdNotificationsActive className='dark:text-white text-2xl my-1' />,
 			},
 		],
 	},

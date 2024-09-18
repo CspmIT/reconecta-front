@@ -95,7 +95,7 @@ function Map() {
 			{markersRecloser.length > 1 ? (
 				<div className={`!min-h-[90vh] relative w-full flex flex-wrap pb-3`}>
 					{/* <ToastContainer className={'absolute top-0'} stacked /> */}
-					<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 w-1/2 relative'>
+					<div className='!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 md:w-1/2 w-full relative'>
 						<IconButton className={`!absolute !top-5 !left-4 z-[9999] !bg-slate-300`} onClick={() => handleActiveZoom(1)}>
 							{zoomActive ? <Lock /> : <LockOpen />}
 						</IconButton>
@@ -108,7 +108,7 @@ function Map() {
 							polylines={polylines}
 						/>
 					</div>
-					<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 w-1/2 relative'>
+					<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 md:w-1/2 w-full relative'>
 						<IconButton className={`!absolute !top-5 !left-4 z-[9999] !bg-slate-300`} onClick={() => handleActiveZoom(2)}>
 							{zoomActive2 ? <Lock /> : <LockOpen />}
 						</IconButton>

@@ -153,6 +153,7 @@ function NavBarCustom() {
 							}
 							return (
 								<ListItem
+									key={index}
 									disablePadding
 									sx={{
 										...(isMobile && {
