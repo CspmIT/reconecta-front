@@ -8,10 +8,7 @@ import { backend } from '../../../../../utils/routes/app.routes'
 const MetrologyBoard = ({ idRecloser }) => {
 	const [dataMetrology, setDataMetrology] = useState({})
 	const getDataMetrology = async (id) => {
-		const data = await request(
-			`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${id}`,
-			'GET'
-		)
+		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
@@ -24,13 +21,7 @@ const MetrologyBoard = ({ idRecloser }) => {
 	}
 
 	useEffect(() => {
-		if (!idRecloser) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-		} else {
+		if (idRecloser) {
 			getDataMetrology(idRecloser)
 			const intervalId = setInterval(() => {
 				getDataMetrology(idRecloser)

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import { request } from '../../../../../../utils/js/request'
 import GrafLinea from '../../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../../utils/routes/app.routes'
