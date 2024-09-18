@@ -3,7 +3,6 @@ import TableCustom from '../../../../../components/TableCustom'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { columnManeuver } from '../../utils/ColumnsManeuver'
-import { rowManeuver } from '../../utils/objects'
 const ManeuverBoard = () => {
 	return (
 		<div className='w-full'>
