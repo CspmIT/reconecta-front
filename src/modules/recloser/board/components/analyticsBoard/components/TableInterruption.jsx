@@ -37,13 +37,7 @@ function TableInterruption({ idRecloser }) {
 		setDataInterruption(datareturn)
 	}
 	useEffect(() => {
-		if (!idRecloser) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-		} else {
+		if (idRecloser) {
 			getEvents(idRecloser)
 			const intervalId = setInterval(() => {
 				getEvents(idRecloser)

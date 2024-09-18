@@ -74,13 +74,7 @@ const EventBoard = ({ idRecloser }) => {
 		setRowCriticos(rows)
 	}
 	useEffect(() => {
-		if (!idRecloser) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-		} else {
+		if (idRecloser) {
 			getEvents(idRecloser)
 			const intervalId = setInterval(() => {
 				getEvents(idRecloser)
@@ -127,7 +121,6 @@ const EventBoard = ({ idRecloser }) => {
 					/>
 				</LocalizationProvider>
 			</div>
-
 		</div>
 	)
 }

@@ -37,6 +37,8 @@ const DataBoard = () => {
 			})
 			navigate('/Home')
 		} else {
+			console.log(data)
+
 			getDataRecloser(data.id)
 		}
 	}, [data])

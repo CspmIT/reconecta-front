@@ -25,13 +25,7 @@ function GrafTensionABC({ idRecloser }) {
 	}
 
 	useEffect(() => {
-		if (!idRecloser) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-		} else {
+		if (idRecloser) {
 			getTensionABC(idRecloser)
 			const intervalId = setInterval(() => {
 				getTensionABC(idRecloser)
