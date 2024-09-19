@@ -110,7 +110,7 @@ function Map() {
 					</div>
 					<div className='min-h-[inherit]  !shadow-md !shadow-black/40 !rounded-2xl p-2 md:w-1/2 w-full relative'>
 						<IconButton className={`!absolute !top-5 !left-4 z-[9999] !bg-slate-300`} onClick={() => handleActiveZoom(2)}>
-							{zoomActive2 ? <Lock /> : <LockOpen />}
+							{!zoomActive2 ? <Lock /> : <LockOpen />}
 						</IconButton>
 						<MapCustom
 							id={2}
