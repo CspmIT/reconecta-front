@@ -3,7 +3,8 @@
 		"beforeDevCommand": "npm run dev",
 		"beforeBuildCommand": "npm run build",
 		"devPath": "http://localhost:1420",
-		"distDir": "../dist"
+		"distDir": "../dist",
+		"withGlobalTauri": true
 	},
 	"package": {
 		"productName": "Reconecta",
@@ -17,6 +18,23 @@
 			"shell": {
 				"all": false,
 				"open": true
+			},
+			"http": {
+				"all": true
+			},
+			"fs": {
+				"copyFile": true,
+				"readDir": true,
+				"readFile": true,
+				"writeFile": true
+			},
+			"notification": {
+				"all": true
+			},
+			"app": {
+				"all": true,
+				"hide": true,
+				"show": true
 			}
 		},
 		"windows": [
@@ -26,29 +44,25 @@
 				"height": 768,
 				"minWidth": 1024,
 				"minHeight": 600,
-				"resizable": true
+				"resizable": true,
+				"url": "https://reconecta.cooptech.com.ar",
+				"decorations": true
 			}
 		],
 		"security": {
-			"csp": null
-		},
-		"updater": {
-			"active": true,
-			"endpoints": ["https://api.github.com/repos/CspmIT/Reconecta_front/releases/latest"],
-			"dialog": true,
-			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEEyQjU2ODZCMTA2M0EzRDQKUldUVW8yTVFhMmkxb3V3WFdoaWpsOTZ0NzdSWHA2eUlrQmpHOUxrb2hxVlhKL1YxVzhHSDh1SVkK"
+			"csp": "default-src blob: data: filesystem: ws: http: https: 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';"
 		},
 		"bundle": {
 			"active": true,
-			"targets": "all",
+			"targets": ["deb", "updater", "msi", "app", "dmg"],
 			"identifier": "com.cooptech.reconecta",
-			"icon": [
-				"icons/32x32.png",
-				"icons/128x128.png",
-				"icons/128x128@2x.png",
-				"icons/icon.icns",
-				"icons/icon.ico"
-			]
+			"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+		}
+	},
+	"plugins": {
+		"store": {
+			"version": "2",
+			"dir": ".storage"
 		}
 	}
 }

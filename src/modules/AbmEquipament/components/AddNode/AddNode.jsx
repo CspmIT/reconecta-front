@@ -40,7 +40,6 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 			setInfo(dataEdit)
 		}
 	}, [dataEdit])
-	console.log(info)
 	return (
 		<>
 			<p className='w-full text-center text-2xl mb-3'>Infraestructura</p>

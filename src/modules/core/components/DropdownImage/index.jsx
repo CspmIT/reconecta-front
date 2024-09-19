@@ -1,7 +1,7 @@
-import Cookies from 'js-cookie'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FaUser, FaSignOutAlt } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
+import { removeData } from '../../../../storage/cookies-store'
 
 const DropdownImage = ({ props }) => {
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
@@ -11,9 +11,9 @@ const DropdownImage = ({ props }) => {
 		setDropdownOpen(!isDropdownOpen)
 	}
 
-	const handleLogout = () => {
+	const handleLogout = async () => {
 		localStorage.clear()
-		Cookies.remove('token')
+		await removeData('token')
 		navigator('/')
 	}
 

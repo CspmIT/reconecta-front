@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getProductActive } from '../../utils/login'
 import { getLogo } from '../../utils/images'
 import { front } from '../../../../utils/routes/app.routes'
-import Cookies from 'js-cookie'
+import { getData } from '../../../../storage/cookies-store'
 function BottonApps() {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [products, setProducts] = useState([])
@@ -17,10 +17,10 @@ function BottonApps() {
 	}
 	const open = Boolean(anchorEl)
 	const id = open ? 'simple-popper' : undefined
-	const reDirection = (key) => {
+	const reDirection = async (key) => {
 		const url = front[key]
 		if (!url) throw new Error('No se encontró la Aplicación...')
-		const tokencooptech = Cookies.get('token')
+		const tokencooptech = await getData('token')
 		window.location.href = `${url}/LoginCooptech/${tokencooptech}`
 	}
 	const dropdownRef = useRef(null) // Referencia al dropdown
@@ -61,14 +61,11 @@ function BottonApps() {
 											if (item.profile !== 0) reDirection(item.name)
 										}}
 										className={`${
-											item.profile !== 0 &&
-											'hover:bg-slate-200 dark:hover:bg-slate-900 hover:cursor-pointer'
+											item.profile !== 0 && 'hover:bg-slate-200 dark:hover:bg-slate-900 hover:cursor-pointer'
 										}   select-none rounded-lg p-3  max-h-[13vh] transition-colors flex flex-col justify-center items-center`}
 									>
 										<img
-											className={`${
-												item.profile === 0 && 'opacity-15'
-											} max-w-[10vw] max-sm:max-w-[20vw] max-h-[10vh]`}
+											className={`${item.profile === 0 && 'opacity-15'} max-w-[10vw] max-sm:max-w-[20vw] max-h-[10vh]`}
 											src={getLogo(item.name)}
 										/>
 										<p className='m-0 p-0 text-black dark:text-white'>{item.name}</p>

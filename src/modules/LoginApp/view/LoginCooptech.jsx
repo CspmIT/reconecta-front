@@ -1,10 +1,10 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
 import { requestLogin } from '../utils/requesLogin'
 import { storage } from '../utils/storage'
 import Swal from 'sweetalert2'
 import { backend } from '../../../utils/routes/app.routes'
+import { removeData, saveData } from '../../../storage/cookies-store'
 
 const LoginCooptech = () => {
 	const navigate = useNavigate()
@@ -12,7 +12,7 @@ const LoginCooptech = () => {
 	const validateUserCooptech = async () => {
 		try {
 			if (token === 'null') {
-				Cookies.remove('token')
+				await removeData('token')
 				storage.remove('usuario')
 				storage.remove('tokenCooptech')
 				navigate('/login')
@@ -30,16 +30,16 @@ const LoginCooptech = () => {
 			const decoded = jwtDecode(responseData.token)
 			// Obtengo la fecha de expiracion del token y la guardo en una cookie
 			const expirationDate = new Date(decoded.exp)
-			Cookies.set('token', responseData.token, {
+			await saveData('token', token, {
 				expires: expirationDate,
-				secure: false,
+				secure: true,
 				sameSite: 'Lax',
 			})
 			localStorage.setItem('usuario', JSON.stringify(decoded))
 			navigate('/')
 		} catch (error) {
 			Swal.fire('Atencion', error.response?.data?.error || error.response?.data || error.message, 'error')
-			Cookies.remove('token')
+			await removeData('token')
 			storage.remove('usuario')
 			storage.remove('tokenCooptech')
 			navigate('/login')
