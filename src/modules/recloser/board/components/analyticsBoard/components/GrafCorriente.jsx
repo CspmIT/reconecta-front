@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { request } from '../../../../../../utils/js/request'
 import GrafLinea from '../../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../../utils/routes/app.routes'
+import Swal from 'sweetalert2'
 function GrafCorriente({ idRecloser }) {
 	const [dataGraf, setDataGraf] = useState([])
 	const getTensionABC = async (id) => {
@@ -25,13 +26,7 @@ function GrafCorriente({ idRecloser }) {
 	}
 
 	useEffect(() => {
-		if (!idRecloser) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `No se cargo correctamente el reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-		} else {
+		if (idRecloser) {
 			getTensionABC(idRecloser)
 			const intervalId = setInterval(() => {
 				getTensionABC(idRecloser)

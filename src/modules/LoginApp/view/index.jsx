@@ -8,12 +8,12 @@ import { ArrowBack } from '@mui/icons-material'
 import { requestLogin } from '../utils/requesLogin'
 import { useNavigate } from 'react-router-dom'
 import { getProduct, logeoApp, schemaName } from '../utils/login'
-import Cookies from 'js-cookie'
 import { storage } from '../utils/storage'
 import { getImgApp } from '../utils/images'
 import { jwtDecode } from 'jwt-decode'
 import styles from '../utils/style.module.css'
 import { backend } from '../../../utils/routes/app.routes'
+import { getData, removeData, saveData } from '../../../storage/cookies-store'
 function LoginApp() {
 	const {
 		register,
@@ -64,11 +64,7 @@ function LoginApp() {
 					if (responseData.cliente.length === 0) {
 						throw new Error('El usuario no existe...')
 					}
-					const product = await getProduct(
-						import.meta.env.VITE_APP_NAME,
-						responseData.cliente[0].id,
-						responseData.id
-					)
+					const product = await getProduct(import.meta.env.VITE_APP_NAME, responseData.cliente[0].id, responseData.id)
 					if (!product || !Object.keys(product).length) {
 						throw new Error('No se encontro productos relacionados con el usuario')
 					}
@@ -76,7 +72,7 @@ function LoginApp() {
 					const token = await logeoApp(responseData.id, schema)
 					if (token.error) {
 						Swal.fire('Atencion', token.error.message || token.error, 'error')
-						Cookies.remove('token')
+						await removeData('token')
 						storage.remove('usuario')
 						storage.remove('usuarioCooptech')
 						storage.remove('tokenCooptech')
@@ -85,7 +81,7 @@ function LoginApp() {
 					const decoded = jwtDecode(token.token)
 					// Obtengo la fecha de expiracion del token y la guardo en una cookie
 					const expirationDate = new Date(decoded.exp)
-					Cookies.set('token', token.token, {
+					await saveData('token', token.token, {
 						expires: expirationDate,
 						secure: false,
 						sameSite: 'Lax',
@@ -98,8 +94,8 @@ function LoginApp() {
 			Swal.fire('Atencion', error.response?.data?.error || error.message, 'error')
 		}
 	}
-	useEffect(() => {
-		const cookies = Cookies.get('token')
+	const validateUser = async () => {
+		const cookies = await getData('token')
 		const localStorage = storage.get('usuario')
 		if (cookies && localStorage) {
 			navigate(`/`)
@@ -107,14 +103,13 @@ function LoginApp() {
 			const img = getImgApp()
 			setImgApp(img)
 		}
+	}
+	useEffect(() => {
+		validateUser()
 	}, [])
 
 	return (
-		<div
-			className={
-				`min-h-[100vh] w-full flex justify-center items-center bg-gray-300 bg-cover ` + styles.fondoLogin
-			}
-		>
+		<div className={`min-h-[100vh] w-full flex justify-center items-center bg-gray-300 bg-cover ` + styles.fondoLogin}>
 			<Card className='max-md:!min-w-[95vw] !min-w-[50vw] w-1/3 !max-w-[85vw] !min-h-[50vh] py-8 bg-white !rounded-2xl !shadow-lg !shadow-gray-400  flex justify-center items-center flex-col '>
 				<img className='w-5/12 max-md:w-8/12 m-0 p-0 mb-5' src={imgApp} alt='logo Cooptech' />
 
@@ -144,18 +139,12 @@ function LoginApp() {
 								minLength: { value: 8, message: 'Debe tener al menos 8 caracteres' },
 								pattern: {
 									value: /^(?=.*[A-Z]).{8,}$/,
-									message:
-										'El Formato correcto debe tener al menos 1 Mayuscula, 1 Simbolo especial y 1 Numero',
+									message: 'El Formato correcto debe tener al menos 1 Mayuscula, 1 Simbolo especial y 1 Numero',
 								},
 							})}
 							InputProps={{
 								endAdornment: (
-									<IconButton
-										size='small'
-										type='button'
-										onClick={visiblePassword}
-										className='absolute right-0'
-									>
+									<IconButton size='small' type='button' onClick={visiblePassword} className='absolute right-0'>
 										{eyePass}
 									</IconButton>
 								),
@@ -171,12 +160,7 @@ function LoginApp() {
 					{!recovery ? (
 						<div className='flex flex-row justify-center items-center'>
 							<p className='m-0'>¿Se te olvido la contraseña?</p>
-							<Button
-								variant='text'
-								title='Recupera la contraseña'
-								type='button'
-								onClick={() => handleRecovery()}
-							>
+							<Button variant='text' title='Recupera la contraseña' type='button' onClick={() => handleRecovery()}>
 								Recuperala
 							</Button>
 						</div>

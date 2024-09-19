@@ -7,17 +7,17 @@ import Footer from '../components/Footer'
 import { userPermisos } from '../utils/js/PermisosUser'
 import Swal from 'sweetalert2'
 import { storage } from '../../../storage/storage'
-import Cookies from 'js-cookie'
+import { getData, removeData } from '../../../storage/cookies-store'
 const MainContent = () => {
 	const { user, setInfoNav } = useContext(MainContext)
 	const location = useLocation()
 	const navigate = useNavigate()
 	const authUser = storage.get('usuario')
-
-	useEffect(() => {
-		if (!authUser || !Cookies.get('token')) {
+	const validationUser = async () => {
+		const token = await getData('token')
+		if (!authUser || !token) {
 			localStorage.clear()
-			Cookies.remove('token')
+			await removeData('token')
 			navigate('/login')
 			return
 		}
@@ -28,6 +28,9 @@ const MainContent = () => {
 		if (!location.pathname.includes('/Abm/') && !location.pathname.includes('/AbmDevice/')) {
 			setInfoNav('')
 		}
+	}
+	useEffect(() => {
+		validationUser()
 	}, [location])
 	return (
 		<>

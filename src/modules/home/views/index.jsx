@@ -65,11 +65,6 @@ const Home = () => {
 	}
 	const tabsHome = [
 		{
-			id: 6,
-			title: 'Nodos',
-			component: <TableNodo />,
-		},
-		{
 			id: 1,
 			title: 'Reconectadores',
 			component: <TableRecloser newTab={newTabBoard} />,
@@ -94,6 +89,11 @@ const Home = () => {
 		// 	title: 'Analizador de red',
 		// 	component: <TableAnalyzer newTab={newTabBoard} />,
 		// },
+		{
+			id: 6,
+			title: 'Nodos',
+			component: <TableNodo />,
+		},
 	]
 
 	return (
