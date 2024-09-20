@@ -10,7 +10,7 @@ import { Lock, LockOpen } from '@mui/icons-material'
 function Map() {
 	const center = [-30.680865, -62.011055]
 	const centerCity = [-30.712865, -62.006255]
-	const [markersRecloser, setMarkersRecloser] = useState([])
+	const [markersRecloser, setMarkersRecloser] = useState(null)
 	// const navigate = useNavigate()
 	// const showToastMessage = () => {
 	// 	toast.warn(`Nueva Alerta para ID!`, {
@@ -92,7 +92,7 @@ function Map() {
 	}, [])
 	return (
 		<>
-			{markersRecloser.length > 1 ? (
+			{markersRecloser ? (
 				<div className={`!min-h-[90vh] relative w-full flex flex-wrap pb-3`}>
 					{/* <ToastContainer className={'absolute top-0'} stacked /> */}
 					<div className='!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 md:w-1/2 w-full relative'>

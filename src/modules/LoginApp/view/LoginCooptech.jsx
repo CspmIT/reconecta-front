@@ -23,7 +23,7 @@ const LoginCooptech = () => {
 			const info = {
 				email: decodedToken.email,
 				tokenCooptech: decodedToken.token,
-				schemaName: decodedToken.schemaName,
+				schemaName: decodedToken.iss.slice(4),
 				influx_name: decodedToken.influx_name,
 			}
 			const responseData = await requestLogin(url, 'POST', info)

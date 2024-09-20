@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { boardMetrology } from '../../utils/objects'
+import { boardMetrology } from '../../utils/Objects'
 import CardCustom from '../../../../../components/CardCustom'
 import { request } from '../../../../../utils/js/request'
 import Swal from 'sweetalert2'
@@ -33,7 +33,7 @@ const MetrologyBoard = ({ idRecloser }) => {
 		<div className='w-full flex flex-row flex-wrap justify-center '>
 			{boardMetrology.map((item, i) => (
 				<div className={`w-full md:w-1/2 lg:w-1/3 flex justify-center items-center p-3`} key={i}>
-					<CardCustom className='w-5/6 min-h-52 border-t-[1rem] border-r-2 border-b-2 border-blue-500  shadow-md !rounded-lg overflow-hidden'>
+					<CardCustom className='w-5/6 min-h-52 border-t-[0.5rem] border-r-2 border-b-2 border-blue-500  shadow-md !rounded-lg overflow-hidden'>
 						<h1 className='font-bold text-xl my-3'>{item.name}</h1>
 						<div className={`w-full h-full text-center flex flex-row flex-wrap items-center`}>
 							{item.children.map((child, j) => {

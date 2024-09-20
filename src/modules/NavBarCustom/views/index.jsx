@@ -26,6 +26,7 @@ import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
 import MenuSideBar from '../components/MenuSideBar'
+import { storage } from '../../../storage/storage'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
 	const { tabActive, tabs, infoNav } = useContext(MainContext)
@@ -95,6 +96,7 @@ function NavBarCustom() {
 						Reconecta
 					</Typography>
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
+						<p className='text-black text-xl ml-3 select-none'>{storage.get('usuarioCooptech')?.cliente?.name || ''}</p>
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />

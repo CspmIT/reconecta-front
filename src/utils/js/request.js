@@ -6,7 +6,10 @@ export const request = async (url, method, data = false) => {
 	if (!url || !method) {
 		throw new Error('URL o método no proporcionados')
 	}
-	const token = await getData('token')
+	let token = await getData('token')
+	if (!token) {
+		token = storage.get('tokenCooptech')
+	}
 	try {
 		const response = await axios({
 			method,

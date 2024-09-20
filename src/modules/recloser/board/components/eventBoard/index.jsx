@@ -102,14 +102,13 @@ const EventBoard = ({ idRecloser }) => {
 						columns={ColumnsEvent()}
 						density='comfortable'
 						header={{
-							background: 'rgb(190 190 190)',
+							background: 'rgb(91 151 248);',
 							fontSize: '18px',
 							fontWeight: 'bold',
 						}}
-						toolbarClass={{ background: 'rgb(190 190 190)' }}
+						toolbarClass={{ background: 'rgb(91 151 248)' }}
 						bodyContent={{ fontSize: '16px' }}
-						body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-						footer={{ background: 'rgb(190 190 190)' }}
+						footer={{ background: 'rgb(223 233 249)' }}
 						ChangeColorRow={ChangeColorRow}
 						pageSize={10}
 						checkAlert={bottonCheck}

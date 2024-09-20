@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { FaUser, FaSignOutAlt } from 'react-icons/fa'
+import { FaUser, FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
 import { removeData } from '../../../../storage/cookies-store'
+import { ChangeCircle, ChangeCircleOutlined } from '@mui/icons-material'
+import { Button } from '@mui/material'
+import { storage } from '../../../../storage/storage'
 
 const DropdownImage = ({ props }) => {
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
@@ -15,6 +18,11 @@ const DropdownImage = ({ props }) => {
 		localStorage.clear()
 		await removeData('token')
 		navigator('/')
+	}
+	const handleChangeClient = async () => {
+		storage.remove('usuario')
+		await removeData('token')
+		navigator('/ListClients/1')
 	}
 
 	useEffect(() => {
@@ -51,29 +59,19 @@ const DropdownImage = ({ props }) => {
 			</div>
 			{isDropdownOpen && (
 				<div
-					className='absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white dark:bg-black shadow-lg  focus:outline-none'
+					className='absolute right-0 z-10 mt-2 w-64 origin-top-right rounded-md bg-white dark:bg-black shadow-lg  focus:outline-none'
 					role='menu'
 					aria-orientation='vertical'
 					aria-labelledby='user-menu-button'
 					tabIndex='-1'
 				>
-					<div className='py-1' role='none'>
-						<Link
-							to={'/profile'}
-							className='px-2 py-1 flex items-center w-full md:w-auto hover:bg-gray-200 pl-4 dark:text-white dark:hover:bg-gray-700'
-						>
-							<FaUser className='mr-2' /> Perfil
-						</Link>
-						<a
-							href='#'
-							onClick={() => handleLogout()}
-							className='px-2 py-1 flex items-center w-full md:w-auto hover:bg-gray-200 pl-4 dark:text-white dark:hover:bg-gray-700'
-							role='menuitem'
-							tabIndex='-1'
-							id='user-menu-item-1'
-						>
+					<div className='p-1' role='none'>
+						<Button className='!text-black hover:!bg-slate-200 w-full flex !justify-start' onClick={() => handleChangeClient()}>
+							<FaExchangeAlt className='mr-2' /> Cambio de Organización
+						</Button>
+						<Button className='!text-black hover:!bg-slate-200 w-full flex !justify-start' onClick={() => handleLogout()}>
 							<FaSignOutAlt className='mr-2' /> Cerrar Sesión
-						</a>
+						</Button>
 					</div>
 				</div>
 			)}

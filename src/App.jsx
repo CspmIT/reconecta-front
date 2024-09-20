@@ -48,6 +48,7 @@ function App() {
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
 		{ path: '/ListClients', element: <ListClients /> },
+		{ path: '/ListClients/:action', element: <ListClients /> },
 		{ path: '/LoginCooptech/:token', element: <LoginCooptech /> },
 	]
 	const userRoutes = [
