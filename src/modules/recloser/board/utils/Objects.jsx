@@ -10,7 +10,24 @@ export const boardFields = [
 	{ id: 2, field: 'number', name: 'Número' },
 	{ id: 3, field: 'serial', name: 'Nro de serie' },
 	{ id: 4, field: 'brand', name: 'Fabricante' },
-	{ id: 5, field: 'ac', name: 'Alimentación' },
+	{
+		id: 5,
+		field: 'ac',
+		name: 'Alimentación',
+		options: {
+			0: <b className='text-green-500 text-xl'> Batería</b>,
+			1: <b className='text-red-500 text-xl'> Red Electrica</b>,
+		},
+	},
+	{
+		id: 6,
+		field: 'local',
+		name: 'Modo',
+		options: {
+			0: <b className='text-black text-xl'> Remoto</b>,
+			1: <b className='text-black bg-yellow-400 text-xl p-1 px-2 ml-1 rounded-md'>Local</b>,
+		},
+	},
 ]
 
 export const boardControls = [

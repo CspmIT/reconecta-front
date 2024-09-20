@@ -1,30 +1,57 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Card, MenuItem, Select } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { getProduct, logeoApp, schemaName } from '../utils/login'
 import { storage } from '../utils/storage'
 import LogoBlanco from '../assets/img/Logo_Cooptech.png'
 import styles from '../utils/style.module.css'
 import { getData } from '../../../storage/cookies-store'
+import { backend } from '../../../utils/routes/app.routes'
+import { request } from '../../../utils/js/request'
+import { requestAuth } from '../utils/requesLogin'
 function ListClients() {
+	const { action } = useParams()
 	const usuario = storage.get('usuario')
+	const usuarioCooptech = storage.get('usuarioCooptech')
 	const [optionsSelect, setOptionsSelect] = useState([])
 	const [valueSelect, setValueSelect] = useState('')
 	const navigate = useNavigate()
 	const searchClients = async () => {
 		const options = []
-		for (const key in usuario.cliente) {
-			options.push(usuario.cliente[key])
+		if (!usuario?.cliente || usuario.cliente.length <= 1) {
+			if (!usuarioCooptech) {
+				navigate(`/`)
+			}
+			const url = backend.Cooptech + '/listClientsxUser?id_user=' + usuarioCooptech.id_user
+			const responseData = await requestAuth(url, 'GET')
+			for (const key in responseData.data) {
+				options.push({
+					id: responseData.data[key].id,
+					name: responseData.data[key].name,
+					selected: false,
+					status: 1,
+				})
+			}
+			usuarioCooptech.cliente = options
+			storage.set('usuarioCooptech', usuarioCooptech)
+		} else {
+			for (const key in usuario.cliente) {
+				options.push(usuario.cliente[key])
+			}
 		}
 		setValueSelect(options[0].id)
 		setOptionsSelect(options)
 	}
-	useEffect(() => {
-		searchClients()
-	}, [])
 
 	const selectClient = async (data) => {
-		const user = storage.get('usuario')
+		let user = storage.get('usuario')
+		if (!user?.cliente) {
+			user = {
+				cliente: usuarioCooptech.cliente,
+				id: usuarioCooptech.id_user,
+				token: usuarioCooptech.token,
+			}
+		}
 		user.cliente.map((element) => {
 			if (element.id === data) {
 				element.selected = true
@@ -44,7 +71,7 @@ function ListClients() {
 			throw new Error('No se encontro productos relacionados con el usuario')
 		}
 		const schema = await schemaName(data, product.id_product)
-		const token = await logeoApp(usuario.id, schema)
+		const token = await logeoApp(user.id, schema)
 		navigate(`/LoginCooptech/${token.token}`)
 	}
 	const handleChangeSelect = (event) => {
@@ -58,7 +85,10 @@ function ListClients() {
 		}
 	}
 	useEffect(() => {
-		returnData()
+		if (action) {
+			returnData()
+		}
+		searchClients()
 	}, [])
 
 	return (

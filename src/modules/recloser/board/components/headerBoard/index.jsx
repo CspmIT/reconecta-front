@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { FaCircle } from 'react-icons/fa'
-import { boardStatus, boardFields } from '../../utils/objects'
+import { boardFields, boardStatus } from '../../utils/Objects'
 
 const HeaderBoard = ({ info }) => {
 	const [statusReco, setStatusReco] = useState(null)
+	const [dataHead, setDataHead] = useState({})
 	useEffect(() => {
 		// Los estados del reconectador son 0= abierto, 1= cerrado y 2= Sin señal
 		if (info) {
@@ -12,8 +13,17 @@ const HeaderBoard = ({ info }) => {
 			} else {
 				setStatusReco(info.instantaneo?.['d/c'][0].value)
 			}
+			setDataHead({
+				name: info?.recloser?.relation?.nodes?.['name'] || 'S/D',
+				number: info?.recloser?.relation?.nodes?.['number'] || 'S/D',
+				serial: info?.recloser?.['serial'] || 'S/D',
+				brand: info?.recloser?.['brand'] || 'S/D',
+				ac: info?.instantaneo['ac']?.[0].value,
+				local: info?.instantaneo['local']?.[0].value,
+			})
 		}
 	}, [info])
+
 	return (
 		<div className='w-full flex flex-wrap justify-around items-center'>
 			<div className='w-full md:w-1/4 px-3'>
@@ -21,24 +31,9 @@ const HeaderBoard = ({ info }) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
 							<h3 className='ml-5'>
-								{info?.recloser[`${item.field}`] ? (
-									<>
-										{item.name}: <b>{info ? info?.recloser[`${item.field}`] : 'S/D'}</b>
-									</>
-								) : (
-									<>
-										{item.name}:
-										{item.field == 'ac' ? (
-											info?.instantaneo[item.field]?.[0].value ? (
-												<b className='text-red-500 text-xl'> Red Electrica</b>
-											) : (
-												<b className='text-green-500 text-xl'> Batería</b>
-											)
-										) : (
-											info?.instantaneo[item.field]?.[0].value
-										)}
-									</>
-								)}
+								<>
+									{item.name}: {!item.options ? <b>{dataHead[item.field]}</b> : item.options[dataHead[item.field]]}
+								</>
 							</h3>
 						</div>
 					)
@@ -58,9 +53,7 @@ const HeaderBoard = ({ info }) => {
 						onClick={() => alert('habilitacion y ejecucion')}
 						className='text-center grid cursor-pointer bg-white rounded-full min-w-28 max-w-28 min-h-28 max-h-28 items-center shadow-md shadow-slate-500'
 					>
-						<b className='text-black'>
-							{statusReco === 1 ? 'CERRADO' : statusReco === 0 ? 'ABIERTO' : 'SIN SEÑAL'}
-						</b>
+						<b className='text-black'>{statusReco === 1 ? 'CERRADO' : statusReco === 0 ? 'ABIERTO' : 'SIN SEÑAL'}</b>
 					</div>
 				</div>
 			</div>
@@ -68,11 +61,7 @@ const HeaderBoard = ({ info }) => {
 				{boardStatus.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
-							<FaCircle
-								color={
-									info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'
-								}
-							/>
+							<FaCircle color={info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'} />
 							<h3 className='ml-3'>{item.name}</h3>
 						</div>
 					)
