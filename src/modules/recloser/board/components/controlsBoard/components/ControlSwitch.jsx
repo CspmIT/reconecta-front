@@ -29,7 +29,11 @@ function ControlSwitch({ control, contador, enabled }) {
 			<label>
 				<b className='mr-2'>{control.title}</b>
 			</label>
-			<label className={`inline-flex items-center ${control.status === 'sin Datos' ? 'cursor-default' : 'cursor-pointer'} relative`}>
+			<label
+				className={`inline-flex items-center ${
+					control.status === 'sin Datos' ? 'cursor-default' : 'cursor-pointer'
+				} relative`}
+			>
 				<input
 					disabled={!control.enabled}
 					type='checkbox'

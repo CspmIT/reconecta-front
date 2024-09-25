@@ -14,13 +14,11 @@ import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
 import SubstationRuralBoard from '../../substationRural/views'
 import TableNodo from '../components/Tables/TableNodo'
-import { Button, IconButton, MenuItem, Popper } from '@mui/material'
-import { PlusOne } from '@mui/icons-material'
-import { BiPlus } from 'react-icons/bi'
 import ButtonAddElement from '../components/ButtonAddElement'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
+	const [loading, setLoading] = useState(true)
 	const navigate = useNavigate()
 	const typeEquipment = (key) => {
 		let component

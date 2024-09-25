@@ -51,7 +51,12 @@ function DndComponent({ controls, setContainer }) {
 							<div className='grid grid-cols-4 gap-3'>
 								<SortableContext items={container.items.map((item) => item.id)}>
 									{container.items.map((item) => (
-										<div key={item.id} className={`w-full ${(!item.enabled || item.status == 'sin Datos') && '!opacity-25'}`}>
+										<div
+											key={item.id}
+											className={`w-full ${
+												(!item.enabled || item.status == 'sin Datos') && '!opacity-25'
+											}`}
+										>
 											<ItemsDnD key={item.id} id={item.id} control={item} />
 										</div>
 									))}
@@ -60,7 +65,11 @@ function DndComponent({ controls, setContainer }) {
 						</ContainerDnd>
 					))}
 				</SortableContext>
-				<DragOverlay>{activeId && findItemById(activeId, containers)?.item && <ItemsDnD id={activeId} control={findItemById(activeId, containers).item} />}</DragOverlay>
+				<DragOverlay>
+					{activeId && findItemById(activeId, containers)?.item && (
+						<ItemsDnD id={activeId} control={findItemById(activeId, containers).item} />
+					)}
+				</DragOverlay>
 			</div>
 		</DndContext>
 	)

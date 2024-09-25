@@ -96,7 +96,9 @@ function NavBarCustom() {
 						Reconecta
 					</Typography>
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
-						<p className='text-black text-xl ml-3 select-none'>{storage.get('usuarioCooptech')?.cliente?.name || ''}</p>
+						<p className='text-black text-xl ml-3 select-none'>
+							{storage.get('usuarioCooptech')?.cliente?.name || ''}
+						</p>
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
@@ -177,7 +179,7 @@ function NavBarCustom() {
 									) : (
 										<Link to={item.link} className={` text-black dark:text-white`}>
 											<ListItemButton
-												className={item.link === '/Alert' ? styles.backgroundAlert : ''}
+												// className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 												sx={{
 													minHeight: 48,
 													justifyContent: !isMobile && open ? 'initial' : 'center',
