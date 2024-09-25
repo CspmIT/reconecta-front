@@ -3,8 +3,8 @@ import GrafTensiones from '../components/GrafTensiones'
 
 const Diagrams = () => {
 	return (
-		<div className='w-full flex flex-wrap justify-center text-black dark:text-white relative mt-2'>
-			<div className='w-full shadow-md  overflow-hidden !h-[100vh] relative rounded-md bg-[#CFC4BE] dark:bg-[#303b41] pt-4'>
+		<div className='w-full flex flex-wrap justify-center text-black dark:text-white relative'>
+			<div className='w-full shadow-md  overflow-hidden !h-[90vh] relative rounded-md bg-[#CFC4BE] dark:bg-[#303b41] '>
 				<DiagramElectricity />
 			</div>
 			<div className='w-full flex flex-wrap'>

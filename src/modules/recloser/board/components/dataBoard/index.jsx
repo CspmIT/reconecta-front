@@ -60,7 +60,13 @@ const DataBoard = () => {
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
-					<Button onClick={() => editRecloser(info)} className='!ml-3' color='warning' title='Editar Reconectador' variant='contained'>
+					<Button
+						onClick={() => editRecloser(info)}
+						className='!ml-3'
+						color='warning'
+						title='Editar Reconectador'
+						variant='contained'
+					>
 						<FaEdit />
 					</Button>
 				</div>

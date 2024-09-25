@@ -2,12 +2,13 @@ import { TextField } from '@mui/material'
 import MapCustom from '../../../map/components/MapCustom'
 import { grayIcon } from '../../../map/utils/js/markerClass'
 import { useEffect, useState } from 'react'
-function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
+function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 	const [centerMap, setCenterMap] = useState([-30.680865, -62.011055])
 	const [markerEdit, setMarkerEdit] = useState(false)
 	const [markerDraw, setMarkerDraw] = useState(false)
 	const [lng, setLng] = useState('')
 	const [lat, setLat] = useState('')
+	const numberValue = watch('number', dataEdit.number || '  ')
 	const getLatLngMarker = (lat, lng) => {
 		setLng(lng)
 		setLat(lat)
@@ -16,7 +17,7 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 	}
 	const changeUbication = (lng, lat) => {
 		const ubication = {
-			icon: grayIcon(dataEdit.number || 'RE'),
+			icon: grayIcon(numberValue),
 			info: {},
 			lat,
 			lng,
@@ -28,7 +29,7 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 		if (lng && lat) {
 			changeUbication(lng, lat)
 		}
-	}, [lng, lat])
+	}, [lng, lat, numberValue])
 	useEffect(() => {
 		if (dataEdit.lat_location && dataEdit.lng_location) {
 			getLatLngMarker(dataEdit.lat_location, dataEdit.lng_location)
@@ -78,14 +79,13 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 					center={centerMap}
 					id={155}
 					editor={markerEdit ? false : true}
+					activeZoom
 					zoom={11}
 					getLatLngMarker={getLatLngMarker}
 					markers={markerDraw}
 				/>
 			</div>
-			<p className='text-red-500 text-xs mt-2 ml-3'>
-				{(errors.lat_marker || errors.lng_marker) && 'Debe agregar una ubicación'}
-			</p>
+			<p className='text-red-500 text-xs mt-2 ml-3'>{(errors.lat_marker || errors.lng_marker) && 'Debe agregar una ubicación'}</p>
 		</>
 	)
 }

@@ -3,6 +3,7 @@ import { calcScale, draw, draw_line, getDataDetail, textosAdd } from '../utils/j
 import { dataElectricity } from '../utils/objects/dataElectricidad'
 import DetailMeter from './DetailMeter'
 import { storage } from '../../../storage/storage'
+import LoaderComponent from '../../../components/Loader'
 
 function DiagramElectricity() {
 	const canvasRef = useRef(null)
@@ -15,17 +16,19 @@ function DiagramElectricity() {
 	const [zoom, setZoom] = useState(0)
 
 	const scaleSettings = [
-		{ width: 640, scale: 'scale-[0.33]', translate: '-translate-x-44 -translate-y-52' },
-		{ width: 768, scale: 'scale-[0.40]', translate: '-translate-x-44 -translate-y-48' },
-		{ width: 1024, scale: 'scale-[0.53]', translate: '-translate-x-40 -translate-y-48' },
-		{ width: 1280, scale: 'scale-[0.67]', translate: '-translate-x-36 -translate-y-36' },
-		{ width: 1366, scale: 'scale-[0.71]', translate: '-translate-x-36 -translate-y-28' },
-		{ width: 1440, scale: 'scale-[0.75]', translate: '-translate-x-32 -translate-y-24' },
-		{ width: 1600, scale: 'scale-[0.83]', translate: '-translate-x-24 -translate-y-16' },
-		{ width: 1920, scale: 'scale-[1.00]', translate: ' ' },
-		{ width: 2560, scale: 'scale-[1.33]', translate: 'translate-x-72 translate-y-40' },
-		{ width: 3840, scale: 'scale-[2.00]', translate: 'translate-x-40 translate-y-40' },
-		{ width: Infinity, scale: 'scale-[2.00]', translate: 'translate-x-40 translate-y-40' },
+		{ width: 425, scale: 'scale-[0.21]' },
+		{ width: 640, scale: 'scale-[0.33]' },
+		{ width: 768, scale: 'scale-[0.40]' },
+		{ width: 1024, scale: 'scale-[0.53]' },
+		{ width: 1280, scale: 'scale-[0.67]' },
+		{ width: 1366, scale: 'scale-[0.71]' },
+		{ width: 1440, scale: 'scale-[0.75]' },
+		{ width: 1600, scale: 'scale-[0.83]' },
+		{ width: 1920, scale: 'scale-[0.9]' },
+		{ width: 2048, scale: 'scale-[1.10]' },
+		{ width: 2560, scale: 'scale-[1.33]' },
+		{ width: 3840, scale: 'scale-[2.00]' },
+		{ width: Infinity, scale: 'scale-[2.00]' },
 	]
 
 	const changeZoom = () => {
@@ -79,13 +82,19 @@ function DiagramElectricity() {
 	}, [canvas])
 
 	return (
-		<div className='w-full'>
-			<div id='div_canvas' className={`${scaleSettings[zoom].scale} ${scaleSettings[zoom].translate} `}>
-				<canvas ref={canvasRef} id='canvas' className='z-40'></canvas>
-				{details.map((detail, index) => (
-					<DetailMeter key={index} position={detail.position} data={detail.data} />
-				))}
-			</div>
+		<div className='w-full h-full flex justify-center items-center'>
+			{details ? (
+				<div id='div_canvas' className={`${scaleSettings[zoom].scale} ${scaleSettings[zoom].translate} `}>
+					<canvas ref={canvasRef} id='canvas' className='z-40'></canvas>
+					{details.map((detail, index) => (
+						<DetailMeter key={index} position={detail.position} data={detail.data} />
+					))}
+				</div>
+			) : (
+				<>
+					<LoaderComponent />
+				</>
+			)}
 		</div>
 	)
 }
