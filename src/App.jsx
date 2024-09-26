@@ -25,6 +25,7 @@ import ConfigSecurity from './modules/configSecurity/views'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
+
 function App() {
 	// async function updateApp() {
 	// 	const { shouldUpdate, manifest } = await checkUpdate()
