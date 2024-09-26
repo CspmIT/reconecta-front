@@ -33,7 +33,7 @@ export const ColumnsAnalyzer = (newTab) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			const info = {
-				Name: row.original.name,
+				name: row.original.name,
 				id: parseInt(row.original.id),
 				type_recloser: 4,
 				...row.origin,

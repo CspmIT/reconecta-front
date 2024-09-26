@@ -4,11 +4,14 @@ export const enableControl = (contador, enabled, setEnabled) => {
 	if (!enabled) {
 		Swal.fire({
 			title: 'Ingrese su contraseña',
-			input: 'text',
+			input: 'password',
 			inputAttributes: {
 				autocapitalize: 'off',
-				onkeydown: 'this.type="password"',
-				placeholder: 'ingrese su contraseña',
+				autocomplete: 'off',
+				placeholder: 'Ingrese su contraseña',
+				form: {
+					autocomplete: 'off',
+				},
 			},
 			showCancelButton: true,
 			confirmButtonText: 'Autentificar',
@@ -21,6 +24,10 @@ export const enableControl = (contador, enabled, setEnabled) => {
 				} else {
 					Swal.fire('Error', 'Contraseña incorrecta', 'error')
 				}
+			},
+			didOpen: () => {
+				const inputField = Swal.getInput()
+				inputField.setAttribute('autocomplete', 'new-password')
 			},
 		})
 	} else {

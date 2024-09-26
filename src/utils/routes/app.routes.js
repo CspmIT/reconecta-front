@@ -1,7 +1,8 @@
 export const front = {
 	Cooptech: 'https://cooptech.com.ar',
 	'Oficina Virtual': 'https://oficinainterna.cooptech.com.ar',
-	Reconecta: import.meta.env.VITE_ENTORNO == 'desarrollo' ? 'http://localhost:4000' : 'https://reconecta.cooptech.com.ar',
+	Reconecta:
+		import.meta.env.VITE_ENTORNO == 'desarrollo' ? 'http://localhost:4000' : 'https://reconecta.cooptech.com.ar',
 	'Mas Agua': 'http://localhost:8082',
 	Centinela: 'http://localhost:8082',
 	Cloud: 'http://localhost:8082',

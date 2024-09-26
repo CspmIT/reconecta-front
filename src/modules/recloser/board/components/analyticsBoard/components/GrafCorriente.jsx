@@ -3,8 +3,9 @@ import { request } from '../../../../../../utils/js/request'
 import GrafLinea from '../../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
+import LoaderComponent from '../../../../../../components/Loader'
 function GrafCorriente({ idRecloser }) {
-	const [dataGraf, setDataGraf] = useState([])
+	const [dataGraf, setDataGraf] = useState(null)
 	const getTensionABC = async (id) => {
 		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
@@ -37,18 +38,22 @@ function GrafCorriente({ idRecloser }) {
 
 	return (
 		<>
-			<GrafLinea
-				title={'Corrientes'}
-				seriesData={dataGraf}
-				configxAxis={{ type: 'datetime' }}
-				labelxAxis={{ format: '{value:%Y-%m-%d %H:%M:%S}' }}
-				tooltip={{
-					tooltip: {
-						xDateFormat: '%Y-%m-%d %H:%M:%S',
-						shared: true,
-					},
-				}}
-			/>
+			{dataGraf ? (
+				<GrafLinea
+					title={'Corrientes'}
+					seriesData={dataGraf}
+					configxAxis={{ type: 'datetime' }}
+					labelxAxis={{ format: '{value:%Y-%m-%d %H:%M:%S}' }}
+					tooltip={{
+						tooltip: {
+							xDateFormat: '%Y-%m-%d %H:%M:%S',
+							shared: true,
+						},
+					}}
+				/>
+			) : (
+				<LoaderComponent image={false} />
+			)}
 		</>
 	)
 }

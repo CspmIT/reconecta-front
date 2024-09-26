@@ -1,4 +1,4 @@
-import { Collapse, ListItemButton, ListItemIcon, ListItemText, Menu, MenuItem, Popper, useMediaQuery } from '@mui/material'
+import { Collapse, ListItemButton, ListItemIcon, ListItemText, MenuItem, Popper, useMediaQuery } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 
@@ -6,10 +6,6 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
 	const [openSub, setOpenSub] = useState(item.submenus.some((value) => value.link == buttonActive))
 	const isMobile = useMediaQuery('(max-width: 600px)')
-	const handleClose = () => {
-		setAnchorEl(null)
-		setOpenSub(false)
-	}
 	const handleOpen = (evento) => {
 		setOpenSub(!openSub)
 		setAnchorEl(evento.currentTarget)
@@ -31,7 +27,11 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 				}}
 			>
 				<ListItemIcon
-					className={`${item.submenus.some((value) => value.link == buttonActive) ? ' !text-blue-500 dark:!text-blue-500' : ''}`}
+					className={`${
+						item.submenus.some((value) => value.link == buttonActive)
+							? ' !text-blue-500 dark:!text-blue-500'
+							: ''
+					}`}
 					sx={{
 						...(isMobile && {
 							minWidth: 'auto !important',
@@ -44,7 +44,11 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 					sx={{
 						display: isMobile ? 'none !important' : 'block',
 					}}
-					className={`${item.submenus.some((value) => value.link == buttonActive) ? ' !text-blue-500 dark:!text-blue-500' : ''}`}
+					className={`${
+						item.submenus.some((value) => value.link == buttonActive)
+							? ' !text-blue-500 dark:!text-blue-500'
+							: ''
+					}`}
 					primary={item.name}
 				/>
 			</ListItemButton>
@@ -54,11 +58,17 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						return (
 							<ListItemButton key={index} onClick={() => activeButton(submenu.link)}>
 								<Link to={submenu.link} className='text-black dark:text-white flex pl-5'>
-									<ListItemIcon className={`${buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''}`}>
+									<ListItemIcon
+										className={`${
+											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+										}`}
+									>
 										{submenu.icon}
 									</ListItemIcon>
 									<ListItemText
-										className={`${buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''}`}
+										className={`${
+											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+										}`}
 										primary={submenu.name}
 									/>
 								</Link>
@@ -66,14 +76,14 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						)
 					})}
 				</Collapse>
-			) : (
+			) : anchorEl ? (
 				<Popper
 					id={item.name}
 					key={item.name}
 					className='bg-[#ffffff] z-40 rounded-md shadow-md flex flex-col justify-start'
 					placement='left-start'
 					open={openSub}
-					anchorEl={anchorEl}
+					anchorEl={anchorEl} // Solo abrir si `anchorEl` es válido
 					sx={{
 						...(isMobile && {
 							transform: 'translate3d(-50px, -76px, 0px) !important',
@@ -81,19 +91,17 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						}),
 					}}
 				>
-					{item.submenus?.map((item, index) => {
-						return (
-							<MenuItem
-								className={`gap-3  ${buttonActive === item.link ? ' !text-blue-500' : ' !text-gray-500'}`}
-								key={index}
-								onClick={() => activeButton(item.link)}
-							>
-								{item.icon} {item.name}
-							</MenuItem>
-						)
-					})}
+					{item.submenus?.map((item, index) => (
+						<MenuItem
+							className={`gap-3  ${buttonActive === item.link ? ' !text-blue-500' : ' !text-gray-500'}`}
+							key={index}
+							onClick={() => activeButton(item.link)}
+						>
+							{item.icon} {item.name}
+						</MenuItem>
+					))}
 				</Popper>
-			)}
+			) : null}
 		</>
 	)
 }

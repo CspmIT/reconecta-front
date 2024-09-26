@@ -23,7 +23,8 @@ function CardBoard({ onCardSelect, info }) {
 		}
 	}
 
-	const classTabs = '!border-solid !border-gray-200 !rounded-l-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
+	const classTabs =
+		'!border-solid !border-gray-200 !rounded-l-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
 	return (
 		<div className='w-full max-w-[94.5vw] flex flex-row rounded-xl'>
 			<Tabs
@@ -56,7 +57,7 @@ function CardBoard({ onCardSelect, info }) {
 					/>
 				))}
 			</Tabs>
-			<div className='w-4/5 md:w-full bg-white dark:bg-zinc-500 mt-0.5 justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-0 py-3 rounded-r-2xl border-zinc-200 dark:border-gray-700'>
+			<div className='w-4/5 md:w-full bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-0 py-3 rounded-r-2xl border-zinc-200 dark:border-gray-700'>
 				{selectedCardId === 1 && <MetrologyBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 3 && <AnalyticsBoard idRecloser={info?.recloser?.id || null} />}

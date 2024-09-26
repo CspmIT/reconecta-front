@@ -40,7 +40,7 @@ export const ColumnsUrban = (newTab) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			const info = {
-				Name: row.original.name,
+				name: row.original.name,
 				id: parseInt(row.original.id),
 				type_recloser: 3,
 				...row.origin,

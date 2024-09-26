@@ -76,7 +76,7 @@ export const ColumnsRural = (newTab) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			const info = {
-				Name: row.original.name_station,
+				name: row.original.name_station,
 				id: parseInt(row.original.id),
 				type_recloser: 5,
 				...row.origin,

@@ -7,8 +7,9 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { request } from '../../../../../utils/js/request'
 import { ColumnsEvent } from './ColumnsEvent'
 import { backend } from '../../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../../components/Loader'
 const EventBoard = ({ idRecloser }) => {
-	const [rowCriticos, setRowCriticos] = useState([])
+	const [rowCriticos, setRowCriticos] = useState(null)
 	const [bottonCheck, setBottonCheck] = useState(false)
 
 	const ChangeColorRow = (row) => {
@@ -84,42 +85,48 @@ const EventBoard = ({ idRecloser }) => {
 	}, [idRecloser])
 
 	useEffect(() => {
-		if (rowCriticos.some((row) => row.statusAlert === 1)) {
+		if (rowCriticos && rowCriticos.some((row) => row.statusAlert === 1)) {
 			setBottonCheck(true)
 		}
 	}, [rowCriticos])
 
 	return (
 		<div className='w-full'>
-			<div className='relative flex justify-between items-center mb-4'>
-				<FormLabel className='w-full text-center !text-2xl'>Evento Criticos</FormLabel>
-			</div>
-			<div className='w-full max-w-full overflow-x-auto'>
-				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<TableCustom
-						getPage={checkAlertCriticas}
-						data={rowCriticos}
-						columns={ColumnsEvent()}
-						density='comfortable'
-						header={{
-							background: 'rgb(91 151 248);',
-							fontSize: '18px',
-							fontWeight: 'bold',
-						}}
-						toolbarClass={{ background: 'rgb(91 151 248)' }}
-						bodyContent={{ fontSize: '16px' }}
-						footer={{ background: 'rgb(223 233 249)' }}
-						ChangeColorRow={ChangeColorRow}
-						pageSize={10}
-						checkAlert={bottonCheck}
-						topToolbar
-						hide
-						filter
-						sort
-						pagination
-					/>
-				</LocalizationProvider>
-			</div>
+			{rowCriticos ? (
+				<>
+					<div className='relative flex justify-between items-center mb-4'>
+						<FormLabel className='w-full text-center !text-2xl'>Evento Criticos</FormLabel>
+					</div>
+					<div className='w-full max-w-full overflow-x-auto'>
+						<LocalizationProvider dateAdapter={AdapterDayjs}>
+							<TableCustom
+								getPage={checkAlertCriticas}
+								data={rowCriticos}
+								columns={ColumnsEvent()}
+								density='comfortable'
+								header={{
+									background: 'rgb(91 151 248);',
+									fontSize: '18px',
+									fontWeight: 'bold',
+								}}
+								toolbarClass={{ background: 'rgb(91 151 248)' }}
+								bodyContent={{ fontSize: '16px' }}
+								footer={{ background: 'rgb(223 233 249)' }}
+								ChangeColorRow={ChangeColorRow}
+								pageSize={10}
+								checkAlert={bottonCheck}
+								topToolbar
+								hide
+								filter
+								sort
+								pagination
+							/>
+						</LocalizationProvider>
+					</div>
+				</>
+			) : (
+				<LoaderComponent />
+			)}
 		</div>
 	)
 }
