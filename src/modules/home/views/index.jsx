@@ -67,26 +67,26 @@ const Home = () => {
 			title: 'Reconectadores',
 			component: <TableRecloser newTab={newTabBoard} />,
 		},
-		// {
-		// 	id: 4,
-		// 	title: 'Medidores',
-		// 	component: <TableMeter newTab={newTabBoard} />,
-		// },
-		// {
-		// 	id: 2,
-		// 	title: 'Sub Estación Urbana',
-		// 	component: <TableSubStationUrban newTab={newTabBoard} />,
-		// },
-		// {
-		// 	id: 3,
-		// 	title: 'Sub Estación Rural',
-		// 	component: <TableSubStationRural newTab={newTabBoard} />,
-		// },
-		// {
-		// 	id: 5,
-		// 	title: 'Analizador de red',
-		// 	component: <TableAnalyzer newTab={newTabBoard} />,
-		// },
+		{
+			id: 4,
+			title: 'Medidores',
+			component: <TableMeter newTab={newTabBoard} />,
+		},
+		{
+			id: 2,
+			title: 'Sub Estación Urbana',
+			component: <TableSubStationUrban newTab={newTabBoard} />,
+		},
+		{
+			id: 3,
+			title: 'Sub Estación Rural',
+			component: <TableSubStationRural newTab={newTabBoard} />,
+		},
+		{
+			id: 5,
+			title: 'Analizador de red',
+			component: <TableAnalyzer newTab={newTabBoard} />,
+		},
 		{
 			id: 6,
 			title: 'Nodos',

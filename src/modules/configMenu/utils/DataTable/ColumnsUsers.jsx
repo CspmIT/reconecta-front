@@ -1,13 +1,14 @@
 import { Add, Circle, Edit } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
-import { FaKey } from "react-icons/fa";
-import Swal from 'sweetalert2';
+import { useState } from 'react'
+import { FaKey } from 'react-icons/fa'
+import Swal from 'sweetalert2'
 
 const profile = {
-	1: 'Super Admin',
-	2: 'Moderador',
-	3: 'Lector',
-	4: 'Operador',
+	1: 'Moderador',
+	2: 'Lector',
+	3: 'Operador',
+	4: 'Super Admin',
 }
 export const ColumnsUser = (editUser) => [
 	{
@@ -24,25 +25,87 @@ export const ColumnsUser = (editUser) => [
 	},
 	{
 		header: 'Perfil',
-		accessorKey: 'id_profile',
+		accessorKey: 'profile',
 		Cell: ({ row }) => {
-			return <p className='m-0 p-0 ml-2 text-base'>{`${profile[row.original?.id_profile]}`}</p>
+			return <p className='m-0 p-0 ml-2 text-base'>{`${profile[row.original?.profile]}`}</p>
 		},
 	},
 	{
 		header: 'Clave de Operación',
 		accessorKey: 'password',
+		size: 50,
 		Cell: ({ row }) => {
+			const [editing, setEditing] = useState(false)
+			const [password, setPassword] = useState(row.original?.password || '')
+
+			const swalNewPassword = async (id) => {
+				Swal.fire({
+					title: 'Crear nueva contraseña',
+					input: 'password',
+					inputAttributes: {
+						autocapitalize: 'off',
+						autocomplete: 'off',
+						placeholder: 'Ingrese su contraseña',
+						form: {
+							autocomplete: 'off',
+						},
+					},
+					inputLabel: 'Ingresa la nueva contraseña',
+					inputPlaceholder: 'Nueva contraseña',
+					showCancelButton: true,
+					confirmButtonText: 'Guardar',
+					preConfirm: (password) => {
+						if (!password) {
+							Swal.showValidationMessage('La contraseña no puede estar vacía')
+						} else {
+							// Lógica para guardar la contraseña en la base de datos o estado de la aplicación.
+							setEditing(false)
+							Swal.fire({
+								title: 'Perfecto!',
+								text: 'Se guardo correctamente',
+								icon: 'success',
+							})
+						}
+					},
+					didOpen: () => {
+						const inputField = Swal.getInput()
+						inputField.setAttribute('autocomplete', 'new-password')
+					},
+				})
+			}
+
 			return (
 				<div className='flex items-center justify-end'>
-					<p className='m-0 p-0 mr-5 text-base'>{row.original?.password ? '••••••••' : ''}</p>
-					<IconButton onClick={() => swalPass(row.original?.id, row.original?.password)} className=' !text-black !shadow-md'>
-						{row.original?.password ? <FaKey /> : <Add />}
-					</IconButton>
+					{editing ? (
+						<div className='flex items-center'>
+							<input
+								type='text'
+								value={password}
+								disabled={true}
+								onChange={(e) => setPassword(e.target.value)}
+								className='border p-1 rounded'
+								placeholder='Nueva contraseña'
+							/>
+							<IconButton onClick={swalNewPassword} className='!text-black !shadow-md'>
+								<Add />
+							</IconButton>
+						</div>
+					) : (
+						<div className='flex items-center'>
+							<p className='m-0 p-0 mr-5 text-base'>{password ? '••••••••' : ''}</p>
+							<IconButton
+								onClick={password ? () => setEditing(true) : () => swalNewPassword()}
+								className='!text-black !shadow-md'
+							>
+								{password ? <FaKey /> : <Add />}
+							</IconButton>
+						</div>
+					)}
 				</div>
 			)
 		},
 	},
+
 	{
 		header: 'Estado',
 		accessorKey: 'status',
@@ -50,8 +113,9 @@ export const ColumnsUser = (editUser) => [
 			return (
 				<div className='flex items-center w-full'>
 					<Circle color={row.original?.status > 0 ? 'success' : 'error'} />
-					<p className='m-0 p-0 ml-2 text-base'>{`${row.original?.status > 0 ? 'Habilitado' : 'Deshabilitado'
-						}`}</p>
+					<p className='m-0 p-0 ml-2 text-base'>{`${
+						row.original?.status > 0 ? 'Habilitado' : 'Deshabilitado'
+					}`}</p>
 				</div>
 			)
 		},
@@ -75,15 +139,3 @@ export const ColumnsUser = (editUser) => [
 		},
 	},
 ]
-
-const swalPass = (id, pass) => {
-	Swal.fire({
-		text: "Nueva Contraseña",
-		input: "text",
-		inputAttributes: {
-			autocapitalize: "off"
-		},
-		showCancelButton: false,
-		confirmButtonText: "Guardar",
-	});
-}

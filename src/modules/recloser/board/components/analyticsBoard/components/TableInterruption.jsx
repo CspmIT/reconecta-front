@@ -3,9 +3,10 @@ import TableCustom from '../../../../../../components/TableCustom'
 import { request } from '../../../../../../utils/js/request'
 import { ColumnTableInt } from '../utils/ColumnTableInt'
 import { backend } from '../../../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../../../components/Loader'
 
 function TableInterruption({ idRecloser }) {
-	const [dataInterruption, setDataInterruption] = useState([])
+	const [dataInterruption, setDataInterruption] = useState(null)
 
 	const getEvents = async (id) => {
 		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/interruptions?id=${id}`, 'GET')
@@ -47,26 +48,30 @@ function TableInterruption({ idRecloser }) {
 	}, [idRecloser])
 	return (
 		<>
-			<h1 className='text-2xl mb-4'>Interrupciones</h1>
-			<div className='!w-3/4'>
-				<TableCustom
-					data={dataInterruption}
-					columns={ColumnTableInt}
-					header={{
-						background: 'rgb(190 190 190)',
-						fontSize: '18px',
-						fontWeight: 'bold',
-					}}
-					toolbarClass={{ background: 'rgb(190 190 190)' }}
-					bodyContent={{ fontSize: '16px', textAlign: 'center' }}
-					body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-					footer={{ background: 'rgb(190 190 190)' }}
-					card={{
-						boxShadow: `1px 1px 8px 0px #00000046`,
-						borderRadius: '0.75rem',
-					}}
-				/>
-			</div>
+			{dataInterruption ? (
+				<>
+					<h1 className='text-2xl mb-4'>Interrupciones</h1>
+					<TableCustom
+						data={dataInterruption}
+						columns={ColumnTableInt}
+						header={{
+							background: 'rgb(190 190 190)',
+							fontSize: '18px',
+							fontWeight: 'bold',
+						}}
+						toolbarClass={{ background: 'rgb(190 190 190)' }}
+						bodyContent={{ fontSize: '16px', textAlign: 'center' }}
+						body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
+						footer={{ background: 'rgb(190 190 190)' }}
+						card={{
+							boxShadow: `1px 1px 8px 0px #00000046`,
+							borderRadius: '0.75rem',
+						}}
+					/>
+				</>
+			) : (
+				<LoaderComponent image={false} />
+			)}
 		</>
 	)
 }

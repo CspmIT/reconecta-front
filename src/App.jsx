@@ -25,6 +25,7 @@ import ConfigSecurity from './modules/configSecurity/views'
 import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
+import Binnacle from './modules/Binnacle'
 
 function App() {
 	// async function updateApp() {
@@ -70,6 +71,7 @@ function App() {
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
 		{ path: '/config/notifications', element: <Notifications /> },
+		{ path: '/bitacora', element: <Binnacle /> },
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({
