@@ -119,6 +119,7 @@ function Map() {
 					{dataMap.map((map, index) => {
 						return (
 							<div
+								key={index}
 								className={`!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 ${
 									widthMap[dataMap.length > 1 ? 0 : 1]
 								} w-full relative`}
@@ -130,7 +131,7 @@ function Map() {
 									{!zoomActive[index] ? <Lock /> : <LockOpen />}
 								</IconButton>
 								<MapCustom
-									id={index}
+									key={index}
 									center={map.center}
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}

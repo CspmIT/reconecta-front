@@ -11,7 +11,6 @@ import '../utils/css/AlertSwal.modules.css'
 
 function MapCustom({
 	center,
-	id,
 	zoom,
 	activeMove = true,
 	activeZoom = false,
