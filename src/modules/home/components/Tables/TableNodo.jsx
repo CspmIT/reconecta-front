@@ -15,7 +15,6 @@ function TableNodo() {
 	const navigate = useNavigate()
 	const getdisplay = async () => {
 		const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
-		console.log(nodes.data)
 		setNode(nodes.data)
 	}
 	const getColumns = async () => {

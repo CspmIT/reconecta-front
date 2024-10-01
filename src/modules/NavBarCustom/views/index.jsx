@@ -74,6 +74,16 @@ function NavBarCustom() {
 		},
 		[navigate]
 	)
+	const [nameCoop, setNameCoop] = useState('')
+	useEffect(() => {
+		if (storage.get('usuarioCooptech')) {
+			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
+				? storage.get('usuarioCooptech')?.cliente?.filter((item) => item.selected)[0]
+				: storage.get('usuarioCooptech')?.cliente || ''
+			setNameCoop(cliente.name)
+		}
+	}, [])
+
 	return (
 		<>
 			<AppBarCustom position='fixed' open={open}>
@@ -96,9 +106,7 @@ function NavBarCustom() {
 						Reconecta
 					</Typography>
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
-						<p className='text-black text-xl ml-3 select-none'>
-							{storage.get('usuarioCooptech')?.cliente?.name || ''}
-						</p>
+						<p className='text-black text-xl ml-3 select-none'>{nameCoop}</p>
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />

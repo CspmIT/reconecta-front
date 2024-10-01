@@ -2,7 +2,6 @@ import { Add, Circle, Edit } from '@mui/icons-material'
 import { IconButton } from '@mui/material'
 import { useState } from 'react'
 import { FaKey } from 'react-icons/fa'
-import Swal from 'sweetalert2'
 
 const profile = {
 	1: 'Moderador',
@@ -10,7 +9,7 @@ const profile = {
 	3: 'Operador',
 	4: 'Super Admin',
 }
-export const ColumnsUser = (editUser) => [
+export const ColumnsUser = (editUser, swalNewPassword) => [
 	{
 		header: 'Nombre',
 		accessorKey: 'first_name',
@@ -36,43 +35,6 @@ export const ColumnsUser = (editUser) => [
 		size: 50,
 		Cell: ({ row }) => {
 			const [editing, setEditing] = useState(false)
-			const [password, setPassword] = useState(row.original?.password || '')
-
-			const swalNewPassword = async (id) => {
-				Swal.fire({
-					title: 'Crear nueva contraseña',
-					input: 'password',
-					inputAttributes: {
-						autocapitalize: 'off',
-						autocomplete: 'off',
-						placeholder: 'Ingrese su contraseña',
-						form: {
-							autocomplete: 'off',
-						},
-					},
-					inputLabel: 'Ingresa la nueva contraseña',
-					inputPlaceholder: 'Nueva contraseña',
-					showCancelButton: true,
-					confirmButtonText: 'Guardar',
-					preConfirm: (password) => {
-						if (!password) {
-							Swal.showValidationMessage('La contraseña no puede estar vacía')
-						} else {
-							// Lógica para guardar la contraseña en la base de datos o estado de la aplicación.
-							setEditing(false)
-							Swal.fire({
-								title: 'Perfecto!',
-								text: 'Se guardo correctamente',
-								icon: 'success',
-							})
-						}
-					},
-					didOpen: () => {
-						const inputField = Swal.getInput()
-						inputField.setAttribute('autocomplete', 'new-password')
-					},
-				})
-			}
 
 			return (
 				<div className='flex items-center justify-end'>
@@ -80,24 +42,30 @@ export const ColumnsUser = (editUser) => [
 						<div className='flex items-center'>
 							<input
 								type='text'
-								value={password}
+								value={row.original?.password}
 								disabled={true}
 								onChange={(e) => setPassword(e.target.value)}
-								className='border p-1 rounded'
-								placeholder='Nueva contraseña'
+								className='border p-1 rounded bg-transparent'
 							/>
-							<IconButton onClick={swalNewPassword} className='!text-black !shadow-md'>
+							<IconButton
+								onClick={() => swalNewPassword(row.original).then(() => setEditing(false))}
+								className='!text-black !shadow-md'
+							>
 								<Add />
 							</IconButton>
 						</div>
 					) : (
 						<div className='flex items-center'>
-							<p className='m-0 p-0 mr-5 text-base'>{password ? '••••••••' : ''}</p>
+							<p className='m-0 p-0 mr-5 text-base'>{row.original?.password ? '••••••••' : ''}</p>
 							<IconButton
-								onClick={password ? () => setEditing(true) : () => swalNewPassword()}
+								onClick={
+									row.original?.password
+										? () => setEditing(true)
+										: () => swalNewPassword(row.original).then(() => setEditing(false))
+								}
 								className='!text-black !shadow-md'
 							>
-								{password ? <FaKey /> : <Add />}
+								{row.original?.password ? <FaKey /> : <Add />}
 							</IconButton>
 						</div>
 					)}

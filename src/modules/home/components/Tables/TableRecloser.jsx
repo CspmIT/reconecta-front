@@ -15,7 +15,6 @@ function TableRecloser({ ...props }) {
 	const navigate = useNavigate()
 	const getdisplay = async () => {
 		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getAllReclosers`, 'GET')
-		console.log(recloser)
 		setReclosers(recloser.data)
 	}
 

@@ -6,24 +6,29 @@ import { useNavigate } from 'react-router-dom'
 import { dataPerfils } from '../utils/DataTable/dataProfile'
 import { ColumnsProfile } from '../utils/DataTable/ColumnsProfile'
 import { ColumnsUser } from '../utils/DataTable/ColumnsUsers'
-import { listUsers } from '../utils/DataTable/dataUser'
 import EditMenu from '../components/EditMenu/EditMenu'
 import { profilePermission, userPermission } from '../utils/DataMenu/permisos'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import LoaderComponent from '../../../components/Loader'
+import Swal from 'sweetalert2'
 
 function ConfigMenu() {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
 	const navigate = useNavigate()
-	const [listUser, setListUsers] = useState(null)
-	useEffect(() => {
-		const getUsers = async () => {
-			// const listUser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/listUsers`, 'GET')
-			// console.log(listUser)
-			// setListUsers(listUser.data)
-			setListUsers(listUsers)
+	const [listUsers, setListUsers] = useState(null)
+	const getUsers = async () => {
+		try {
+			const response = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/listUsersPass`, 'GET')
+			if (response?.data) {
+				setListUsers(response.data)
+			}
+		} catch (error) {
+			console.error('Error al obtener los usuarios:', error)
 		}
+	}
+
+	useEffect(() => {
 		getUsers()
 	}, [])
 
@@ -64,6 +69,49 @@ function ConfigMenu() {
 		navigate('/tabs')
 	}
 
+	const swalNewPassword = async (info) => {
+		Swal.fire({
+			title: 'Crear nueva contraseña',
+			input: 'text',
+			inputAttributes: {
+				autocapitalize: 'off',
+				placeholder: 'Ingrese su contraseña',
+			},
+			inputLabel: 'Ingresa la nueva contraseña',
+			inputPlaceholder: 'Nueva contraseña',
+			showCancelButton: true,
+			confirmButtonText: 'Guardar',
+			preConfirm: async (password) => {
+				if (!password) {
+					Swal.showValidationMessage('La contraseña no puede estar vacía')
+				} else {
+					await savePassword(info, password)
+				}
+			},
+		})
+	}
+
+	const savePassword = async (info, password) => {
+		try {
+			const data = { id_user: info?.id, password: password }
+			await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/savePass`, 'POST', data)
+			// Verificar que la respuesta sea correcta
+
+			await getUsers()
+			Swal.fire({
+				title: 'Perfecto!',
+				text: 'Se guardó correctamente',
+				icon: 'success',
+			})
+		} catch (error) {
+			Swal.fire({
+				title: 'Atención!',
+				text: 'Hubo un error en el guardado',
+				icon: 'warning',
+			})
+		}
+	}
+
 	return (
 		<CardCustom
 			className={
@@ -90,12 +138,12 @@ function ConfigMenu() {
 					}}
 				/>
 			</div>
-			{listUser ? (
+			{listUsers ? (
 				<div className='w-full mt-4 md:p-5'>
 					<h1 className='text-2xl mb-3'>Habilitaciones por Usuarios</h1>
 					<TableCustom
-						data={listUser}
-						columns={ColumnsUser(editUser)}
+						data={listUsers}
+						columns={ColumnsUser(editUser, swalNewPassword)}
 						density='compact'
 						header={{
 							background: 'rgb(190 190 190)',

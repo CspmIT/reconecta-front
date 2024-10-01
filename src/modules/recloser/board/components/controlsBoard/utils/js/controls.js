@@ -1,10 +1,21 @@
 import Swal from 'sweetalert2'
+import { request } from '../../../../../../../utils/js/request'
+import { backend } from '../../../../../../../utils/routes/app.routes'
+import { storage } from '../../../../../../../storage/storage'
 
-export const enableControl = (contador, enabled, setEnabled) => {
+export const enableControl = async (contador, enabled, setEnabled) => {
 	if (!enabled) {
+		const pass = await request(
+			`${backend[`${import.meta.env.VITE_APP_NAME}`]}/userPass?id_user=${storage.get('usuario').sub}`,
+			'GET'
+		)
+		if (!pass?.data?.password) {
+			Swal.fire('Error', 'No tienes permiso/contraseña de ejecución', 'error')
+			return false
+		}
 		Swal.fire({
 			title: 'Ingrese su contraseña',
-			input: 'password',
+			input: 'text',
 			inputAttributes: {
 				autocapitalize: 'off',
 				autocomplete: 'off',
@@ -17,7 +28,7 @@ export const enableControl = (contador, enabled, setEnabled) => {
 			confirmButtonText: 'Autentificar',
 			showLoaderOnConfirm: true,
 			preConfirm: (login) => {
-				if (login === '1234') {
+				if (login === pass.data.password) {
 					Swal.fire('Perfecto!', 'Se habilito correctamente los controles', 'success')
 					contador()
 					setEnabled(!enabled)
