@@ -7,7 +7,7 @@ import Swal from 'sweetalert2'
 import { ArrowBack } from '@mui/icons-material'
 import { requestLogin } from '../utils/requesLogin'
 import { useNavigate } from 'react-router-dom'
-import { getProduct, logeoApp, schemaName } from '../utils/login'
+import { saveDataUser } from '../utils/login'
 import { storage } from '../utils/storage'
 import { getImgApp } from '../utils/images'
 import { jwtDecode } from 'jwt-decode'
@@ -61,7 +61,7 @@ function LoginApp() {
 				storage.set('usuarioCooptech', {
 					token: responseData.token,
 					id_user: responseData.id,
-					cliente: responseData.cliente[0],
+					cliente: responseData.cliente,
 				})
 				if (responseData.cliente.length > 1) {
 					navigate('/ListClients')
@@ -72,21 +72,9 @@ function LoginApp() {
 
 						throw new Error('El usuario no existe...')
 					}
-					const product = await getProduct(
-						import.meta.env.VITE_APP_NAME,
-						responseData.cliente[0].id,
-						responseData.id
-					)
-					if (!product || !Object.keys(product).length) {
-						setLoading(false)
-
-						throw new Error('No se encontro productos relacionados con el usuario')
-					}
-					const schema = await schemaName(responseData.cliente[0].id, product.id_product)
-					const token = await logeoApp(responseData.id, schema)
+					const token = await saveDataUser(responseData.cliente[0].id, responseData.cliente)
 					if (token.error) {
 						setLoading(false)
-
 						Swal.fire('Atencion', token.error.message || token.error, 'error')
 						await removeData('token')
 						storage.remove('usuario')

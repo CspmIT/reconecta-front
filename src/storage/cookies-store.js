@@ -8,7 +8,6 @@ function isTauri() {
 
 // Crear una instancia de Store para Tauri
 const store = isTauri() ? new Store('.storage/user-data.dat') : null
-console.log(new Store('.storage/user-data.dat'))
 // Guardar datos condicionalmente
 export async function saveData(key, value, cookieOptions = {}) {
 	try {

@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { FaUser, FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa'
-import { Link, useNavigate } from 'react-router-dom'
+import { FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 import { removeData } from '../../../../storage/cookies-store'
-import { ChangeCircle, ChangeCircleOutlined } from '@mui/icons-material'
 import { Button } from '@mui/material'
 import { storage } from '../../../../storage/storage'
 
@@ -66,10 +65,16 @@ const DropdownImage = ({ props }) => {
 					tabIndex='-1'
 				>
 					<div className='p-1' role='none'>
-						<Button className='!text-black hover:!bg-slate-200 w-full flex !justify-start' onClick={() => handleChangeClient()}>
+						<Button
+							className='!text-black hover:!bg-slate-200 w-full flex !justify-start'
+							onClick={() => handleChangeClient()}
+						>
 							<FaExchangeAlt className='mr-2' /> Cambio de Organización
 						</Button>
-						<Button className='!text-black hover:!bg-slate-200 w-full flex !justify-start' onClick={() => handleLogout()}>
+						<Button
+							className='!text-black hover:!bg-slate-200 w-full flex !justify-start'
+							onClick={() => handleLogout()}
+						>
 							<FaSignOutAlt className='mr-2' /> Cerrar Sesión
 						</Button>
 					</div>
