@@ -7,7 +7,7 @@ export const logeoApp = async (usuarioId, schema, cliente = false) => {
 	try {
 		const urlUser = backend.Cooptech + `/getUser?id=${usuarioId}`
 		const user = await requestAuth(urlUser, 'GET')
-		const urlToken = backend[`${import.meta.env.VITE_APP_NAME}`] + '/loginCooptech'
+		const urlToken = backend[import.meta.env.VITE_APP_NAME] + '/loginCooptech'
 		const info = {
 			email: user.data.email,
 			tokenApp: user.data.token_apps,

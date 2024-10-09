@@ -10,7 +10,6 @@ import {
 	Typography,
 	List,
 	Toolbar,
-	Badge,
 	useMediaQuery,
 } from '@mui/material'
 import DropdownImage from '../../core/components/DropdownImage'
@@ -21,8 +20,6 @@ import AppBarCustom from '../components/AppBarCustom'
 import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
-import { MdNotificationsActive } from 'react-icons/md'
-import styles from '../utils/css/styles.module.css'
 import { MainContext } from '../../../context/MainContext'
 import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
 import MenuSideBar from '../components/MenuSideBar'

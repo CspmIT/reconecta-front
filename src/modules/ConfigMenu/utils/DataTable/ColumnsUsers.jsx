@@ -3,13 +3,7 @@ import { IconButton } from '@mui/material'
 import { useState } from 'react'
 import { FaKey } from 'react-icons/fa'
 
-const profile = {
-	1: 'Moderador',
-	2: 'Lector',
-	3: 'Operador',
-	4: 'Super Admin',
-}
-export const ColumnsUser = (editUser, swalNewPassword) => [
+export const ColumnsUser = (editUser, swalNewPassword, profile) => [
 	{
 		header: 'Nombre',
 		accessorKey: 'first_name',
@@ -26,7 +20,11 @@ export const ColumnsUser = (editUser, swalNewPassword) => [
 		header: 'Perfil',
 		accessorKey: 'profile',
 		Cell: ({ row }) => {
-			return <p className='m-0 p-0 ml-2 text-base'>{`${profile[row.original?.profile]}`}</p>
+			return (
+				<p className='m-0 p-0 ml-2 text-base'>{`${
+					profile.find((item) => item.id == row.original?.profile).description
+				}`}</p>
+			)
 		},
 	},
 	{
