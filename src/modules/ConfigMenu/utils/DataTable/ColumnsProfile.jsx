@@ -4,7 +4,7 @@ import { IconButton } from '@mui/material'
 export const ColumnsProfile = (editProfile) => [
 	{
 		header: 'Perfil',
-		accessorKey: 'name',
+		accessorKey: 'description',
 	},
 	{
 		header: 'Estado',

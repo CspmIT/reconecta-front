@@ -6,7 +6,7 @@ import { MainContext } from '../../../context/MainContext'
 import Board from '../../recloser/board/views'
 import CustomPopUpRecloser from './CustomPopUp'
 
-const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawnItems }) => {
+const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawnItems, recloser = [] }) => {
 	const markerRef = useRef(null)
 	const navigate = useNavigate()
 	const intervalRef = useRef(null)
@@ -26,7 +26,7 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 						...prevTabs,
 						{
 							name: popupData.name,
-							id: id,
+							id: recloser.length ? recloser[0].id_device : id,
 							link: '/board',
 							component: (
 								<>

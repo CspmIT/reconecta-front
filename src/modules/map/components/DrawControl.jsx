@@ -132,7 +132,7 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 	useEffect(() => {
 		setCreatedMarkers(markers)
 	}, [markers])
-
+	console.log(createdMarkers)
 	return (
 		<>
 			{createdMarkers &&
@@ -143,6 +143,7 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 						position={[marker.lat, marker.lng]}
 						icon={marker.icon}
 						popupData={marker.info}
+						recloser={marker.recloser}
 						drawnItems={drawnItemsRef.current}
 						layerControl={markersListRef.current}
 					/>
