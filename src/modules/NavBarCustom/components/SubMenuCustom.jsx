@@ -1,10 +1,11 @@
 import { Collapse, ListItemButton, ListItemIcon, ListItemText, MenuItem, Popper, useMediaQuery } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import ListIcon from '../../../components/ListIcon'
 
 const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 	const [anchorEl, setAnchorEl] = useState(null)
-	const [openSub, setOpenSub] = useState(item.submenus.some((value) => value.link == buttonActive))
+	const [openSub, setOpenSub] = useState(item.subMenus.some((value) => value.link == buttonActive))
 	const isMobile = useMediaQuery('(max-width: 600px)')
 	const handleOpen = (evento) => {
 		setOpenSub(!openSub)
@@ -14,13 +15,20 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 		if (!openSideBar) {
 			setOpenSub(false)
 		} else {
-			setOpenSub(item.submenus.some((value) => value.link == buttonActive))
+			setOpenSub(item.subMenus.some((value) => value.link == buttonActive))
 		}
 	}, [openSideBar, buttonActive])
+	const getIcon = (menu) => {
+		const listIcon = ListIcon()
+		const componentIcon = listIcon.filter((icono) => icono.name === menu.icon)?.[0] || ''
+		return componentIcon.icon
+	}
+
 	return (
 		<>
 			<ListItemButton
 				onClick={(evento) => handleOpen(evento)}
+				className='!w-full !px-5'
 				sx={{
 					minHeight: isMobile ? 60 : 48,
 					justifyContent: isMobile ? 'center' : 'flex-start',
@@ -28,7 +36,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 			>
 				<ListItemIcon
 					className={`${
-						item.submenus.some((value) => value.link == buttonActive)
+						item.subMenus.some((value) => value.link == buttonActive)
 							? ' !text-blue-500 dark:!text-blue-500'
 							: ''
 					}`}
@@ -38,14 +46,14 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						}),
 					}}
 				>
-					{item.icon}
+					{getIcon(item)}
 				</ListItemIcon>
 				<ListItemText
 					sx={{
 						display: isMobile ? 'none !important' : 'block',
 					}}
 					className={`${
-						item.submenus.some((value) => value.link == buttonActive)
+						item.subMenus.some((value) => value.link == buttonActive)
 							? ' !text-blue-500 dark:!text-blue-500'
 							: ''
 					}`}
@@ -53,8 +61,8 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 				/>
 			</ListItemButton>
 			{openSideBar ? (
-				<Collapse in={openSub} timeout='auto' unmountOnExit>
-					{item.submenus.map((submenu, index) => {
+				<Collapse in={openSub} className='!w-full' timeout='auto' unmountOnExit>
+					{item.subMenus.map((submenu, index) => {
 						return (
 							<ListItemButton key={index} onClick={() => activeButton(submenu.link)}>
 								<Link to={submenu.link} className='text-black dark:text-white flex pl-5'>
@@ -63,7 +71,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
 										}`}
 									>
-										{submenu.icon}
+										{getIcon(submenu)}
 									</ListItemIcon>
 									<ListItemText
 										className={`${
@@ -80,7 +88,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 				<Popper
 					id={item.name}
 					key={item.name}
-					className='bg-[#ffffff] z-40 rounded-md shadow-md flex flex-col justify-start'
+					className='p-2 bg-[#ffffff] z-40 rounded-md shadow-md flex flex-col justify-start'
 					placement='left-start'
 					open={openSub}
 					anchorEl={anchorEl} // Solo abrir si `anchorEl` es válido
@@ -91,13 +99,13 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						}),
 					}}
 				>
-					{item.submenus?.map((item, index) => (
+					{item.subMenus?.map((item2, index) => (
 						<MenuItem
-							className={`gap-3  ${buttonActive === item.link ? ' !text-blue-500' : ' !text-gray-500'}`}
+							className={`gap-3  ${buttonActive === item2.link ? ' !text-blue-500' : ' !text-gray-500'}`}
 							key={index}
-							onClick={() => activeButton(item.link)}
+							onClick={() => activeButton(item2.link)}
 						>
-							{item.icon} {item.name}
+							{getIcon(item2)} {item2.name}
 						</MenuItem>
 					))}
 				</Popper>

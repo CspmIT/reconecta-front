@@ -6,7 +6,7 @@ import CardCustom from '../../../../components/CardCustom'
 import { Add } from '@mui/icons-material'
 import { backend } from '../../../../utils/routes/app.routes'
 import { request } from '../../../../utils/js/request'
-import { createNewMenu, editMenu } from './utils/js/actions'
+import { createNewMenu, editMenu } from './utils/js/Actions'
 import Swal from 'sweetalert2'
 import BtnActions from './components/BtnActions'
 
@@ -59,6 +59,7 @@ function AddMenu() {
 
 	const createMenu = async () => {
 		const result = await createNewMenu(groupedMenus, false)
+
 		if (result) {
 			getDataMenu()
 		}

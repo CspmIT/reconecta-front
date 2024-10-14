@@ -11,6 +11,7 @@ import {
 	List,
 	Toolbar,
 	useMediaQuery,
+	Badge,
 } from '@mui/material'
 import DropdownImage from '../../core/components/DropdownImage'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
@@ -24,9 +25,13 @@ import { MainContext } from '../../../context/MainContext'
 import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
 import MenuSideBar from '../components/MenuSideBar'
 import { storage } from '../../../storage/storage'
+import { getPermissionDb } from '../utils/js'
+import { PiTabsFill } from 'react-icons/pi'
+import ListIcon from '../../../components/ListIcon'
 function NavBarCustom() {
 	const [open, setOpen] = useState(false)
-	const { tabActive, tabs, infoNav } = useContext(MainContext)
+	const [nameCoop, setNameCoop] = useState('')
+	const { tabActive, tabs, infoNav, permission, setPermission } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
 	const { pathname } = useLocation()
@@ -59,7 +64,7 @@ function NavBarCustom() {
 		if (infoNav != '') {
 			setButtonActive(infoNav)
 		}
-		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && !infoNav[0]) {
+		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && infoNav == '') {
 			navigate('Home')
 		}
 	}, [location, locationTAbs])
@@ -71,16 +76,56 @@ function NavBarCustom() {
 		},
 		[navigate]
 	)
-	const [nameCoop, setNameCoop] = useState('')
+	const [menuSideBar, setMenuSideBar] = useState([])
+	const groupedMenu = async (data) => {
+		const result = data.reduce((acc, menu) => {
+			const groupMenuId = parseInt(menu.group_menu)
+			if (!acc[groupMenuId]) {
+				acc[groupMenuId] = { ...menu, subMenus: [] }
+			}
+			if (menu.sub_menu) {
+				const parentMenu = acc[groupMenuId]
+				const subMenu = { ...menu, subMenus: [] }
+				const findAndAddSubMenu = (parent, sub) => {
+					if (parent.id === sub.sub_menu) {
+						parent.subMenus.push(sub)
+					} else {
+						for (let i = 0; i < parent.subMenus.length; i++) {
+							findAndAddSubMenu(parent.subMenus[i], sub)
+						}
+					}
+				}
+				findAndAddSubMenu(parentMenu, subMenu)
+			}
+			return acc
+		}, [])
+		setMenuSideBar(result.filter((item) => Object.values(item).length))
+	}
+
+	const getPermissions = async () => {
+		const permiso = await getPermissionDb()
+		setPermission(permiso)
+		await groupedMenu(permiso)
+	}
+
 	useEffect(() => {
 		if (storage.get('usuarioCooptech')) {
 			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
 				? storage.get('usuarioCooptech')?.cliente?.filter((item) => item.selected)[0]
 				: storage.get('usuarioCooptech')?.cliente || ''
 			setNameCoop(cliente.name)
+			getPermissions()
 		}
 	}, [])
-
+	useEffect(() => {
+		if (storage.get('usuarioCooptech')) {
+			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
+				? storage.get('usuarioCooptech')?.cliente?.filter((item) => item.selected)[0]
+				: storage.get('usuarioCooptech')?.cliente || ''
+			setNameCoop(cliente.name)
+			getPermissions()
+		}
+	}, [])
 	return (
 		<>
 			<AppBarCustom position='fixed' open={open}>
@@ -153,13 +198,15 @@ function NavBarCustom() {
 							}),
 						}}
 					>
-						{MenuSideBar(tabActive, infoNav).map((item, index) => {
-							if (tabs.length == 0 && item.link == '/tabs') {
-								return null
-							}
+						{menuSideBar.map((item, index) => {
 							if (item.name == 'ABM Equipos' && item.link == '') {
 								return null
 							}
+							if (!permission.some((perm) => perm.name == item.name)) {
+								return null
+							}
+							const listIcon = ListIcon()
+							const componentIcon = listIcon.filter((icono) => icono.name === item.icon)?.[0] || ''
 							return (
 								<ListItem
 									key={index}
@@ -173,7 +220,7 @@ function NavBarCustom() {
 										}),
 									}}
 								>
-									{item.submenus ? (
+									{item.subMenus.length ? (
 										<SubMenuCustom
 											item={item}
 											className={`dark:text-white`}
@@ -182,15 +229,15 @@ function NavBarCustom() {
 											activeButton={activeButton}
 										/>
 									) : (
-										<Link to={item.link} className={` text-black dark:text-white`}>
+										<Link to={item.link} className={`!w-full text-black dark:text-white`}>
 											<ListItemButton
 												// className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 												sx={{
 													minHeight: 48,
 													justifyContent: !isMobile && open ? 'initial' : 'center',
-													px: 2.5,
 													py: 1.8,
 												}}
+												className='!w-full !px-5'
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon
@@ -201,7 +248,7 @@ function NavBarCustom() {
 														color: buttonActive == item.link ? 'blue' : '',
 													}}
 												>
-													{item.icon}
+													{componentIcon.icon}
 												</ListItemIcon>
 												<ListItemText
 													primary={item.name}
@@ -217,6 +264,54 @@ function NavBarCustom() {
 								</ListItem>
 							)
 						})}
+						{tabs.length == 0 && !locationTAbs.includes('tabs') ? null : (
+							<ListItem
+								key={'tabs'}
+								disablePadding
+								sx={{
+									...(isMobile && {
+										flexGrow: 1,
+										flexBasis: 0,
+										justifyContent: 'center',
+										display: 'flex',
+									}),
+								}}
+							>
+								<Link to={'/tabs'} className={` text-black dark:text-white`}>
+									<ListItemButton
+										sx={{
+											minHeight: 48,
+											justifyContent: !isMobile && open ? 'initial' : 'center',
+											px: 2.5,
+											py: 1.8,
+										}}
+										className='!w-full'
+										onClick={() => activeButton('/tabs')}
+									>
+										<ListItemIcon
+											sx={{
+												minWidth: 0,
+												mr: !isMobile && open ? 3 : 'auto',
+												justifyContent: 'center',
+												color: buttonActive == '/tabs' ? 'blue' : '',
+											}}
+										>
+											<Badge badgeContent={tabActive} color='primary'>
+												<PiTabsFill className='dark:text-white text-3xl' />
+											</Badge>
+										</ListItemIcon>
+										<ListItemText
+											primary={'Paginas'}
+											sx={{
+												opacity: !isMobile && open ? 1 : 0,
+												color: buttonActive == '/tabs' ? 'blue' : '',
+												display: isMobile ? 'none !important' : 'block',
+											}}
+										/>
+									</ListItemButton>
+								</Link>
+							</ListItem>
+						)}
 					</List>
 				</div>
 			</DrawerCustom>

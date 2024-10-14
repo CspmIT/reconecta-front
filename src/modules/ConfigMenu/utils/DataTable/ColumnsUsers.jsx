@@ -22,7 +22,7 @@ export const ColumnsUser = (editUser, swalNewPassword, profile) => [
 		Cell: ({ row }) => {
 			return (
 				<p className='m-0 p-0 ml-2 text-base'>{`${
-					profile.find((item) => item.id == row.original?.profile).description
+					profile.find((item) => item.id == row.original?.profile)?.description || ''
 				}`}</p>
 			)
 		},

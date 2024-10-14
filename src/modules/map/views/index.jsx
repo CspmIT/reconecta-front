@@ -4,7 +4,7 @@ import { polylines } from '../utils/js/polilines'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import markerCustom from '../utils/js/markerClass'
-import { IconButton, Skeleton } from '@mui/material'
+import { IconButton } from '@mui/material'
 import { Lock, LockOpen } from '@mui/icons-material'
 import LoaderComponent from '../../../components/Loader'
 function Map() {

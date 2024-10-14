@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import {
 	Accordion,
 	AccordionSummary,
@@ -14,30 +14,32 @@ import MenuItems from './components/MenuItems'
 import Swal from 'sweetalert2'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
+import { MainContext } from '../../../../context/MainContext'
+import { getPermissionDb } from '../../../NavBarCustom/utils/js'
 
 const PermissionMenu = ({ data, id_user, profile }) => {
+	const { setPermission } = useContext(MainContext)
 	const [selectedMenus, setSelectedMenus] = useState({})
 	const [permissonUserData, setPermissonUserData] = useState([])
 	const [permissonProfileData, setPermissonProfileData] = useState([])
 	const [expandedAccordions, setExpandedAccordions] = useState({})
 	const [groupedMenus, setGroupedMenus] = useState({})
-	const handleCheckboxChange = (id, subMenus) => {
+	const handleCheckboxChange = (id, subMenus, type_select) => {
 		const updateSelection = (menus, isSelected) => {
 			return menus.reduce((acc, menu) => {
-				acc[menu.id] = isSelected
+				acc[menu.id] = { status: isSelected, id: menu.id, type_select }
 				if (menu.subMenus) {
 					Object.assign(acc, updateSelection(menu.subMenus, isSelected))
 				}
 				return acc
 			}, {})
 		}
-
 		setSelectedMenus((prevSelectedMenus) => {
-			const isSelected = !prevSelectedMenus[id]
+			const isSelected = !prevSelectedMenus[id]?.status || 0
 			const updatedSelection = updateSelection(subMenus, isSelected)
 			return {
 				...prevSelectedMenus,
-				[id]: isSelected,
+				[id]: { status: isSelected, id: id, type_select },
 				...updatedSelection,
 			}
 		})
@@ -60,11 +62,11 @@ const PermissionMenu = ({ data, id_user, profile }) => {
 		}
 		if (!menu.subMenus || menu.subMenus?.length < 1) {
 			return {
-				checked: selectedMenus[menu.id],
+				checked: selectedMenus[menu.id]?.status || false,
 				indeterminate: false,
 			}
 		}
-		const subMenusSelected = menu.subMenus.map((sub) => selectedMenus[sub.id] || false)
+		const subMenusSelected = menu.subMenus.map((sub) => selectedMenus[sub.id]?.status || false)
 		const allSelected = subMenusSelected.every(Boolean)
 		const noneSelected = subMenusSelected.every((selected) => !selected)
 		if (allSelected) {
@@ -134,7 +136,11 @@ const PermissionMenu = ({ data, id_user, profile }) => {
 			allMenus.forEach((item) => {
 				const permItemUser = userPermission.find((prem) => prem.id_menu == item.id && prem.status) || {}
 				const permItemProfile = profilePermission.find((prem) => prem.id_menu == item.id && prem.status) || {}
-				menuPermissions[item.id] = permItemUser.status || permItemProfile.status ? true : false
+				menuPermissions[item.id] = {
+					status: permItemProfile?.status ? true : permItemUser?.status ? true : false,
+					type_select: permItemProfile?.status ? 'profile' : permItemUser?.status ? 'user_id' : false,
+					id: item.id,
+				}
 			})
 
 			setSelectedMenus(menuPermissions)
@@ -160,14 +166,18 @@ const PermissionMenu = ({ data, id_user, profile }) => {
 				return {
 					id: permissionItem.id || 0,
 					id_menu: item.id,
-					status: selectedMenus[item.id] || false,
+					status:
+						id_user && selectedMenus[item.id].type_select == 'user_id'
+							? selectedMenus[item.id].status
+							: id_user && selectedMenus[item.id].type_select == 'profile'
+							? false
+							: selectedMenus[item.id].status,
 					id_profile: profile || null,
 					id_user: id_user || null,
 				}
 			})
-			console.log(result)
-			// await request(backend.Reconecta + '/savePermission', 'POST', result)
-
+			await request(backend.Reconecta + '/savePermission', 'POST', result)
+			setPermission(await getPermissionDb())
 			Swal.fire({
 				title: 'Perfecto!',
 				text: 'Se guardó correctamente',
@@ -265,7 +275,8 @@ const PermissionMenu = ({ data, id_user, profile }) => {
 								}
 								onClick={(event) => {
 									event.stopPropagation()
-									handleCheckboxChange(groupMenu.id, groupMenu.subMenus)
+									let type_select = id_user ? 'user_id' : 'profile'
+									handleCheckboxChange(groupMenu.id, groupMenu.subMenus, type_select)
 								}}
 							/>
 							<Typography className='flex items-center text-black'>{groupMenu.name}</Typography>

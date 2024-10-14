@@ -47,7 +47,8 @@ function MenuItems({
 									)}
 									onClick={(event) => {
 										event.stopPropagation()
-										handleCheckboxChange(item.id, item.subMenus)
+										let type_select = permissonProfileData.length ? 'user_id' : 'profile'
+										handleCheckboxChange(item.id, item.subMenus, type_select)
 									}}
 								/>
 							)}
@@ -99,14 +100,15 @@ function MenuItems({
 					<ListItem className='flex !items-center !w-full !pl-10' key={item.id}>
 						{calculateCheckboxState && (
 							<Checkbox
-								checked={selectedMenus[item.id] || false}
+								checked={selectedMenus[item.id]?.status || false}
 								disabled={permissonProfileData.some(
 									(perm) =>
 										Boolean(perm.id_profile) && Boolean(perm.status) && perm.id_menu == item.id
 								)}
 								onClick={(event) => {
 									event.stopPropagation()
-									handleCheckboxChange(item.id, [])
+									let type_select = permissonProfileData.length ? 'user_id' : 'profile'
+									handleCheckboxChange(item.id, [], type_select)
 								}}
 							/>
 						)}
