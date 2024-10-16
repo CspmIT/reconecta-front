@@ -1,7 +1,8 @@
 import Swal from 'sweetalert2'
+import { sendAction } from '../utils/js/Controls'
 
-function ControlCircle({ control, enabled, contador }) {
-	const setCircleValue = (id, value) => {
+function ControlCircle({ control, enabled, contador, info }) {
+	const setCircleValue = (field, value) => {
 		if (!enabled) {
 			Swal.fire({
 				title: 'Atención!',
@@ -17,10 +18,12 @@ function ControlCircle({ control, enabled, contador }) {
 			allowOutsideClick: false,
 			showDenyButton: true,
 			confirmButtonText: 'Si',
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				contador()
-				control.status = value
+				const status = await sendAction(field, value, contador, info)
+				if (status) {
+					control.status = status
+				}
 			}
 		})
 	}
@@ -37,7 +40,7 @@ function ControlCircle({ control, enabled, contador }) {
 						} mx-2 text-white rounded-[50%] w-[28px] h-[27px] flex pl-[10px] pt-[3px] `}
 						key={i}
 						onClick={() => {
-							if (control.status != 'sin Datos') setCircleValue(control.id, i + 1)
+							if (control.status != 'sin Datos') setCircleValue(control.field, i + 1)
 						}}
 					>
 						{i + 1}

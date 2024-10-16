@@ -51,6 +51,9 @@ const DataBoard = () => {
 		setInfoNav([info])
 		navigate('/AbmDevice/recloser/' + info.recloser.id)
 	}
+	const refreshInflux = async () => {
+		getDataRecloser(data.id)
+	}
 	return (
 		<div className='w-full h-auto items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
 			{info ? (
@@ -60,10 +63,16 @@ const DataBoard = () => {
 							<h2 className='text-2xl'>Reconectador</h2>
 						</div>
 						<div className='absolute right-2 top-8 md:top-0'>
-							<Button variant='contained' title='Recargar Datos'>
+							<Button
+								variant='contained'
+								title='Recargar Datos'
+								type='button'
+								onClick={async () => await refreshInflux()}
+							>
 								<FaRedo />
 							</Button>
 							<Button
+								type='button'
 								onClick={() => editRecloser(info)}
 								className='!ml-3'
 								color='warning'
