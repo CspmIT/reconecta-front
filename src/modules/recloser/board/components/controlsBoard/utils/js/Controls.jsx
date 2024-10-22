@@ -61,6 +61,7 @@ export const sendAction = async (field, action, contador, info) => {
 			id_recloser: info.recloser.id,
 		}
 		// await request(`${backend.Reconecta}/sendMQTT`, 'POST', dataSend)
+
 		const dataControl = {
 			action: field === 'grp' ? action : !action ? 1 : 0,
 			field: field,

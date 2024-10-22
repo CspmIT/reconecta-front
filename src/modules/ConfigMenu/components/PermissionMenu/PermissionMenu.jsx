@@ -171,7 +171,7 @@ const PermissionMenu = ({ data, id_user, profile }) => {
 							? selectedMenus[item.id].status
 							: id_user && selectedMenus[item.id].type_select == 'profile'
 							? false
-							: selectedMenus[item.id].status,
+							: selectedMenus?.[item.id]?.status || false,
 					id_profile: profile || null,
 					id_user: id_user || null,
 				}

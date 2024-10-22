@@ -23,7 +23,6 @@ import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
 import { MainContext } from '../../../context/MainContext'
 import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
-import MenuSideBar from '../components/MenuSideBar'
 import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
@@ -56,6 +55,7 @@ function NavBarCustom() {
 			document.removeEventListener('mouseup', handleClickOutside)
 		}
 	}, [])
+
 	useEffect(() => {
 		setButtonActive(location)
 		if (location === '/DashBoard') {
@@ -63,6 +63,9 @@ function NavBarCustom() {
 		}
 		if (infoNav != '') {
 			setButtonActive(infoNav)
+		}
+		if (location === '/' || location === '/Home' || location === '') {
+			setButtonActive('/home')
 		}
 		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && infoNav == '') {
 			navigate('Home')
@@ -99,6 +102,7 @@ function NavBarCustom() {
 			}
 			return acc
 		}, [])
+		result.sort((a, b) => a.order - b.order)
 		setMenuSideBar(result.filter((item) => Object.values(item).length))
 	}
 
@@ -117,15 +121,7 @@ function NavBarCustom() {
 			getPermissions()
 		}
 	}, [])
-	useEffect(() => {
-		if (storage.get('usuarioCooptech')) {
-			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
-				? storage.get('usuarioCooptech')?.cliente?.filter((item) => item.selected)[0]
-				: storage.get('usuarioCooptech')?.cliente || ''
-			setNameCoop(cliente.name)
-			getPermissions()
-		}
-	}, [])
+
 	return (
 		<>
 			<AppBarCustom position='fixed' open={open}>
