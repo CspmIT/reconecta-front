@@ -66,6 +66,7 @@ function TableInterruption({ idRecloser }) {
 						card={{
 							boxShadow: `1px 1px 8px 0px #00000046`,
 							borderRadius: '0.75rem',
+							width:'100%'
 						}}
 					/>
 				</>

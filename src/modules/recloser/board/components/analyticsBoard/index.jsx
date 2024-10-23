@@ -16,7 +16,7 @@ const AnalyticsBoard = ({ idRecloser }) => {
 				<h1 className='text-2xl mb-4'>Disparos de sobrecorriente</h1>
 				<h1 className='text-xl mb-4'>En desarrollo...</h1>
 			</CardCustom>
-			<CardCustom className='flex flex-col items-center mt-8 rounded-md p-4 border-t-8  border-blue-500 shadow-blue-500/55 shadow-[3px_3px_3px_2px]'>
+			<CardCustom className='w-full flex flex-col items-center mt-8 rounded-md p-4 border-t-8  border-blue-500 shadow-blue-500/55 shadow-[3px_3px_3px_2px]'>
 				<TableInterruption idRecloser={idRecloser} />
 			</CardCustom>
 		</div>

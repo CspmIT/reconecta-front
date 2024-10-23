@@ -148,7 +148,7 @@ function NavBarCustom() {
 						Reconecta
 					</Typography>
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
-						<p className='text-black text-xl ml-3 select-none'>{nameCoop}</p>
+						<p className={`text-black text-xl ml-3 select-none ${isMobile ? 'hidden' : ''}`}>{nameCoop}</p>
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
@@ -215,8 +215,8 @@ function NavBarCustom() {
 										...(isMobile && {
 											flexGrow: 1,
 											flexBasis: 0,
-											justifyContent: 'center',
-											display: 'flex',
+											// justifyContent: 'center',
+											// display: 'flex',
 										}),
 									}}
 								>
@@ -235,9 +235,10 @@ function NavBarCustom() {
 												sx={{
 													minHeight: 48,
 													justifyContent: !isMobile && open ? 'initial' : 'center',
+													padding: !isMobile ? '1.25rem' : '0.2rem',
 													py: 1.8,
 												}}
-												className='!w-full !px-5'
+												className='!w-full'
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon
@@ -246,6 +247,7 @@ function NavBarCustom() {
 														mr: !isMobile && open ? 3 : 'auto',
 														justifyContent: 'center',
 														color: buttonActive == item.link ? 'blue' : '',
+														marginRight: !isMobile ? 'auto' : '0',
 													}}
 												>
 													{componentIcon.icon}

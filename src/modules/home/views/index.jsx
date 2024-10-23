@@ -99,7 +99,6 @@ const Home = () => {
 			<div className='flex flex-wrap gap-3 mb-5 px-3'>
 				<Grafs />
 			</div>
-			<ButtonAddElement />
 			<TabsHome tabs={tabsHome} />
 		</div>
 	)

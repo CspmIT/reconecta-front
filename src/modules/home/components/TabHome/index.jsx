@@ -1,6 +1,7 @@
 import { Tab, Tabs, MenuItem, Select, useMediaQuery } from '@mui/material'
 import { useState } from 'react'
 import { CustomTabPanel, a11yProps } from './PanelTab'
+import ButtonAddElement from '../ButtonAddElement'
 
 function TabsHome({ tabs }) {
   const [value, setValue] = useState(0)
@@ -46,9 +47,8 @@ function TabsHome({ tabs }) {
           {tabs.map((item, index) => (
             <Tab
               key={index}
-              className={`flex-grow sm:w-auto w-full !mr-1 relative ${
-                classTabStatus[value === index ? 0 : 1]
-              } ${classTabs}`}
+              className={`flex-grow sm:w-auto w-full !mr-1 relative ${classTabStatus[value === index ? 0 : 1]
+                } ${classTabs}`}
               label={
                 <p className='text-black dark:text-white w-full text-center'>
                   {item.title}
@@ -61,6 +61,7 @@ function TabsHome({ tabs }) {
       )}
 
       <div className={`bg-white dark:bg-zinc-500 w-full h-full flex-col justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700`}>
+        <ButtonAddElement />
         {tabs.map((item, index) => (
           <CustomTabPanel
             key={index}
