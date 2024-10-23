@@ -132,7 +132,6 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 	useEffect(() => {
 		setCreatedMarkers(markers)
 	}, [markers])
-	console.log(createdMarkers)
 	return (
 		<>
 			{createdMarkers &&
