@@ -1,6 +1,5 @@
 import React from 'react';
-import { IconButton, MenuItem, Select } from '@mui/material';
-import { BiTrash } from 'react-icons/bi';
+import { MenuItem, Select } from '@mui/material';
 
 export const ColumnsNot = (handlePriority, handleCheck) => [
     {
@@ -52,21 +51,6 @@ export const ColumnsNot = (handlePriority, handleCheck) => [
             };
 
             return <input type="checkbox" checked={row.original.notifications === 1} onChange={handleChange} />;
-        },
-    },
-    {
-        header: '',
-        accessorKey: 'actions',
-        size: 20,
-        Cell: ({ row }) => {
-            return (
-                <IconButton
-                    onClick={() => deleteNotidication(row.original)}
-                    className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
-                >
-                    <BiTrash />
-                </IconButton>
-            );
         },
     },
 ];
