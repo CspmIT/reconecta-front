@@ -1,8 +1,8 @@
 import React from 'react';
-import { FaCheck } from "react-icons/fa";
-import MenuListComposition from '../../components/MenuListComposition';
+import { IconButton, MenuItem, Select } from '@mui/material';
+import { BiTrash } from 'react-icons/bi';
 
-export const ColumnsNot = () => [
+export const ColumnsNot = (handlePriority, handleCheck) => [
     {
         header: 'ID',
         accessorKey: 'id',
@@ -15,29 +15,43 @@ export const ColumnsNot = () => [
         header: 'Prioridad',
         accessorKey: 'prioridad',
         Cell: ({ row }) => {
-            const priorityMap = {
-                1: { color: 'text-red-500', value: 'ALTA' },
-                2: { color: '', value: 'SIN MODIFICAR' },
-                3: { color: 'text-green-500', value: 'BAJA' },
+            const handleChange = (event) => {
+                handlePriority(row.original.id, event.target.value);
             };
-        
-            const { color, value } = priorityMap[row.original?.prioridad] || { color: '', value: '' };
-        
-            return <b className={`m-0 p-0 ml-2 text-base ${color}`}>{value}</b>;
+
+            return (
+                <Select
+                    id="priority"
+                    value={row.original.prioridad || ''}
+                    onChange={handleChange}
+                >
+                    <MenuItem value={1}>ALTA</MenuItem>
+                    <MenuItem value={2}>SIN MODIFICAR</MenuItem>
+                    <MenuItem value={3}>BAJA</MenuItem>
+                </Select>
+            );
         },
     },
     {
         header: 'Destello en Pantalla',
         accessorKey: 'destello',
         Cell: ({ row }) => {
-            return (row.original?.destello == 1 ? <FaCheck className='text-green-800 dark:text-green-500  text-3xl' /> : '')
+            const handleChange = () => {
+                handleCheck(row.original.id, 'destello');
+            };
+
+            return <input type="checkbox" checked={row.original.destello === 1} onChange={handleChange} />;
         },
     },
     {
         header: 'Notificación',
         accessorKey: 'notifications',
         Cell: ({ row }) => {
-            return (row.original?.notifications == 1 ? <FaCheck className='text-green-800 dark:text-green-500  text-3xl' /> : '')
+            const handleChange = () => {
+                handleCheck(row.original.id, 'notifications');
+            };
+
+            return <input type="checkbox" checked={row.original.notifications === 1} onChange={handleChange} />;
         },
     },
     {
@@ -46,11 +60,13 @@ export const ColumnsNot = () => [
         size: 20,
         Cell: ({ row }) => {
             return (
-                <div className='flex items-center w-full'>
-                    <MenuListComposition id={row.original?.id} />
-                </div>
+                <IconButton
+                    onClick={() => deleteNotidication(row.original)}
+                    className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
+                >
+                    <BiTrash />
+                </IconButton>
             );
         },
     },
-]
-
+];
