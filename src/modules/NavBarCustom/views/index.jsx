@@ -27,7 +27,7 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-function NavBarCustom() {
+function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
 	const { tabActive, tabs, infoNav, permission, setPermission } = useContext(MainContext)
@@ -110,6 +110,7 @@ function NavBarCustom() {
 		const permiso = await getPermissionDb()
 		setPermission(permiso)
 		await groupedMenu(permiso)
+		setLoading(true)
 	}
 
 	useEffect(() => {

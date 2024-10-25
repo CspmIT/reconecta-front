@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import style from '../utils/style.module.css'
 import NavBarCustom from '../../NavBarCustom/views'
@@ -8,6 +8,8 @@ import { userPermisos } from '../utils/js/PermisosUser'
 import Swal from 'sweetalert2'
 import { storage } from '../../../storage/storage'
 import { getData, removeData } from '../../../storage/cookies-store'
+import LoaderComponent from '../../../components/Loader'
+import { getPermissionDb } from '../../NavBarCustom/utils/js'
 const MainContent = () => {
 	const { user, setInfoNav } = useContext(MainContext)
 	const location = useLocation()
@@ -29,17 +31,32 @@ const MainContent = () => {
 			setInfoNav('')
 		}
 	}
+	// const [permissionDb, setPermissionDb] = useState(null)
+	// const getPermisson = async () => {
+	// 	const permiso = await getPermissionDb()
+	// 	setPermissionDb(permiso)
+	// }
+	const [loading, setLoading] = useState(false)
 	useEffect(() => {
 		validationUser()
 	}, [location])
+	// useEffect(() => {
+	// 	getPermisson()
+	// }, [])
 	return (
 		<>
 			<div className='pt-16 !min-h-screen absolute w-full bg-gray-200 dark:bg-gray-700 '>
-				<NavBarCustom />
-				<div className={`sm:pl-20 pl-4 pr-4 pt-4 pb-20 z-10 flex relative ${style.boxMain}`}>
-					<Outlet />
-				</div>
-				<Footer />
+				<NavBarCustom setLoading={setLoading} />
+				{!loading ? (
+					<LoaderComponent />
+				) : (
+					<>
+						<div className={`sm:pl-20 pl-4 pr-4 pt-4 pb-20 z-10 flex relative ${style.boxMain}`}>
+							<Outlet />
+						</div>
+						<Footer />
+					</>
+				)}
 			</div>
 		</>
 	)
