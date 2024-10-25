@@ -1,15 +1,32 @@
 import { useState } from 'react'
 import { Card } from '@mui/material'
 import Accordion from '../components/Accordion'
+import { FaArrowRight } from "react-icons/fa6";
 
 
 function ConfigNotifications() {
 
 	const arraydevice = [
-		{ name: 'Reconectador/NOJA/RC01' },
-		{ name: 'Reconectador/NOJA/RC10' },
-		{ name: 'Reconectador/COOPER/F5' },
-		{ name: 'Reconectador/COOPER/F6' },
+		{
+			name: 'Reconectador',
+			type: 'NOJA',
+			number: 'RC01'
+		},
+		{
+			name: 'Reconectador',
+			type: 'NOJA',
+			number: 'RC10'
+		},
+		{
+			name: 'Reconectador',
+			type: 'COOPER',
+			number: 'F5'
+		},
+		{
+			name: 'Reconectador',
+			type: 'COOPER',
+			number: 'F6'
+		},
 	]
 	return (
 		<Card
@@ -22,7 +39,7 @@ function ConfigNotifications() {
 				<div className='flex flex-col gap-3'>
 					{arraydevice.map((item, index) => {
 						return (
-							<Accordion title={item.name} />
+							<Accordion title={<> {item.name} <FaArrowRight className='mt-1 mx-2' /> {item.type} → {item.number} </>}  />
 						)
 					})}
 				</div>
