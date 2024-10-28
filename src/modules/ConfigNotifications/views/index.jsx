@@ -4,21 +4,58 @@ import Accordion from '../components/Accordion'
 import { FaArrowRight } from 'react-icons/fa6'
 import { formatterConfig, getConfigNotify } from '../utils/js'
 import LoaderComponent from '../../../components/Loader'
+import { request } from '../../../utils/js/request'
+import { backend } from '../../../utils/routes/app.routes'
 
 function ConfigNotifications() {
 	const [devices, setDevices] = useState([])
+	const [hasAccess, setHasAccess] = useState(false)
+	const [loading, setLoading] = useState(true)
+
 	const getConfig = async () => {
 		const config = await getConfigNotify()
-		console.log(config)
 		const configFormatter = await formatterConfig(config)
-		console.log(configFormatter)
 		setDevices(configFormatter)
+		setLoading(false)
 	}
-	useEffect(() => {
-		getConfig()
-	}, [])
 
-	// console.log(devices)
+	useEffect(() => {
+		const checkAccess = async () => {
+			try {
+				await getConfig()
+				const response = await request(
+					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/check-access-Config`,
+					'GET'
+				)
+				if (response.status === 200) {
+					setHasAccess(true)
+				}
+			} catch (err) {
+				setHasAccess(false)
+			}
+		}
+
+		checkAccess()
+
+		const intervalId = setInterval(async () => {
+			if (hasAccess) {
+				try {
+					await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/renew-access-Config`, 'POST')
+				} catch (error) {
+					console.error('Error renewing access:', error)
+					setHasAccess(false)
+				}
+			}
+		}, 60 * 1000)
+		return () => {
+			clearInterval(intervalId)
+			if (hasAccess) {
+				request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/release-access-Config`, 'POST')
+			}
+		}
+	}, [hasAccess])
+
+	if (loading) return <LoaderComponent />
 	return (
 		<Card
 			className={
@@ -45,6 +82,7 @@ function ConfigNotifications() {
 										</>
 									}
 									dataTable={item.objets}
+									access={hasAccess}
 								/>
 							)
 						})

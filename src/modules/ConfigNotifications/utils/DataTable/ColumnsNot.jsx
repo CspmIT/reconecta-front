@@ -1,10 +1,10 @@
 import { MenuItem, Select } from '@mui/material'
 import React, { useState } from 'react'
 
-export const ColumnsNot = (handlePriority, handleCheck) => [
+export const ColumnsNot = (handlePriority, handleCheck, access) => [
 	{
 		header: 'ID',
-		accessorKey: 'id',
+		accessorKey: 'id_event_influx',
 		muiTableHeadCellProps: {
 			style: { minWidth: '3ch', maxWidth: '3ch' },
 		},
@@ -38,7 +38,14 @@ export const ColumnsNot = (handlePriority, handleCheck) => [
 			// 	handlePriority(row.original.id, event.target.value, row.index)
 			// }
 			return (
-				<Select key={row.index} id='priority' className='max-h-8 w-56' value={status} onChange={handleChange}>
+				<Select
+					key={row.index}
+					id='priority'
+					disabled={!access}
+					className='max-h-8 w-56'
+					value={status}
+					onChange={handleChange}
+				>
 					<MenuItem value={1}>ALTA</MenuItem>
 					<MenuItem value={2}>SIN MODIFICAR</MenuItem>
 					<MenuItem value={3}>BAJA</MenuItem>
@@ -69,6 +76,7 @@ export const ColumnsNot = (handlePriority, handleCheck) => [
 					id={`check_flash_screen_${row.index}`}
 					style={{ height: '18px', width: '18px' }}
 					checked={status}
+					disabled={!access}
 					onChange={handleChange}
 				/>
 			)
@@ -97,6 +105,7 @@ export const ColumnsNot = (handlePriority, handleCheck) => [
 					id={`check_alarm_${row.index}`}
 					style={{ height: '18px', width: '18px' }}
 					checked={status}
+					disabled={!access}
 					onChange={handleChange}
 				/>
 			)

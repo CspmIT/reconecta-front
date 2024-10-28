@@ -1,65 +1,87 @@
-import React, { useEffect, useState } from 'react'
-import AccordionMui from '@mui/material/Accordion'
-import AccordionSummary from '@mui/material/AccordionSummary'
-import AccordionDetails from '@mui/material/AccordionDetails'
+import { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import TableCustom from '../../../components/TableCustom'
 import { ColumnsNot } from '../utils/DataTable/ColumnsNot'
-import Button from '@mui/material/Button'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../components/Loader'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
+import { Accordion, AccordionDetails, AccordionSummary, Button } from '@mui/material'
+import { generateSources, sendConfigMqtt } from '../utils/js'
+import SwalLoader from '../../../components/SwalLoader/SwalLoader'
 
-const CustomAccordion = ({ title, dataTable }) => {
+const CustomAccordion = ({ title, dataTable, access }) => {
 	const [expanded, setExpanded] = useState(false)
 	const [tableData, setTableData] = useState([])
 	const [newData, setNewData] = useState({})
-
+	const [isLoading, setIsLoading] = useState(true)
 	const handleChange = () => {
 		setExpanded(!expanded)
+		if (expanded) {
+			setTableData([])
+		} else {
+			setTimeout(() => {
+				setTableData(dataTable)
+			}, 300)
+		}
 	}
 
 	const handlePriority = (row) => {
 		let data = newData
 		data[row.id] = row
-		console.log(data)
 		setNewData(data)
 	}
-	// row.original, 'flash_screen', event.target.checked
 	const handleCheck = (row) => {
 		let data = newData
 		data[row.id] = row
 		setNewData(data)
 	}
 	useEffect(() => {
-		setTableData(dataTable)
-	}, [])
+		if (tableData.length) {
+			setIsLoading(false)
+		} else {
+			setIsLoading(true)
+		}
+	}, [tableData])
 
 	const saveData = async () => {
-		const { value: result } = await Swal.fire({
-			html: '¿Estás seguro de Guardar los Cambios?',
-			icon: 'question',
-			confirmButtonText: 'Guardar',
-			cancelButtonText: 'Cancelar',
-			showCancelButton: true,
-			showCloseButton: true,
-		})
-		if (result) {
-			// const dataSave = tableData.map((item) => {
-			// 	if (newData[item.id]) {
-			// 		item = newData[item.id]
-			// 	}
-			// 	return item
-			// })
-			const data = Object.values(newData).map((item) => item)
-			console.log(data)
-			const config = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
+		try {
+			const { value: result } = await Swal.fire({
+				html: '¿Estás seguro de Guardar los Cambios?',
+				icon: 'question',
+				confirmButtonText: 'Guardar',
+				cancelButtonText: 'Cancelar',
+				showCancelButton: true,
+				showCloseButton: true,
+			})
+
+			if (result) {
+				SwalLoader()
+				const data = Object.values(newData).map((item) => item)
+				// CANTIDAD DE REGISTROS POR GRUPO
+				const cantReg = 47
+				const sources = await generateSources(tableData, data, cantReg)
+				// await sendConfigMqtt(sources, tableData[0].type, tableData[0].id_version)
+				// await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
+				Swal.close()
+				Swal.fire({
+					title: 'Recorda!',
+					text: 'Esta comentado el codigo del guardado por precuación',
+					icon: 'warning',
+				})
+			}
+		} catch (error) {
+			Swal.fire({
+				title: 'Atención!',
+				text: 'Hubo un error al guardar la configuración',
+				icon: 'warning',
+			})
+			console.error(error) // Captura y muestra el error
 		}
 	}
 
 	return (
-		<AccordionMui
+		<Accordion
 			expanded={expanded}
 			onChange={handleChange}
 			className='!rounded-md !shadow-md dark:!bg-gray-500 !bg-gray-300'
@@ -68,13 +90,13 @@ const CustomAccordion = ({ title, dataTable }) => {
 				{title}
 			</AccordionSummary>
 			<AccordionDetails className='bg-zinc-100 dark:bg-zinc-900'>
-				{expanded && !tableData.length ? (
-					<LoaderComponent />
+				{isLoading ? (
+					<LoaderComponent image={false} />
 				) : (
 					<div className='p-5'>
 						<TableCustom
 							data={tableData}
-							columns={ColumnsNot(handlePriority, handleCheck)}
+							columns={ColumnsNot(handlePriority, handleCheck, access)}
 							density='compact'
 							header={{
 								background: 'rgb(190 190 190)',
@@ -91,14 +113,14 @@ const CustomAccordion = ({ title, dataTable }) => {
 							enableRowVirtualization
 						/>
 						<div className='mt-5 w-full flex justify-center'>
-							<Button onClick={saveData} variant='contained'>
+							<Button onClick={saveData} disabled={!access} variant='contained'>
 								Guardar
 							</Button>
 						</div>
 					</div>
 				)}
 			</AccordionDetails>
-		</AccordionMui>
+		</Accordion>
 	)
 }
 
