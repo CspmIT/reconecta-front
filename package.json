@@ -45,6 +45,7 @@
 		"react-leaflet": "^4.2.1",
 		"react-router-dom": "^6.21.1",
 		"react-toastify": "^10.0.5",
+		"socket.io-client": "^4.8.1",
 		"sweetalert2": "^11.6.13",
 		"sweetalert2-react-content": "^5.0.7",
 		"tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1"
