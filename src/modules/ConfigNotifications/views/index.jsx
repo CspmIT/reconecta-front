@@ -31,14 +31,12 @@ function ConfigNotifications() {
 		socket.emit('access-config', user, (response) => {
 			setHasAccess(response)
 			if (!response) {
-				socket.emit('disconnect-acces-config', user)
 				socket.disconnect()
 			}
 		})
 
 		// Limpiar al desmontar el componente
 		return () => {
-			socket.emit('disconnect-acces-config', user)
 			socket.disconnect()
 		}
 	}, [])
