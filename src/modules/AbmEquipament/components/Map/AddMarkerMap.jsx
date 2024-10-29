@@ -43,7 +43,7 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 					id='lat_marker'
 					type='number'
 					disabled={markerEdit}
-					className={`w-1/3 `}
+					className={`w-1/2 md:w-1/3 `}
 					label={`Latitud`}
 					{...register('lat_marker', { required: 'Debe agregar una ubicación' })}
 					error={errors.lat_marker ? true : false}
@@ -58,7 +58,7 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 					id='lng_marker'
 					type='number'
 					disabled={markerEdit}
-					className={`w-1/3 `}
+					className={`w-1/2 md:w-1/3 `}
 					label={`Logitud`}
 					{...register('lng_marker', { required: 'Debe agregar una ubicación' })}
 					error={errors.lng_marker ? true : false}

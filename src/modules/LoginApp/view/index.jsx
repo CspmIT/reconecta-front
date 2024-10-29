@@ -98,6 +98,7 @@ function LoginApp() {
 			}
 		} catch (error) {
 			Swal.fire('Atencion', error.response?.data?.error || error.message, 'error')
+			setLoading(false)
 		}
 	}
 	const validateUser = async () => {

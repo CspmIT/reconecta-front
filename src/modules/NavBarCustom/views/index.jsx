@@ -23,12 +23,11 @@ import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
 import { MainContext } from '../../../context/MainContext'
 import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
-import MenuSideBar from '../components/MenuSideBar'
 import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-function NavBarCustom() {
+function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
 	const { tabActive, tabs, infoNav, permission, setPermission } = useContext(MainContext)
@@ -56,6 +55,7 @@ function NavBarCustom() {
 			document.removeEventListener('mouseup', handleClickOutside)
 		}
 	}, [])
+
 	useEffect(() => {
 		setButtonActive(location)
 		if (location === '/DashBoard') {
@@ -63,6 +63,9 @@ function NavBarCustom() {
 		}
 		if (infoNav != '') {
 			setButtonActive(infoNav)
+		}
+		if (location === '/' || location === '/Home' || location === '') {
+			setButtonActive('/home')
 		}
 		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && infoNav == '') {
 			navigate('Home')
@@ -99,6 +102,7 @@ function NavBarCustom() {
 			}
 			return acc
 		}, [])
+		result.sort((a, b) => a.order - b.order)
 		setMenuSideBar(result.filter((item) => Object.values(item).length))
 	}
 
@@ -106,6 +110,7 @@ function NavBarCustom() {
 		const permiso = await getPermissionDb()
 		setPermission(permiso)
 		await groupedMenu(permiso)
+		setLoading(true)
 	}
 
 	useEffect(() => {
@@ -117,15 +122,7 @@ function NavBarCustom() {
 			getPermissions()
 		}
 	}, [])
-	useEffect(() => {
-		if (storage.get('usuarioCooptech')) {
-			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
-				? storage.get('usuarioCooptech')?.cliente?.filter((item) => item.selected)[0]
-				: storage.get('usuarioCooptech')?.cliente || ''
-			setNameCoop(cliente.name)
-			getPermissions()
-		}
-	}, [])
+
 	return (
 		<>
 			<AppBarCustom position='fixed' open={open}>
@@ -148,7 +145,7 @@ function NavBarCustom() {
 						Reconecta
 					</Typography>
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
-						<p className='text-black text-xl ml-3 select-none'>{nameCoop}</p>
+						<p className={`text-black text-xl ml-3 select-none ${isMobile ? 'hidden' : ''}`}>{nameCoop}</p>
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
@@ -215,8 +212,8 @@ function NavBarCustom() {
 										...(isMobile && {
 											flexGrow: 1,
 											flexBasis: 0,
-											justifyContent: 'center',
-											display: 'flex',
+											// justifyContent: 'center',
+											// display: 'flex',
 										}),
 									}}
 								>
@@ -235,9 +232,10 @@ function NavBarCustom() {
 												sx={{
 													minHeight: 48,
 													justifyContent: !isMobile && open ? 'initial' : 'center',
+													padding: !isMobile ? '1.25rem' : '0.2rem',
 													py: 1.8,
 												}}
-												className='!w-full !px-5'
+												className='!w-full'
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon
@@ -246,6 +244,7 @@ function NavBarCustom() {
 														mr: !isMobile && open ? 3 : 'auto',
 														justifyContent: 'center',
 														color: buttonActive == item.link ? 'blue' : '',
+														marginRight: !isMobile ? 'auto' : '0',
 													}}
 												>
 													{componentIcon.icon}

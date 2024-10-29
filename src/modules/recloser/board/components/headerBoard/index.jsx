@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FaCircle } from 'react-icons/fa'
 import { boardFields, boardStatus } from '../../utils/Objects'
+import { enableControl, sendAction } from '../controlsBoard/utils/js/Controls'
 
 const HeaderBoard = ({ info }) => {
 	const [statusReco, setStatusReco] = useState(null)
@@ -11,7 +12,7 @@ const HeaderBoard = ({ info }) => {
 			if (info.instantaneo.length === 0) {
 				setStatusReco(2)
 			} else {
-				setStatusReco(info.instantaneo?.['d/c'][0].value)
+				setStatusReco(info.instantaneo?.['d/c']?.[0]?.value || 3)
 			}
 			setDataHead({
 				name: info?.recloser?.relation?.nodes?.['name'] || 'S/D',
@@ -32,7 +33,8 @@ const HeaderBoard = ({ info }) => {
 						<div className='flex flex-row my-1' key={i}>
 							<h3 className='ml-5'>
 								<>
-									{item.name}: {!item.options ? <b>{dataHead[item.field]}</b> : item.options[dataHead[item.field]]}
+									{item.name}:{' '}
+									{!item.options ? <b>{dataHead[item.field]}</b> : item.options[dataHead[item.field]]}
 								</>
 							</h3>
 						</div>
@@ -50,10 +52,15 @@ const HeaderBoard = ({ info }) => {
 					} justify-center items-center shadow-md `}
 				>
 					<div
-						onClick={() => alert('habilitacion y ejecucion')}
+						onClick={async () => {
+							const enable = await enableControl(false)
+							if (enable) sendAction('d/c', statusReco, false, info)
+						}}
 						className='text-center grid cursor-pointer bg-white rounded-full min-w-28 max-w-28 min-h-28 max-h-28 items-center shadow-md shadow-slate-500'
 					>
-						<b className='text-black'>{statusReco === 1 ? 'CERRADO' : statusReco === 0 ? 'ABIERTO' : 'SIN SEÑAL'}</b>
+						<b className='text-black'>
+							{statusReco === 1 ? 'CERRADO' : statusReco === 0 ? 'ABIERTO' : 'SIN SEÑAL'}
+						</b>
 					</div>
 				</div>
 			</div>
@@ -61,7 +68,11 @@ const HeaderBoard = ({ info }) => {
 				{boardStatus.map((item, i) => {
 					return (
 						<div className='flex flex-row my-1' key={i}>
-							<FaCircle color={info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'} />
+							<FaCircle
+								color={
+									info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'
+								}
+							/>
 							<h3 className='ml-3'>{item.name}</h3>
 						</div>
 					)

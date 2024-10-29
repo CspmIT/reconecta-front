@@ -19,10 +19,10 @@ function ButtonAddElement() {
 		setAnchorEl(evento.currentTarget)
 	}
 	return (
-		<div className='flex flex-col w-full relative'>
+		<div className='flex justify-end w-full relative mb-3'>
 			<Fab
 				onClick={handleOpen}
-				className='!absolute right-6 !flex !justify-center !items-center'
+				className='!flex !justify-center !items-center'
 				size='small'
 				color='primary'
 				aria-label='add'

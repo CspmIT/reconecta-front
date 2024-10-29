@@ -48,12 +48,12 @@ function DndComponent({ controls, setContainer }) {
 				<SortableContext items={containers.map((container) => container.id)}>
 					{containers.map((container) => (
 						<ContainerDnd key={container.id} id={container.id} title={container.title}>
-							<div className='grid grid-cols-4 gap-3'>
+							<div className='flex flex-wrap gap-3 w-full'>
 								<SortableContext items={container.items.map((item) => item.id)}>
 									{container.items.map((item) => (
 										<div
 											key={item.id}
-											className={`w-full ${
+											className={`w-full md:w-[24%] ${
 												(!item.enabled || item.status == 'sin Datos') && '!opacity-25'
 											}`}
 										>

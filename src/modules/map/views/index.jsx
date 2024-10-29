@@ -120,7 +120,7 @@ function Map() {
 						return (
 							<div
 								key={index}
-								className={`!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 ${
+								className={`!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 sm:m-0 m-2 ${
 									widthMap[dataMap.length > 1 ? 0 : 1]
 								} w-full relative`}
 							>
