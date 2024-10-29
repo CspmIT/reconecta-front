@@ -17,37 +17,21 @@ import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/board/views'
 import AbmEquipament from './modules/AbmEquipament/views'
-import AnalyzerBoard from './modules/analyzer/board/views'
-import ConfigMenu from './modules/configMenu/view'
+import ConfigMenu from './modules/ConfigMenu/view'
 import Profile from './modules/profile/views'
 import Notifications from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
+import Binnacle from './modules/Binnacle'
+import AddMenu from './modules/ConfigMenu/components/AddMenu'
+
 function App() {
-	// async function updateApp() {
-	// 	const { shouldUpdate, manifest } = await checkUpdate()
-
-	// 	if (shouldUpdate) {
-	// 		// Notificar al usuario sobre la actualización
-	// 		console.log(`Nueva versión disponible: ${manifest.version}`)
-
-	// 		// Instalar la actualización
-	// 		await installUpdate()
-	// 		// Reiniciar la aplicación
-	// 		await relaunch()
-	// 	}
-	// }
-
-	// useEffect(() => {
-	// 	updateApp()
-	// }, [])
-
 	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
 		{ path: '/ListClients', element: <ListClients /> },
+		{ path: '/ListClients/:action', element: <ListClients /> },
 		{ path: '/LoginCooptech/:token', element: <LoginCooptech /> },
 	]
 	const userRoutes = [
@@ -68,6 +52,8 @@ function App() {
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
 		{ path: '/config/notifications', element: <Notifications /> },
+		{ path: '/bitacora', element: <Binnacle /> },
+		{ path: '/AddMenu', element: <AddMenu /> },
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

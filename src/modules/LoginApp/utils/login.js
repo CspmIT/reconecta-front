@@ -3,14 +3,14 @@ import { request, requestAuth } from './requesLogin'
 
 import { storage } from './storage'
 
-export const logeoApp = async (usuarioId, schema) => {
+export const logeoApp = async (usuarioId, schema, cliente = false) => {
 	try {
 		const urlUser = backend.Cooptech + `/getUser?id=${usuarioId}`
 		const user = await requestAuth(urlUser, 'GET')
-		const urlToken = backend[`${import.meta.env.VITE_APP_NAME}`] + '/loginCooptech'
+		const urlToken = backend[import.meta.env.VITE_APP_NAME] + '/loginCooptech'
 		const info = {
 			email: user.data.email,
-			tokenCooptech: user.data.token_apps,
+			tokenApp: user.data.token_apps,
 			schemaName: schema.schema_name,
 			influx_name: schema.influx_name,
 		}
@@ -52,8 +52,10 @@ export const getProduct = async (productName, clientID, usuarioId) => {
 
 export const getProductActive = async () => {
 	try {
-		const tokencooptech = storage.get('usuarioCooptech')
-		const url = backend.Cooptech + `/listProductxUserxClient?id_user=${tokencooptech.id_user}&id_client=${tokencooptech.cliente.id}`
+		const tokencooptech = storage.get('usuarioCooptech') || storage.get('usuario')
+		const url =
+			backend.Cooptech +
+			`/getListProdct?id_user=${tokencooptech.id_user || tokencooptech.sub}&id_client=${tokencooptech.cliente.id}`
 		const product = await requestAuth(url, 'GET').then((data) => {
 			return data.data
 		})
@@ -61,4 +63,42 @@ export const getProductActive = async () => {
 	} catch (error) {
 		console.error(error)
 	}
+}
+
+export const saveDataUser = async (idClient, listCliente = false) => {
+	let user = storage.get('usuario')
+	const usuarioCooptech = storage.get('usuarioCooptech')
+	if (!user?.cliente) {
+		user = {
+			cliente: listCliente,
+			id: usuarioCooptech.id_user,
+			token: usuarioCooptech.token,
+		}
+	}
+	let cliente = user.cliente
+	if (Array.isArray(user.cliente)) {
+		user.cliente.map((element) => {
+			if (element.id === idClient) {
+				element.selected = true
+			} else {
+				element.selected = false
+			}
+			return element
+		})
+		cliente = user.cliente.find((item) => item.selected)
+	}
+	storage.set('usuario', user)
+
+	const product = await getProduct(import.meta.env.VITE_APP_NAME, idClient, user.id)
+	if (!product || !Object.keys(product).length) {
+		throw new Error('No se encontro productos relacionados con el usuario')
+	}
+	storage.set('usuarioCooptech', {
+		token: usuarioCooptech.token,
+		id_user: usuarioCooptech.id_user,
+		cliente: cliente,
+	})
+	const schema = await schemaName(idClient, product.id_product)
+	const token = await logeoApp(user.id, schema, user.cliente)
+	return token
 }

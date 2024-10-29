@@ -124,11 +124,11 @@ class markerCustom {
 		lat,
 		lng,
 		status = 3,
-		alert = false,
 		info = {
 			name: 'nuevo',
 			data: [],
 		},
+		alert = false,
 		recloser = []
 	) {
 		this.id = id || ''
@@ -144,7 +144,10 @@ class markerCustom {
 		try {
 			if (this.recloser.length > 0) {
 				// Reemplaza la URL con la API o endpoint que necesites
-				const response = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${this.recloser[0].id}`, 'GET')
+				const response = await request(
+					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${this.recloser[0].id_device}`,
+					'GET'
+				)
 				if (response.status !== 200) {
 					throw new Error('Error al obtener la información')
 				}
@@ -154,7 +157,10 @@ class markerCustom {
 					VL3: response.data.V_f_SRT_2?.[0].value || '',
 				}
 				this.info = { ...this.info, data: data }
-				const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${this.recloser[0].id}`, 'GET')
+				const recloser = await request(
+					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${this.recloser[0].id_device}`,
+					'GET'
+				)
 				if (recloser.status !== 200) {
 					throw new Error('Error al obtener la información')
 				}

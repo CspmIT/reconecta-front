@@ -6,10 +6,12 @@ import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
 import { backend } from '../../../../utils/routes/app.routes'
 import { ColumnsNodo } from '../../utils/ColumnsTables/ColumnsNodo'
+import LoaderComponent from '../../../../components/Loader'
+import Swal from 'sweetalert2'
 
 function TableNodo() {
 	const { setInfoNav } = useContext(MainContext)
-	const [node, setNode] = useState([])
+	const [node, setNode] = useState(null)
 	const navigate = useNavigate()
 	const getdisplay = async () => {
 		const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
@@ -58,87 +60,107 @@ function TableNodo() {
 		navigate(`/Abm/node/${data.id}`)
 	}
 	const deleteNodo = async (data) => {
-		// Swal.fire({
-		// 	title: '¡Atención!',
-		// 	text: '¿Que desea realizar?',
-		// 	icon: 'question',
-		// 	allowOutsideClick: false,
-		// 	showDenyButton: true,
-		// 	showCancelButton: true,
-		// 	confirmButtonText: 'Eliminar',
-		// 	denyButtonText: 'Desvincular',
-		// }).then(async (result) => {
-		// 	if (result.isConfirmed) {
-		// 		try {
-		// 			data.status = 0
-		// 			const result = await request(
-		// 				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/deleteRecloser`,
-		// 				'POST',
-		// 				data
-		// 			)
-		// 			Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
-		// 			getdisplay()
-		// 		} catch (error) {
-		// 			console.error(error)
-		// 			Swal.fire({
-		// 				title: 'Atención!',
-		// 				text: 'Hubo un error al intentear eliminar el reconectador',
-		// 				icon: 'warning',
-		// 			})
-		// 		}
-		// 	}
-		// 	if (result.isDenied) {
-		// 		try {
-		// 			data.status = 0
-		// 			const result = await request(
-		// 				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/unlinkRelation`,
-		// 				'POST',
-		// 				data
-		// 			)
-		// 			Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
-		// 			getdisplay()
-		// 		} catch (error) {
-		// 			console.error(error)
-		// 			Swal.fire({
-		// 				title: 'Atención!',
-		// 				text: 'Hubo un error al intentear desvincular el reconectador',
-		// 				icon: 'warning',
-		// 			})
-		// 		}
-		// 	}
-		// })
+		Swal.fire({
+			title: '¡Atención!',
+			text: '¿Que desea realizar?',
+			icon: 'question',
+			allowOutsideClick: false,
+			showDenyButton: true,
+			showCancelButton: true,
+			confirmButtonText: 'Eliminar',
+			denyButtonText: 'Desvincular',
+		}).then(async (result) => {
+			if (result.isConfirmed) {
+				try {
+					Swal.fire({
+						text: 'Por favos espere...',
+						timerProgressBar: true,
+						didOpen: () => {
+							Swal.showLoading()
+						},
+					})
+					const result = await request(
+						`${backend[`${import.meta.env.VITE_APP_NAME}`]}/deleteNode`,
+						'POST',
+						data
+					)
+					Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
+					getdisplay()
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Atención!',
+						text: 'Hubo un error al intentear eliminar el reconectador',
+						icon: 'warning',
+					})
+				}
+			}
+			if (result.isDenied) {
+				try {
+					Swal.fire({
+						text: 'Por favos espere...',
+						timerProgressBar: true,
+						didOpen: () => {
+							Swal.showLoading()
+						},
+					})
+					const result = await request(
+						`${backend[`${import.meta.env.VITE_APP_NAME}`]}/unlinkRelationNode`,
+						'POST',
+						data
+					)
+					Swal.fire({ title: 'Perfecto!', text: 'Se desvinculo correctamente!', icon: 'success' })
+					getdisplay()
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Atención!',
+						text: 'Hubo un error al intentear desvincular el reconectador',
+						icon: 'warning',
+					})
+				}
+			}
+		})
 	}
 
 	useEffect(() => {
 		getdisplay()
 	}, [])
 	return (
-		<div className='pb-5 w-full'>
-			<TableCustom
-				data={node}
-				columns={ColumnsNodo(changeView, deleteNodo)}
-				density='comfortable'
-				header={{
-					background: 'rgb(190 190 190)',
-					fontSize: '18px',
-					fontWeight: 'bold',
-				}}
-				toolbarClass={{ background: 'rgb(190 190 190)' }}
-				body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-				footer={{ background: 'rgb(190 190 190)' }}
-				card={{
-					boxShadow: `1px 1px 8px 0px #00000046`,
-					borderRadius: '0.75rem',
-				}}
-				topToolbar
-				copy
-				hide
-				sort
-				pagination
-				columnVisibility={visibility}
-				onColumnVisibilityChange={handleColumnVisibilityChange}
-			/>
-		</div>
+		<>
+			{node ? (
+				<div className='pb-5 w-full'>
+					<TableCustom
+						data={node}
+						columns={ColumnsNodo(changeView, deleteNodo)}
+						density='comfortable'
+						header={{
+							background: 'rgb(190 190 190)',
+							fontSize: '18px',
+							fontWeight: 'bold',
+						}}
+						toolbarClass={{ background: 'rgb(190 190 190)' }}
+						body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
+						footer={{ background: 'rgb(190 190 190)' }}
+						card={{
+							boxShadow: `1px 1px 8px 0px #00000046`,
+							borderRadius: '0.75rem',
+						}}
+						topToolbar
+						copy
+						hide
+						sort
+						pagination
+						columnVisibility={visibility}
+						onColumnVisibilityChange={handleColumnVisibilityChange}
+					/>
+				</div>
+			) : (
+				<div className='h-96'>
+					<LoaderComponent image={false} />
+				</div>
+			)}
+		</>
 	)
 }
 

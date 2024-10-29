@@ -9,6 +9,7 @@ function MainProvider({ children }) {
 	const [tabActive, setTabActive] = useState(0)
 	const [tabs, setTabs] = useState([])
 	const [tabCurrent, setTabCurrent] = useState(0)
+	const [permission, setPermission] = useState([])
 	useEffect(() => {
 		if (tabs.length) {
 			setTabActive(tabs.length)
@@ -30,6 +31,8 @@ function MainProvider({ children }) {
 				setUser,
 				darkMode,
 				setDarkMode,
+				permission,
+				setPermission,
 			}}
 		>
 			{children}

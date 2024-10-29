@@ -1,12 +1,15 @@
 import axios from 'axios'
 import { storage } from '../../storage/storage'
-import Cookies from 'js-cookie'
+import { getData } from '../../storage/cookies-store'
 
 export const request = async (url, method, data = false) => {
 	if (!url || !method) {
 		throw new Error('URL o método no proporcionados')
 	}
-	const token = Cookies.get('token')
+	let token = await getData('token')
+	if (!token) {
+		token = storage.get('tokenCooptech')
+	}
 	try {
 		const response = await axios({
 			method,

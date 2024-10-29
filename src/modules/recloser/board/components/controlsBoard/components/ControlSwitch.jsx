@@ -1,7 +1,8 @@
 import Swal from 'sweetalert2'
+import { sendAction } from '../utils/js/Controls'
 
-function ControlSwitch({ control, contador, enabled }) {
-	const toggleCheck = (field) => {
+function ControlSwitch({ control, contador, enabled, info }) {
+	const toggleCheck = async (field) => {
 		if (!enabled) {
 			Swal.fire({
 				title: 'Atención!',
@@ -10,7 +11,6 @@ function ControlSwitch({ control, contador, enabled }) {
 			})
 			return
 		}
-		contador()
 		Swal.fire({
 			title: 'Atención!',
 			text: `Estas por ejecutar ${field}. ¿Deseas Ejecutarlo?`,
@@ -18,9 +18,12 @@ function ControlSwitch({ control, contador, enabled }) {
 			allowOutsideClick: false,
 			showDenyButton: true,
 			confirmButtonText: 'Si',
-		}).then((result) => {
+		}).then(async (result) => {
 			if (result.isConfirmed) {
-				control.status = !control.status
+				const status = await sendAction(field, control.status, contador, info)
+				if (status) {
+					control.status = status
+				}
 			}
 		})
 	}
@@ -29,7 +32,11 @@ function ControlSwitch({ control, contador, enabled }) {
 			<label>
 				<b className='mr-2'>{control.title}</b>
 			</label>
-			<label className={`inline-flex items-center ${control.status === 'sin Datos' ? 'cursor-default' : 'cursor-pointer'} relative`}>
+			<label
+				className={`inline-flex items-center ${
+					control.status === 'sin Datos' ? 'cursor-default' : 'cursor-pointer'
+				} relative`}
+			>
 				<input
 					disabled={!control.enabled}
 					type='checkbox'

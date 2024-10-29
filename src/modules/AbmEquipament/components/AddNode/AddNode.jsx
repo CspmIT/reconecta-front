@@ -40,7 +40,6 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 			setInfo(dataEdit)
 		}
 	}, [dataEdit])
-	console.log(info)
 	return (
 		<>
 			<p className='w-full text-center text-2xl mb-3'>Infraestructura</p>
@@ -54,7 +53,7 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 						changeType(e.target.value)
 						handleChange(e)
 					}}
-					className='w-1/2'
+					className='w-full md:w-1/2'
 					value={info.type || ''}
 					helperText={errors.type?.message}
 					name='type'

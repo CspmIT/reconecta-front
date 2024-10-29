@@ -9,6 +9,7 @@ import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import { request } from '../../../../../utils/js/request'
 import { backend } from '../../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../../components/Loader'
 
 const DataBoard = () => {
 	const [info, setInfo] = useState(null)
@@ -50,28 +51,51 @@ const DataBoard = () => {
 		setInfoNav([info])
 		navigate('/AbmDevice/recloser/' + info.recloser.id)
 	}
+	const refreshInflux = async () => {
+		getDataRecloser(data.id)
+	}
 	return (
-		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
-			<div className='flex flex-row relative justify-between mb-8'>
-				<div className='flex-grow flex justify-center'>
-					<h2 className='text-2xl'>Reconectador</h2>
-				</div>
-				<div className='absolute right-2 top-8 md:top-0'>
-					<Button variant='contained' title='Recargar Datos'>
-						<FaRedo />
-					</Button>
-					<Button onClick={() => editRecloser(info)} className='!ml-3' color='warning' title='Editar Reconectador' variant='contained'>
-						<FaEdit />
-					</Button>
-				</div>
-			</div>
-			<div className='mb-8'>
-				<HeaderBoard info={info} />
-			</div>
-			<div className='mb-4'>
-				<ControlsBoard info={info} />
-			</div>
-			<CardBoard onCardSelect={handleCardSelect} selectedCardId={selectedCardId} info={info} />
+		<div className='w-full h-auto items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
+			{info ? (
+				<>
+					<div className='flex flex-row relative justify-between mb-8'>
+						<div className='flex-grow flex justify-center'>
+							<h2 className='text-2xl'>Reconectador</h2>
+						</div>
+						<div className='absolute right-2 top-8 md:top-0'>
+							<Button
+								variant='contained'
+								title='Recargar Datos'
+								type='button'
+								onClick={async () => await refreshInflux()}
+							>
+								<FaRedo />
+							</Button>
+							<Button
+								type='button'
+								onClick={() => editRecloser(info)}
+								className='!ml-3'
+								color='warning'
+								title='Editar Reconectador'
+								variant='contained'
+							>
+								<FaEdit />
+							</Button>
+						</div>
+					</div>
+					<div className='mb-8'>
+						<HeaderBoard info={info} />
+					</div>
+					<div className='mb-4'>
+						<ControlsBoard info={info} />
+					</div>
+					<CardBoard onCardSelect={handleCardSelect} selectedCardId={selectedCardId} info={info} />
+				</>
+			) : (
+				<>
+					<LoaderComponent />
+				</>
+			)}
 		</div>
 	)
 }

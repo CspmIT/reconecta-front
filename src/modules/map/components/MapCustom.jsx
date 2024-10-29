@@ -9,22 +9,35 @@ import 'react-toastify/dist/ReactToastify.css'
 import '../utils/css/toastCustom.modules.css'
 import '../utils/css/AlertSwal.modules.css'
 
-function MapCustom({ center, id, zoom, activeZoom = true, markers, polylines, editor = false, getLatLngMarker = false }) {
+function MapCustom({
+	center,
+	zoom,
+	activeMove = true,
+	activeZoom = false,
+	markers,
+	polylines,
+	editor = false,
+	getLatLngMarker = false,
+}) {
 	const mapRef = useRef(null)
 
 	useEffect(() => {
 		if (mapRef.current) {
 			const map = mapRef.current // Accedemos al mapa
 			if (activeZoom) {
-				// Si el zoom está activo, deshabilitamos interacciones
-				map.scrollWheelZoom.disable()
-				map.dragging.disable()
-				map.doubleClickZoom.disable()
-			} else {
 				// Si el zoom no está activo, habilitamos interacciones
 				map.scrollWheelZoom.enable()
 				map.dragging.enable()
+				map.maxZoom = 18
+				map.minZoom = 0
 				map.doubleClickZoom.enable()
+			} else {
+				// Si el zoom está activo, deshabilitamos interacciones
+				map.scrollWheelZoom.disable()
+				map.dragging.disable()
+				map.maxZoom = zoom
+				map.minZoom = zoom
+				map.doubleClickZoom.disable()
 			}
 		}
 	}, [activeZoom]) // Escuchamos cambios en activeZoom
@@ -36,10 +49,10 @@ function MapCustom({ center, id, zoom, activeZoom = true, markers, polylines, ed
 			zoom={zoom}
 			wheelPxPerZoomLevel={500}
 			zoomSnap={0.1}
-			dragging={!activeZoom}
+			dragging={activeMove}
 			zoomControl={false}
-			maxZoom={activeZoom ? 100 : zoom}
-			minZoom={activeZoom ? 0 : zoom}
+			maxZoom={activeZoom ? 18 : zoom}
+			minZoom={activeZoom ? zoom : zoom}
 			style={{ minHeight: '100%', width: '100%', borderRadius: '10px' }}
 		>
 			<LayersControl position='topright'>

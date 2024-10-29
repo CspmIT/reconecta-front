@@ -14,13 +14,11 @@ import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
 import SubstationRuralBoard from '../../substationRural/views'
 import TableNodo from '../components/Tables/TableNodo'
-import { Button, IconButton, MenuItem, Popper } from '@mui/material'
-import { PlusOne } from '@mui/icons-material'
-import { BiPlus } from 'react-icons/bi'
 import ButtonAddElement from '../components/ButtonAddElement'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
+	const [loading, setLoading] = useState(true)
 	const navigate = useNavigate()
 	const typeEquipment = (key) => {
 		let component
@@ -65,35 +63,35 @@ const Home = () => {
 	}
 	const tabsHome = [
 		{
-			id: 6,
-			title: 'Nodos',
-			component: <TableNodo />,
-		},
-		{
 			id: 1,
 			title: 'Reconectadores',
 			component: <TableRecloser newTab={newTabBoard} />,
 		},
-		// {
-		// 	id: 4,
-		// 	title: 'Medidores',
-		// 	component: <TableMeter newTab={newTabBoard} />,
-		// },
-		// {
-		// 	id: 2,
-		// 	title: 'Sub Estación Urbana',
-		// 	component: <TableSubStationUrban newTab={newTabBoard} />,
-		// },
-		// {
-		// 	id: 3,
-		// 	title: 'Sub Estación Rural',
-		// 	component: <TableSubStationRural newTab={newTabBoard} />,
-		// },
-		// {
-		// 	id: 5,
-		// 	title: 'Analizador de red',
-		// 	component: <TableAnalyzer newTab={newTabBoard} />,
-		// },
+		{
+			id: 4,
+			title: 'Medidores',
+			component: <TableMeter newTab={newTabBoard} />,
+		},
+		{
+			id: 2,
+			title: 'Sub Estación Urbana',
+			component: <TableSubStationUrban newTab={newTabBoard} />,
+		},
+		{
+			id: 3,
+			title: 'Sub Estación Rural',
+			component: <TableSubStationRural newTab={newTabBoard} />,
+		},
+		{
+			id: 5,
+			title: 'Analizador de red',
+			component: <TableAnalyzer newTab={newTabBoard} />,
+		},
+		{
+			id: 6,
+			title: 'Nodos',
+			component: <TableNodo />,
+		},
 	]
 
 	return (
@@ -101,7 +99,6 @@ const Home = () => {
 			<div className='flex flex-wrap gap-3 mb-5 px-3'>
 				<Grafs />
 			</div>
-			<ButtonAddElement />
 			<TabsHome tabs={tabsHome} />
 		</div>
 	)

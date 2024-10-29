@@ -1,10 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import Cookies from 'js-cookie'
 import { jwtDecode } from 'jwt-decode'
-import { requestLogin } from '../utils/requesLogin'
 import { storage } from '../utils/storage'
 import Swal from 'sweetalert2'
-import { backend } from '../../../utils/routes/app.routes'
+import { removeData, saveData } from '../../../storage/cookies-store'
 
 const LoginCooptech = () => {
 	const navigate = useNavigate()
@@ -12,34 +10,35 @@ const LoginCooptech = () => {
 	const validateUserCooptech = async () => {
 		try {
 			if (token === 'null') {
-				Cookies.remove('token')
+				await removeData('token')
 				storage.remove('usuario')
 				storage.remove('tokenCooptech')
 				navigate('/login')
 			}
 			storage.set('tokenCooptech', token)
 			const decodedToken = jwtDecode(token)
-			const url = backend[`${import.meta.env.VITE_APP_NAME}`] + '/loginCooptech'
-			const info = {
-				email: decodedToken.email,
-				tokenCooptech: decodedToken.token,
-				schemaName: decodedToken.schemaName,
-				influx_name: decodedToken.influx_name,
+			if (decodedToken.cliente) {
+				const cliente = decodedToken.cliente.find((item) => item.selected)
+				storage.set('usuarioCooptech', {
+					cliente: cliente,
+					id_user: decodedToken.user_id_cooptech,
+					token: decodedToken.tokenCooptech,
+				})
 			}
-			const responseData = await requestLogin(url, 'POST', info)
-			const decoded = jwtDecode(responseData.token)
+			delete decodedToken.user_id_cooptech
+			delete decodedToken.tokenCooptech
 			// Obtengo la fecha de expiracion del token y la guardo en una cookie
-			const expirationDate = new Date(decoded.exp)
-			Cookies.set('token', responseData.token, {
+			const expirationDate = new Date(decodedToken.exp)
+			await saveData('token', token, {
 				expires: expirationDate,
-				secure: false,
+				secure: true,
 				sameSite: 'Lax',
 			})
-			localStorage.setItem('usuario', JSON.stringify(decoded))
+			storage.set('usuario', decodedToken)
 			navigate('/')
 		} catch (error) {
 			Swal.fire('Atencion', error.response?.data?.error || error.response?.data || error.message, 'error')
-			Cookies.remove('token')
+			await removeData('token')
 			storage.remove('usuario')
 			storage.remove('tokenCooptech')
 			navigate('/login')

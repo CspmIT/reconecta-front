@@ -32,12 +32,28 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 		enableColumnFilter: false,
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
+			const status = {
+				0: {
+					description: 'Cerrado',
+					color: 'error',
+				},
+				1: {
+					description: 'Abierto',
+					color: 'success',
+				},
+				2: {
+					description: 'Sin Señal',
+					color: 'warning',
+				},
+				3: {
+					description: 'Sin datos',
+					color: 'action',
+				},
+			}
 			return (
-				<div className='flex items-center w-full'>
-					<Circle color={row.original?.status_recloser > 0 ? 'success' : 'error'} />
-					<p className='m-0 p-0 ml-2 text-base'>{`${
-						row.original?.status_recloser > 0 ? 'Abierto' : 'Cerrado'
-					}`}</p>
+				<div className='flex items-center justify-center md:justify-start w-full'>
+					<Circle color={status[row.original?.status_recloser].color} />
+					<p className='m-0 p-0 ml-2 text-base hidden md:block'>{`${status[row.original?.status_recloser].description}`}</p>
 				</div>
 			)
 		},
@@ -92,15 +108,12 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 			row.original.type_recloser = 1
 			return (
 				<>
-					<IconButton
-						onClick={() => newTab(row.original)}
-						className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
-					>
+					<IconButton onClick={() => newTab(row.original)} className='!m-1 !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
 						<BiWindowOpen />
 					</IconButton>
 					<IconButton
 						onClick={() => deleteRecloser(row.original)}
-						className='!ml-3 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
+						className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
 					>
 						<BiTrash />
 					</IconButton>

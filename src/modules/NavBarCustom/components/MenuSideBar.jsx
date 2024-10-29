@@ -1,12 +1,12 @@
 import { Badge } from '@mui/material'
 import { BsFillMenuButtonWideFill } from 'react-icons/bs'
 import { FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram } from 'react-icons/fa'
-import { MdNotificationsActive } from 'react-icons/md'
+import { MdContentPaste, MdNotificationsActive } from 'react-icons/md'
 import { PiTabsFill } from 'react-icons/pi'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
 
 const MenuSideBar = (tabActive, infoNav) => [
-	{ name: 'Alertas', link: '/Alert', icon: <RiAlertFill className=' text-3xl' /> },
+	{ name: 'Alerta', link: '/Alert', icon: <RiAlertFill className=' text-3xl' /> },
 	{ name: 'Dashboard', link: '/Home', icon: <RiDashboardFill className=' text-3xl' /> },
 	{
 		name: 'Mapa',
@@ -14,9 +14,14 @@ const MenuSideBar = (tabActive, infoNav) => [
 		icon: <FaMapMarkedAlt className=' text-3xl' />,
 	},
 	{
-		name: 'Diagram',
+		name: 'Diagrama',
 		link: '/Diagram',
 		icon: <FaProjectDiagram className=' text-3xl' />,
+	},
+	{
+		name: 'Bitácora',
+		link: '/bitacora',
+		icon: <MdContentPaste className=' text-3xl' />,
 	},
 	{
 		name: 'Configuración',
@@ -34,15 +39,16 @@ const MenuSideBar = (tabActive, infoNav) => [
 			},
 		],
 	},
-	{
-		name: 'Paginas',
-		link: '/tabs',
-		icon: (
-			<Badge badgeContent={tabActive} color='primary'>
-				<PiTabsFill className='dark:text-white text-3xl' />
-			</Badge>
-		),
-	},
+
+	// {
+	// 	name: 'Paginas',
+	// 	link: '/tabs',
+	// 	icon: (
+	// 		<Badge badgeContent={tabActive} color='primary'>
+	// 			<PiTabsFill className='dark:text-white text-3xl' />
+	// 		</Badge>
+	// 	),
+	// },
 	{
 		name: 'ABM Equipos',
 		link: `${infoNav}`,

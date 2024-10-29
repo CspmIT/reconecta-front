@@ -22,7 +22,11 @@ function ItemsDnD({ id, control }) {
 			className={isDragging ? ' opacity-50' : ''}
 		>
 			<div className='flex  p-3 rounded-md items-center justify-between bg-gray-300 ' {...listeners}>
-				{control.type_input === 'switch' ? <ControlSwitch control={control} /> : <ControlCircle control={control} />}
+				{control.type_input === 'switch' ? (
+					<ControlSwitch control={control} />
+				) : (
+					<ControlCircle control={control} />
+				)}
 			</div>
 		</div>
 	)

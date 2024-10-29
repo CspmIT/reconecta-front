@@ -55,7 +55,7 @@ export const ColumnsMeter = (newTab) => [
 		enableClickToCopy: false,
 		Cell: ({ row }) => {
 			const info = {
-				Name: row.original.device_name,
+				name: row.original.device_name,
 				id: parseInt(row.original.id),
 				type_recloser: 2,
 				...row.origin,

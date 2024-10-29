@@ -20,6 +20,7 @@ function AbmEquipament() {
 	const {
 		register,
 		setValue,
+		watch,
 		clearErrors,
 		formState: { errors },
 		handleSubmit,
@@ -94,6 +95,7 @@ function AbmEquipament() {
 								<AddMarkerMap
 									register={register}
 									errors={errors}
+									watch={watch}
 									dataEdit={dataEdit}
 									setSelectMarkers={setSelectMarkers}
 								/>
