@@ -5,7 +5,7 @@ import { FaArrowRight } from 'react-icons/fa6'
 import { formatterConfig, getConfigNotify } from '../utils/js'
 import LoaderComponent from '../../../components/Loader'
 import { io } from 'socket.io-client'
-import { front } from '../../../utils/routes/app.routes'
+import { backend } from '../../../utils/routes/app.routes'
 
 function ConfigNotifications() {
 	const [devices, setDevices] = useState([])
@@ -21,7 +21,7 @@ function ConfigNotifications() {
 
 	useEffect(() => {
 		getConfig()
-		const socket = io(front.Reconecta)
+		const socket = io(backend.Reconecta, { path: '/api/socket.io' })
 		socket.on('connect', () => {
 			console.log('Conectado al servidor de sockets')
 		})
