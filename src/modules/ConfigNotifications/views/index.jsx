@@ -4,8 +4,7 @@ import Accordion from '../components/Accordion'
 import { FaArrowRight } from 'react-icons/fa6'
 import { formatterConfig, getConfigNotify } from '../utils/js'
 import LoaderComponent from '../../../components/Loader'
-import { request } from '../../../utils/js/request'
-import { backend } from '../../../utils/routes/app.routes'
+import { io } from 'socket.io-client'
 
 function ConfigNotifications() {
 	const [devices, setDevices] = useState([])
@@ -20,72 +19,57 @@ function ConfigNotifications() {
 	}
 
 	useEffect(() => {
-		const checkAccess = async () => {
-			try {
-				await getConfig()
-				const response = await request(
-					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/check-access-Config`,
-					'GET'
-				)
-				if (response.status === 200) {
-					setHasAccess(true)
-				}
-			} catch (err) {
-				setHasAccess(false)
-			}
-		}
+		getConfig()
+		const socket = io('http://localhost:4000')
+		socket.on('connect', () => {
+			console.log('Conectado al servidor de sockets')
+		})
 
-		checkAccess()
-
-		const intervalId = setInterval(async () => {
-			if (hasAccess) {
-				try {
-					await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/renew-access-Config`, 'POST')
-				} catch (error) {
-					console.error('Error renewing access:', error)
-					setHasAccess(false)
-				}
+		// Solicitar acceso al conectar
+		socket.emit('access-config', (response) => {
+			setHasAccess(response)
+			if (!response) {
+				socket.disconnect()
 			}
-		}, 60 * 1000)
+		})
+
+		// Limpiar al desmontar el componente
 		return () => {
-			clearInterval(intervalId)
-			if (hasAccess) {
-				request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/release-access-Config`, 'POST')
-			}
+			socket.disconnect()
 		}
-	}, [hasAccess])
+	}, [])
 
-	if (loading) return <LoaderComponent />
+	if (loading)
+		return (
+			<Card className='w-full h-full flex flex-col items-center justify-center text-black dark:text-white relative p-3 rounded-md'>
+				<LoaderComponent />
+			</Card>
+		)
+
 	return (
-		<Card
-			className={
-				'w-full h-full flex flex-col items-center justify-center text-black dark:text-white relative p-3 rounded-md'
-			}
-		>
-			<div className='w-full  md:p-5'>
+		<Card className='w-full h-full flex flex-col items-center justify-center text-black dark:text-white relative p-3 rounded-md'>
+			<div className='w-full md:p-5'>
 				<h1 className='text-2xl mb-3'>Configuración de eventos y notificaciones</h1>
 				<div className='flex flex-col gap-3'>
 					{!devices ? (
 						<LoaderComponent />
 					) : (
-						devices.map((item, index) => {
-							return (
-								<Accordion
-									key={index}
-									title={
-										<>
-											<FormLabel>{item.router.device}</FormLabel>
-											<FaArrowRight className='mt-1 mx-2' />
-											<FormLabel>{item.router.brand}</FormLabel>
-											<FaArrowRight className='mt-1 mx-2' />
-											<FormLabel>{item.router.version}</FormLabel>
-										</>
-									}
-									dataTable={item.objets}
-									access={hasAccess}
-								/>
-							)
-						})
+						devices.map((item, index) => (
+							<Accordion
+								key={index}
+								title={
+									<>
+										<FormLabel>{item.router.device}</FormLabel>
+										<FaArrowRight className='mt-1 mx-2' />
+										<FormLabel>{item.router.brand}</FormLabel>
+										<FaArrowRight className='mt-1 mx-2' />
+										<FormLabel>{item.router.version}</FormLabel>
+									</>
+								}
+								dataTable={item.objets}
+								access={hasAccess}
+							/>
+						))
 					)}
 				</div>
 			</div>
