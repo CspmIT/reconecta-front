@@ -19,10 +19,7 @@ function ConfigNotifications() {
 		setDevices(configFormatter)
 		setLoading(false)
 	}
-	const disconectSocket = async (socket) => {
-		socket.emit('disconnect-acces-config', user)
-		socket.disconnect()
-	}
+
 	useEffect(() => {
 		getConfig()
 		const socket = io(front.Reconecta, { path: '/api/socket.io' })
@@ -34,13 +31,15 @@ function ConfigNotifications() {
 		socket.emit('access-config', user, (response) => {
 			setHasAccess(response)
 			if (!response) {
-				disconectSocket(socket)
+				socket.emit('disconnect-acces-config', user)
+				socket.disconnect()
 			}
 		})
 
 		// Limpiar al desmontar el componente
 		return () => {
-			disconectSocket(socket)
+			socket.emit('disconnect-acces-config', user)
+			socket.disconnect()
 		}
 	}, [])
 
