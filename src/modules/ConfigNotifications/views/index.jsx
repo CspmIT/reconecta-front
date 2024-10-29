@@ -6,19 +6,23 @@ import { formatterConfig, getConfigNotify } from '../utils/js'
 import LoaderComponent from '../../../components/Loader'
 import { io } from 'socket.io-client'
 import { backend, front } from '../../../utils/routes/app.routes'
+import { storage } from '../../../storage/storage'
 
 function ConfigNotifications() {
 	const [devices, setDevices] = useState([])
 	const [hasAccess, setHasAccess] = useState(false)
 	const [loading, setLoading] = useState(true)
-
+	const user = storage.get('usuario').sub
 	const getConfig = async () => {
 		const config = await getConfigNotify()
 		const configFormatter = await formatterConfig(config)
 		setDevices(configFormatter)
 		setLoading(false)
 	}
-
+	const disconectSocket = async (socket) => {
+		socket.emit('disconnect-acces-config', user)
+		socket.disconnect()
+	}
 	useEffect(() => {
 		getConfig()
 		const socket = io(front.Reconecta, { path: '/api/socket.io' })
@@ -27,16 +31,16 @@ function ConfigNotifications() {
 		})
 
 		// Solicitar acceso al conectar
-		socket.emit('access-config', (response) => {
+		socket.emit('access-config', user, (response) => {
 			setHasAccess(response)
 			if (!response) {
-				socket.disconnect()
+				disconectSocket(socket)
 			}
 		})
 
 		// Limpiar al desmontar el componente
 		return () => {
-			socket.disconnect()
+			disconectSocket(socket)
 		}
 	}, [])
 
