@@ -5,13 +5,15 @@ import { MainContext } from '../../../../context/MainContext'
 import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
 import { backend } from '../../../../utils/routes/app.routes'
-import { ColumnsNodo } from '../../utils/ColumnsTables/ColumnsNodo'
+import { ColumnsNodo, ColumnsNodoCel } from '../../utils/ColumnsTables/ColumnsNodo'
 import LoaderComponent from '../../../../components/Loader'
 import Swal from 'sweetalert2'
+import { useMediaQuery } from '@mui/material'
 
 function TableNodo() {
 	const { setInfoNav } = useContext(MainContext)
 	const [node, setNode] = useState(null)
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const navigate = useNavigate()
 	const getdisplay = async () => {
 		const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
@@ -132,7 +134,7 @@ function TableNodo() {
 				<div className='pb-5 w-full'>
 					<TableCustom
 						data={node}
-						columns={ColumnsNodo(changeView, deleteNodo)}
+						columns={isMobile ? ColumnsNodoCel(changeView, deleteNodo) : ColumnsNodo(changeView, deleteNodo)}
 						density='comfortable'
 						header={{
 							background: 'rgb(190 190 190)',

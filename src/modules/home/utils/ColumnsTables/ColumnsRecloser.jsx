@@ -53,7 +53,7 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 			return (
 				<div className='flex items-center justify-center md:justify-start w-full'>
 					<Circle color={status[row.original?.status_recloser].color} />
-					<p className='m-0 p-0 ml-2 text-base hidden md:block'>{`${status[row.original?.status_recloser].description}`}</p>
+					<p className='m-0 p-0 ml-2 text-base'>{`${status[row.original?.status_recloser].description}`}</p>
 				</div>
 			)
 		},
@@ -115,6 +115,88 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 						onClick={() => deleteRecloser(row.original)}
 						className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
 					>
+						<BiTrash />
+					</IconButton>
+				</>
+			)
+		},
+	},
+]
+
+
+export const ColumnsRecloserCel = (changeAlarm, newTab, deleteRecloser) => [
+	{
+		header: <span className="text-xs">Nº</span>,
+		accessorKey: 'number',
+		muiFilterTextFieldProps: { placeholder: 'Nº' },
+		grow: false,
+		muiTableHeadCellProps: {
+			style: { width: 'auto', minWidth: '40px', maxWidth: '40px'},
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
+		Cell: ({ row }) => (
+			<div  className="text-xs">{row.original.version}</div>
+		),
+	},
+	{
+		header: <span className="text-xs">Nombre</span>,
+		accessorKey: 'name',
+		muiFilterTextFieldProps: { placeholder: 'name' },
+		muiTableHeadCellProps: {
+		style: { width: 'auto', minWidth: '70px', maxWidth: '70px'},
+	},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
+		Cell: ({ row }) => (
+			<div  className="text-xs" style={{ overflow: 'hidden', whiteSpace: 'normal', wordWrap: 'break-word'}}>{row.original.name}</div>
+		),
+	},
+	{
+		header: '',
+		accessorKey: 'status_recloser',
+		size: 10,
+		enableColumnFilter: false,
+		enableClickToCopy: false,
+		Cell: ({ row }) => {
+			const status = {
+				0: {
+					color: 'error',
+				},
+				1: {
+					color: 'success',
+				},
+				2: {
+					color: 'warning',
+				},
+				3: {
+					color: 'action',
+				},
+			}
+			return (
+				<div className=' flex items-center justify-center md:justify-start w-full '>
+					<Circle style={{ fontSize: '1rem' }} color={status[row.original?.status_recloser].color} />
+				</div>
+			)
+		},
+	},
+	{
+		header: '',
+		accessorKey: 'btn-dashboard',
+		size: 10,
+		enableSorting: false,
+		enableColumnFilter: false,
+		enableClickToCopy: false,
+		Cell: ({ row }) => {
+			row.original.type_recloser = 1
+			return (
+				<>
+					<IconButton size="small" onClick={() => newTab(row.original)} className='!m-1 !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'>
+						<BiWindowOpen />
+					</IconButton>
+					<IconButton size="small" onClick={() => deleteRecloser(row.original)} className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'>
 						<BiTrash />
 					</IconButton>
 				</>
