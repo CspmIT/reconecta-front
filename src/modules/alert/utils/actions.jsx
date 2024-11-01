@@ -7,7 +7,9 @@ export const checkAlert = async (table, rowCriticos) => {
 		const eventCheck = []
 		const { value: result } = await Swal.fire({
 			title: 'Atención!',
-			html: '¿Está seguro de que desea limpiar las alertas críticas?',
+			html: `¿Está seguro de que desea limpiar ${
+				!table.getState().globalFilter ? 'todas las alertas' : 'las alertas filtradas'
+			}  ?`,
 			icon: 'warning',
 			showCancelButton: true,
 			allowOutsideClick: false,
@@ -17,19 +19,8 @@ export const checkAlert = async (table, rowCriticos) => {
 			cancelButtonText: 'No, cancelar',
 		})
 		if (result) {
-			const { value: result2 } = await Swal.fire({
-				title: 'Atención!',
-				html: '¿Deseas limpiar toda la tabla o solo la pag actual?',
-				icon: 'warning',
-				showCancelButton: true,
-				allowOutsideClick: false,
-				confirmButtonColor: '#3085d6',
-				cancelButtonColor: '#d33',
-				confirmButtonText: 'Actual',
-				cancelButtonText: 'Toda la tabla',
-			})
 			const changeRows = await rowCriticos.alta.map((row, index) => {
-				if (!result2 || table?.getRowModel()?.rows?.some((item) => item.index == index)) {
+				if (!table.getState().globalFilter || table?.getRowModel()?.rows?.some((item) => item.index == index)) {
 					if (row.statusAlert) {
 						if (!eventCheck.some((item) => item.id_device == row.id_device)) {
 							eventCheck.push({
@@ -54,6 +45,7 @@ export const checkAlert = async (table, rowCriticos) => {
 export const saveChecks = async (events) => {
 	try {
 		await request(`${backend.Reconecta}/saveLogsChecks`, 'POST', events)
+		console.log(events)
 		return true
 	} catch (error) {
 		throw error
