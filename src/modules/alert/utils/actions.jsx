@@ -54,7 +54,6 @@ export const checkAlert = async (table, rowCriticos) => {
 export const saveChecks = async (events) => {
 	try {
 		await request(`${backend.Reconecta}/saveLogsChecks`, 'POST', events)
-		console.log(events)
 		return true
 	} catch (error) {
 		throw error

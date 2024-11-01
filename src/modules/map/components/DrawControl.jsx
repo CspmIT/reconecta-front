@@ -141,6 +141,7 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 						id={marker.id}
 						position={[marker.lat, marker.lng]}
 						icon={marker.icon}
+						alert={marker.alert}
 						popupData={marker.info}
 						recloser={marker.recloser}
 						drawnItems={drawnItemsRef.current}

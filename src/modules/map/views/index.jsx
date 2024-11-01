@@ -91,17 +91,15 @@ function Map() {
 	}
 
 	const handleActiveZoom = (index) => {
-		// Actualizar el estado de zoom individual por cada mapa
 		setZoomActive((prevState) => {
 			const newState = [...prevState]
-			newState[index] = !newState[index] // Cambia el estado del zoom solo para el mapa correspondiente
+			newState[index] = !newState[index]
 			return newState
 		})
 
-		// Actualizar el estado de movimiento individual por cada mapa
 		setActiveMove((prevState) => {
 			const newState = [...prevState]
-			newState[index] = !newState[index] // Cambia el estado de movimiento solo para el mapa correspondiente
+			newState[index] = !newState[index]
 			return newState
 		})
 	}
@@ -111,6 +109,12 @@ function Map() {
 			setActiveMove(Array(dataMap.length).fill(false))
 		}
 	}, [markersRecloser])
+	useEffect(() => {
+		const intervalId = setInterval(() => {
+			getdisplay()
+		}, 15000)
+		return () => clearInterval(intervalId)
+	}, [])
 	const widthMap = ['lg:w-1/2', 'lg:w-full']
 	return (
 		<>
