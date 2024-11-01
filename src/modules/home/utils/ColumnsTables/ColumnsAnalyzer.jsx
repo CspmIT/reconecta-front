@@ -49,3 +49,59 @@ export const ColumnsAnalyzer = (newTab) => [
 		},
 	},
 ]
+
+export const ColumnsAnalyzerCel = (newTab) => [
+	{
+		header:  <span className="text-xs">Nombre/ubicacion</span>,
+		accessorKey: 'name',
+		muiFilterTextFieldProps: { placeholder: 'Nro de serie' },
+		muiTableHeadCellProps: {
+			style: { minWidth: '140px', maxWidth: '140px' },
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
+		Cell: ({ row }) => (
+			<div  className="text-xs">{row.original.name}</div>
+		),
+	},
+	{
+		header:  <span className="text-xs">Nro de serie</span>,
+		accessorKey: 'serial',
+		muiFilterTextFieldProps: { placeholder: 'Marca' },
+		muiTableHeadCellProps: {
+			style: { minWidth: '70px', maxWidth: '70px' },
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
+		Cell: ({ row }) => (
+			<div  className="text-xs">{row.original.serial}</div>
+		),
+	},
+	{
+		header: '',
+		accessorKey: 'btn-dashboard',
+		size: 10,
+		enableSorting: false,
+		enableColumnFilter: false,
+		enableClickToCopy: false,
+		Cell: ({ row }) => {
+			const info = {
+				name: row.original.name,
+				id: parseInt(row.original.id),
+				type_recloser: 4,
+				...row.origin,
+			}
+			return (
+				<IconButton
+					size="small"
+					onClick={() => newTab(info)}
+					className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
+				>
+					<BiWindowOpen />
+				</IconButton>
+			)
+		},
+	},
+]

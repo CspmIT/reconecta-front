@@ -2,10 +2,10 @@ import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { IconButton } from '@mui/material'
+import { IconButton, useMediaQuery } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
-import { ColumnsRural } from '../../utils/ColumnsTables/ColumnsStationRural'
+import { ColumnsRural, ColumnsRuralCel } from '../../utils/ColumnsTables/ColumnsStationRural'
 import { dataUser, substation } from '../../utils/dataTables/dataRural'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
@@ -13,6 +13,7 @@ import { backend } from '../../../../utils/routes/app.routes'
 function TableSubStationRural({ ...props }) {
 	const [subStations, setSubStations] = useState([])
 	const navigate = useNavigate()
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const generateData = () => {
 		const Station = substation.map((station, index) => {
 			station.user = dataUser.filter((item, index) => item.id_user_recloser == station.id)
@@ -72,7 +73,7 @@ function TableSubStationRural({ ...props }) {
 			<TableCustom
 				key={Math.random()}
 				data={subStations}
-				columns={ColumnsRural(props.newTab)}
+				columns={isMobile ? ColumnsRuralCel(props.newTab) : ColumnsRural(props.newTab)}
 				density='comfortable'
 				header={{
 					background: 'rgb(190 190 190)',

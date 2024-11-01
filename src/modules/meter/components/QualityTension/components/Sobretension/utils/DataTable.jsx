@@ -17,18 +17,36 @@ export const ColumnsTable = [
 		accessorKey: 'fase',
 		enableColumnFilter: false,
 		enableSorting: false,
+		muiTableHeadCellProps: {
+			style: { width: 'auto', minWidth: '70px'},
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
 	},
 	{
 		header: 'Duración',
 		accessorKey: 'duration',
 		enableColumnFilter: false,
 		enableSorting: false,
+		muiTableHeadCellProps: {
+			style: { width: 'auto', minWidth: '70px'},
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
 	},
 	{
 		header: 'Amplitud',
 		accessorKey: 'Amplitud',
 		enableColumnFilter: false,
 		enableSorting: false,
+		muiTableHeadCellProps: {
+			style: { width: 'auto', minWidth: '70px'},
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
 	},
 	{
 		accessorFn: (originalRow) => new Date(originalRow.datePeriod),
@@ -38,6 +56,12 @@ export const ColumnsTable = [
 		Cell: ({ cell }) => `${cell.getValue().toLocaleDateString()} ${cell.getValue().toLocaleTimeString()}`,
 		header: 'Fecha el Período',
 		size: 200,
+		muiTableHeadCellProps: {
+			style: { width: 'auto', minWidth: '70px'},
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: 'auto' },
+		},
 	},
 ]
 export const dataTableModal = [

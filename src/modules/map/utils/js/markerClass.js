@@ -145,7 +145,9 @@ class markerCustom {
 			if (this.recloser.length > 0) {
 				// Reemplaza la URL con la API o endpoint que necesites
 				const response = await request(
-					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${this.recloser[0].id_device}`,
+					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${
+						this.recloser[0].id_device
+					}`,
 					'GET'
 				)
 				if (response.status !== 200) {
@@ -164,8 +166,13 @@ class markerCustom {
 				if (recloser.status !== 200) {
 					throw new Error('Error al obtener la información')
 				}
-				const status = recloser.data?.instantaneo?.['ac']?.[0]?.value ? 1 : recloser.data?.instantaneo?.['ac'] ? 2 : 3
+				const status = recloser.data?.instantaneo?.['ac']?.[0]?.value
+					? 1
+					: recloser.data?.instantaneo?.['ac']
+					? 2
+					: 3
 				this.icon = getIcon(status, this.number)
+				this.alert = recloser?.data?.alarm || false
 			}
 		} catch (error) {
 			console.error('Error al obtener la información del marcador:', error)

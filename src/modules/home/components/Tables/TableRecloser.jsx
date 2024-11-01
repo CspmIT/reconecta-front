@@ -2,15 +2,17 @@ import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
 import { storage } from '../../../../storage/storage'
 import { MainContext } from '../../../../context/MainContext'
-import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
+import { ColumnsRecloser, ColumnsRecloserCel } from '../../utils/ColumnsTables/ColumnsRecloser'
 import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
 import { backend } from '../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../../components/Loader'
+import { useMediaQuery } from '@mui/material'
 
 function TableRecloser({ ...props }) {
 	const { setInfoNav } = useContext(MainContext)
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const [reclosers, setReclosers] = useState(null)
 	const navigate = useNavigate()
 	const getdisplay = async () => {
@@ -134,7 +136,7 @@ function TableRecloser({ ...props }) {
 				<div className='pb-5 w-full'>
 					<TableCustom
 						data={reclosers}
-						columns={ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)}
+						columns={isMobile ? ColumnsRecloserCel(changeAlarm, props.newTab, deleteRecloser) : ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)}
 						density='comfortable'
 						header={{
 							background: 'rgb(190 190 190)',

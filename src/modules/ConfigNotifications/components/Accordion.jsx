@@ -27,6 +27,11 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 	}
 
 	const handlePriority = (row) => {
+		const dataTable = tableData.reduce((acc, value) => {
+			acc.push(value.id == row.id ? row : value)
+			return acc
+		}, [])
+		setTableData(dataTable)
 		let data = newData
 		data[row.id] = row
 		setNewData(data)
@@ -62,7 +67,7 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 				const cantReg = 47
 				const sources = await generateSources(tableData, data, cantReg)
 				// await sendConfigMqtt(sources, tableData[0].type, tableData[0].id_version)
-				// await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
+				await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
 				Swal.close()
 				Swal.fire({
 					title: 'Recorda!',
