@@ -11,13 +11,13 @@ export const columnsCriticos = [
 	},
 	{
 		header: 'Nº',
-		accessorKey: 'Nro_recloser',
+		accessorKey: 'nro_recloser',
 		muiFilterTextFieldProps: { placeholder: 'Nº' },
 		size: 20,
 	},
 	{
 		header: 'Nombre',
-		accessorKey: 'Name',
+		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'Nombre' },
 	},
 	{

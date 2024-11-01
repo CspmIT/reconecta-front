@@ -31,12 +31,9 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 				setStatus(event.target.value)
 				const data = row.original
 				data.priority = event.target.value
+				data.flash_screen = event.target.value > 1 ? false : row.original.flash_screen
 				await handlePriority(data)
 			}
-			// const handleChange = (event) => {
-			// 	setStatus(event.target.value)
-			// 	handlePriority(row.original.id, event.target.value, row.index)
-			// }
 			return (
 				<Select
 					key={row.index}
@@ -47,8 +44,8 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 					onChange={handleChange}
 				>
 					<MenuItem value={1}>ALTA</MenuItem>
-					<MenuItem value={2}>SIN MODIFICAR</MenuItem>
-					<MenuItem value={3}>BAJA</MenuItem>
+					<MenuItem value={2}>BAJA</MenuItem>
+					<MenuItem value={3}>SIN PRIORIDAD</MenuItem>
 				</Select>
 			)
 		},
@@ -64,6 +61,7 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 		},
 		Cell: ({ row }) => {
 			const [status, setStatus] = useState(row.original.flash_screen)
+			const disable = !access || row.original.priority > 1 ? true : false
 			const handleChange = async (event) => {
 				setStatus(event.target.checked)
 				const data = row.original
@@ -76,7 +74,7 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 					id={`check_flash_screen_${row.index}`}
 					style={{ height: '18px', width: '18px' }}
 					checked={status}
-					disabled={!access}
+					disabled={disable}
 					onChange={handleChange}
 				/>
 			)
