@@ -57,9 +57,10 @@ const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawn
 	}, [popupData, layerControl, drawnItems])
 
 	useEffect(() => {
-		if (alert) {
+		if (alert == true) {
 			intervalRef.current = setInterval(() => {
 				if (markerRef.current) {
+					markerRef.current.setZIndexOffset(1000)
 					const currentIcon = markerRef.current.options.icon
 					markerRef.current.setIcon(currentIcon === icon ? yellowIcon(popupData.number) : icon)
 				}
