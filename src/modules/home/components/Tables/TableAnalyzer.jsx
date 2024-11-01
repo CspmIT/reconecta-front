@@ -3,17 +3,18 @@ import TableCustom from '../../../../components/TableCustom'
 import { columns } from '../../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { IconButton } from '@mui/material'
+import { IconButton, useMediaQuery } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { AnalyzerList } from '../../utils/dataTables/dataAnalyzer'
-import { ColumnsAnalyzer } from '../../utils/ColumnsTables/ColumnsAnalyzer'
+import { ColumnsAnalyzer, ColumnsAnalyzerCel } from '../../utils/ColumnsTables/ColumnsAnalyzer'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 
 function TableAnalyzer({ ...props }) {
 	const [analizers, setAnalizers] = useState([])
 	const navigate = useNavigate()
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const getdisplay = () => {
 		const data = AnalyzerList.map((item) => {
 			let info = { ...item }
@@ -74,7 +75,7 @@ function TableAnalyzer({ ...props }) {
 		<div className='pb-5 w-full'>
 			<TableCustom
 				data={analizers}
-				columns={ColumnsAnalyzer(props.newTab)}
+				columns={isMobile ? ColumnsAnalyzerCel(props.newTab) : ColumnsAnalyzer(props.newTab)}
 				density='comfortable'
 				header={{
 					background: 'rgb(190 190 190)',
