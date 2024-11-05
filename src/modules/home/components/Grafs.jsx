@@ -45,6 +45,6 @@ function Grafs() {
 				/>
 			</div>
 		</>
-	);
+	)
 }
 export default Grafs

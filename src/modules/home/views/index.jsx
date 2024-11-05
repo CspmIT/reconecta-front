@@ -15,6 +15,7 @@ import TableAnalyzer from '../components/Tables/TableAnalyzer'
 import SubstationRuralBoard from '../../substationRural/views'
 import TableNodo from '../components/Tables/TableNodo'
 import ButtonAddElement from '../components/ButtonAddElement'
+import CardDashboard from '../components/CardDashboard/CardDashboard'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -97,7 +98,7 @@ const Home = () => {
 	return (
 		<div className='flex flex-col w-full pt-4'>
 			<div className='flex flex-wrap gap-3 mb-5 px-3'>
-				<Grafs />
+				<CardDashboard />
 			</div>
 			<TabsHome tabs={tabsHome} />
 		</div>

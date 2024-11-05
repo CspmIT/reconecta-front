@@ -76,7 +76,7 @@ function TableAnalyzer({ ...props }) {
 			<TableCustom
 				data={analizers}
 				columns={isMobile ? ColumnsAnalyzerCel(props.newTab) : ColumnsAnalyzer(props.newTab)}
-				density='comfortable'
+				density='compact'
 				header={{
 					background: 'rgb(190 190 190)',
 					fontSize: '18px',
@@ -97,6 +97,7 @@ function TableAnalyzer({ ...props }) {
 				topToolbar
 				copy
 				grouping
+				pageSize={20}
 				hide
 				sort
 				pagination

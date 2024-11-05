@@ -109,7 +109,7 @@ function TableSubStationUrban({ ...props }) {
 			<TableCustom
 				data={subStations}
 				columns={isMobile ? ColumnsUrbanCel(props.newTab) : ColumnsUrban(props.newTab)}
-				density='comfortable'
+				density='compact'
 				header={{
 					background: 'rgb(190 190 190)',
 					fontSize: '18px',
@@ -132,6 +132,7 @@ function TableSubStationUrban({ ...props }) {
 				grouping
 				hide
 				sort
+				pageSize={20}
 				pagination
 				columnVisibility={visibility}
 				onColumnVisibilityChange={handleColumnVisibilityChange}

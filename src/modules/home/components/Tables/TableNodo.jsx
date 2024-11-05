@@ -134,8 +134,10 @@ function TableNodo() {
 				<div className='pb-5 w-full'>
 					<TableCustom
 						data={node}
-						columns={isMobile ? ColumnsNodoCel(changeView, deleteNodo) : ColumnsNodo(changeView, deleteNodo)}
-						density='comfortable'
+						columns={
+							isMobile ? ColumnsNodoCel(changeView, deleteNodo) : ColumnsNodo(changeView, deleteNodo)
+						}
+						density='compact'
 						header={{
 							background: 'rgb(190 190 190)',
 							fontSize: '18px',
@@ -152,6 +154,7 @@ function TableNodo() {
 						copy
 						hide
 						sort
+						pageSize={20}
 						pagination
 						columnVisibility={visibility}
 						onColumnVisibilityChange={handleColumnVisibilityChange}

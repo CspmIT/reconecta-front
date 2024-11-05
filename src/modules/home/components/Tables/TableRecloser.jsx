@@ -20,14 +20,19 @@ function TableRecloser({ ...props }) {
 		setReclosers(recloser.data)
 	}
 
-	const changeAlarm = (Nro_Serie) => {
-		setReclosers((prevReclosers) =>
-			prevReclosers.map((recloser) =>
-				recloser.serial === Nro_Serie
-					? { ...recloser, status_alarm_recloser: !recloser.status_alarm_recloser }
-					: recloser
+	const changeAlarm = async (data) => {
+		try {
+			console.log(data.status_alarm)
+			await request(`${backend.Reconecta}/changeStatusAlarm`, 'POST', {
+				id: data.id,
+				status_alarm: !data.status_alarm,
+			})
+			setReclosers((prevReclosers) =>
+				prevReclosers.map((recloser) =>
+					recloser.serial === data.serial ? { ...recloser, status_alarm: !recloser.status_alarm } : recloser
+				)
 			)
-		)
+		} catch (error) {}
 	}
 
 	const getColumns = async () => {
@@ -136,8 +141,12 @@ function TableRecloser({ ...props }) {
 				<div className='pb-5 w-full'>
 					<TableCustom
 						data={reclosers}
-						columns={isMobile ? ColumnsRecloserCel(changeAlarm, props.newTab, deleteRecloser) : ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)}
-						density='comfortable'
+						columns={
+							isMobile
+								? ColumnsRecloserCel(changeAlarm, props.newTab, deleteRecloser)
+								: ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)
+						}
+						density='compact'
 						header={{
 							background: 'rgb(190 190 190)',
 							fontSize: '18px',
@@ -151,6 +160,7 @@ function TableRecloser({ ...props }) {
 							borderRadius: '0.75rem',
 						}}
 						topToolbar
+						pageSize={20}
 						copy
 						hide
 						sort

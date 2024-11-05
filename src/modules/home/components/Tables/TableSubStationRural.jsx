@@ -74,7 +74,7 @@ function TableSubStationRural({ ...props }) {
 				key={Math.random()}
 				data={subStations}
 				columns={isMobile ? ColumnsRuralCel(props.newTab) : ColumnsRural(props.newTab)}
-				density='comfortable'
+				density='compact'
 				header={{
 					background: 'rgb(190 190 190)',
 					fontSize: '18px',
@@ -97,6 +97,7 @@ function TableSubStationRural({ ...props }) {
 				grouping
 				hide
 				sort
+				pageSize={20}
 				pagination
 				columnVisibility={visibility}
 				onColumnVisibilityChange={handleColumnVisibilityChange}

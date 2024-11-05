@@ -106,8 +106,7 @@ function TableMeter({ ...props }) {
 			<TableCustom
 				data={meters}
 				columns={isMobile ? ColumnsMeterCel(props.newTab) : ColumnsMeter(props.newTab)}
-
-				density='comfortable'
+				density='compact'
 				header={{
 					background: 'rgb(190 190 190)',
 					fontSize: '18px',
@@ -126,6 +125,7 @@ function TableMeter({ ...props }) {
 				// 	</IconButton>
 				// }
 				topToolbar
+				pageSize={20}
 				copy
 				grouping
 				hide
