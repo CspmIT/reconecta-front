@@ -70,7 +70,6 @@ function NavBarCustom({ setLoading }) {
 		})
 
 		socketRef.current.on('alert-active', (data) => {
-			console.log(data)
 			setNewEvent(data.active)
 		})
 	}

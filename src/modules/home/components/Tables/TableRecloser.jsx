@@ -22,7 +22,6 @@ function TableRecloser({ ...props }) {
 
 	const changeAlarm = async (data) => {
 		try {
-			console.log(data.status_alarm)
 			await request(`${backend.Reconecta}/changeStatusAlarm`, 'POST', {
 				id: data.id,
 				status_alarm: !data.status_alarm,
