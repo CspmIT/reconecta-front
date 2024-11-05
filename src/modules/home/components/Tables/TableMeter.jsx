@@ -2,17 +2,18 @@ import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { IconButton } from '@mui/material'
+import { IconButton, useMediaQuery } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
 import { deviceSubStation, devices, listMeters } from '../../utils/dataTables/dataMeter'
-import { ColumnsMeter } from '../../utils/ColumnsTables/ColumnsMeter'
+import { ColumnsMeter, ColumnsMeterCel } from '../../utils/ColumnsTables/ColumnsMeter'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 
 function TableMeter({ ...props }) {
 	const [meters, setMeters] = useState([])
 	const navigate = useNavigate()
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const getdisplay = () => {
 		const metersList = listMeters.map((meter) => {
 			deviceSubStation
@@ -104,8 +105,8 @@ function TableMeter({ ...props }) {
 		<div className='pb-5 w-full'>
 			<TableCustom
 				data={meters}
-				columns={ColumnsMeter(props.newTab)}
-				density='comfortable'
+				columns={isMobile ? ColumnsMeterCel(props.newTab) : ColumnsMeter(props.newTab)}
+				density='compact'
 				header={{
 					background: 'rgb(190 190 190)',
 					fontSize: '18px',
@@ -124,6 +125,7 @@ function TableMeter({ ...props }) {
 				// 	</IconButton>
 				// }
 				topToolbar
+				pageSize={20}
 				copy
 				grouping
 				hide

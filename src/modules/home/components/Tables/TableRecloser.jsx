@@ -2,15 +2,17 @@ import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
 import { storage } from '../../../../storage/storage'
 import { MainContext } from '../../../../context/MainContext'
-import { ColumnsRecloser } from '../../utils/ColumnsTables/ColumnsRecloser'
+import { ColumnsRecloser, ColumnsRecloserCel } from '../../utils/ColumnsTables/ColumnsRecloser'
 import { request } from '../../../../utils/js/request'
 import { useNavigate } from 'react-router-dom'
 import { backend } from '../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../../components/Loader'
+import { useMediaQuery } from '@mui/material'
 
 function TableRecloser({ ...props }) {
 	const { setInfoNav } = useContext(MainContext)
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const [reclosers, setReclosers] = useState(null)
 	const navigate = useNavigate()
 	const getdisplay = async () => {
@@ -18,14 +20,19 @@ function TableRecloser({ ...props }) {
 		setReclosers(recloser.data)
 	}
 
-	const changeAlarm = (Nro_Serie) => {
-		setReclosers((prevReclosers) =>
-			prevReclosers.map((recloser) =>
-				recloser.serial === Nro_Serie
-					? { ...recloser, status_alarm_recloser: !recloser.status_alarm_recloser }
-					: recloser
+	const changeAlarm = async (data) => {
+		try {
+			console.log(data.status_alarm)
+			await request(`${backend.Reconecta}/changeStatusAlarm`, 'POST', {
+				id: data.id,
+				status_alarm: !data.status_alarm,
+			})
+			setReclosers((prevReclosers) =>
+				prevReclosers.map((recloser) =>
+					recloser.serial === data.serial ? { ...recloser, status_alarm: !recloser.status_alarm } : recloser
+				)
 			)
-		)
+		} catch (error) {}
 	}
 
 	const getColumns = async () => {
@@ -134,8 +141,12 @@ function TableRecloser({ ...props }) {
 				<div className='pb-5 w-full'>
 					<TableCustom
 						data={reclosers}
-						columns={ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)}
-						density='comfortable'
+						columns={
+							isMobile
+								? ColumnsRecloserCel(changeAlarm, props.newTab, deleteRecloser)
+								: ColumnsRecloser(changeAlarm, props.newTab, deleteRecloser)
+						}
+						density='compact'
 						header={{
 							background: 'rgb(190 190 190)',
 							fontSize: '18px',
@@ -149,6 +160,7 @@ function TableRecloser({ ...props }) {
 							borderRadius: '0.75rem',
 						}}
 						topToolbar
+						pageSize={20}
 						copy
 						hide
 						sort

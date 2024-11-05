@@ -3,15 +3,16 @@ import TableCustom from '../../../../components/TableCustom'
 import { columns } from '../../utils/dataTable'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { IconButton } from '@mui/material'
+import { IconButton, useMediaQuery } from '@mui/material'
 import { Add } from '@mui/icons-material'
 import { MainContext } from '../../../../context/MainContext'
-import { ColumnsUrban } from '../../utils/ColumnsTables/ColumnsStationUrban'
+import { ColumnsUrban, ColumnsUrbanCel } from '../../utils/ColumnsTables/ColumnsStationUrban'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 
 function TableSubStationUrban({ ...props }) {
 	const [subStations, setSubStations] = useState([])
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const navigate = useNavigate()
 	const getdisplay = () => {
 		setSubStations([
@@ -107,8 +108,8 @@ function TableSubStationUrban({ ...props }) {
 		<div className='pb-5 w-full'>
 			<TableCustom
 				data={subStations}
-				columns={ColumnsUrban(props.newTab)}
-				density='comfortable'
+				columns={isMobile ? ColumnsUrbanCel(props.newTab) : ColumnsUrban(props.newTab)}
+				density='compact'
 				header={{
 					background: 'rgb(190 190 190)',
 					fontSize: '18px',
@@ -131,6 +132,7 @@ function TableSubStationUrban({ ...props }) {
 				grouping
 				hide
 				sort
+				pageSize={20}
 				pagination
 				columnVisibility={visibility}
 				onColumnVisibilityChange={handleColumnVisibilityChange}

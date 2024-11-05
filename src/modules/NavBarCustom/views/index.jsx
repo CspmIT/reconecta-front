@@ -27,12 +27,18 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
+import { backend, front } from '../../../utils/routes/app.routes'
+import { request } from '../../../utils/js/request'
+import styles from '../utils/css/styles.module.css'
+import { io } from 'socket.io-client'
+import Cookies from 'js-cookie'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
 	const { tabActive, tabs, infoNav, permission, setPermission } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
+	const socketRef = useRef(null)
 	const { pathname } = useLocation()
 	const locationTAbs = pathname.split('/')[1] || '/DashBoard'
 	const location = pathname
@@ -54,6 +60,24 @@ function NavBarCustom({ setLoading }) {
 		return () => {
 			document.removeEventListener('mouseup', handleClickOutside)
 		}
+	}, [])
+	const [newEvent, setNewEvent] = useState(false)
+
+	const initializeSocket = () => {
+		socketRef.current = io(front.Reconecta, {
+			path: '/api/socket.io',
+			query: { token: Cookies.get('token') },
+		})
+
+		socketRef.current.on('alert-active', (data) => {
+			console.log(data)
+			setNewEvent(data.active)
+		})
+	}
+
+	useEffect(() => {
+		initializeSocket()
+		return () => socketRef.current.disconnect()
 	}, [])
 
 	useEffect(() => {
@@ -122,7 +146,6 @@ function NavBarCustom({ setLoading }) {
 			getPermissions()
 		}
 	}, [])
-
 	return (
 		<>
 			<AppBarCustom position='fixed' open={open}>
@@ -228,14 +251,15 @@ function NavBarCustom({ setLoading }) {
 									) : (
 										<Link to={item.link} className={`!w-full text-black dark:text-white`}>
 											<ListItemButton
-												// className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 												sx={{
 													minHeight: 48,
 													justifyContent: !isMobile && open ? 'initial' : 'center',
 													padding: !isMobile ? '1.25rem' : '0.2rem',
 													py: 1.8,
 												}}
-												className='!w-full'
+												className={`!w-full ${
+													item.link === '/Alert' && newEvent ? styles.backgroundAlert : ''
+												}`}
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon
