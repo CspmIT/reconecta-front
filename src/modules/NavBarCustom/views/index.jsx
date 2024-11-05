@@ -38,7 +38,6 @@ function NavBarCustom({ setLoading }) {
 	const { tabActive, tabs, infoNav, permission, setPermission } = useContext(MainContext)
 	const navigate = useNavigate()
 	const NavBarRef = useRef(null)
-	const socketRef = useRef(null)
 	const { pathname } = useLocation()
 	const locationTAbs = pathname.split('/')[1] || '/DashBoard'
 	const location = pathname
@@ -63,20 +62,29 @@ function NavBarCustom({ setLoading }) {
 	}, [])
 	const [newEvent, setNewEvent] = useState(false)
 
-	const initializeSocket = () => {
-		socketRef.current = io(front.Reconecta, {
-			path: '/api/socket.io',
-			query: { token: Cookies.get('token') },
-		})
+	// const initializeSocket = () => {
+	// 	const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
+	// 	// socketRef.current = io(front.Reconecta, {
+	// 	// 	path: '/api/socket.io',
+	// 	// 	query: { token: Cookies.get('token') },
+	// 	// })
 
-		socketRef.current.on('alert-active', (data) => {
-			setNewEvent(data.active)
-		})
-	}
+	// 	socket.on('alert-active', (data) => {
+	// 		setNewEvent(data.active)
+	// 	})
+	// }
 
 	useEffect(() => {
-		initializeSocket()
-		return () => socketRef.current.disconnect()
+		const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
+		// // socketRef.current = io(front.Reconecta, {
+		// // 	path: '/api/socket.io',
+		// // 	query: { token: Cookies.get('token') },
+		// // })
+
+		socket.on('alert-active', (data) => {
+			setNewEvent(data.active)
+		})
+		return () => socket.disconnect()
 	}, [])
 
 	useEffect(() => {
