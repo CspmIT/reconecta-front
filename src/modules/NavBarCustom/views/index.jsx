@@ -27,8 +27,7 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-import { backend, front } from '../../../utils/routes/app.routes'
-import { request } from '../../../utils/js/request'
+import { front } from '../../../utils/routes/app.routes'
 import styles from '../utils/css/styles.module.css'
 import { io } from 'socket.io-client'
 import Cookies from 'js-cookie'
@@ -212,7 +211,7 @@ function NavBarCustom({ setLoading }) {
 						}}
 					>
 						{menuSideBar.map((item, index) => {
-							if (item.name == 'ABM Equipos' && item.link == '') {
+							if (item.name.includes('ABM') && (item.link == '' || infoNav == '')) {
 								return null
 							}
 							if (!permission.some((perm) => perm.name == item.name)) {
