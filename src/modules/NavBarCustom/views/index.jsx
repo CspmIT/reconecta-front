@@ -77,18 +77,11 @@ function NavBarCustom({ setLoading }) {
 			setButtonActive('/home')
 		}
 		if (infoNav != '') {
-			console.log('------------1111-----------')
-			console.log(typeof infoNav == 'object' ? infoNav[0].link : infoNav)
 			setButtonActive(typeof infoNav == 'object' ? infoNav[0].link : infoNav)
 		}
 		if (location === '/' || location === '/Home' || location === '') {
 			setButtonActive('/home')
 		}
-		console.log('-----2222-----')
-		console.log(location)
-		console.log(locationTAbs)
-		console.log(infoNav)
-		console.log('-----333 -----')
 		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && infoNav == '') {
 			navigate('Home')
 		}
