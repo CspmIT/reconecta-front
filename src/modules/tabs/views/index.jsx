@@ -36,7 +36,6 @@ function TabDinamic({ ...props }) {
 			setTabActive(tabs.length)
 		}
 	}, [tabs])
-	console.log(tabs)
 	return (
 		<div className={`w-full max-w-[94.5vw] !mr-3 !rounded-xl flex flex-col items-center`}>
 			<Tabs
