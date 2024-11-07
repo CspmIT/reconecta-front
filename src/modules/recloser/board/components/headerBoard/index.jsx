@@ -66,13 +66,11 @@ const HeaderBoard = ({ info }) => {
 			</div>
 			<div className='w-full sm:w-1/4'>
 				{boardStatus.map((item, i) => {
+					let color = info ? (info?.instantaneo[item.field]?.[0].value != 1 ? 'black' : 'red') : 'black'
+					if (!info?.instantaneo[item.field]) return false
 					return (
 						<div className='flex flex-row my-1' key={i}>
-							<FaCircle
-								color={
-									info ? (info?.instantaneo[item.field]?.[0].value !== 0 ? 'red' : 'black') : 'black'
-								}
-							/>
+							<FaCircle color={color} />
 							<h3 className='ml-3'>{item.name}</h3>
 						</div>
 					)

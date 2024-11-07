@@ -27,8 +27,7 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-import { backend, front } from '../../../utils/routes/app.routes'
-import { request } from '../../../utils/js/request'
+import { front } from '../../../utils/routes/app.routes'
 import styles from '../utils/css/styles.module.css'
 import { io } from 'socket.io-client'
 import Cookies from 'js-cookie'
@@ -62,24 +61,8 @@ function NavBarCustom({ setLoading }) {
 	}, [])
 	const [newEvent, setNewEvent] = useState(false)
 
-	// const initializeSocket = () => {
-	// 	const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
-	// 	// socketRef.current = io(front.Reconecta, {
-	// 	// 	path: '/api/socket.io',
-	// 	// 	query: { token: Cookies.get('token') },
-	// 	// })
-
-	// 	socket.on('alert-active', (data) => {
-	// 		setNewEvent(data.active)
-	// 	})
-	// }
-
 	useEffect(() => {
 		const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
-		// // socketRef.current = io(front.Reconecta, {
-		// // 	path: '/api/socket.io',
-		// // 	query: { token: Cookies.get('token') },
-		// // })
 
 		socket.on('alert-active', (data) => {
 			setNewEvent(data.active)
@@ -90,10 +73,10 @@ function NavBarCustom({ setLoading }) {
 	useEffect(() => {
 		setButtonActive(location)
 		if (location === '/DashBoard') {
-			setButtonActive('Home')
+			setButtonActive('/home')
 		}
 		if (infoNav != '') {
-			setButtonActive(infoNav)
+			setButtonActive(typeof infoNav == 'object' ? infoNav[0].link : infoNav)
 		}
 		if (location === '/' || location === '/Home' || location === '') {
 			setButtonActive('/home')
@@ -105,7 +88,8 @@ function NavBarCustom({ setLoading }) {
 
 	const activeButton = useCallback(
 		(id) => {
-			setButtonActive(id)
+			// console.log(id)
+			// setButtonActive(id)
 			navigate(id)
 		},
 		[navigate]
@@ -153,6 +137,7 @@ function NavBarCustom({ setLoading }) {
 			getPermissions()
 		}
 	}, [])
+
 	return (
 		<>
 			<AppBarCustom position='fixed' open={open}>
@@ -226,7 +211,7 @@ function NavBarCustom({ setLoading }) {
 						}}
 					>
 						{menuSideBar.map((item, index) => {
-							if (item.name == 'ABM Equipos' && item.link == '') {
+							if (item.name.includes('ABM') && (item.link == '' || infoNav == '')) {
 								return null
 							}
 							if (!permission.some((perm) => perm.name == item.name)) {
@@ -234,6 +219,7 @@ function NavBarCustom({ setLoading }) {
 							}
 							const listIcon = ListIcon()
 							const componentIcon = listIcon.filter((icono) => icono.name === item.icon)?.[0] || ''
+
 							return (
 								<ListItem
 									key={index}
@@ -270,11 +256,12 @@ function NavBarCustom({ setLoading }) {
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon
+													className={`${!isMobile && open ? '!mr-3' : ''}`}
 													sx={{
 														minWidth: 0,
 														mr: !isMobile && open ? 3 : 'auto',
 														justifyContent: 'center',
-														color: buttonActive == item.link ? 'blue' : '',
+														color: buttonActive.includes(item.link) ? 'blue' : '',
 														marginRight: !isMobile ? 'auto' : '0',
 													}}
 												>
@@ -284,7 +271,7 @@ function NavBarCustom({ setLoading }) {
 													primary={item.name}
 													sx={{
 														opacity: !isMobile && open ? 1 : 0,
-														color: buttonActive == item.link ? 'blue' : '',
+														color: buttonActive.includes(item.link) ? 'blue' : '',
 														display: isMobile ? 'none !important' : 'block',
 													}}
 												/>

@@ -45,7 +45,7 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
-		const existingTabIndex = tabs.findIndex((tab) => tab.name === data.name)
+		const existingTabIndex = tabs.findIndex((tab) => tab.name === data.name && tab.id === data.id)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
 		} else {

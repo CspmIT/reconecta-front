@@ -22,6 +22,7 @@ function Map() {
 				data.push({
 					center: [element.lat_location, element.lng_location],
 					zoom: adjustZoomToScreenSize(element.zoom),
+					id: element.id,
 				})
 			}
 			setDataMap(data)
@@ -59,7 +60,11 @@ function Map() {
 	const getdisplay = async () => {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
-			const markers = await Promise.all(
+
+			// Group markers by id_map
+			const markersByMap = {}
+
+			await Promise.all(
 				nodes.data.map(async (item) => {
 					const info = item.node_history.length
 						? {
@@ -67,7 +72,9 @@ function Map() {
 								number: item.number,
 						  }
 						: {}
-					const recloser = item.node_history.filter((item) => item.type_device == 1)
+					const recloser = item.node_history.filter((historyItem) => historyItem.type_device == 1)
+
+					// Create a new marker
 					const marker = new markerCustom(
 						item.id,
 						item.number,
@@ -78,13 +85,21 @@ function Map() {
 						item.alert,
 						recloser
 					)
+
+					// Fetch additional information if needed
 					if (recloser.length > 0) {
 						await marker.fetchInfo()
 					}
-					return marker
+
+					// Group markers by id_map
+					if (!markersByMap[item.id_map]) {
+						markersByMap[item.id_map] = []
+					}
+					markersByMap[item.id_map].push(marker)
 				})
 			)
-			setMarkersRecloser(markers)
+
+			setMarkersRecloser(markersByMap)
 		} catch (error) {
 			console.error('Error al obtener los nodos:', error)
 		}
@@ -140,7 +155,7 @@ function Map() {
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}
 									zoom={map.zoom}
-									markers={markersRecloser}
+									markers={markersRecloser[map.id]}
 									polylines={polylines}
 								/>
 							</div>

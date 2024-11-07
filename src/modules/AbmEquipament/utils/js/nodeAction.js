@@ -9,6 +9,7 @@ export const saveNode = async (data) => {
 		description: data.description,
 		lat_location: data.lat_marker,
 		lng_location: data.lng_marker,
+		id_map: data.id_map || 1,
 		status: 1,
 		devices: data.devices,
 		type: data.type,
