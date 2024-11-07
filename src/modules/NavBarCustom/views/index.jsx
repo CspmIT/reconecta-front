@@ -88,8 +88,6 @@ function NavBarCustom({ setLoading }) {
 
 	const activeButton = useCallback(
 		(id) => {
-			// console.log(id)
-			// setButtonActive(id)
 			navigate(id)
 		},
 		[navigate]

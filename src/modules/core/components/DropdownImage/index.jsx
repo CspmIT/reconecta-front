@@ -6,7 +6,7 @@ import { Button } from '@mui/material'
 import { storage } from '../../../../storage/storage'
 import { MainContext } from '../../../../context/MainContext'
 
-const DropdownImage = ({ props }) => {
+const DropdownImage = () => {
 	const { setInfoNav, setTabs, setTabCurrent, setTabActive } = useContext(MainContext)
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
 	const dropdownRef = useRef(null) // Referencia al dropdown
@@ -40,10 +40,8 @@ const DropdownImage = ({ props }) => {
 				setDropdownOpen(false)
 			}
 		}
-		// Agregar el escuchador de eventos al montar el componente
 		document.addEventListener('mousedown', handleClickOutside)
 		return () => {
-			// Limpiar el escuchador de eventos al desmontar el componente
 			document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [])
