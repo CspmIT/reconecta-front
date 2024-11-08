@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-import Grafs from '../components/Grafs'
 import TableRecloser from '../components/Tables/TableRecloser'
 import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
@@ -14,12 +13,12 @@ import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
 import SubstationRuralBoard from '../../substationRural/views'
 import TableNodo from '../components/Tables/TableNodo'
-import ButtonAddElement from '../components/ButtonAddElement'
 import CardDashboard from '../components/CardDashboard/CardDashboard'
+import { useMediaQuery } from '@mui/material'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
-	const [loading, setLoading] = useState(true)
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const navigate = useNavigate()
 	const typeEquipment = (key) => {
 		let component
@@ -94,12 +93,13 @@ const Home = () => {
 			component: <TableNodo />,
 		},
 	]
-
 	return (
 		<div className='flex flex-col w-full pt-4'>
-			<div className='flex flex-wrap gap-3 mb-5 px-3'>
-				<CardDashboard />
-			</div>
+			{!isMobile ? (
+				<div className='flex flex-wrap gap-3 mb-5 px-3 max-sm:hidden'>
+					<CardDashboard />
+				</div>
+			) : null}
 			<TabsHome tabs={tabsHome} />
 		</div>
 	)

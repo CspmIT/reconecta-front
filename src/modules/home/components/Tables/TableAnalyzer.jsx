@@ -70,7 +70,16 @@ function TableAnalyzer({ ...props }) {
 		setInfoNav(nameView)
 		navigate(`/Abm/${nameView}`)
 	}
+	const [darkMode, setDarkMode] = useState(storage.get('dark'))
+	useEffect(() => {
+		setDarkMode(storage.get('dark'))
+	}, [storage.get('dark')])
 
+	const stylesTable = {
+		header: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+		toolbarClass: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+		footer: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+	}
 	return (
 		<div className='pb-5 w-full'>
 			<TableCustom
@@ -78,13 +87,13 @@ function TableAnalyzer({ ...props }) {
 				columns={isMobile ? ColumnsAnalyzerCel(props.newTab) : ColumnsAnalyzer(props.newTab)}
 				density='compact'
 				header={{
-					background: 'rgb(190 190 190)',
+					...stylesTable.header,
 					fontSize: '18px',
 					fontWeight: 'bold',
 				}}
-				toolbarClass={{ background: 'rgb(190 190 190)' }}
+				toolbarClass={{ ...stylesTable.toolbarClass }}
 				body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-				footer={{ background: 'rgb(190 190 190)' }}
+				footer={{ ...stylesTable.footer }}
 				card={{
 					boxShadow: `1px 1px 8px 0px #00000046`,
 					borderRadius: '0.75rem',

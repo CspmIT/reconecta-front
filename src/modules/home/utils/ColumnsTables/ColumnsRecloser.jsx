@@ -1,29 +1,38 @@
 import { FormControlLabel, IconButton, Switch } from '@mui/material'
 import { Circle } from '@mui/icons-material'
-import { BiTrash, BiWindowOpen } from 'react-icons/bi'
+import { BiWindowOpen } from 'react-icons/bi'
 
-export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
+export const ColumnsRecloser = (changeAlarm, newTab) => [
 	{
-		header: 'Nº',
+		header: 'Matricula',
 		accessorKey: 'number',
 		muiFilterTextFieldProps: { placeholder: 'Nº' },
 		grow: false,
-		size: 20,
+		maxSize: 20,
+		size: 19,
+		minSize: 10,
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.number}</p>,
 	},
 	{
 		header: 'Nombre',
 		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'name' },
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.name}</p>,
 	},
 	{
 		header: 'Num. de Serie',
 		accessorKey: 'serial',
+
 		muiFilterTextFieldProps: { placeholder: 'Num. de Serie' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.serial}</p>,
 	},
 	{
 		header: 'Marca',
 		accessorKey: 'version',
 		muiFilterTextFieldProps: { placeholder: 'Marca' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.version}</p>,
 	},
 	{
 		header: 'Estado',
@@ -31,6 +40,7 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 		size: 50,
 		enableColumnFilter: false,
 		enableClickToCopy: false,
+
 		Cell: ({ row }) => {
 			const status = {
 				0: {
@@ -53,7 +63,9 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 			return (
 				<div className='flex items-center justify-center md:justify-start w-full'>
 					<Circle color={status[row.original?.status_recloser].color} />
-					<p className='m-0 p-0 ml-2 text-base'>{`${status[row.original?.status_recloser].description}`}</p>
+					<p className='m-0 p-0 ml-2 text-base dark:!text-black'>{`${
+						status[row.original?.status_recloser].description
+					}`}</p>
 				</div>
 			)
 		},
@@ -64,6 +76,7 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 		size: 185,
 		enableColumnFilter: false,
 		enableClickToCopy: false,
+
 		Cell: ({ row }) => {
 			return (
 				<FormControlLabel
@@ -74,6 +87,7 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 							name={row.original.name}
 						/>
 					}
+					className='dark:text-black m-0 p-0'
 					label={row.original?.status_alarm ? 'Activada' : 'Desactivada'}
 				/>
 			)
@@ -92,15 +106,10 @@ export const ColumnsRecloser = (changeAlarm, newTab, deleteRecloser) => [
 				<>
 					<IconButton
 						onClick={() => newTab(row.original)}
-						className='!m-1 !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
+						// size='small'
+						className='!m-0 !text-base !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
 					>
 						<BiWindowOpen />
-					</IconButton>
-					<IconButton
-						onClick={() => deleteRecloser(row.original)}
-						className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
-					>
-						<BiTrash />
 					</IconButton>
 				</>
 			)
@@ -120,7 +129,8 @@ export const ColumnsRecloserCel = (changeAlarm, newTab, deleteRecloser) => [
 		muiTableBodyCellProps: {
 			style: { minWidth: 'auto' },
 		},
-		Cell: ({ row }) => <div className='text-xs'>{row.original.version}</div>,
+
+		Cell: ({ row }) => <div className='text-xs dark:!text-black'>{row.original.version}</div>,
 	},
 	{
 		header: <span className='text-xs'>Nombre</span>,
@@ -132,8 +142,12 @@ export const ColumnsRecloserCel = (changeAlarm, newTab, deleteRecloser) => [
 		muiTableBodyCellProps: {
 			style: { minWidth: 'auto' },
 		},
+
 		Cell: ({ row }) => (
-			<div className='text-xs' style={{ overflow: 'hidden', whiteSpace: 'normal', wordWrap: 'break-word' }}>
+			<div
+				className='text-xs dark:!text-black'
+				style={{ overflow: 'hidden', whiteSpace: 'normal', wordWrap: 'break-word' }}
+			>
 				{row.original.name}
 			</div>
 		),
@@ -180,16 +194,9 @@ export const ColumnsRecloserCel = (changeAlarm, newTab, deleteRecloser) => [
 					<IconButton
 						size='small'
 						onClick={() => newTab(row.original)}
-						className='!m-1 !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
+						className='!m-0  !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
 					>
 						<BiWindowOpen />
-					</IconButton>
-					<IconButton
-						size='small'
-						onClick={() => deleteRecloser(row.original)}
-						className='!m-1 !bg-[#fd7979] hover:!bg-[#ff5656] !text-black !shadow-md'
-					>
-						<BiTrash />
 					</IconButton>
 				</>
 			)
