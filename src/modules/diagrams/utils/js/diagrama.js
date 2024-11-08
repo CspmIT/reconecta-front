@@ -248,11 +248,11 @@ export const getDataDetail = (data) => {
 export const textosAdd = (data, context) => {
 	const darkMode = storage.get('dark')
 	context.fillStyle = darkMode ? 'white' : 'Black'
-	context.font = '150px'
+	context.font = '15px Arial'
 	context.textAlign = 'start'
 	context.textAlign = 'center'
 	context.fillText('Tension de', 620, 20)
 	context.fillText('entrada 132 kV', 620, 40)
-	context.fillText('Tension de', 620, 100)
-	context.fillText('salida 13,2 kV', 620, 120)
+	context.fillText('Tension de', 620, 110)
+	context.fillText('salida 13,2 kV', 620, 130)
 }

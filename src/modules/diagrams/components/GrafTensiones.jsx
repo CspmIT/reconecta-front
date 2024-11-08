@@ -6,6 +6,8 @@ import { useContext, useEffect } from 'react'
 import { MainContext } from '../../../context/MainContext'
 function GrafTensiones({ data, title }) {
 	const { darkMode } = useContext(MainContext)
+	const categories = data.map((point) => new Date(point.date).toLocaleString())
+	const seriesData = data.map((point) => point.value)
 	const options = {
 		chart: {
 			type: 'line',
@@ -22,20 +24,7 @@ function GrafTensiones({ data, title }) {
 			enabled: false,
 		},
 		xAxis: {
-			categories: [
-				'Enero',
-				'Febrero',
-				'Marzo',
-				'Abril',
-				'Mayo',
-				'Junio',
-				'Julio',
-				'Agosto',
-				'Septiembre',
-				'Octubre',
-				'Noviembre',
-				'Diciembre',
-			],
+			categories,
 			title: {
 				style: {
 					color: darkMode ? 'white' : 'black',
@@ -51,6 +40,7 @@ function GrafTensiones({ data, title }) {
 		},
 		yAxis: {
 			title: {
+				text: 'MVA',
 				style: {
 					color: darkMode ? 'white' : 'black',
 				},
@@ -65,7 +55,7 @@ function GrafTensiones({ data, title }) {
 		},
 		series: [
 			{
-				data,
+				data: seriesData,
 			},
 		],
 	}
