@@ -31,6 +31,7 @@ import { front } from '../../../utils/routes/app.routes'
 import styles from '../utils/css/styles.module.css'
 import { io } from 'socket.io-client'
 import Cookies from 'js-cookie'
+import Logo from '/public/assets/img/Logo/LogoText.png'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -156,11 +157,7 @@ function NavBarCustom({ setLoading }) {
 						<MenuIcon />
 					</IconButton>
 
-					<img
-						onClick={() => navigate('home')}
-						className=' max-h-7 cursor-pointer'
-						src='public/assets/img/Logo/LogoText.png'
-					/>
+					<img onClick={() => navigate('home')} className=' max-h-7 cursor-pointer' src={Logo} />
 					{/* <Typography variant='h6' noWrap component='div'>
 						Reconecta
 					</Typography> */}
