@@ -256,6 +256,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 			sx: {
 				minHeight: prop.pagination ? '3.5rem' : '2rem',
 				backgroundColor: 'transparent',
+				color: 'black !important',
 				...prop.footer,
 			},
 		},

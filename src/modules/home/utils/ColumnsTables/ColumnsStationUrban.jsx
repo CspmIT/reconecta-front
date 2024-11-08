@@ -7,11 +7,15 @@ export const ColumnsUrban = (newTab) => [
 		header: 'Nombre',
 		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'Nombre' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.name}</p>,
 	},
 	{
 		header: 'Ubicación',
 		accessorKey: 'location',
 		muiFilterTextFieldProps: { placeholder: 'Ubicación' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.location}</p>,
 	},
 	{
 		header: 'On-Line',
@@ -19,6 +23,7 @@ export const ColumnsUrban = (newTab) => [
 		size: 80,
 		enableColumnFilter: false,
 		enableClickToCopy: false,
+
 		Cell: ({ row }) => {
 			return (
 				<div className='flex items-center w-full'>
@@ -38,6 +43,7 @@ export const ColumnsUrban = (newTab) => [
 		enableSorting: false,
 		enableColumnFilter: false,
 		enableClickToCopy: false,
+
 		Cell: ({ row }) => {
 			const info = {
 				name: row.original.name,
@@ -59,7 +65,7 @@ export const ColumnsUrban = (newTab) => [
 
 export const ColumnsUrbanCel = (newTab) => [
 	{
-		header: <span className="text-xs">Nombre</span>,
+		header: <span className='text-xs'>Nombre</span>,
 		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'Nombre' },
 		muiTableHeadCellProps: {
@@ -68,12 +74,10 @@ export const ColumnsUrbanCel = (newTab) => [
 		muiTableBodyCellProps: {
 			style: { minWidth: 'auto' },
 		},
-		Cell: ({ row }) => (
-			<div  className="text-xs">{row.original.name}</div>
-		),
+		Cell: ({ row }) => <div className='text-xs dark:text-black'>{row.original.name}</div>,
 	},
 	{
-		header: <span className="text-xs">On-Line</span>,
+		header: <span className='text-xs'>On-Line</span>,
 		accessorKey: 'status',
 		size: 10,
 		enableColumnFilter: false,
@@ -112,7 +116,7 @@ export const ColumnsUrbanCel = (newTab) => [
 			}
 			return (
 				<IconButton
-				size="small"
+					size='small'
 					onClick={() => newTab(info)}
 					className=' !bg-[#bce1fc] hover:!bg-[#74bdf2] !text-black !shadow-md'
 				>

@@ -54,7 +54,11 @@ function TabDinamic({ ...props }) {
 							} ${classTabs}`}
 							label={
 								<div className='pl-2 flex items-center justify-between w-full'>
-									<span>{item.name}</span>
+									<span
+										className={`${!item.name ? ' !italic font-light lowercase text-gray-400' : ''}`}
+									>
+										{item.name || '(Sin Matricula)'}
+									</span>
 									<a onClick={() => handleRemoveTab(index)} className=''>
 										<CloseIcon fontSize='small' />
 									</a>

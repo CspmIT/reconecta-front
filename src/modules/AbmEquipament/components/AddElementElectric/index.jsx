@@ -10,7 +10,6 @@ function AddElementElectric({ setValue, dataEdit }) {
 	const [openSub, setOpenSub] = useState(false)
 	const [selectElement, setSelectElement] = useState([])
 	const [listElement, setListElement] = useState([])
-	const [device, setDevice] = useState(null)
 	const handleOpen = (evento) => {
 		setOpenSub(!openSub)
 		setAnchorEl(evento.currentTarget)
@@ -41,7 +40,7 @@ function AddElementElectric({ setValue, dataEdit }) {
 		}
 		setSelectElement(listElement)
 	}
-	const addElementList = () => {
+	const addElementList = (device) => {
 		const deviceSelect = selectElement.filter((item) => item.id == device)
 		const result = listElement.filter((item) => item.id != deviceSelect[0].id)
 		setListElement([...result, ...deviceSelect])
@@ -118,7 +117,6 @@ function AddElementElectric({ setValue, dataEdit }) {
 					variant='contained'
 				>
 					Elemento Electrico
-					{/* {openSub ? <Minimize /> : <Add />} */}
 				</Button>
 				<Popper
 					ref={selectType}
@@ -148,7 +146,9 @@ function AddElementElectric({ setValue, dataEdit }) {
 						label={`Elementos`}
 						className='w-1/2'
 						defaultValue={''}
-						onChange={(e) => setDevice(e.target.value)}
+						onChange={(e) => {
+							addElementList(e.target.value)
+						}}
 					>
 						<MenuItem key={0} value={''}>
 							<em>Elemento</em>
@@ -161,11 +161,6 @@ function AddElementElectric({ setValue, dataEdit }) {
 							)
 						})}
 					</TextField>
-					{device && (
-						<Button variant='contained' color='warning' className='!mt-4' onClick={addElementList}>
-							Agregar
-						</Button>
-					)}
 				</div>
 			)}
 			{listElement.length > 0 && (

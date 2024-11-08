@@ -16,19 +16,19 @@ function DiagramElectricity() {
 	const [zoom, setZoom] = useState(0)
 
 	const scaleSettings = [
-		{ width: 425, scale: 'scale-[0.21]' },
-		{ width: 640, scale: 'scale-[0.33]' },
-		{ width: 768, scale: 'scale-[0.40]' },
-		{ width: 1024, scale: 'scale-[0.53]' },
-		{ width: 1280, scale: 'scale-[0.67]' },
-		{ width: 1366, scale: 'scale-[0.71]' },
-		{ width: 1440, scale: 'scale-[0.75]' },
-		{ width: 1600, scale: 'scale-[0.83]' },
-		{ width: 1920, scale: 'scale-[0.9]' },
-		{ width: 2048, scale: 'scale-[1.10]' },
-		{ width: 2560, scale: 'scale-[1.33]' },
-		{ width: 3840, scale: 'scale-[2.00]' },
-		{ width: Infinity, scale: 'scale-[2.00]' },
+		{ width: 425, scale: 'scale-[0.21]', translate: 'translate-y-1' },
+		{ width: 640, scale: 'scale-[0.33]', translate: 'translate-y-1' },
+		{ width: 768, scale: 'scale-[0.40]', translate: 'translate-y-1' },
+		{ width: 1024, scale: 'scale-[0.53]', translate: 'translate-y-1' },
+		{ width: 1280, scale: 'scale-[0.67]', translate: 'translate-y-1' },
+		{ width: 1366, scale: 'scale-[0.70]', translate: 'translate-y-3' },
+		{ width: 1440, scale: 'scale-[0.70]', translate: 'translate-y-4' },
+		{ width: 1600, scale: 'scale-[0.73]', translate: 'translate-y-4' },
+		{ width: 1920, scale: 'scale-[0.8]', translate: 'translate-y-1' },
+		{ width: 2048, scale: 'scale-[1.10]', translate: 'translate-y-1' },
+		{ width: 2560, scale: 'scale-[1.33]', translate: 'translate-y-1' },
+		{ width: 3840, scale: 'scale-[2.00]', translate: 'translate-y-1' },
+		{ width: Infinity, scale: 'scale-[2.00]', translate: 'translate-y-1' },
 	]
 
 	const changeZoom = () => {

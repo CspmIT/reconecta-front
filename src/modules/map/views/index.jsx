@@ -62,8 +62,7 @@ function Map() {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
 
 			// Group markers by id_map
-			// const markersByMap = {}
-			const markersByMap = []
+			const markersByMap = {}
 
 			await Promise.all(
 				nodes.data.map(async (item) => {
@@ -93,11 +92,10 @@ function Map() {
 					}
 
 					// Group markers by id_map
-					// if (!markersByMap[item.id_map]) {
-					// 	markersByMap[item.id_map] = []
-					// }
-					// markersByMap[item.id_map].push(marker)
-					markersByMap.push(marker)
+					if (!markersByMap[item.id_map]) {
+						markersByMap[item.id_map] = []
+					}
+					markersByMap[item.id_map].push(marker)
 				})
 			)
 
@@ -157,9 +155,8 @@ function Map() {
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}
 									zoom={map.zoom}
-									markers={markersRecloser}
-									// markers={markersRecloser[map.id]}
-									polylines={polylines}
+									markers={markersRecloser[map.id]}
+									polylines={polylines[map.id]}
 								/>
 							</div>
 						)

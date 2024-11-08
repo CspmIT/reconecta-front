@@ -36,7 +36,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 			>
 				<ListItemIcon
 					className={`${
-						item.subMenus.some((value) => buttonActive.includes(value.link))
+						item.subMenus.some((value) => buttonActive?.includes(value.link))
 							? ' !text-blue-500 dark:!text-blue-500'
 							: ''
 					}`}
@@ -53,7 +53,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						display: isMobile ? 'none !important' : 'block',
 					}}
 					className={`${
-						item.subMenus.some((value) => buttonActive.includes(value.link))
+						item.subMenus.some((value) => buttonActive?.includes(value.link))
 							? ' !text-blue-500 dark:!text-blue-500'
 							: ''
 					}`}
@@ -68,7 +68,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 								<Link to={submenu.link} className='text-black dark:text-white flex pl-5'>
 									<ListItemIcon
 										className={`${
-											buttonActive.includes(submenu.link)
+											buttonActive?.includes(submenu.link)
 												? ' !text-blue-500 dark:!text-blue-500'
 												: ''
 										}`}
@@ -77,7 +77,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 									</ListItemIcon>
 									<ListItemText
 										className={`${
-											buttonActive.includes(submenu.link)
+											buttonActive?.includes(submenu.link)
 												? ' !text-blue-500 dark:!text-blue-500'
 												: ''
 										}`}

@@ -33,7 +33,7 @@ function TableRecloser({ ...props }) {
 			)
 		} catch (error) {}
 	}
-
+	const columnsDefaultHide = ['serial', 'version', 'status_alarm']
 	const getColumns = async () => {
 		try {
 			const user = storage.get('usuario').sub
@@ -46,6 +46,11 @@ function TableRecloser({ ...props }) {
 				acc[item.name] = item.status
 				return acc
 			}, {})
+			for (const element of columnsDefaultHide) {
+				if (!visibility?.[element]) {
+					visibility[element] = false
+				}
+			}
 			storage.set('visibilityRecloser', visibility)
 			setVisibility(visibility)
 		} catch (error) {
@@ -72,10 +77,10 @@ function TableRecloser({ ...props }) {
 		await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveConfigTable`, 'POST', data)
 	}
 
-	const changeView = (nameView) => {
-		setInfoNav(nameView)
-		navigate(`/Abm/${nameView}`)
-	}
+	// const changeView = (nameView) => {
+	// 	setInfoNav(nameView)
+	// 	navigate(`/Abm/${nameView}`)
+	// }
 	const deleteRecloser = async (data) => {
 		Swal.fire({
 			title: '¡Atención!',
@@ -129,11 +134,20 @@ function TableRecloser({ ...props }) {
 			}
 		})
 	}
-
 	useEffect(() => {
 		getdisplay()
 	}, [])
 
+	const [darkMode, setDarkMode] = useState(storage.get('dark'))
+	useEffect(() => {
+		setDarkMode(storage.get('dark'))
+	}, [storage.get('dark')])
+
+	const stylesTable = {
+		header: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+		toolbarClass: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+		footer: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+	}
 	return (
 		<>
 			{reclosers ? (
@@ -147,13 +161,13 @@ function TableRecloser({ ...props }) {
 						}
 						density='compact'
 						header={{
-							background: 'rgb(190 190 190)',
+							...stylesTable.header,
 							fontSize: '18px',
 							fontWeight: 'bold',
 						}}
-						toolbarClass={{ background: 'rgb(190 190 190)' }}
+						toolbarClass={{ ...stylesTable.toolbarClass }}
 						body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-						footer={{ background: 'rgb(190 190 190)' }}
+						footer={{ ...stylesTable.footer }}
 						card={{
 							boxShadow: `1px 1px 8px 0px #00000046`,
 							borderRadius: '0.75rem',

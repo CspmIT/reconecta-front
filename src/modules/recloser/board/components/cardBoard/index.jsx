@@ -58,11 +58,14 @@ function CardBoard({ onCardSelect, info }) {
 					/>
 				))}
 			</Tabs>
-			<div style={{maxWidth: isMobile ? '84%' : ''}} className='w-11/12 md:w-full bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-700'>
+			<div
+				style={{ maxWidth: isMobile ? '84%' : '' }}
+				className='w-11/12 md:w-full bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-700'
+			>
 				{selectedCardId === 1 && <MetrologyBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 3 && <AnalyticsBoard idRecloser={info?.recloser?.id || null} />}
-				{selectedCardId === 4 && <ManeuverBoard info={info || {}} />}
+				{selectedCardId === 4 && <ManeuverBoard idRecloser={info?.recloser?.id || null} />}
 			</div>
 		</div>
 	)

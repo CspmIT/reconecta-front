@@ -12,7 +12,9 @@ const HeaderBoard = ({ info }) => {
 			if (info.instantaneo.length === 0) {
 				setStatusReco(2)
 			} else {
-				setStatusReco(info.instantaneo?.['d/c']?.[0]?.value || 3)
+				setStatusReco(
+					typeof info.instantaneo?.['d/c']?.[0]?.value == 'number' ? info.instantaneo?.['d/c']?.[0]?.value : 3
+				)
 			}
 			setDataHead({
 				name: info?.recloser?.relation?.nodes?.['name'] || 'S/D',
