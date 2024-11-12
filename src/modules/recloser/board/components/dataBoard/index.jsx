@@ -84,7 +84,7 @@ const DataBoard = () => {
 					setTabActive(tabsfiltered.length)
 					setInfoNav(!tabsfiltered.length ? '' : tabsfiltered)
 					setTabCurrent(0)
-					navigate('Home')
+					navigate('/Home')
 				} catch (error) {
 					console.error(error)
 					Swal.fire({
@@ -111,7 +111,7 @@ const DataBoard = () => {
 					setTabActive(tabsfiltered.length)
 					setInfoNav(!tabsfiltered.length ? '' : tabsfiltered)
 					setTabCurrent(0)
-					navigate('Home')
+					navigate('/Home')
 				} catch (error) {
 					console.error(error)
 					Swal.fire({

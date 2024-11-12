@@ -14,7 +14,7 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.number}</p>,
 	},
 	{
-		header: 'Nombre',
+		header: 'Nodo',
 		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'name' },
 		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.name}</p>,
@@ -133,7 +133,7 @@ export const ColumnsRecloserCel = (changeAlarm, newTab, deleteRecloser) => [
 		Cell: ({ row }) => <div className='text-xs dark:!text-black'>{row.original.version}</div>,
 	},
 	{
-		header: <span className='text-xs'>Nombre</span>,
+		header: <span className='text-xs'>Nodo</span>,
 		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'name' },
 		muiTableHeadCellProps: {

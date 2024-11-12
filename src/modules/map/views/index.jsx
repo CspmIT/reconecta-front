@@ -60,7 +60,6 @@ function Map() {
 	const getdisplay = async () => {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
-
 			// Group markers by id_map
 			const markersByMap = {}
 
@@ -72,7 +71,9 @@ function Map() {
 								number: item.number,
 						  }
 						: {}
-					const recloser = item.node_history.filter((historyItem) => historyItem.type_device == 1)
+					const recloser = item.node_history.filter(
+						(historyItem) => historyItem.type_device == 'Reconectador'
+					)
 
 					// Create a new marker
 					const marker = new markerCustom(

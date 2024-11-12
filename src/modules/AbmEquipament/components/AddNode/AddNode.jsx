@@ -40,6 +40,11 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 			setInfo(dataEdit)
 		}
 	}, [dataEdit])
+	const typeDevice = [
+		{ title: 'Nodo de Reconexión', value: 'Reconectador' },
+		{ title: 'Nodo de Estacion Urbana', value: 'Sub estación urbana' },
+		{ title: 'Nodo de Estacion Rural', value: 'Sub estación rural' },
+	]
 	return (
 		<>
 			<p className='w-full text-center text-2xl mb-3'>Infraestructura</p>
@@ -61,9 +66,13 @@ function AddNode({ register, errors, setValue, changeInfra, dataEdit }) {
 					<MenuItem key={0} value=''>
 						<em>Seleccionar tipo</em>
 					</MenuItem>
-					<MenuItem key={1} value={1}>
-						Nodo de Reconexión
-					</MenuItem>
+					{typeDevice.map((item, index) => {
+						return (
+							<MenuItem key={index} value={item.value}>
+								{item.title}
+							</MenuItem>
+						)
+					})}
 				</TextField>
 			</div>
 

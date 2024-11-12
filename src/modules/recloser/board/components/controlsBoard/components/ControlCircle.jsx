@@ -30,7 +30,7 @@ function ControlCircle({ control, enabled, contador, info }) {
 	return (
 		<>
 			<label>
-				<b className='mr-2'>{control.title}</b>
+				<b className='mr-2 dark:!text-black'>{control.title}</b>
 			</label>
 			<div className='flex flex-row justify-center'>
 				{Array.from({ length: 4 }, (_, i) => (

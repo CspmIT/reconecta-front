@@ -31,11 +31,10 @@ function CardDashboard() {
 				if (recloser?.data === 0) acc++
 				return acc
 			}, 0)
-
 			const info = dataRecloser.data.reduce(
 				(acc, val) => {
 					if (val.status_recloser === 1) acc.recoOpen++
-					else if (val.status_recloser === 3) acc.recoOffline++
+					if (val.status_recloser === 3) acc.recoOffline++
 					return acc
 				},
 				{

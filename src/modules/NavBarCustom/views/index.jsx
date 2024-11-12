@@ -83,7 +83,7 @@ function NavBarCustom({ setLoading }) {
 			setButtonActive('/home')
 		}
 		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && infoNav == '') {
-			navigate('Home')
+			navigate('/Home')
 		}
 	}, [location, locationTAbs])
 
