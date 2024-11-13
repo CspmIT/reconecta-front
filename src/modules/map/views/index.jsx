@@ -12,6 +12,7 @@ function Map() {
 	const [dataMap, setDataMap] = useState([])
 	const [zoomActive, setZoomActive] = useState([])
 	const [activeMove, setActiveMove] = useState([])
+	const [changeZoom, setChangeZoom] = useState(false)
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -30,7 +31,6 @@ function Map() {
 			setActiveMove(Array(data.length).fill(true))
 		}
 		getCenter()
-		getdisplay()
 	}, [])
 
 	// Escalas para el ajuste de zoom
@@ -62,43 +62,44 @@ function Map() {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
 			// Group markers by id_map
 			const markersByMap = {}
+			if (nodes.data.length > 0) {
+				await Promise.all(
+					nodes.data.map(async (item) => {
+						const info = item.node_history.length
+							? {
+									name: item.name,
+									number: item.number,
+							  }
+							: {}
+						const recloser = item.node_history.filter(
+							(historyItem) => historyItem.type_device == 'Reconectador'
+						)
 
-			await Promise.all(
-				nodes.data.map(async (item) => {
-					const info = item.node_history.length
-						? {
-								name: item.name,
-								number: item.number,
-						  }
-						: {}
-					const recloser = item.node_history.filter(
-						(historyItem) => historyItem.type_device == 'Reconectador'
-					)
+						// Create a new marker
+						const marker = new markerCustom(
+							item.id,
+							item.number,
+							item.lat_location,
+							item.lng_location,
+							3,
+							info,
+							item.alert,
+							recloser
+						)
 
-					// Create a new marker
-					const marker = new markerCustom(
-						item.id,
-						item.number,
-						item.lat_location,
-						item.lng_location,
-						3,
-						info,
-						item.alert,
-						recloser
-					)
+						// Fetch additional information if needed
+						if (recloser.length > 0) {
+							await marker.fetchInfo()
+						}
 
-					// Fetch additional information if needed
-					if (recloser.length > 0) {
-						await marker.fetchInfo()
-					}
-
-					// Group markers by id_map
-					if (!markersByMap[item.id_map]) {
-						markersByMap[item.id_map] = []
-					}
-					markersByMap[item.id_map].push(marker)
-				})
-			)
+						// Group markers by id_map
+						if (!markersByMap[item.id_map]) {
+							markersByMap[item.id_map] = []
+						}
+						markersByMap[item.id_map].push(marker)
+					})
+				)
+			}
 
 			setMarkersRecloser(markersByMap)
 		} catch (error) {
@@ -118,14 +119,17 @@ function Map() {
 			newState[index] = !newState[index]
 			return newState
 		})
+		setChangeZoom(true)
 	}
 	useEffect(() => {
-		if (markersRecloser && dataMap) {
+		if (markersRecloser && dataMap && !changeZoom) {
 			setZoomActive(Array(dataMap.length).fill(false))
 			setActiveMove(Array(dataMap.length).fill(false))
 		}
 	}, [markersRecloser])
 	useEffect(() => {
+		getdisplay()
+
 		const intervalId = setInterval(() => {
 			getdisplay()
 		}, 15000)
