@@ -15,7 +15,7 @@ function CardsInfo({ title, infoData, colorTitle }) {
 						? 'text-blue-500'
 						: colorTitle === 'green'
 						? 'text-green-500'
-						: 'text-black'
+						: 'text-black dark:text-white'
 				}`}
 			>
 				{title}
@@ -33,7 +33,7 @@ function CardsInfo({ title, infoData, colorTitle }) {
 							? 'text-blue-500'
 							: colorTitle === 'green'
 							? 'text-green-500'
-							: 'text-black'
+							: 'text-black dark:text-white'
 					}`}
 				>
 					{infoData}

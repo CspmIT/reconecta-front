@@ -104,9 +104,8 @@ function ConfigMenu() {
 
 	const savePassword = async (info, password) => {
 		try {
-			const data = { id_user: info?.id, password: password }
+			const data = { id_user: info?.id, id: info?.passwordRecloser?.id || 0, password: password }
 			await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/savePass`, 'POST', data)
-			// Verificar que la respuesta sea correcta
 
 			await getUsers()
 			Swal.fire({

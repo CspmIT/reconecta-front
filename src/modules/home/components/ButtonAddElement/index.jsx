@@ -38,7 +38,7 @@ function ButtonAddElement() {
 				<em className='!text-black ml-3 underline'>Nomenclatura Catastral</em>
 				<div className='ml-3'>
 					<MenuItem onClick={() => changeView('/Abm/node')} className='hover:!bg-slate-300 !rounded-lg'>
-						<p className='text-black font-semibold'>Nodo de Infraestructura</p>
+						<p className='text-black font-semibold'>Nuevo Nodo de Infraestructura</p>
 					</MenuItem>
 				</div>
 				<Divider sx={{ my: 0.5 }} />
@@ -48,12 +48,15 @@ function ButtonAddElement() {
 						onClick={() => changeView('/AbmDevice/recloser')}
 						className='hover:!bg-slate-300 !rounded-lg'
 					>
-						<p className='text-black font-semibold'>Reconectador</p>
+						<p className='text-black font-semibold'>Nuevo Reconectador</p>
 					</MenuItem>
-					{/* <MenuItem onClick={() => changeView('/AbmDevice/meter')} className='hover:!bg-slate-300 !rounded-lg'>
-					<p className='text-black font-semibold'>Medidor</p>
-				</MenuItem>
-				<MenuItem
+					<MenuItem
+						onClick={() => changeView('/AbmDevice/meter')}
+						className='hover:!bg-slate-300 !rounded-lg'
+					>
+						<p className='text-black font-semibold'>Nuevo Medidor</p>
+					</MenuItem>
+					{/* <MenuItem
 					onClick={() => changeView('/AbmDevice/netAnalyzer')}
 					className='hover:!bg-slate-300 !rounded-lg'
 				>

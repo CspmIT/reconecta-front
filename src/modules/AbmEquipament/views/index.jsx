@@ -101,7 +101,7 @@ function AbmEquipament() {
 								/>
 							</>
 						)}
-						{infra == 'subStationUrban' && (
+						{infra == 'sub estación urbana' && (
 							<AddSubStationUrban
 								register={register}
 								errors={errors}
@@ -109,7 +109,7 @@ function AbmEquipament() {
 								clearErrors={clearErrors}
 							/>
 						)}
-						{infra == 'subStationRural' && (
+						{infra == 'sub estación rural' && (
 							<AddSubStationRural
 								register={register}
 								errors={errors}

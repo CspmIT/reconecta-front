@@ -57,7 +57,7 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 			map.addControl(drawControl)
 		}
 
-		const handleDrawCreated = (event) => {
+		const handleDrawCreated = async (event) => {
 			const layer = event.layer
 			if (event.layerType === 'marker') {
 				const { lat, lng } = layer.getLatLng()
@@ -67,13 +67,14 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 				}
 				setCreatedMarkers([newMarker])
 				// Add the marker to the drawnItems group to enable editing
-				// drawnItems.addLayer(layer)
+				drawnItems.clearLayers()
+				drawnItems.addLayer(layer)
 			} else {
 				drawnItems.addLayer(layer)
 			}
 		}
 
-		const handleDrawEdited = (event) => {
+		const handleDrawEdited = async (event) => {
 			const layers = event.layers
 			layers.eachLayer((layer) => {
 				if (layer instanceof L.Polyline) {
@@ -111,7 +112,8 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 				}
 			})
 		}
-		const handleDrawDelete = () => {
+
+		const handleDrawDelete = async () => {
 			setCreatedMarkers([])
 			drawnItems.clearLayers()
 			getLatLngMarker(null, null)
@@ -131,10 +133,10 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 	}, [map, polylines, editor])
 	useEffect(() => {
 		setCreatedMarkers(markers)
-	}, [markers])
+	}, [])
 	return (
 		<>
-			{createdMarkers &&
+			{createdMarkers.length > 0 &&
 				createdMarkers.map((marker, index) => (
 					<PopupMarker
 						key={index}

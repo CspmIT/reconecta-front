@@ -16,7 +16,7 @@ function AddElementElectric({ setValue, dataEdit }) {
 	}
 	const addElementSelect = async (element) => {
 		let info
-		let listElement
+		let listElement = []
 		setOpenSub(false)
 		switch (element) {
 			case 1:
@@ -128,10 +128,10 @@ function AddElementElectric({ setValue, dataEdit }) {
 					<MenuItem onClick={() => addElementSelect(1)} className='hover:!bg-slate-300 !rounded-lg'>
 						<p className='text-black font-semibold'>Reconectador</p>
 					</MenuItem>
-					{/* <MenuItem onClick={() => addElementSelect(2)} className='hover:!bg-slate-300 !rounded-lg'>
+					<MenuItem onClick={() => addElementSelect(2)} className='hover:!bg-slate-300 !rounded-lg'>
 						<p className='text-black font-semibold'>Medidor</p>
 					</MenuItem>
-					<MenuItem
+					{/* <MenuItem
 						onClick={() => addElementSelect(3)}
 						className='hover:!bg-slate-300 !rounded-lg'
 					>

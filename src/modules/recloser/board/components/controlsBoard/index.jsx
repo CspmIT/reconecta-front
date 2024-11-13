@@ -186,7 +186,9 @@ const ControlsBoard = ({ info }) => {
 								className='!w-full'
 								aria-controls={`panel-content`}
 							>
-								<Typography className='flex items-center justify-center w-full'>Avanzado</Typography>
+								<Typography className='flex items-center justify-center w-full uppercase'>
+									Controles Avanzado
+								</Typography>
 							</AccordionSummary>
 							<AccordionDetails className={`flex flex-wrap gap-3`}>
 								{controlAdvance.map((boardcontrol, index) => {
