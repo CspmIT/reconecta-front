@@ -4,51 +4,39 @@ import { BiWindowOpen } from 'react-icons/bi'
 
 export const ColumnsMeter = (newTab) => [
 	{
-		header: 'Nro de serie',
-		accessorKey: 'num_serie',
-		muiFilterTextFieldProps: { placeholder: 'Nro de serie' },
-
-		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.num_serie}</p>,
+		header: 'Matricula',
+		accessorKey: 'matricula',
+		muiFilterTextFieldProps: { placeholder: 'Matricula' },
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.matricula}</p>,
 	},
 	{
-		header: 'Nombre',
+		header: 'Nodo',
 		accessorKey: 'device_name',
-		muiFilterTextFieldProps: { placeholder: 'Nombre usuario' },
-
+		muiFilterTextFieldProps: { placeholder: 'Nodo' },
 		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.device_name}</p>,
 	},
 	{
-		header: 'Tipo de Estación',
-		accessorKey: 'type_station',
-		muiFilterTextFieldProps: { placeholder: 'Tipo de Estación' },
-
-		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.type_station}</p>,
+		header: 'Nro de serie',
+		accessorKey: 'serial',
+		muiFilterTextFieldProps: { placeholder: 'Nro de serie' },
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.serial}</p>,
 	},
 	{
 		header: 'Version',
 		accessorKey: 'version',
 		muiFilterTextFieldProps: { placeholder: 'Version' },
-
 		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.version}</p>,
 	},
 	{
-		header: 'Marca',
-		accessorKey: 'brand',
-		muiFilterTextFieldProps: { placeholder: 'Marca' },
-
-		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.brand}</p>,
-	},
-	{
 		header: 'On-Line',
-		accessorKey: 'status',
+		accessorKey: 'status_meter',
 		size: 80,
 		enableColumnFilter: false,
 		enableClickToCopy: false,
-
 		Cell: ({ row }) => {
 			return (
 				<div className='flex items-center w-full'>
-					{parseInt(row.original?.status) > 0 ? (
+					{parseInt(row.original?.status_meter) > 0 ? (
 						<CheckCircleSharp color='success' className='!text-3xl' />
 					) : (
 						<ErrorSharp color='warning' className='!text-3xl' />
@@ -86,7 +74,7 @@ export const ColumnsMeter = (newTab) => [
 export const ColumnsMeterCel = (newTab) => [
 	{
 		header: <span className='text-xs'>Nro de serie</span>,
-		accessorKey: 'num_serie',
+		accessorKey: 'serial',
 		muiFilterTextFieldProps: { placeholder: 'Nro de serie' },
 		muiTableHeadCellProps: {
 			style: { width: 'auto', minWidth: '20px', maxWidth: '20px' },

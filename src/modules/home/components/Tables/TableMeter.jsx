@@ -2,10 +2,8 @@ import { useContext, useEffect, useState } from 'react'
 import TableCustom from '../../../../components/TableCustom'
 import { useNavigate } from 'react-router-dom'
 import { storage } from '../../../../storage/storage'
-import { IconButton, useMediaQuery } from '@mui/material'
-import { Add } from '@mui/icons-material'
+import { useMediaQuery } from '@mui/material'
 import { MainContext } from '../../../../context/MainContext'
-import { deviceSubStation, devices, listMeters } from '../../utils/dataTables/dataMeter'
 import { ColumnsMeter, ColumnsMeterCel } from '../../utils/ColumnsTables/ColumnsMeter'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
@@ -14,45 +12,17 @@ function TableMeter({ ...props }) {
 	const [meters, setMeters] = useState([])
 	const navigate = useNavigate()
 	const isMobile = useMediaQuery('(max-width: 600px)')
-	const getdisplay = () => {
-		const metersList = listMeters.map((meter) => {
-			deviceSubStation
-				.filter((device) => device.id_device == meter.id)
-				.map((device) => {
-					meter.device_name = device.name
-					meter.type_station = 'SUB ESTACIÓN'
-				})
-			devices
-				.filter((device) => device.id_device == meter.id)
-				.map((device) => {
-					switch (parseInt(device.id_substation)) {
-						case 1:
-							meter.device_name = 'MEDICION EN BARRA'
-							break
-						case 2:
-							meter.device_name = 'ALIMENTADOR 1'
-							break
-						case 3:
-							meter.device_name = 'ALIMENTADOR 2'
-							break
-						case 4:
-							meter.device_name = 'DISTRIBUIDOR 1'
-							break
-						case 5:
-							meter.device_name = 'DISTRIBUIDOR 2'
-							break
-						case 6:
-							meter.device_name = 'DISTRIBUIDOR 3'
-							break
-						case 7:
-							meter.device_name = 'DISTRIBUIDOR 4'
-							break
-					}
-					meter.type_station = 'ESTACIÓN DE REBAJE'
-				})
-			return meter
-		})
-		setMeters(metersList)
+	const getdisplay = async () => {
+		const metersList = await request(`${backend.Reconecta}/getListMeter`, 'GET')
+		const dataFormater = metersList.data.map((item) => ({
+			serial: item.serial,
+			id: item.id,
+			matricula: item.number,
+			device_name: item.name,
+			version: item.fullVersion,
+			status_meter: item.status_meter,
+		}))
+		setMeters(dataFormater)
 	}
 
 	const getColumns = async () => {
@@ -128,11 +98,6 @@ function TableMeter({ ...props }) {
 					boxShadow: `1px 1px 8px 0px #00000046`,
 					borderRadius: '0.75rem',
 				}}
-				// btnCustomToolbar={
-				// 	<IconButton id='basic-button' onClick={() => changeView('meter')}>
-				// 		<Add />
-				// 	</IconButton>
-				// }
 				topToolbar
 				pageSize={20}
 				copy
