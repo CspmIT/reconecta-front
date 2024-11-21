@@ -21,6 +21,7 @@ import autoTable from 'jspdf-autotable'
 import { FaFilePdf } from 'react-icons/fa'
 
 const csvConfig = mkConfig({
+	filename: 'Excel-export',
 	fieldSeparator: ',',
 	decimalSeparator: '.',
 	useKeysAsHeaders: true,
@@ -35,14 +36,34 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	// }
 	// exportar en excel toda la info
 	const handleExportData = () => {
-		const csv = generateCsv(csvConfig)(data)
+		const dataFormat = data.map((row) => {
+			const linea = Object.values(row).map((item) => {
+				if (item instanceof Date) {
+					item = `${item.toLocaleDateString()} ${item.toLocaleTimeString()}`
+				}
+				return item
+			})
+			return linea
+		})
+		const csv = generateCsv(csvConfig)(dataFormat)
 		download(csvConfig)(csv)
 	}
 
 	// Exportado de pdf
 	const handleExportRowsPdf = (rows) => {
 		const doc = new jsPDF()
-		const tableData = rows.map((row) => Object.values(row.original))
+		const tableData = rows
+			.map((row) => Object.values(row.original))
+			.map((row) => {
+				const linea = row.map((item) => {
+					if (item instanceof Date) {
+						item = `${item.toLocaleDateString()} ${item.toLocaleTimeString()}`
+					}
+					return item
+				})
+				return linea
+			})
+
 		const tableHeaders = columns.map((c) => c.header)
 
 		autoTable(doc, {
@@ -50,7 +71,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 			body: tableData,
 		})
 
-		doc.save('mrt-pdf-example.pdf')
+		doc.save('pdf-export.pdf')
 	}
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {

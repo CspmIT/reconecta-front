@@ -4,29 +4,29 @@ import Energi from './components/Energi'
 import Fasorial from './components/Fasorial'
 import Power from './components/Power'
 
-function Metrology() {
+function Metrology({ info }) {
 	const tabs = [
 		{
 			id: 1,
 			title: 'Básicos',
-			component: <Basic />,
+			component: <Basic info={{ version: info.version, brand: info.brand, serial: info.serial }} />,
 		},
 		{
 			id: 2,
 			title: 'Potencia',
-			component: <Power />,
+			component: <Power info={{ version: info.version, brand: info.brand, serial: info.serial }} />,
 		},
 		{
 			id: 3,
 			title: 'Energia',
-			component: <Energi />,
+			component: <Energi info={{ version: info.version, brand: info.brand, serial: info.serial }} />,
 		},
 		{
 			id: 4,
 			title: 'Diagrama Fasorial',
 			component: (
 				<div className='flex w-full  justify-center'>
-					<Fasorial />
+					<Fasorial info={{ version: info.version, brand: info.brand, serial: info.serial }} />
 				</div>
 			),
 		},

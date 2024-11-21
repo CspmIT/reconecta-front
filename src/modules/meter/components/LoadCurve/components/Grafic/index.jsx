@@ -1,163 +1,105 @@
+import { useNavigate } from 'react-router-dom'
 import GrafLinea from '../../../../../../components/Graphs/linechart'
-import {
-	dataGrafCorriente,
-	dataGrafCosenoFi,
-	dataGrafPotenciaActiva,
-	dataGrafPotenciaAparente,
-	dataGrafPotenciaReactiva,
-	dataGrafTension,
-} from './utils/dataTensiones'
+import { useEffect, useState } from 'react'
+import { request } from '../../../../../../utils/js/request'
+import { backend } from '../../../../../../utils/routes/app.routes'
+import Swal from 'sweetalert2'
+import { getFormatterGraf } from './utils/js/actions'
+import LoaderComponent from '../../../../../../components/Loader'
+import { MenuItem, TextField } from '@mui/material'
+import { dataGraficos } from './utils/dataGraf'
 
-function Grafic() {
-	const tensiones = [
-		{
-			name: 'Linea 1',
-			data: dataGrafTension.Linea1,
-		},
-		{
-			name: 'Linea 3',
-			data: dataGrafTension.Linea3,
-		},
-		{
-			name: 'Linea 4',
-			data: dataGrafTension.Linea5,
-		},
-	]
-	const corrientes = [
-		{
-			name: 'Linea 1',
-			data: dataGrafCorriente.Linea1,
-		},
-		{
-			name: 'Linea 3',
-			data: dataGrafCorriente.Linea3,
-		},
-		{
-			name: 'Linea 4',
-			data: dataGrafCorriente.Linea5,
-		},
-	]
-	const potenciaActiva = [
-		{
-			name: 'Linea 1',
-			data: dataGrafPotenciaActiva.Linea1,
-		},
-		{
-			name: 'Linea 3',
-			data: dataGrafPotenciaActiva.Linea3,
-		},
-		{
-			name: 'Linea 4',
-			data: dataGrafPotenciaActiva.Linea5,
-		},
-	]
-	const potenciaAparente = [
-		{
-			name: 'Linea 1',
-			data: dataGrafPotenciaAparente.Linea1,
-		},
-		{
-			name: 'Linea 3',
-			data: dataGrafPotenciaAparente.Linea3,
-		},
-		{
-			name: 'Linea 4',
-			data: dataGrafPotenciaAparente.Linea5,
-		},
-	]
-	const potenciaReactivas = [
-		{
-			name: 'Linea 1',
-			data: dataGrafPotenciaReactiva.Linea1,
-		},
-		{
-			name: 'Linea 3',
-			data: dataGrafPotenciaReactiva.Linea3,
-		},
-		{
-			name: 'Linea 4',
-			data: dataGrafPotenciaReactiva.Linea5,
-		},
-	]
-	const CosenoFi = [
-		{
-			name: 'Linea 1',
-			data: dataGrafCosenoFi.Linea1,
-		},
-		{
-			name: 'Linea 3',
-			data: dataGrafCosenoFi.Linea3,
-		},
-		{
-			name: 'Linea 4',
-			data: dataGrafCosenoFi.Linea5,
-		},
-	]
+function Grafic({ info }) {
+	const navigate = useNavigate()
+	const [isLoading, setIsLoading] = useState(true)
+	const [dataGraf, setDataGraf] = useState([])
+	const getDataGraf = async (dateStart = null, dateFinished = null) => {
+		try {
+			setIsLoading(true)
+			const dataGraf = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getInfoGraf`, 'POST', {
+				serial: info.serial,
+				version: info.version,
+				brand: info.brand,
+				dateStart,
+				dateFinished,
+			})
+			const data = dataGraf.data
+
+			const dataGrafico = await Promise.all(dataGraficos.map((grafico) => getFormatterGraf(data, grafico)))
+			setDataGraf(dataGrafico)
+		} catch (error) {
+			console.error(error)
+			Swal.fire({
+				title: 'Atención!',
+				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
+				icon: 'error',
+			})
+			navigate('/Home')
+		} finally {
+			setIsLoading(false)
+		}
+	}
+
+	useEffect(() => {
+		if (!info) {
+			Swal.fire({
+				title: 'Atención!',
+				html: `Hubo un problema con la carga de los datos del Medidor.<br>Intente nuevamente...`,
+				icon: 'error',
+			}).then(() => navigate('/Home'))
+			return
+		}
+		getDataGraf()
+	}, [info])
+	const [selectOptionGraf, setSelectOptionGraf] = useState('Importada')
+	const changeDisableGraf = (value) => {
+		setSelectOptionGraf(value)
+		setDataGraf((prevDataGraf) =>
+			prevDataGraf.map((item) => ({
+				...item,
+				disable: item.titleGraf.includes('Exportada')
+					? value !== 'Exportada'
+					: item.titleGraf.includes('Importada')
+					? value !== 'Importada'
+					: item.disable,
+			}))
+		)
+	}
+	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<>
-			<div className='w-full'>
-				<GrafLinea key={1} title='Tensiones (V)' seriesData={tensiones} axisX={dataGrafTension.DatePeriod} />
-			</div>
-			<div className='w-full my-3'>
-				<hr />
-			</div>
-			<div className='w-full'>
-				<GrafLinea
-					key={2}
-					title='Corrientes (A)'
-					seriesData={corrientes}
-					axisX={dataGrafCorriente.DatePeriod}
-				/>
-			</div>
-			<div className='w-full my-3'>
-				<hr />
-			</div>
-			<div className='w-full'>
-				<GrafLinea
-					key={3}
-					title='Potencias Activas (kW)'
-					seriesData={potenciaActiva}
-					axisX={dataGrafPotenciaActiva.DatePeriod}
-				/>
-			</div>
-			<div className='w-full my-3'>
-				<hr />
-			</div>
-			<div className='w-full'>
-				<GrafLinea
-					key={4}
-					title='Potencias Aparentes (kVA)'
-					seriesData={potenciaAparente}
-					axisX={dataGrafPotenciaAparente.DatePeriod}
-				/>
-			</div>
-			<div className='w-full my-3'>
-				<hr />
-			</div>
-			<div className='w-full'>
-				<GrafLinea
-					key={5}
-					title='Potencias Reactivas (kVAr)'
-					seriesData={potenciaReactivas}
-					axisX={dataGrafPotenciaReactiva.DatePeriod}
-				/>
-			</div>
-			<div className='w-full my-3'>
-				<hr />
-			</div>
-			<div className='w-full'>
-				<GrafLinea
-					key={6}
-					title='Coseno Fi'
-					seriesData={CosenoFi}
-					axisX={dataGrafCosenoFi.DatePeriod}
-					configyAxis={{
-						min: 0.75,
-						max: 1,
-						tickInterval: 0.035,
-					}}
-				/>
-			</div>
+			{dataGraf.map((graf, index) => {
+				if (!graf.disable)
+					return (
+						<div className='py-4 my-2 w-full flex flex-col items-center '>
+							{graf.select ? (
+								<TextField
+									select
+									value={selectOptionGraf}
+									className='w-1/2 !mb-4'
+									onChange={(e) => changeDisableGraf(e.target.value)}
+								>
+									<MenuItem value={'Importada'}>Importada</MenuItem>
+									<MenuItem value={'Exportada'}>Exportada</MenuItem>
+								</TextField>
+							) : null}
+
+							<div className={`w-full shadow-lg shadow-slate-300 p-4`}>
+								<GrafLinea
+									key={index}
+									title={graf.titleGraf}
+									seriesData={graf.graf}
+									axisX={graf.data.DatePeriod}
+									configyAxis={graf.config}
+									colors={['#ff4c4c', '#6cff6c', '#6161ff', '#ffff62']}
+									configMarks={{
+										radius: 1,
+									}}
+								/>
+							</div>
+						</div>
+					)
+			})}
 		</>
 	)
 }
