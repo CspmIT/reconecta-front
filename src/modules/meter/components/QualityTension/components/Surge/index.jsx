@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { ColumnsTable, ColumnsTableModal } from './utils/DataTable'
-import LoaderComponent from '../../../../../../components/Loader'
-import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom'
 import { request } from '../../../../../../utils/js/request'
 import { backend } from '../../../../../../utils/routes/app.routes'
-import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import LoaderComponent from '../../../../../../components/Loader'
 import TableAntecedent from '../TableAntecedent/TableAntecedent'
 import { formatterDataModal, formatterDataTable } from '../../utils/Js'
-function CorteTension({ info }) {
+function Surge({ info }) {
 	const navigate = useNavigate()
 	const [dataTable, setDataTable] = useState([])
 	const [dataModal, setDataModal] = useState([])
 	const [isLoading, setIsLoading] = useState(true)
-	const getDataSubtension = async (dateStart = null, dateFinished = null) => {
+	const getDataSobreTension = async (dateStart = null, dateFinished = null) => {
 		try {
 			setIsLoading(true)
-			const dataSubtension = await request(
-				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getQualityCourt`,
+			const dataSobreTension = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getQualitySurge`,
 				'POST',
 				{
 					serial: info.serial,
@@ -26,13 +26,14 @@ function CorteTension({ info }) {
 					dateFinished,
 				}
 			)
-			const dataFormatter = await formatterDataTable(dataSubtension.data)
-			dataFormatter.sort((a, b) => {
+			const dataFormatterTable = await formatterDataTable(dataSobreTension.data)
+			dataFormatterTable.sort((a, b) => {
 				return new Date(b.datePeriod) - new Date(a.datePeriod)
 			})
-			setDataTable(dataFormatter)
-			const dataSubtensionModal = await request(
-				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getQualityCourtSummary`,
+			setDataTable(dataFormatterTable)
+
+			const dataSobreTensionModal = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getQualitySurgeSummary`,
 				'POST',
 				{
 					serial: info.serial,
@@ -42,7 +43,7 @@ function CorteTension({ info }) {
 					dateFinished,
 				}
 			)
-			const dataFormatterModal = await formatterDataModal(dataSubtensionModal.data)
+			const dataFormatterModal = await formatterDataModal(dataSobreTensionModal.data)
 			setDataModal(dataFormatterModal)
 		} catch (error) {
 			Swal.fire({
@@ -50,7 +51,7 @@ function CorteTension({ info }) {
 				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
 				icon: 'error',
 			})
-			// navigate('/Home')
+			navigate('/Home')
 		} finally {
 			setIsLoading(false)
 		}
@@ -65,7 +66,7 @@ function CorteTension({ info }) {
 			})
 			navigate('/Home')
 		} else {
-			getDataSubtension()
+			getDataSobreTension()
 		}
 	}, [info])
 	if (isLoading) return <LoaderComponent image={false} />
@@ -79,4 +80,4 @@ function CorteTension({ info }) {
 	)
 }
 
-export default CorteTension
+export default Surge

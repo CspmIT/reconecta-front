@@ -30,3 +30,25 @@ export const formatDate = (date) => {
 export const formatStrToDate = (date, hour = 0) => {
 	return dayjs(date, 'DD/MM/YYYY HH:mm:ss').add(hour, 'hour').toDate()
 }
+
+export const calculoTiempoDuracion = (segundos) => {
+	if (segundos <= 0) return '0 Seg.'
+
+	// Convertir segundos a días, horas, minutos y segundos restantes
+	const dias = Math.floor(segundos / 86400)
+	segundos %= 86400
+	const horas = Math.floor(segundos / 3600)
+	segundos %= 3600
+	const minutos = Math.floor(segundos / 60)
+	segundos = Math.round(((segundos % 60) + Number.EPSILON) * 100) / 100
+
+	// Crear una lista con las partes del tiempo
+	const partes = []
+	if (dias > 0) partes.push(`${dias} Día(s)`)
+	if (horas > 0) partes.push(`${horas} Hora(s)`)
+	if (minutos > 0) partes.push(`${minutos} Min`)
+	if (segundos > 0) partes.push(`${segundos} Seg`)
+
+	// Unir las partes en un solo string
+	return partes.join(', ')
+}

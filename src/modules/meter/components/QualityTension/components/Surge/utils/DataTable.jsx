@@ -36,7 +36,7 @@ export const ColumnsTable = [
 		},
 	},
 	{
-		accessorFn: (originalRow) => new Date(originalRow.datePeriod),
+		// accessorFn: (originalRow) => new Date(originalRow.datePeriod),
 		id: 'datePeriod',
 		accessorKey: 'datePeriod',
 		filterVariant: 'date-range',
