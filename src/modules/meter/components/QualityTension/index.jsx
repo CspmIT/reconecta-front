@@ -1,29 +1,29 @@
 import TabsMeter from '../tabsMeter'
 import CorteTension from './components/CorteTension'
 import InterrupcionTension from './components/InterripcionTension'
-import Sobretension from './components/Sobretension'
+import Surge from './components/Surge'
 import Subtension from './components/Subtension'
-function QualityTension() {
+function QualityTension({ info }) {
 	const tabs = [
 		{
 			id: 1,
 			title: 'Sobretensiones',
-			component: <Sobretension />,
+			component: <Surge info={info} />,
 		},
 		{
 			id: 2,
 			title: 'Subtensiones',
-			component: <Subtension />,
+			component: <Subtension info={info} />,
 		},
 		{
 			id: 3,
 			title: 'Cortes de tensión',
-			component: <CorteTension />,
+			component: <CorteTension info={info} />,
 		},
 		{
 			id: 4,
 			title: 'Interrupciones de tensión',
-			component: <InterrupcionTension />,
+			component: <InterrupcionTension info={info} />,
 		},
 	]
 	return (

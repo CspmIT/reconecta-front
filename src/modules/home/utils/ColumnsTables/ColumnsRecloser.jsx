@@ -52,8 +52,8 @@ export const ColumnsRecloser = (changeAlarm, newTab) => [
 					color: 'success',
 				},
 				2: {
-					description: 'Offline',
-					color: 'warning',
+					description: 'Cerrado (Sin Tensión)',
+					color: 'secondary',
 				},
 				3: {
 					description: 'Offline',

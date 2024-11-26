@@ -21,6 +21,7 @@ import autoTable from 'jspdf-autotable'
 import { FaFilePdf } from 'react-icons/fa'
 
 const csvConfig = mkConfig({
+	filename: 'Excel-export',
 	fieldSeparator: ',',
 	decimalSeparator: '.',
 	useKeysAsHeaders: true,
@@ -35,14 +36,58 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	// }
 	// exportar en excel toda la info
 	const handleExportData = () => {
-		const csv = generateCsv(csvConfig)(data)
+		const getFlattenedHeadersAndKeys = (cols) => {
+			const flattened = []
+			cols.forEach((column) => {
+				if (column.columns) {
+					flattened.push(...getFlattenedHeadersAndKeys(column.columns))
+				} else {
+					flattened.push({ header: column.header, accessorKey: column.accessorKey })
+				}
+			})
+			return flattened
+		}
+
+		const flattenedColumns = getFlattenedHeadersAndKeys(columns)
+		const groupedHeaders = []
+		columns.forEach((column) => {
+			if (column.columns) {
+				const colSpan = column.columns.length
+				groupedHeaders.push({ header: column.header, colSpan })
+			} else {
+				groupedHeaders.push({ header: '', colSpan: 1 })
+			}
+		})
+		const groupedHeadersRow = groupedHeaders.flatMap((group) => Array(group.colSpan).fill(group.header))
+		const headers = flattenedColumns.map((col) => col.header)
+		const dataFormat = data.map((row) => {
+			return flattenedColumns.map((col) => {
+				const value = row[col.accessorKey]
+				return value instanceof Date
+					? `${value.toLocaleDateString()} ${value.toLocaleTimeString()}`
+					: value ?? ''
+			})
+		})
+		const dataWithHeaders = [groupedHeadersRow, headers, ...dataFormat]
+		const csv = generateCsv(csvConfig)(dataWithHeaders)
 		download(csvConfig)(csv)
 	}
 
 	// Exportado de pdf
 	const handleExportRowsPdf = (rows) => {
 		const doc = new jsPDF()
-		const tableData = rows.map((row) => Object.values(row.original))
+		const tableData = rows
+			.map((row) => Object.values(row.original))
+			.map((row) => {
+				const linea = row.map((item) => {
+					if (item instanceof Date) {
+						item = `${item.toLocaleDateString()} ${item.toLocaleTimeString()}`
+					}
+					return item
+				})
+				return linea
+			})
+
 		const tableHeaders = columns.map((c) => c.header)
 
 		autoTable(doc, {
@@ -50,7 +95,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 			body: tableData,
 		})
 
-		doc.save('mrt-pdf-example.pdf')
+		doc.save('pdf-export.pdf')
 	}
 	const filtros =
 		storage.get('filter')?.reduce((acc, item) => {
@@ -162,11 +207,13 @@ const TableCustom = ({ data, columns, ...prop }) => {
 			},
 		},
 
-		muiTableHeadCellProps: {
-			sx: {
-				backgroundColor: 'transparent',
-				...prop.header,
-			},
+		muiTableHeadCellProps: (cell) => {
+			return {
+				sx: {
+					backgroundColor: 'transparent',
+					...prop.header,
+				},
+			}
 		},
 
 		// ------------------------------------

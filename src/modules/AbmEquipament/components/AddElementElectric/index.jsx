@@ -31,6 +31,15 @@ function AddElementElectric({ setValue, dataEdit }) {
 				})
 				break
 			case 2:
+				info = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getMetersEnabled`, 'GET')
+				listElement = info.data.map((item) => {
+					return {
+						...item,
+						brand: item.brand + ' - ' + item.version,
+						identification: item.serial,
+						type_element: element,
+					}
+				})
 				break
 			case 3:
 				break
