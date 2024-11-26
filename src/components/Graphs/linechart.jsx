@@ -2,7 +2,11 @@ import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 import React, { useContext } from 'react'
 import { MainContext } from '../../context/MainContext'
+import Exporting from 'highcharts/modules/exporting'
+import OfflineExporting from 'highcharts/modules/offline-exporting'
 
+Exporting(Highcharts)
+OfflineExporting(Highcharts)
 const GrafLinea = ({ ...props }) => {
 	const { darkMode } = useContext(MainContext)
 	let ticksGraf = new Array()
@@ -76,7 +80,9 @@ const GrafLinea = ({ ...props }) => {
 			}
 		}),
 		...props.tooltip,
+		exporting: { enabled: props.exporting || false },
 	}
+
 	return (
 		<div className='mb-3'>
 			<HighchartsReact highcharts={Highcharts} options={options} />

@@ -30,7 +30,25 @@ export const formatDate = (date) => {
 export const formatStrToDate = (date, hour = 0) => {
 	return dayjs(date, 'DD/MM/YYYY HH:mm:ss').add(hour, 'hour').toDate()
 }
-
+/**
+ * Convierte un string ISO 8601 (e.g., '2024-11-01T00:00:00Z') a un objeto Date.
+ *
+ * @param {string} dateString - String en formato ISO 8601.
+ * @returns {Date} Objeto Date correspondiente al string proporcionado.
+ * @author [Jose Romani] <jose.romani@hotmail.com>
+ */
+export const convertStringToDate = (dateString) => {
+	return dayjs(dateString).toDate()
+}
+/**
+ * Convierte un número de segundos en una cadena que representa la duración
+ * en días, horas, minutos y segundos.
+ *
+ * @param {number} segundos - Cantidad de segundos a convertir.
+ * @returns {string} Una cadena que representa la duración en un formato legible.
+ * Si los segundos son 0 o negativos, devuelve '0 Seg.'.
+ * @author [Jose Romani] <jose.romani@hotmail.com>
+ */
 export const calculoTiempoDuracion = (segundos) => {
 	if (segundos <= 0) return '0 Seg.'
 
@@ -52,3 +70,18 @@ export const calculoTiempoDuracion = (segundos) => {
 	// Unir las partes en un solo string
 	return partes.join(', ')
 }
+
+export const meses = [
+	'Enero',
+	'Febrero',
+	'Marzo',
+	'Abril',
+	'Mayo',
+	'Junio',
+	'Julio',
+	'Agosto',
+	'Septiembre',
+	'Octubre',
+	'Noviembre',
+	'Diciembre',
+]

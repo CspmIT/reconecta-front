@@ -1,4 +1,5 @@
 export const getFormatterGraf = async (data, dataGrafico) => {
+	console.log(data.Date, data.V_0)
 	const dataFormatter = dataGrafico.keys.reduce((acc, key) => {
 		acc[key] = data[key]?.map((item) => item.value) || []
 		return acc

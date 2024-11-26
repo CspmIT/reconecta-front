@@ -26,7 +26,6 @@ function Basic({ info }) {
 			setCorrienteInfo(formatDataCorriente(meter.data))
 			setCosenoInfo(formatDataCosenoFi(meter.data))
 			setDemandaInfo(formatDataDemanda(meter.data))
-			setIsLoading(false)
 		} catch (error) {
 			Swal.fire({
 				title: 'Atención!',
@@ -34,6 +33,8 @@ function Basic({ info }) {
 				icon: 'error',
 			})
 			navigate('/Home')
+		} finally {
+			setIsLoading(false)
 		}
 	}
 

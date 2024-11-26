@@ -36,16 +36,40 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	// }
 	// exportar en excel toda la info
 	const handleExportData = () => {
-		const dataFormat = data.map((row) => {
-			const linea = Object.values(row).map((item) => {
-				if (item instanceof Date) {
-					item = `${item.toLocaleDateString()} ${item.toLocaleTimeString()}`
+		const getFlattenedHeadersAndKeys = (cols) => {
+			const flattened = []
+			cols.forEach((column) => {
+				if (column.columns) {
+					flattened.push(...getFlattenedHeadersAndKeys(column.columns))
+				} else {
+					flattened.push({ header: column.header, accessorKey: column.accessorKey })
 				}
-				return item
 			})
-			return linea
+			return flattened
+		}
+
+		const flattenedColumns = getFlattenedHeadersAndKeys(columns)
+		const groupedHeaders = []
+		columns.forEach((column) => {
+			if (column.columns) {
+				const colSpan = column.columns.length
+				groupedHeaders.push({ header: column.header, colSpan })
+			} else {
+				groupedHeaders.push({ header: '', colSpan: 1 })
+			}
 		})
-		const csv = generateCsv(csvConfig)(dataFormat)
+		const groupedHeadersRow = groupedHeaders.flatMap((group) => Array(group.colSpan).fill(group.header))
+		const headers = flattenedColumns.map((col) => col.header)
+		const dataFormat = data.map((row) => {
+			return flattenedColumns.map((col) => {
+				const value = row[col.accessorKey]
+				return value instanceof Date
+					? `${value.toLocaleDateString()} ${value.toLocaleTimeString()}`
+					: value ?? ''
+			})
+		})
+		const dataWithHeaders = [groupedHeadersRow, headers, ...dataFormat]
+		const csv = generateCsv(csvConfig)(dataWithHeaders)
 		download(csvConfig)(csv)
 	}
 
@@ -183,11 +207,13 @@ const TableCustom = ({ data, columns, ...prop }) => {
 			},
 		},
 
-		muiTableHeadCellProps: {
-			sx: {
-				backgroundColor: 'transparent',
-				...prop.header,
-			},
+		muiTableHeadCellProps: (cell) => {
+			return {
+				sx: {
+					backgroundColor: 'transparent',
+					...prop.header,
+				},
+			}
 		},
 
 		// ------------------------------------

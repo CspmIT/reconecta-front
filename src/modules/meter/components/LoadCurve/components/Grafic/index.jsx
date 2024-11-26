@@ -71,7 +71,7 @@ function Grafic({ info }) {
 			{dataGraf.map((graf, index) => {
 				if (!graf.disable)
 					return (
-						<div className='py-4 my-2 w-full flex flex-col items-center '>
+						<div key={index} className='py-4 my-2 w-full flex flex-col items-center '>
 							{graf.select ? (
 								<TextField
 									select
@@ -91,6 +91,7 @@ function Grafic({ info }) {
 									seriesData={graf.graf}
 									axisX={graf.data.DatePeriod}
 									configyAxis={graf.config}
+									exporting={true}
 									colors={['#ff4c4c', '#6cff6c', '#6161ff', '#ffff62']}
 									configMarks={{
 										radius: 1,
