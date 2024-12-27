@@ -3,14 +3,14 @@ export const front = {
 		import.meta.env.VITE_ENTORNO == 'local'
 			? 'http://localhost:8000'
 			: import.meta.env.VITE_ENTORNO == 'desarrollo'
-			? 'https://devcooptech.com.ar'
+			? 'https://dev.cooptech.com.ar'
 			: 'https://cooptech.com.ar',
 	'Oficina Virtual': 'https://oficinainterna.cooptech.com.ar',
 	Reconecta:
 		import.meta.env.VITE_ENTORNO == 'local'
 			? 'http://localhost:4000'
 			: import.meta.env.VITE_ENTORNO == 'desarrollo'
-			? 'https://devreconecta.cooptech.com.ar'
+			? 'https://dev.reconecta.cooptech.com.ar'
 			: 'https://reconecta.cooptech.com.ar',
 	'Mas Agua': 'http://localhost:8082',
 	Centinela: 'http://localhost:8082',
