@@ -53,9 +53,13 @@ export const getProduct = async (productName, clientID, usuarioId) => {
 export const getProductActive = async () => {
 	try {
 		const tokencooptech = storage.get('usuarioCooptech') || storage.get('usuario')
+		const usuarioCooptech = storage.get('usuarioCooptech').id_user
+		const clientID =
+			tokencooptech.cliente?.length > 1
+				? tokencooptech.cliente.find((item) => item.selected).id
+				: tokencooptech.cliente.id
 		const url =
-			backend.Cooptech +
-			`/getListProdct?id_user=${tokencooptech.id_user || tokencooptech.sub}&id_client=${tokencooptech.cliente.id}`
+			backend.Cooptech + `/getListProdct?id_user=${usuarioCooptech || tokencooptech.sub}&id_client=${clientID}`
 		const product = await requestAuth(url, 'GET').then((data) => {
 			return data.data
 		})
