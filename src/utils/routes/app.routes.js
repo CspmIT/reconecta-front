@@ -10,7 +10,7 @@ export const front = {
 		import.meta.env.VITE_ENTORNO == 'local'
 			? 'http://localhost:4000'
 			: import.meta.env.VITE_ENTORNO == 'desarrollo'
-			? 'https://dev.reconecta.cooptech.com.ar'
+			? 'https://devreconecta.cooptech.com.ar'
 			: 'https://reconecta.cooptech.com.ar',
 	'Mas Agua': 'http://localhost:8082',
 	Centinela: 'http://localhost:8082',
