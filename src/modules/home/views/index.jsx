@@ -44,7 +44,9 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
-		const existingTabIndex = tabs.findIndex((tab) => tab.name === data.name && tab.id === data.id)
+		const existingTabIndex = tabs.findIndex(
+			(tab) => tab.name === data.name && tab.id === data.id && tab.typeEquipment === data.type_recloser
+		)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
 		} else {
@@ -53,6 +55,7 @@ const Home = () => {
 				{
 					name: data.name,
 					id: data.id,
+					typeEquipment: data.type_recloser,
 					link: '/board',
 					component: typeEquipment(data.type_recloser),
 				},

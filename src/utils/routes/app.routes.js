@@ -1,7 +1,7 @@
 export const front = {
 	Cooptech:
 		import.meta.env.VITE_ENTORNO == 'local'
-			? 'http://localhost:8000'
+			? 'https://dev.cooptech.com.ar'
 			: import.meta.env.VITE_ENTORNO == 'desarrollo'
 			? 'https://dev.cooptech.com.ar'
 			: 'https://cooptech.com.ar',

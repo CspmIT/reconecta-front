@@ -52,7 +52,6 @@ const MetrologyBoard = ({ idRecloser }) => {
 					})
 					if (!content.length) return false
 					return (
-						// <div className={`w-full md:w-1/2 lg:w-1/3 flex justify-center items-center py-3`} key={i}>
 						<CardCustom
 							key={i}
 							className='w-full min-h-52 border-t-[0.5rem] border-r-2 border-b-2 border-blue-500  shadow-md !rounded-lg overflow-hidden'
@@ -83,7 +82,6 @@ const MetrologyBoard = ({ idRecloser }) => {
 								})}
 							</div>
 						</CardCustom>
-						// </div>
 					)
 				})
 			) : (
