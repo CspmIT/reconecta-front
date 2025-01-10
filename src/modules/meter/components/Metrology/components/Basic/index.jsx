@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react'
 import DivData from '../DivData'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
-import { request } from '../../../../../../utils/js/request'
-import { backend } from '../../../../../../utils/routes/app.routes'
-import { formatDataCorriente, formatDataCosenoFi, formatDataDemanda, formatDataTension } from './utils/actions'
+import {
+	DataInsta,
+	formatDataCorriente,
+	formatDataCosenoFi,
+	formatDataDemanda,
+	formatDataTension,
+} from './utils/actions'
 import LoaderComponent from '../../../../../../components/Loader'
 
 function Basic({ info }) {
@@ -16,23 +20,17 @@ function Basic({ info }) {
 	const [isLoading, setIsLoading] = useState(true)
 	const getDataInsta = async () => {
 		try {
-			const meter = await request(
-				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getMetrologyInsta?serial=${info.serial}&version=${
-					info.version
-				}&brand=${info.brand}`,
-				'GET'
-			)
-			setTensionInfo(formatDataTension(meter.data))
-			setCorrienteInfo(formatDataCorriente(meter.data))
-			setCosenoInfo(formatDataCosenoFi(meter.data))
-			setDemandaInfo(formatDataDemanda(meter.data))
+			const meter = await DataInsta(info)
+			setTensionInfo(formatDataTension(meter))
+			setCorrienteInfo(formatDataCorriente(meter))
+			setCosenoInfo(formatDataCosenoFi(meter))
+			setDemandaInfo(formatDataDemanda(meter))
 		} catch (error) {
 			Swal.fire({
 				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
+				html: error.message,
 				icon: 'error',
 			})
-			navigate('/Home')
 		} finally {
 			setIsLoading(false)
 		}

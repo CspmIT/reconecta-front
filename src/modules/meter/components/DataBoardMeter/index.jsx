@@ -13,27 +13,30 @@ import Swal from 'sweetalert2'
 import { backend } from '../../../../utils/routes/app.routes'
 import { request } from '../../../../utils/js/request'
 import LoaderComponent from '../../../../components/Loader'
+import { DataInsta } from '../Metrology/components/Basic/utils/actions'
 
 function DataBoardMeter() {
 	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
-	const { tabCurrent, tabs } = useContext(MainContext)
+	const { tabCurrent, tabs, setInfoNav } = useContext(MainContext)
 	const [data] = useState(tabs[tabCurrent] || null)
-
+	const [validateMeter, setValidateMeter] = useState(false)
 	const getDataMeter = async (id) => {
 		try {
 			const meter = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataMeter?id=${id}`, 'GET')
 			setInfo(meter.data)
 			setIsLoading(false)
 			setSelectedCardId(1)
+			controlData(meter.data)
 		} catch (error) {
+			console.error(error)
 			Swal.fire({
 				title: 'Atención!',
 				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
 				icon: 'error',
 			})
-			navigate('/Home')
+			// navigate('/Home')
 		}
 	}
 
@@ -49,7 +52,29 @@ function DataBoardMeter() {
 			getDataMeter(data.id)
 		}
 	}, [data])
+	const controlData = async (data) => {
+		try {
+			const meter = await DataInsta(data)
+			if (meter?.VI?.V_0) {
+				setValidateMeter(true)
+			} else {
+				throw new Error('No se obtuvieron datos instantaneos, intente nuevamente')
+			}
+		} catch (error) {
+			console.error(error)
 
+			Swal.fire({
+				title: 'Atención!',
+				html: error.message,
+				icon: 'error',
+			})
+		}
+	}
+
+	const editMeter = () => {
+		setInfoNav([info])
+		navigate('/AbmDevice/meter/' + info.id)
+	}
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	const handleCardSelect = (id) => {
 		setSelectedCardId(id)
@@ -61,11 +86,11 @@ function DataBoardMeter() {
 					<h2 className='text-2xl'>Medidor</h2>
 				</div>
 				<div className='absolute right-2 top-8 md:top-0'>
-					<Button variant='contained' title='Recargar Datos'>
+					<Button onClick={() => getDataMeter(info.id)} variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
 					<Button
-						onClick={() => navigate('/AbmDevice/meter/' + info.id)}
+						onClick={editMeter}
 						className='!ml-3'
 						color='warning'
 						title='Editar Reconectador'
@@ -84,13 +109,17 @@ function DataBoardMeter() {
 					<div className='mb-8'>
 						<Header info={info} />
 					</div>
-					<CardBoard onCardSelect={handleCardSelect} />
-					<div className='p-3'>
-						{selectedCardId === 1 ? <Metrology info={info} /> : null}
-						{selectedCardId === 2 ? <LoadCurve info={info} /> : null}
-						{selectedCardId === 3 ? <QualityTension info={info} /> : null}
-						{selectedCardId === 4 ? <HistoryMeter info={info} /> : null}
-					</div>
+					{validateMeter ? (
+						<>
+							<CardBoard onCardSelect={handleCardSelect} />
+							<div className='p-3'>
+								{selectedCardId === 1 ? <Metrology info={info} /> : null}
+								{selectedCardId === 2 ? <LoadCurve info={info} /> : null}
+								{selectedCardId === 3 ? <QualityTension info={info} /> : null}
+								{selectedCardId === 4 ? <HistoryMeter info={info} /> : null}
+							</div>
+						</>
+					) : null}
 				</>
 			)}
 		</div>

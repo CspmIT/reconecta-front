@@ -5,7 +5,10 @@ export const getVersions = async () => {
 	const versions = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getVersionsMeter`, 'GET')
 	return versions.data
 }
-
+export const getMeter = async (id) => {
+	const meter = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataMeter?id=${id}`, 'GET')
+	return meter.data
+}
 export const saveMeter = async (data) => {
 	const dataMeter = {
 		id: parseFloat(data.id),

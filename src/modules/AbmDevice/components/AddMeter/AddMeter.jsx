@@ -1,11 +1,12 @@
 import { Button, ListSubheader, MenuItem, TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { getVersions, saveMeter } from './utils/js/actions'
+import { useNavigate, useParams } from 'react-router-dom'
+import { getMeter, getVersions, saveMeter } from './utils/js/actions'
 import Swal from 'sweetalert2'
 
-function AddMeter({ id }) {
+function AddMeter() {
+	const { id, name } = useParams()
 	const navigate = useNavigate()
 	const [nameVersion, setnameVersion] = useState('')
 	const [info, setInfo] = useState({})
@@ -30,11 +31,12 @@ function AddMeter({ id }) {
 		setnameVersion(selectedVersion?.name || '')
 		setVersionSelected(value)
 	}
-	const getDataEdit = async (id) => {
-		const data = await getRecloser(id)
+	const getDataEdit = async () => {
+		console.log(id)
+		const data = await getMeter(id)
+		console.log(data)
 		changeVersion(data.version)
 		setValue('serial', data.serial)
-		setValue('config', data.config)
 		setValue('id', data.id)
 		setInfo(data)
 	}
@@ -63,10 +65,11 @@ function AddMeter({ id }) {
 		listVersion()
 	}, [])
 	useEffect(() => {
-		if (id && versiones) {
-			getDataEdit(id)
+		if (id) {
+			getDataEdit()
 		}
-	}, [id, versiones])
+	}, [id])
+	console.log(info.serial)
 	return (
 		<>
 			<div className='mt-3'>
@@ -80,9 +83,17 @@ function AddMeter({ id }) {
 							error={errors.serial ? true : false}
 							type='text'
 							label='Nro Serie'
-							{...register('serial', { required: 'El campo es requerido' })}
+							{...register('serial', {
+								required: 'El campo es requerido',
+								onChange: (e) => {
+									const infoUpdate = { ...info, serial: e.target.value }
+									setInfo(infoUpdate)
+								},
+							})}
 							className='w-full'
 							helperText={errors.serial && errors.serial.message}
+							defaultValue={info.serial || ''}
+							value={info.serial || ''}
 						/>
 						<div className='w-full'>
 							<TextField
