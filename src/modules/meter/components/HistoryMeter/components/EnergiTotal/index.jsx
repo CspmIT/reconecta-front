@@ -32,7 +32,6 @@ function EnergiTotal({ info }) {
 				}
 			)
 			const data = dataRestart.data
-			console.log(data)
 			setDataImpExp(dataTableEnergiImpExp(data))
 			setDataReactxCuadrante(dataTableReactivaxCuadrante(data))
 		} catch (error) {
@@ -60,7 +59,6 @@ function EnergiTotal({ info }) {
 		}
 	}, [info])
 	if (isLoading) return <LoaderComponent image={false} />
-	console.log(info)
 	return (
 		<>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>

@@ -26,9 +26,7 @@ function InterrupcionTension({ info }) {
 					dateFinished,
 				}
 			)
-			console.log(dataSubtension)
 			const dataFormatter = await formatterDataTable(dataSubtension.data)
-			console.log(dataFormatter)
 			dataFormatter.sort((a, b) => {
 				return new Date(b.datePeriod) - new Date(a.datePeriod)
 			})
@@ -44,9 +42,7 @@ function InterrupcionTension({ info }) {
 					dateFinished,
 				}
 			)
-			console.log(dataSubtensionModal)
 			const dataFormatterModal = await formatterDataModal(dataSubtensionModal.data)
-			console.log(dataFormatterModal)
 			setDataModal(dataFormatterModal)
 		} catch (error) {
 			console.error(error)

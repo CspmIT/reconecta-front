@@ -1,16 +1,18 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import TableCustom from '../../../../../components/TableCustom'
-import { FormLabel } from '@mui/material'
-import Swal from 'sweetalert2'
+import { HiSwitchHorizontal } from 'react-icons/hi'
+
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { request } from '../../../../../utils/js/request'
 import { ColumnsEvent } from './ColumnsEvent'
 import { backend } from '../../../../../utils/routes/app.routes'
 import LoaderComponent from '../../../../../components/Loader'
+import { IconButton } from '@mui/material'
+import BtnChangeTable from './BtnChangeTable'
 const EventBoard = ({ idRecloser }) => {
 	const [rowCriticos, setRowCriticos] = useState(null)
-
+	const [register, setRegister] = useState(false)
 	const getEvents = async (id) => {
 		const data = await request(
 			`${backend[`${import.meta.env.VITE_APP_NAME}`]}/eventsDevices?id=${id}&type=Reconectador`,
@@ -29,20 +31,16 @@ const EventBoard = ({ idRecloser }) => {
 	useEffect(() => {
 		if (idRecloser) {
 			getEvents(idRecloser)
-			// const intervalId = setInterval(() => {
-			// 	getEvents(idRecloser)
-			// }, 15000)
-			// return () => clearInterval(intervalId)
 		}
 	}, [idRecloser])
-
+	const change = (option) => {
+		setRegister(option === 'reg')
+		setRowCriticos([])
+	}
 	return (
 		<div className='w-full'>
 			{rowCriticos ? (
 				<>
-					<div className='relative flex justify-between items-center mb-4'>
-						<FormLabel className='w-full text-center !text-2xl'>Evento </FormLabel>
-					</div>
 					<div className='w-full max-w-full overflow-x-auto'>
 						<LocalizationProvider dateAdapter={AdapterDayjs}>
 							<TableCustom
@@ -57,6 +55,7 @@ const EventBoard = ({ idRecloser }) => {
 								toolbarClass={{ background: 'rgb(91 151 248)' }}
 								bodyContent={{ fontSize: '16px' }}
 								footer={{ background: 'rgb(223 233 249)' }}
+								btnCustomToolbar={<BtnChangeTable fnClick={change} table={register} />}
 								pageSize={10}
 								topToolbar
 								hide

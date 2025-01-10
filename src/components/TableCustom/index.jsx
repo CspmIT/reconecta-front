@@ -229,6 +229,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 					display: 'flex',
 					justifyContent: 'flex-end',
 					alignItems: 'center',
+					position: 'relative',
 					backgroundColor: 'transparent',
 					...prop.toolbarClass,
 				}}
