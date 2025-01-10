@@ -67,5 +67,5 @@ jobs:
                   --build-arg VITE_APP_NAME=${{ secrets.VITE_APP_NAME }} \
                   --build-arg SECRET=${{ secrets.SECRET }} \
                   --build-arg VITE_ENTORNO=desarrollo \
-                  -t ${{ secrets.DOCKER_USERNAME }}/${REPO_NAME}:${{ needs.bump.outputs.new_tag }} .
-                  docker push ${{ secrets.DOCKER_USERNAME }}/${REPO_NAME}:${{ needs.bump.outputs.new_tag }}
+                  -t ${{ secrets.DOCKER_USERNAME }}/${REPO_NAME}:${{ needs.bump.outputs.new_tag }}-dev .
+                  docker push ${{ secrets.DOCKER_USERNAME }}/${REPO_NAME}:${{ needs.bump.outputs.new_tag }}-dev

@@ -27,7 +27,7 @@ function DataBoardMeter() {
 			const meter = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataMeter?id=${id}`, 'GET')
 			setInfo(meter.data)
 			setIsLoading(false)
-			setSelectedCardId(1)
+
 			controlData(meter.data)
 		} catch (error) {
 			console.error(error)
@@ -57,12 +57,13 @@ function DataBoardMeter() {
 			const meter = await DataInsta(data)
 			if (meter?.VI?.V_0) {
 				setValidateMeter(true)
+				setSelectedCardId(1)
 			} else {
+				setSelectedCardId(0)
 				throw new Error('No se obtuvieron datos instantaneos, intente nuevamente')
 			}
 		} catch (error) {
 			console.error(error)
-
 			Swal.fire({
 				title: 'Atención!',
 				html: error.message,
@@ -78,6 +79,13 @@ function DataBoardMeter() {
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	const handleCardSelect = (id) => {
 		setSelectedCardId(id)
+		if (id == 0) {
+			Swal.fire({
+				title: 'Atención!',
+				html: 'La opción seleccionada no tiene datos. </br>Vuelve a recargar los datos...',
+				icon: 'error',
+			})
+		}
 	}
 	return (
 		<div className='w-full rounded-xl p-3 bg-gray-200 dark:bg-gray-600 '>
@@ -109,17 +117,15 @@ function DataBoardMeter() {
 					<div className='mb-8'>
 						<Header info={info} />
 					</div>
-					{validateMeter ? (
-						<>
-							<CardBoard onCardSelect={handleCardSelect} />
-							<div className='p-3'>
-								{selectedCardId === 1 ? <Metrology info={info} /> : null}
-								{selectedCardId === 2 ? <LoadCurve info={info} /> : null}
-								{selectedCardId === 3 ? <QualityTension info={info} /> : null}
-								{selectedCardId === 4 ? <HistoryMeter info={info} /> : null}
-							</div>
-						</>
-					) : null}
+					<>
+						<CardBoard onCardSelect={handleCardSelect} verifyBasic={validateMeter} />
+						<div className='p-3'>
+							{selectedCardId === 1 ? <Metrology info={info} /> : null}
+							{selectedCardId === 2 ? <LoadCurve info={info} /> : null}
+							{selectedCardId === 3 ? <QualityTension info={info} /> : null}
+							{selectedCardId === 4 ? <HistoryMeter info={info} /> : null}
+						</div>
+					</>
 				</>
 			)}
 		</div>
