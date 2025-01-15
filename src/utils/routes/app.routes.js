@@ -12,7 +12,12 @@ export const front = {
 			: import.meta.env.VITE_ENTORNO == 'desarrollo'
 			? 'https://devreconecta.cooptech.com.ar'
 			: 'https://reconecta.cooptech.com.ar',
-	'Mas Agua': 'http://localhost:8082',
+	'Mas Agua':
+		import.meta.env.VITE_ENTORNO == 'local'
+			? 'http://localhost:8082'
+			: import.meta.env.VITE_ENTORNO == 'desarrollo'
+			? 'https://masagua.cooptech.com.ar'
+			: 'https://masagua.cooptech.com.ar',
 	Centinela: 'http://localhost:8082',
 	Cloud: 'http://localhost:8082',
 	Provision: 'http://localhost:8082',
