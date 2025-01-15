@@ -145,7 +145,6 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		state: {
 			...columnVisibility,
 		},
-		groupedColumnMode: 'remove',
 		positionToolbarAlertBanner: 'none',
 		positionToolbarDropZone: 'none',
 		enableTopToolbar: prop.topToolbar || false,
@@ -187,7 +186,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		// activa un boton que te genera un modal para editar el campo en la tabla, pero hay que combinarlo con otra funcion para el guardado, actualizacion, etc.
 		enableEditing: false,
 		// permite agrupar por columnas
-		enableGrouping: prop.grouping,
+		enableGrouping: prop.groupBy ? true : false,
 		// junto con el de los 3 puntos de accion te permite ocultar columnas, o activando el toopbar
 		enableHiding: prop.hide,
 		// habilita el ordenamiento de columnas osea ordenar los datos por alguna columna en especifico

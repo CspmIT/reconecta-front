@@ -5,7 +5,7 @@ import { FaArrowRight } from 'react-icons/fa6'
 import { formatterConfig, getConfigNotify } from '../utils/js'
 import LoaderComponent from '../../../components/Loader'
 import { io } from 'socket.io-client'
-import { backend, front } from '../../../utils/routes/app.routes'
+import { front } from '../../../utils/routes/app.routes'
 import { storage } from '../../../storage/storage'
 
 function ConfigNotifications() {
