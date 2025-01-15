@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import HeaderBoard from '../headerBoard'
 import { Button } from '@mui/material'
-import { FaEdit, FaRedo } from 'react-icons/fa'
+import { FaCog, FaCogs, FaEdit, FaRedo, FaTrash } from 'react-icons/fa'
 import ControlsBoard from '../controlsBoard'
 import CardBoard from '../cardBoard'
 import { MainContext } from '../../../../../context/MainContext'
@@ -14,7 +14,7 @@ import LoaderComponent from '../../../../../components/Loader'
 const DataBoard = () => {
 	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
-	const { tabCurrent, tabs, setTabs } = useContext(MainContext)
+	const { setInfoNav, tabCurrent, setTabCurrent, setTabActive, tabs, setTabs } = useContext(MainContext)
 	const [data] = useState(tabs[tabCurrent] || null)
 	const [selectedCardId, setSelectedCardId] = useState(null)
 
@@ -46,7 +46,7 @@ const DataBoard = () => {
 			setSelectedCardId(data.ActionOpen)
 		}
 	}, [info])
-	const { setInfoNav } = useContext(MainContext)
+
 	const editRecloser = (info) => {
 		setInfoNav([info])
 		navigate('/AbmDevice/recloser/' + info.recloser.id)
@@ -54,6 +54,76 @@ const DataBoard = () => {
 	const refreshInflux = async () => {
 		getDataRecloser(data.id)
 	}
+	const deleteRecloser = async (data) => {
+		Swal.fire({
+			title: '¡Atención!',
+			text: '¿Que desea realizar?',
+			icon: 'question',
+			allowOutsideClick: false,
+			showDenyButton: true,
+			showCancelButton: true,
+			confirmButtonText: '⛓️‍💥 Desvincular',
+			denyButtonText: '🗑️ Eliminar',
+		}).then(async (result) => {
+			if (result.isDenied) {
+				const infoUpdate = {
+					...data.recloser,
+					type_device: data.recloser?.relation?.type_device || 1,
+					status: 0,
+				}
+
+				try {
+					const result = await request(
+						`${backend[`${import.meta.env.VITE_APP_NAME}`]}/deleteRecloser`,
+						'POST',
+						infoUpdate
+					)
+					Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
+					const tabsfiltered = tabs.filter((item) => item.id != data.recloser.id)
+					setTabs(tabsfiltered)
+					setTabActive(tabsfiltered.length)
+					setInfoNav(!tabsfiltered.length ? '' : tabsfiltered)
+					setTabCurrent(0)
+					navigate('/Home')
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Atención!',
+						text: 'Hubo un error al intentear eliminar el reconectador',
+						icon: 'warning',
+					})
+				}
+			}
+			if (result.isConfirmed) {
+				try {
+					const infoUpdate = {
+						...data.recloser,
+						type_device: data?.recloser?.relation?.type_device || 1,
+					}
+					const result = await request(
+						`${backend[`${import.meta.env.VITE_APP_NAME}`]}/unlinkRelation`,
+						'POST',
+						infoUpdate
+					)
+					Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente!', icon: 'success' })
+					const tabsfiltered = tabs.filter((item) => item.id != data.recloser.id)
+					setTabs(tabsfiltered)
+					setTabActive(tabsfiltered.length)
+					setInfoNav(!tabsfiltered.length ? '' : tabsfiltered)
+					setTabCurrent(0)
+					navigate('/Home')
+				} catch (error) {
+					console.error(error)
+					Swal.fire({
+						title: 'Atención!',
+						text: 'Hubo un error al intentear desvincular el reconectador',
+						icon: 'warning',
+					})
+				}
+			}
+		})
+	}
+
 	return (
 		<div className='w-full h-auto items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
 			{info ? (
@@ -80,6 +150,16 @@ const DataBoard = () => {
 								variant='contained'
 							>
 								<FaEdit />
+							</Button>
+							<Button
+								type='button'
+								onClick={() => deleteRecloser(info)}
+								className='!ml-3'
+								color='secondary'
+								title='Opciones de Reconectador'
+								variant='contained'
+							>
+								<FaCog />
 							</Button>
 						</div>
 					</div>

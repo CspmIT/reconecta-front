@@ -29,7 +29,7 @@ function CardBoard({ onCardSelect, info }) {
 	return (
 		<div className='w-full max-w-[94.5vw] flex flex-row rounded-xl overflow-hidden'>
 			<Tabs
-				className='flex flex-col !w-10 border-r '
+				className='flex flex-col !w-10 border-r  border-r-white dark:border-r-slate-500'
 				value={selectedCardId - 1}
 				orientation='vertical'
 				indicatorColor='transparent'
@@ -40,8 +40,10 @@ function CardBoard({ onCardSelect, info }) {
 						key={item.id}
 						style={{ minWidth: 0, height: '144px' }}
 						className={`w-full ${
-							selectedCardId == item.id ? '!bg-white' : '!bg-gray-300'
-						}   !border-t-2 !border-l-2 !border-b-2 dark:!bg-zinc-500 min-w-0 ${classTabs} relative`}
+							selectedCardId == item.id
+								? '!bg-white dark:!bg-zinc-500 '
+								: '!bg-gray-300  dark:!bg-zinc-800 '
+						}   !border-t-2 !border-l-2 !border-b-2  min-w-0 ${classTabs} relative`}
 						onClick={() => handleCard(item.id)}
 						label={
 							<div
@@ -58,11 +60,14 @@ function CardBoard({ onCardSelect, info }) {
 					/>
 				))}
 			</Tabs>
-			<div style={{maxWidth: isMobile ? '84%' : ''}} className='w-11/12 md:w-full bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-700'>
+			<div
+				style={{ maxWidth: isMobile ? '84%' : '' }}
+				className='w-11/12 md:w-full bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-800'
+			>
 				{selectedCardId === 1 && <MetrologyBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 3 && <AnalyticsBoard idRecloser={info?.recloser?.id || null} />}
-				{selectedCardId === 4 && <ManeuverBoard info={info || {}} />}
+				{selectedCardId === 4 && <ManeuverBoard idRecloser={info?.recloser?.id || null} />}
 			</div>
 		</div>
 	)

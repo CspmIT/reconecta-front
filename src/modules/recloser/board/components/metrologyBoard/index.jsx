@@ -34,13 +34,30 @@ const MetrologyBoard = ({ idRecloser }) => {
 		}
 	}, [idRecloser])
 	return (
-		<div className='w-full flex flex-row flex-wrap justify-center'>
+		<div className='w-full grid grid-cols-3 max-lg:flex max-lg:flex-col gap-6 justify-center'>
 			{dataMetrology ? (
-				boardMetrology.map((item, i) => (
-					<div className={`w-full md:w-1/2 lg:w-1/3 flex justify-center items-center py-3`} key={i}>
-						<CardCustom className='w-full md:w-5/6 min-h-52 border-t-[0.5rem] border-r-2 border-b-2 border-blue-500  shadow-md !rounded-lg overflow-hidden'>
+				boardMetrology.map((item, i) => {
+					const content = item.children.filter((child, j) => {
+						let value = ''
+						if (Object.keys(dataMetrology).length) {
+							for (const item in dataMetrology) {
+								if (child.field === item) {
+									value = `${dataMetrology[item][0].value}  ${child.unit}`
+									break
+								}
+							}
+						}
+						if (value == '') return false
+						return true
+					})
+					if (!content.length) return false
+					return (
+						<CardCustom
+							key={i}
+							className='w-full min-h-52 border-t-[0.5rem] border-r-2 border-b-2 border-blue-500  shadow-md !rounded-lg overflow-hidden'
+						>
 							<h1 className='font-bold text-xl my-3'>{item.name}</h1>
-							<div className={`w-full h-full text-center flex flex-row flex-wrap items-center`}>
+							<div className={`w-full text-center px-1 ${content.length > 4 ? 'grid grid-cols-2' : ''}`}>
 								{item.children.map((child, j) => {
 									let value = ''
 									if (Object.keys(dataMetrology).length) {
@@ -51,12 +68,11 @@ const MetrologyBoard = ({ idRecloser }) => {
 											}
 										}
 									}
+									if (value == '') return null
 									return (
 										<div
 											key={j}
-											className={`my-1 flex flex-row justify-center text-sm md:text-lg ${
-												item.children.length > 4 ? 'w-1/2' : 'w-full'
-											}`}
+											className={`my-2 flex flex-row justify-center text-sm md:text-base w-full`}
 										>
 											<p>
 												{child.name}: <b>{value}</b>
@@ -66,8 +82,8 @@ const MetrologyBoard = ({ idRecloser }) => {
 								})}
 							</div>
 						</CardCustom>
-					</div>
-				))
+					)
+				})
 			) : (
 				<LoaderComponent />
 			)}

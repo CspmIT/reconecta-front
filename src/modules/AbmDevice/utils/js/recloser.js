@@ -7,7 +7,7 @@ export const getRecloser = async (id) => {
 }
 
 export const getVersions = async () => {
-	const versions = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getVersions`, 'GET')
+	const versions = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getVersionsRecloser`, 'GET')
 
 	return versions.data
 }

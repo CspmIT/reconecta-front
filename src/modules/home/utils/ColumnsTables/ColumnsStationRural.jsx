@@ -7,18 +7,21 @@ export const ColumnsRural = (newTab) => [
 		header: 'Sub-Estación',
 		accessorKey: 'name_station',
 		muiFilterTextFieldProps: { placeholder: 'Sub-Estación' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.name_station}</p>,
 	},
 	{
 		header: 'Nombre de usuario',
 		accessorKey: 'user',
 		size: 350,
+
 		Cell: ({ row }) => {
 			return (
 				<div key={row.original.id} className='flex items-center w-full'>
 					<ul>
 						{row.original?.user.map((user, index) => {
 							return (
-								<li key={index} className='text-gray-600'>
+								<li key={index} className='dark:!text-black'>
 									- {user.name_user_recloser}
 								</li>
 							)
@@ -33,21 +36,32 @@ export const ColumnsRural = (newTab) => [
 		header: 'Nº de Medidor',
 		accessorKey: 'num_meter',
 		muiFilterTextFieldProps: { placeholder: 'Nº de Medidor' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.num_meter}</p>,
 	},
 	{
 		header: 'Latitud',
 		accessorKey: 'lat_point',
 		muiFilterTextFieldProps: { placeholder: 'Latitud' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.lat_point}</p>,
 	},
 	{
 		header: 'Longitud',
 		accessorKey: 'lng_point',
 		muiFilterTextFieldProps: { placeholder: 'Longitud' },
+
+		Cell: ({ row }) => <p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.lng_point}</p>,
 	},
 	{
 		header: 'Potencia',
+		size: 50,
 		accessorKey: 'potencia_transformador',
 		muiFilterTextFieldProps: { placeholder: 'Potencia' },
+
+		Cell: ({ row }) => (
+			<p className='m-0 p-0 ml-2 text-base dark:!text-black'>{row.original?.potencia_transformador}</p>
+		),
 	},
 	{
 		header: 'On-Line',
@@ -55,6 +69,7 @@ export const ColumnsRural = (newTab) => [
 		size: 80,
 		enableColumnFilter: false,
 		enableClickToCopy: false,
+
 		Cell: ({ row }) => {
 			return (
 				<div className='flex items-center w-full'>
@@ -95,7 +110,7 @@ export const ColumnsRural = (newTab) => [
 
 export const ColumnsRuralCel = (newTab) => [
 	{
-		header: <span className="text-xs">Sub-Estación</span>,
+		header: <span className='text-xs'>Sub-Estación</span>,
 		accessorKey: 'name_station',
 		muiTableHeadCellProps: {
 			style: { minWidth: '30px', maxWidth: '30px' },
@@ -104,12 +119,10 @@ export const ColumnsRuralCel = (newTab) => [
 			style: { minWidth: 'auto' },
 		},
 		muiFilterTextFieldProps: { placeholder: 'Sub-Estación' },
-		Cell: ({ row }) => (
-			<div  className="text-xs">{row.original.name_station}</div>
-		),
+		Cell: ({ row }) => <div className='text-xs  dark:text-black'>{row.original.name_station}</div>,
 	},
 	{
-		header: <span className="text-xs">Nombre de usuario</span>,
+		header: <span className='text-xs'>Nombre de usuario</span>,
 		accessorKey: 'user',
 		size: 40,
 		muiTableHeadCellProps: {
@@ -124,7 +137,7 @@ export const ColumnsRuralCel = (newTab) => [
 					<ul>
 						{row.original?.user.map((user, index) => {
 							return (
-								<li key={index} className='text-gray-600 text-xs'>
+								<li key={index} className='text-gray-600  dark:text-black text-xs'>
 									- {user.name_user_recloser}
 								</li>
 							)
@@ -136,7 +149,7 @@ export const ColumnsRuralCel = (newTab) => [
 		muiFilterTextFieldProps: { placeholder: 'Nombre usuario' },
 	},
 	{
-		header: <span className="text-xs">N° de Medidor</span>,
+		header: <span className='text-xs'>N° de Medidor</span>,
 		accessorKey: 'num_meter',
 		muiFilterTextFieldProps: { placeholder: 'Nº de Medidor' },
 		muiTableHeadCellProps: {
@@ -145,12 +158,10 @@ export const ColumnsRuralCel = (newTab) => [
 		muiTableBodyCellProps: {
 			style: { minWidth: 'auto' },
 		},
-		Cell: ({ row }) => (
-			<div  className="text-xs">{row.original.num_meter}</div>
-		),
+		Cell: ({ row }) => <div className='text-xs dark:text-black'>{row.original.num_meter}</div>,
 	},
 	{
-		header: <span className="text-xs">On-Line</span>,
+		header: <span className='text-xs'>On-Line</span>,
 		accessorKey: 'status',
 		size: 10,
 		enableColumnFilter: false,

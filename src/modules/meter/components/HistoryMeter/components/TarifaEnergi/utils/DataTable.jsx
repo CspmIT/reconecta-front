@@ -1,21 +1,21 @@
-export const dataTableEnergi = [
+export const dataTableEnergi = (data) => [
 	{
 		description: 'Acumulado Activa Importada - Resto',
 		cod: '1.1.1.8.1.255',
-		value: '33908630.00 kWh',
-		datePeriod: '0',
+		value: `${data.Tarifas_value.RTE_0.value} kWh`,
+		datePeriod: `${data.Tarifas_value.RTE_0.date}`,
 	},
 	{
 		description: 'Acumulado Activa Importada - Pico',
 		cod: '1.1.1.8.2.255',
-		value: '530755110.00 kWh',
-		datePeriod: '0',
+		value: `${data.Tarifas_value.RTE_1.value} kWh`,
+		datePeriod: `${data.Tarifas_value.RTE_1.date}`,
 	},
 	{
 		description: 'Acumulado Activa Importada - Valle',
 		cod: '1.1.1.8.3.255',
-		value: '426454862.00 kWh',
-		datePeriod: '0',
+		value: `${data.Tarifas_value.RTE_2.value} kWh`,
+		datePeriod: `${data.Tarifas_value.RTE_2.date}`,
 	},
 ]
 
@@ -52,10 +52,22 @@ export const ColumnsTableEnergi = [
 		size: 200,
 	},
 ]
-export const dataTableDifEnergi = [
-	{ description: 'Acumulado Intermensual Activa Importada - Resto', value: '-963472558.00 kWh', period: 'Junio' },
-	{ description: 'Acumulado Intermensual Activa Importada - Pico', value: '20888182.00 kWh', period: 'Junio' },
-	{ description: 'Acumulado Intermensual Activa Importada - Valle', value: '13424132.00 kWh', period: 'Junio' },
+export const dataTableDifEnergi = (data) => [
+	{
+		description: 'Acumulado Intermensual Activa Importada - Resto',
+		value: `${data.Dif_tarifas_value.RTE_0} kWh`,
+		period: `${data.mes_dif_mensual}`,
+	},
+	{
+		description: 'Acumulado Intermensual Activa Importada - Pico',
+		value: `${data.Dif_tarifas_value.RTE_1} kWh`,
+		period: `${data.mes_dif_mensual}`,
+	},
+	{
+		description: 'Acumulado Intermensual Activa Importada - Valle',
+		value: `${data.Dif_tarifas_value.RTE_2} kWh`,
+		period: `${data.mes_dif_mensual}`,
+	},
 ]
 
 export const ColumnsTableDifEnergi = [

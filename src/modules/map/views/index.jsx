@@ -12,6 +12,7 @@ function Map() {
 	const [dataMap, setDataMap] = useState([])
 	const [zoomActive, setZoomActive] = useState([])
 	const [activeMove, setActiveMove] = useState([])
+	const [changeZoom, setChangeZoom] = useState(false)
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -22,6 +23,7 @@ function Map() {
 				data.push({
 					center: [element.lat_location, element.lng_location],
 					zoom: adjustZoomToScreenSize(element.zoom),
+					id: element.id,
 				})
 			}
 			setDataMap(data)
@@ -29,7 +31,6 @@ function Map() {
 			setActiveMove(Array(data.length).fill(true))
 		}
 		getCenter()
-		getdisplay()
 	}, [])
 
 	// Escalas para el ajuste de zoom
@@ -59,32 +60,48 @@ function Map() {
 	const getdisplay = async () => {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
-			const markers = await Promise.all(
-				nodes.data.map(async (item) => {
-					const info = item.node_history.length
-						? {
-								name: item.name,
-								number: item.number,
-						  }
-						: {}
-					const recloser = item.node_history.filter((item) => item.type_device == 1)
-					const marker = new markerCustom(
-						item.id,
-						item.number,
-						item.lat_location,
-						item.lng_location,
-						3,
-						info,
-						item.alert,
-						recloser
-					)
-					if (recloser.length > 0) {
-						await marker.fetchInfo()
-					}
-					return marker
-				})
-			)
-			setMarkersRecloser(markers)
+			// Group markers by id_map
+			const markersByMap = {}
+			if (nodes.data.length > 0) {
+				await Promise.all(
+					nodes.data.map(async (item) => {
+						const info = item.node_history.length
+							? {
+									name: item.name,
+									number: item.number,
+							  }
+							: {}
+						const recloser = item.node_history.filter(
+							(historyItem) => historyItem.type_device == 'Reconectador'
+						)
+
+						// Create a new marker
+						const marker = new markerCustom(
+							item.id,
+							item.number,
+							item.lat_location,
+							item.lng_location,
+							3,
+							info,
+							item.alert,
+							recloser
+						)
+
+						// Fetch additional information if needed
+						if (recloser.length > 0) {
+							await marker.fetchInfo()
+						}
+
+						// Group markers by id_map
+						if (!markersByMap[item.id_map]) {
+							markersByMap[item.id_map] = []
+						}
+						markersByMap[item.id_map].push(marker)
+					})
+				)
+			}
+
+			setMarkersRecloser(markersByMap)
 		} catch (error) {
 			console.error('Error al obtener los nodos:', error)
 		}
@@ -102,14 +119,17 @@ function Map() {
 			newState[index] = !newState[index]
 			return newState
 		})
+		setChangeZoom(true)
 	}
 	useEffect(() => {
-		if (markersRecloser && dataMap) {
+		if (markersRecloser && dataMap && !changeZoom) {
 			setZoomActive(Array(dataMap.length).fill(false))
 			setActiveMove(Array(dataMap.length).fill(false))
 		}
 	}, [markersRecloser])
 	useEffect(() => {
+		getdisplay()
+
 		const intervalId = setInterval(() => {
 			getdisplay()
 		}, 15000)
@@ -140,8 +160,8 @@ function Map() {
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}
 									zoom={map.zoom}
-									markers={markersRecloser}
-									polylines={polylines}
+									markers={markersRecloser[map.id]}
+									polylines={polylines[map.id]}
 								/>
 							</div>
 						)

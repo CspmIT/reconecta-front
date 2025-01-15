@@ -1,5 +1,4 @@
 import { useContext, useState } from 'react'
-import Grafs from '../components/Grafs'
 import TableRecloser from '../components/Tables/TableRecloser'
 import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
@@ -14,11 +13,12 @@ import TableMeter from '../components/Tables/TableMeter'
 import TableAnalyzer from '../components/Tables/TableAnalyzer'
 import SubstationRuralBoard from '../../substationRural/views'
 import TableNodo from '../components/Tables/TableNodo'
-import ButtonAddElement from '../components/ButtonAddElement'
+import CardDashboard from '../components/CardDashboard/CardDashboard'
+import { useMediaQuery } from '@mui/material'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
-	const [loading, setLoading] = useState(true)
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const navigate = useNavigate()
 	const typeEquipment = (key) => {
 		let component
@@ -44,7 +44,9 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
-		const existingTabIndex = tabs.findIndex((tab) => tab.name === data.name)
+		const existingTabIndex = tabs.findIndex(
+			(tab) => tab.name === data.name && tab.id === data.id && tab.typeEquipment === data.type_recloser
+		)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
 		} else {
@@ -53,6 +55,7 @@ const Home = () => {
 				{
 					name: data.name,
 					id: data.id,
+					typeEquipment: data.type_recloser,
 					link: '/board',
 					component: typeEquipment(data.type_recloser),
 				},
@@ -93,12 +96,13 @@ const Home = () => {
 			component: <TableNodo />,
 		},
 	]
-
 	return (
 		<div className='flex flex-col w-full pt-4'>
-			<div className='flex flex-wrap gap-3 mb-5 px-3'>
-				<Grafs />
-			</div>
+			{!isMobile ? (
+				<div className='flex flex-wrap gap-3 mb-5 px-3 max-sm:hidden'>
+					<CardDashboard />
+				</div>
+			) : null}
 			<TabsHome tabs={tabsHome} />
 		</div>
 	)

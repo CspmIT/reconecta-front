@@ -128,22 +128,34 @@ function TableNodo() {
 	useEffect(() => {
 		getdisplay()
 	}, [])
+	const [darkMode, setDarkMode] = useState(storage.get('dark'))
+	useEffect(() => {
+		setDarkMode(storage.get('dark'))
+	}, [storage.get('dark')])
+
+	const stylesTable = {
+		header: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+		toolbarClass: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+		footer: { background: !darkMode ? 'rgb(190 190 190) ' : 'rgb(46 46 46) ' },
+	}
 	return (
 		<>
 			{node ? (
 				<div className='pb-5 w-full'>
 					<TableCustom
 						data={node}
-						columns={isMobile ? ColumnsNodoCel(changeView, deleteNodo) : ColumnsNodo(changeView, deleteNodo)}
-						density='comfortable'
+						columns={
+							isMobile ? ColumnsNodoCel(changeView, deleteNodo) : ColumnsNodo(changeView, deleteNodo)
+						}
+						density='compact'
 						header={{
-							background: 'rgb(190 190 190)',
+							...stylesTable.header,
 							fontSize: '18px',
 							fontWeight: 'bold',
 						}}
-						toolbarClass={{ background: 'rgb(190 190 190)' }}
+						toolbarClass={{ ...stylesTable.toolbarClass }}
 						body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-						footer={{ background: 'rgb(190 190 190)' }}
+						footer={{ ...stylesTable.footer }}
 						card={{
 							boxShadow: `1px 1px 8px 0px #00000046`,
 							borderRadius: '0.75rem',
@@ -152,6 +164,7 @@ function TableNodo() {
 						copy
 						hide
 						sort
+						pageSize={20}
 						pagination
 						columnVisibility={visibility}
 						onColumnVisibilityChange={handleColumnVisibilityChange}

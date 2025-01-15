@@ -183,9 +183,9 @@ export const getDataDetail = (data) => {
 				position: { x: 65, y: 90 },
 				data: {
 					name: 'BARRA',
-					R: (Barra[0].instantaneos.find((item) => item.field == 'I_0').valor / 1000).toFixed(2) + ' A',
-					S: (Barra[0].instantaneos.find((item) => item.field == 'I_1').valor / 1000).toFixed(2) + ' A',
-					T: (Barra[0].instantaneos.find((item) => item.field == 'I_2').valor / 1000).toFixed(2) + ' A',
+					R: (Barra[0].instantaneos.find((item) => item.field == 'V_0').valor / 1000).toFixed(2) + ' V',
+					S: (Barra[0].instantaneos.find((item) => item.field == 'V_1').valor / 1000).toFixed(2) + ' V',
+					T: (Barra[0].instantaneos.find((item) => item.field == 'V_2').valor / 1000).toFixed(2) + ' V',
 					Mva:
 						parseFloat(Barra[0].instantaneos.find((item) => item.field == 'IApP_3').valor / 1000).toFixed(
 							2
@@ -248,11 +248,11 @@ export const getDataDetail = (data) => {
 export const textosAdd = (data, context) => {
 	const darkMode = storage.get('dark')
 	context.fillStyle = darkMode ? 'white' : 'Black'
-	context.font = '150px'
+	context.font = '15px Arial'
 	context.textAlign = 'start'
 	context.textAlign = 'center'
 	context.fillText('Tension de', 620, 20)
 	context.fillText('entrada 132 kV', 620, 40)
-	context.fillText('Tension de', 620, 100)
-	context.fillText('salida 13,2 kV', 620, 120)
+	context.fillText('Tension de', 620, 110)
+	context.fillText('salida 13,2 kV', 620, 130)
 }

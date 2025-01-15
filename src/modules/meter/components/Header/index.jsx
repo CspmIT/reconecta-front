@@ -1,35 +1,60 @@
 import { TextField } from '@mui/material'
-import React from 'react'
 
-function Header() {
+function Header({ info }) {
 	return (
 		<>
 			<div className='w-full mt-3 grid gap-3 grid-cols-1 sm:grid-cols-2 px-4'>
-				<TextField type='text' label='Name' className='w-full' defaultValue={'SETA 1'} />
-				<TextField type='text' label='Nro Serie' className='w-full' defaultValue={'36037636'} />
 				<TextField
 					type='text'
+					disabled
+					label='Name'
+					className='w-full !text-black'
+					defaultValue={info?.number}
+				/>
+				<TextField
+					type='text'
+					disabled
+					label='Nro Serie'
+					className='w-full !text-black'
+					defaultValue={info?.serial}
+				/>
+				<TextField
+					type='text'
+					disabled
 					label='Ubicación'
-					className='w-full'
-					defaultValue={'BV. EVA PERON ESQ. BV. 9 DE JULIO '}
+					className='w-full !text-black'
+					defaultValue={info?.history?.nodes?.description}
 				/>
 				<div className='w-full grid gap-3 grid-cols-2'>
-					<TextField type='text' label='Marca' className='w-full' defaultValue={'ITRON'} />
-					<TextField type='text' label='Version' className='w-full' defaultValue={'SL7000'} />
+					<TextField
+						type='text'
+						disabled
+						label='Marca'
+						className='w-full !text-black'
+						defaultValue={info?.brand}
+					/>
+					<TextField
+						type='text'
+						disabled
+						label='Version'
+						className='w-full !text-black'
+						defaultValue={info.version}
+					/>
 				</div>
 			</div>
 			<div className='w-full flex justify-center items-center'>
 				<div className='w-full sm:w-2/4 border-2 border-solid border-slate-400 rounded-md flex p-4 mt-5'>
 					<div className='w-full p-1'>
 						<p className='font-semibold w-full text-center'>Tensión de batería:</p>
-						<p className='font-semibold w-full text-center'>0 V</p>
+						<p className='font-semibold w-full text-center'>{info.Bat_0} V</p>
 					</div>
 					<div className='w-full p-1'>
 						<p className='font-semibold w-full text-center'>Diferencia de Hora</p>
-						<p className='font-semibold w-full text-center'>00:01:38</p>
+						<p className='font-semibold w-full text-center'>{info.Dif_Time}</p>
 					</div>
 				</div>
 			</div>
+			<p className='font-semibold w-full text-center mt-4'>Último registro de datos: {info.Date}</p>
 		</>
 	)
 }

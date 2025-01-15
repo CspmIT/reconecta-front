@@ -1,7 +1,8 @@
 import { ContentPaste } from '@mui/icons-material'
-import { Button, Modal } from '@mui/material'
+import { Button, IconButton, Modal } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { RxCross2 } from 'react-icons/rx'
 function ModalDetail({ data, close }) {
 	const [openModalDetail, setOpenModal] = useState(false)
 	const [dataView, setDataView] = useState(null)
@@ -114,8 +115,11 @@ function ModalDetail({ data, close }) {
 							: 'border-slate-500'
 					} border-l-[2rem] border-b-[0.2rem] border-r-[0.2rem] focus:!outline-none`}
 				>
-					<div className='flex flex-col justify-center items-center w-full'>
+					<div className='relative flex flex-col justify-center items-center w-full'>
 						<h1 className='text-2xl text-black font-bold'>{nameMedidor(parseInt(dataView.meter.id))}</h1>
+						<IconButton size='small' onClick={handleCloseModal} className='!absolute right-0'>
+							<RxCross2 />
+						</IconButton>
 					</div>
 					{detailData && (
 						<>

@@ -2,10 +2,15 @@ import { useState } from 'react'
 import { FaChartArea, FaHistory, FaRuler, FaSearchengin } from 'react-icons/fa'
 import CardCustom from '../../../../components/CardCustom'
 
-const CardBoard = ({ onCardSelect }) => {
+const CardBoard = ({ onCardSelect, verifyBasic }) => {
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	const boardCards = [
-		{ id: 1, title: 'METROLOGÍA INSTANTÁNEA', subtitle: '', icon: <FaRuler /> },
+		{
+			id: verifyBasic ? 1 : 0,
+			title: 'METROLOGÍA INSTANTÁNEA',
+			subtitle: `${!verifyBasic ? '(Sin Datos...)' : ''}`,
+			icon: <FaRuler />,
+		},
 		{ id: 2, title: 'CURVA DE CARGA', subtitle: '(LP)', icon: <FaChartArea /> },
 		{ id: 3, title: 'CALIDAD DE TENSION', subtitle: '(VQD)', icon: <FaSearchengin /> },
 		{ id: 4, title: 'HISTORICOS', subtitle: '(EOB)', icon: <FaHistory /> },

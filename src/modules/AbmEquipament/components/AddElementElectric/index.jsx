@@ -10,14 +10,13 @@ function AddElementElectric({ setValue, dataEdit }) {
 	const [openSub, setOpenSub] = useState(false)
 	const [selectElement, setSelectElement] = useState([])
 	const [listElement, setListElement] = useState([])
-	const [device, setDevice] = useState(null)
 	const handleOpen = (evento) => {
 		setOpenSub(!openSub)
 		setAnchorEl(evento.currentTarget)
 	}
 	const addElementSelect = async (element) => {
 		let info
-		let listElement
+		let listElement = []
 		setOpenSub(false)
 		switch (element) {
 			case 1:
@@ -32,6 +31,15 @@ function AddElementElectric({ setValue, dataEdit }) {
 				})
 				break
 			case 2:
+				info = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getMetersEnabled`, 'GET')
+				listElement = info.data.map((item) => {
+					return {
+						...item,
+						brand: item.brand + ' - ' + item.version,
+						identification: item.serial,
+						type_element: element,
+					}
+				})
 				break
 			case 3:
 				break
@@ -41,7 +49,7 @@ function AddElementElectric({ setValue, dataEdit }) {
 		}
 		setSelectElement(listElement)
 	}
-	const addElementList = () => {
+	const addElementList = (device) => {
 		const deviceSelect = selectElement.filter((item) => item.id == device)
 		const result = listElement.filter((item) => item.id != deviceSelect[0].id)
 		setListElement([...result, ...deviceSelect])
@@ -118,7 +126,6 @@ function AddElementElectric({ setValue, dataEdit }) {
 					variant='contained'
 				>
 					Elemento Electrico
-					{/* {openSub ? <Minimize /> : <Add />} */}
 				</Button>
 				<Popper
 					ref={selectType}
@@ -130,10 +137,10 @@ function AddElementElectric({ setValue, dataEdit }) {
 					<MenuItem onClick={() => addElementSelect(1)} className='hover:!bg-slate-300 !rounded-lg'>
 						<p className='text-black font-semibold'>Reconectador</p>
 					</MenuItem>
-					{/* <MenuItem onClick={() => addElementSelect(2)} className='hover:!bg-slate-300 !rounded-lg'>
+					<MenuItem onClick={() => addElementSelect(2)} className='hover:!bg-slate-300 !rounded-lg'>
 						<p className='text-black font-semibold'>Medidor</p>
 					</MenuItem>
-					<MenuItem
+					{/* <MenuItem
 						onClick={() => addElementSelect(3)}
 						className='hover:!bg-slate-300 !rounded-lg'
 					>
@@ -148,7 +155,9 @@ function AddElementElectric({ setValue, dataEdit }) {
 						label={`Elementos`}
 						className='w-1/2'
 						defaultValue={''}
-						onChange={(e) => setDevice(e.target.value)}
+						onChange={(e) => {
+							addElementList(e.target.value)
+						}}
 					>
 						<MenuItem key={0} value={''}>
 							<em>Elemento</em>
@@ -161,11 +170,6 @@ function AddElementElectric({ setValue, dataEdit }) {
 							)
 						})}
 					</TextField>
-					{device && (
-						<Button variant='contained' color='warning' className='!mt-4' onClick={addElementList}>
-							Agregar
-						</Button>
-					)}
 				</div>
 			)}
 			{listElement.length > 0 && (

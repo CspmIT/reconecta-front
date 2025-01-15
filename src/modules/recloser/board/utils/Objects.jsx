@@ -1,8 +1,9 @@
 export const boardStatus = [
 	{ id: 1, field: 'alarm', name: 'Alarma' },
 	{ id: 2, field: 'advr', name: 'Alerta' },
-	{ id: 3, field: 'fail', name: 'Mal Función' },
+	{ id: 3, field: 'fail', name: 'Malfunción' },
 	{ id: 4, field: 'blck', name: 'Bloqueo' },
+	{ id: 5, field: 'malf', name: 'Malfunción' },
 ]
 
 export const boardFields = [

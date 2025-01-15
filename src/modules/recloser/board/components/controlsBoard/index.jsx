@@ -1,6 +1,7 @@
 import { Accordion, AccordionDetails, AccordionSummary, Button, IconButton, Typography } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
+import { BiSliderAlt } from 'react-icons/bi'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Swal from 'sweetalert2'
 // import { controls } from '../../utils/controlsRecloser'
@@ -20,6 +21,7 @@ const ControlsBoard = ({ info }) => {
 	const [controlAdvance, setControlAdvance] = useState([])
 	const [controlBasicOrigin, setControlBasicOrigin] = useState([])
 	const [controlAdvanceOrigin, setControlAdvanceOrigin] = useState([])
+	const [showAdvanced, setShowAdvanced] = useState(false)
 	const [countdown, setCountdown] = useState(0)
 	const [edit, setEdit] = useState(false)
 	const user = storage.get('usuario').sub
@@ -129,12 +131,27 @@ const ControlsBoard = ({ info }) => {
 		const habilitacion = await enableControl(enabled)
 		setEnabled(habilitacion)
 	}
+
+	const toggleAdvancedControls = () => {
+		setShowAdvanced((prev) => !prev) // Cambia el estado de visibilidad
+	}
 	return (
 		<>
-			<div className='w-full my-3 text-center relative'>
+			<div className='w-full text-center relative'>
 				<b className='text-xl mr-3'>Controles</b>
+			</div>
+			<div className='w-full mb-5 text-center relative'>
 				<Button size='large' variant='contained' type='button' onClick={authorizationControl}>
 					{enabled ? <LockOpen className='!text-xl' /> : <Lock className='!text-xl' />}
+				</Button>
+				<Button
+					color={`${showAdvanced ? 'error' : 'primary'}`}
+					className='!ml-2'
+					variant='contained'
+					type='button'
+					onClick={toggleAdvancedControls}
+				>
+					<BiSliderAlt className='!text-xl' />
 				</Button>
 				<IconButton
 					className={`!absolute right-0 sm:right-5 ${
@@ -180,15 +197,16 @@ const ControlsBoard = ({ info }) => {
 						})}
 					</div>
 					<div className='w-full flex mt-4'>
-						<Accordion className='!w-full !shadow-none border-2 border-solid border-white'>
+						<Accordion expanded={showAdvanced} className='!w-full !shadow-none'>
 							<AccordionSummary
-								expandIcon={<ExpandMoreIcon />}
-								className='!w-full'
+								className={`${showAdvanced ? '' : '!hidden'}`}
 								aria-controls={`panel-content`}
 							>
-								<Typography className='flex items-center justify-center w-full'>Avanzado</Typography>
+								<Typography className='flex items-center justify-center w-full uppercase'>
+									Controles Avanzados
+								</Typography>
 							</AccordionSummary>
-							<AccordionDetails className={`flex flex-wrap gap-3`}>
+							<AccordionDetails className={`flex flex-wrap gap-3 `}>
 								{controlAdvance.map((boardcontrol, index) => {
 									return (
 										<div

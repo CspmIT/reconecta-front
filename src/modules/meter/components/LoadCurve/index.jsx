@@ -4,27 +4,27 @@ import Curva from './components/Curva'
 import Grafic from './components/Grafic'
 import VoltageCurrent from './components/VoltageCurrent'
 
-function LoadCurve() {
+function LoadCurve({ info }) {
 	const tabs = [
 		{
 			id: 1,
 			title: 'Curva 1',
-			component: <Curva />,
+			component: <Curva info={info} />,
 		},
 		{
 			id: 2,
 			title: 'Tensiones y Corrientes',
-			component: <VoltageCurrent />,
+			component: <VoltageCurrent info={info} />,
 		},
 		{
 			id: 3,
 			title: 'Coseno Fi',
-			component: <CosenoFi />,
+			component: <CosenoFi info={info} />,
 		},
 		{
 			id: 4,
 			title: 'Gráficos',
-			component: <Grafic />,
+			component: <Grafic info={info} />,
 		},
 	]
 	return (

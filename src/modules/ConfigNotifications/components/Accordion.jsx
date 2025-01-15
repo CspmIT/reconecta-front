@@ -7,7 +7,13 @@ import LoaderComponent from '../../../components/Loader'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import { Accordion, AccordionDetails, AccordionSummary, Button } from '@mui/material'
-import { generateSources, sendConfigMqtt } from '../utils/js'
+import {
+	downloadFromFormData,
+	generateFileAlarm,
+	generateFileEvent,
+	generateSources,
+	sendConfigMqtt,
+} from '../utils/js'
 import SwalLoader from '../../../components/SwalLoader/SwalLoader'
 
 const CustomAccordion = ({ title, dataTable, access }) => {
@@ -62,11 +68,19 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 
 			if (result) {
 				SwalLoader()
-				const data = Object.values(newData).map((item) => item)
+				// todo esto comentado es para pasar lo de alarmas por mqtt pero se cambio para hacerlo por ftp
+				// const dataModify = Object.values(newData).map((item) => item)
 				// CANTIDAD DE REGISTROS POR GRUPO
-				const cantReg = 47
-				const sources = await generateSources(tableData, data, cantReg)
+				// const cantReg = 47
+				// const sources = await generateSources(tableData, dataModify, cantReg)
 				// await sendConfigMqtt(sources, tableData[0].type, tableData[0].id_version)
+
+				const fileEvent = await generateFileEvent(tableData)
+				const fileAlarm = await generateFileAlarm(tableData)
+				// para ver como queda el txt descomenta esta linea y pasale el formdata
+				// await downloadFromFormData(fileEvent)
+				// await downloadFromFormData(fileAlarm)
+				const data = Object.values(newData).map((item) => item)
 				await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
 				Swal.close()
 				Swal.fire({
@@ -84,7 +98,7 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 			console.error(error) // Captura y muestra el error
 		}
 	}
-
+	console.log(tableData)
 	return (
 		<Accordion
 			expanded={expanded}
@@ -115,6 +129,7 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 								boxShadow: `1px 1px 8px 0px #00000046`,
 								borderRadius: '0.75rem',
 							}}
+							groupBy={'type_var'}
 							enableRowVirtualization
 						/>
 						<div className='mt-5 w-full flex justify-center'>

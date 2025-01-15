@@ -30,7 +30,7 @@ function ControlSwitch({ control, contador, enabled, info }) {
 	return (
 		<>
 			<label>
-				<b className='mr-2'>{control.title}</b>
+				<b className='mr-2  dark:!text-black'>{control.title}</b>
 			</label>
 			<label
 				className={`inline-flex items-center ${

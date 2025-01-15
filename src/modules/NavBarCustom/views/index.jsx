@@ -27,6 +27,11 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
+import { front } from '../../../utils/routes/app.routes'
+import styles from '../utils/css/styles.module.css'
+import { io } from 'socket.io-client'
+import Cookies from 'js-cookie'
+import Logo from '/src/assets/img/Logo/LogoText.png'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -55,26 +60,35 @@ function NavBarCustom({ setLoading }) {
 			document.removeEventListener('mouseup', handleClickOutside)
 		}
 	}, [])
+	const [newEvent, setNewEvent] = useState(false)
+
+	useEffect(() => {
+		const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
+
+		socket.on('alert-active', (data) => {
+			setNewEvent(data.active)
+		})
+		return () => socket.disconnect()
+	}, [])
 
 	useEffect(() => {
 		setButtonActive(location)
 		if (location === '/DashBoard') {
-			setButtonActive('Home')
+			setButtonActive('/home')
 		}
 		if (infoNav != '') {
-			setButtonActive(infoNav)
+			setButtonActive(typeof infoNav == 'object' ? infoNav[0].link : infoNav)
 		}
 		if (location === '/' || location === '/Home' || location === '') {
 			setButtonActive('/home')
 		}
 		if ((locationTAbs.includes('Abm') || locationTAbs.includes('AbmDevice')) && infoNav == '') {
-			navigate('Home')
+			navigate('/Home')
 		}
 	}, [location, locationTAbs])
 
 	const activeButton = useCallback(
 		(id) => {
-			setButtonActive(id)
 			navigate(id)
 		},
 		[navigate]
@@ -125,15 +139,16 @@ function NavBarCustom({ setLoading }) {
 
 	return (
 		<>
-			<AppBarCustom position='fixed' open={open}>
-				<Toolbar>
+			<AppBarCustom className='!max-h-11 flex justify-center' position='fixed' open={open}>
+				<Toolbar className='!pl-[1.1rem]'>
 					<IconButton
 						color='inherit'
 						aria-label='open drawer'
 						onClick={handleDrawerOpen}
 						edge='start'
+						size='small'
 						sx={{
-							marginRight: 5,
+							marginRight: 4,
 							boxShadow: 'none',
 							...(isMobile && { display: 'none' }),
 							...(open && { display: 'none' }),
@@ -141,11 +156,15 @@ function NavBarCustom({ setLoading }) {
 					>
 						<MenuIcon />
 					</IconButton>
-					<Typography variant='h6' noWrap component='div'>
+
+					<img onClick={() => navigate('home')} className=' max-h-7 cursor-pointer' src={Logo} />
+					{/* <Typography variant='h6' noWrap component='div'>
 						Reconecta
-					</Typography>
+					</Typography> */}
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
-						<p className={`text-black text-xl ml-3 select-none ${isMobile ? 'hidden' : ''}`}>{nameCoop}</p>
+						<p className={`text-black text-base ml-3 select-none ${isMobile ? 'hidden' : ''}`}>
+							{nameCoop}
+						</p>
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
@@ -177,7 +196,7 @@ function NavBarCustom({ setLoading }) {
 				}}
 			>
 				<div className='bg-white dark:bg-gray-800 h-full w-full sm:w-auto'>
-					<DrawerHeaderCustom style={{ display: isMobile ? 'none' : '' }}>
+					<DrawerHeaderCustom className='!min-h-11 !h-11' style={{ display: isMobile ? 'none' : '' }}>
 						<IconButton onClick={handleDrawerClose}>
 							<ChevronLeftIcon className='dark:text-white' />
 						</IconButton>
@@ -196,7 +215,7 @@ function NavBarCustom({ setLoading }) {
 						}}
 					>
 						{menuSideBar.map((item, index) => {
-							if (item.name == 'ABM Equipos' && item.link == '') {
+							if (item.name.includes('ABM') && (item.link == '' || infoNav == '')) {
 								return null
 							}
 							if (!permission.some((perm) => perm.name == item.name)) {
@@ -204,6 +223,7 @@ function NavBarCustom({ setLoading }) {
 							}
 							const listIcon = ListIcon()
 							const componentIcon = listIcon.filter((icono) => icono.name === item.icon)?.[0] || ''
+
 							return (
 								<ListItem
 									key={index}
@@ -228,22 +248,24 @@ function NavBarCustom({ setLoading }) {
 									) : (
 										<Link to={item.link} className={`!w-full text-black dark:text-white`}>
 											<ListItemButton
-												// className={item.link === '/Alert' ? styles.backgroundAlert : ''}
 												sx={{
 													minHeight: 48,
 													justifyContent: !isMobile && open ? 'initial' : 'center',
 													padding: !isMobile ? '1.25rem' : '0.2rem',
 													py: 1.8,
 												}}
-												className='!w-full'
+												className={`!w-full ${
+													item.link === '/Alert' && newEvent ? styles.backgroundAlert : ''
+												}`}
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon
+													className={`${!isMobile && open ? '!mr-3' : ''}`}
 													sx={{
 														minWidth: 0,
 														mr: !isMobile && open ? 3 : 'auto',
 														justifyContent: 'center',
-														color: buttonActive == item.link ? 'blue' : '',
+														color: buttonActive?.includes(item.link) ? 'blue' : '',
 														marginRight: !isMobile ? 'auto' : '0',
 													}}
 												>
@@ -253,7 +275,7 @@ function NavBarCustom({ setLoading }) {
 													primary={item.name}
 													sx={{
 														opacity: !isMobile && open ? 1 : 0,
-														color: buttonActive == item.link ? 'blue' : '',
+														color: buttonActive?.includes(item.link) ? 'blue' : '',
 														display: isMobile ? 'none !important' : 'block',
 													}}
 												/>

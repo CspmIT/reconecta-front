@@ -154,9 +154,9 @@ class markerCustom {
 					throw new Error('Error al obtener la información')
 				}
 				const data = {
-					VL1: response.data.V_f_SRT_0?.[0].value || '',
-					VL2: response.data.V_f_SRT_1?.[0].value || '',
-					VL3: response.data.V_f_SRT_2?.[0].value || '',
+					VL1: response.data.I_f_0?.[0].value || '',
+					VL2: response.data.I_f_1?.[0].value || '',
+					VL3: response.data.I_f_2?.[0].value || '',
 				}
 				this.info = { ...this.info, data: data }
 				const recloser = await request(

@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
 import { removeData } from '../../../../storage/cookies-store'
 import { Button } from '@mui/material'
 import { storage } from '../../../../storage/storage'
+import { MainContext } from '../../../../context/MainContext'
 
-const DropdownImage = ({ props }) => {
+const DropdownImage = () => {
+	const { setInfoNav, setTabs, setTabCurrent, setTabActive } = useContext(MainContext)
 	const [isDropdownOpen, setDropdownOpen] = useState(false)
 	const dropdownRef = useRef(null) // Referencia al dropdown
 	const navigator = useNavigate()
@@ -15,11 +17,19 @@ const DropdownImage = ({ props }) => {
 
 	const handleLogout = async () => {
 		localStorage.clear()
+		setInfoNav('')
+		setTabs([])
+		setTabActive(0)
+		setTabCurrent(0)
 		await removeData('token')
 		navigator('/')
 	}
 	const handleChangeClient = async () => {
 		storage.remove('usuario')
+		setInfoNav('')
+		setTabs([])
+		setTabActive(0)
+		setTabCurrent(0)
 		await removeData('token')
 		navigator('/ListClients/1')
 	}
@@ -30,10 +40,8 @@ const DropdownImage = ({ props }) => {
 				setDropdownOpen(false)
 			}
 		}
-		// Agregar el escuchador de eventos al montar el componente
 		document.addEventListener('mousedown', handleClickOutside)
 		return () => {
-			// Limpiar el escuchador de eventos al desmontar el componente
 			document.removeEventListener('mousedown', handleClickOutside)
 		}
 	}, [])
@@ -50,7 +58,7 @@ const DropdownImage = ({ props }) => {
 					onClick={toggleDropdown}
 				>
 					<img
-						className='h-8 w-8 rounded-full'
+						className='h-6 w-6 rounded-full'
 						src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
 						alt='imagen de perfil'
 					/>

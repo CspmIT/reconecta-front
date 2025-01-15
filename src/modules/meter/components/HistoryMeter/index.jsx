@@ -2,11 +2,15 @@ import { IconButton, Modal } from '@mui/material'
 import TabsMeter from '../tabsMeter'
 import { FaArrowRightArrowLeft } from 'react-icons/fa6'
 import { ImCross } from 'react-icons/im'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ModelInvoice from './components/ModelInvoice'
 import TarifaEnergi from './components/TarifaEnergi'
 import EnergiTotal from './components/EnergiTotal'
-function HistoryMeter() {
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
+import Swal from 'sweetalert2'
+import LoaderComponent from '../../../../components/Loader'
+function HistoryMeter({ info }) {
 	const [open, setOpen] = useState(false)
 	const handleOpen = () => setOpen(true)
 	const handleClose = () => setOpen(false)
@@ -14,34 +18,95 @@ function HistoryMeter() {
 		{
 			id: 1,
 			title: 'Modelo de Factura',
-			component: <ModelInvoice />,
+			component: <ModelInvoice info={info} />,
 		},
 		{
 			id: 2,
 			title: 'Tarífas de Enegía',
-			component: <TarifaEnergi />,
+			component: <TarifaEnergi info={info} />,
 		},
 		{
 			id: 3,
 			title: 'Índice de Energía Total',
-			component: <EnergiTotal />,
+			component: <EnergiTotal info={info} />,
 		},
 	]
+	const [isLoading, setIsLoading] = useState(true)
+	const [dataRestart, setDataRestart] = useState({})
+	const [dataSummary, setDataSummary] = useState({})
+	const getInfoRestart = async (dateStart = null, dateFinished = null) => {
+		try {
+			setIsLoading(true)
+			const dataRestart = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getHistoryReset`,
+				'POST',
+				{
+					serial: info.serial,
+					version: info.version,
+					brand: info.brand,
+					dateStart,
+					dateFinished,
+				}
+			)
+			setDataRestart(dataRestart.data)
+			const dataSummary = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getHistorySummary`,
+				'POST',
+				{
+					serial: info.serial,
+					version: info.version,
+					brand: info.brand,
+					dateStart,
+					dateFinished,
+				}
+			)
+			setDataSummary(dataSummary.data)
+		} catch (error) {
+			console.error(error)
+			Swal.fire({
+				title: 'Atención!',
+				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
+				icon: 'error',
+			})
+			// navigate('/Home')
+		} finally {
+			setIsLoading(false)
+		}
+	}
+	useEffect(() => {
+		if (!info) {
+			Swal.fire({
+				title: 'Atención!',
+				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
+				icon: 'error',
+			})
+			navigate('/Home')
+		} else {
+			getInfoRestart()
+		}
+	}, [info])
+	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<>
-			<div className='w-full flex flex-wrap justify-around relative py-5 mb-5 border-y-2 border-solid border-gray-300'>
-				<div className='w-full md:w-1/2'>
+			<div className='w-full flex flex-wrap justify-center relative py-5 mb-5 border-y-2 border-solid border-gray-300'>
+				<div className='w-full flex flex-col items-center md:w-1/2'>
 					<p>Causa del último reinicio:</p>
-					<p className='font-bold'>Finalización del periodo</p>
+					<p className='font-bold'>
+						{dataRestart.uR_0.value == '1'
+							? 'Mediante opresión de tecla'
+							: dataRestart.uR_0.value == '20'
+							? 'Finalización del periodo'
+							: ` Nuevo valor de reinicio ${dataRestart.uR_0.value}`}
+					</p>
 					<p>
-						Número de reinicios: <span>24</span>
+						Número de reinicios: <span>{dataRestart.uR_2.value}</span>
 					</p>
 				</div>
-				<div className='w-full md:w-1/2'>
+				<div className='w-full flex flex-col items-center md:w-1/2'>
 					<p>Fecha del último reinicio</p>
-					<p className='font-bold'>01/07/2024 00:00:00</p>
+					<p className='font-bold'>{dataRestart.uR_1.value}</p>
 					<p>
-						Días desde el último reinicio: <span>30</span>
+						Días desde el último reinicio: <span>{dataRestart.uR_3.value}</span>
 					</p>
 				</div>
 				<IconButton
@@ -71,13 +136,13 @@ function HistoryMeter() {
 							<div className='flex justify-evenly'>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										MÍNIMA <span className='text-gray-700'>0.9157</span>
+										MÍNIMA <span className='text-gray-700'>{dataSummary.FP_0.value}</span>
 									</p>
-									<p>24/06/2024 03:55:00</p>
+									<p>{dataSummary.FP_1.value}</p>
 								</div>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										PROMEDIO <span className='text-gray-700'>0.9813</span>
+										PROMEDIO <span className='text-gray-700'>{dataSummary.FP_2.value}</span>
 									</p>
 								</div>
 							</div>
@@ -85,35 +150,35 @@ function HistoryMeter() {
 							<div className='flex justify-evenly gap-4'>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										MÍNIMA <span className='text-gray-700'>49.6Hz</span>
+										MÍNIMA <span className='text-gray-700'>{dataSummary.Freq_0.value}Hz</span>
 									</p>
-									<p>20/06/2024 09:53:22</p>
+									<p>{dataSummary.Freq_1.value}</p>
 								</div>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										MÁXIMA <span className='text-gray-700'>50.3Hz</span>
+										MÁXIMA <span className='text-gray-700'>{dataSummary.Freq_2.value}Hz</span>
 									</p>
-									<p>03/06/2024 02:10:24</p>
+									<p>{dataSummary.Freq_3.value}</p>
 								</div>
 							</div>
 							<h1 className='font-bold text-blue-600'>TEMPERATURA</h1>
 							<div className='flex justify-evenly'>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										MÍNIMA <span className='text-gray-700'>13ºC</span>
+										MÍNIMA <span className='text-gray-700'>{dataSummary.Temp_0.value}ºC</span>
 									</p>
-									<p>29/06/2024 07:31:38</p>
+									<p>{dataSummary.Temp_1.value}</p>
 								</div>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										ACTUAL <span className='text-gray-700'>19ºC</span>
+										ACTUAL <span className='text-gray-700'>{dataSummary.Op_1.value}ºC</span>
 									</p>
 								</div>
 								<div className='text-center'>
 									<p className='font-bold text-blue-600'>
-										MÁXIMA <span className='text-gray-700'>41ºC</span>
+										MÁXIMA <span className='text-gray-700'>{dataSummary.Temp_2.value}ºC</span>
 									</p>
-									<p>12/06/2024 16:36:02</p>
+									<p>{dataSummary.Temp_3.value}</p>
 								</div>
 							</div>
 						</div>

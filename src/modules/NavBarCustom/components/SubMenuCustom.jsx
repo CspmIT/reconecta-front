@@ -25,7 +25,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 	}
 
 	return (
-		<>
+		<div className='w-full'>
 			<ListItemButton
 				onClick={(evento) => handleOpen(evento)}
 				className='!w-full !px-5'
@@ -36,7 +36,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 			>
 				<ListItemIcon
 					className={`${
-						item.subMenus.some((value) => value.link == buttonActive)
+						item.subMenus.some((value) => buttonActive?.includes(value.link))
 							? ' !text-blue-500 dark:!text-blue-500'
 							: ''
 					}`}
@@ -53,7 +53,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 						display: isMobile ? 'none !important' : 'block',
 					}}
 					className={`${
-						item.subMenus.some((value) => value.link == buttonActive)
+						item.subMenus.some((value) => buttonActive?.includes(value.link))
 							? ' !text-blue-500 dark:!text-blue-500'
 							: ''
 					}`}
@@ -68,14 +68,18 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 								<Link to={submenu.link} className='text-black dark:text-white flex pl-5'>
 									<ListItemIcon
 										className={`${
-											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+											buttonActive?.includes(submenu.link)
+												? ' !text-blue-500 dark:!text-blue-500'
+												: ''
 										}`}
 									>
 										{getIcon(submenu)}
 									</ListItemIcon>
 									<ListItemText
 										className={`${
-											buttonActive === submenu.link ? ' !text-blue-500 dark:!text-blue-500' : ''
+											buttonActive?.includes(submenu.link)
+												? ' !text-blue-500 dark:!text-blue-500'
+												: ''
 										}`}
 										primary={submenu.name}
 									/>
@@ -101,7 +105,9 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 				>
 					{item.subMenus?.map((item2, index) => (
 						<MenuItem
-							className={`gap-3  ${buttonActive === item2.link ? ' !text-blue-500' : ' !text-gray-500'}`}
+							className={`gap-3  ${
+								buttonActive.includes(item2.link) ? ' !text-blue-500' : ' !text-gray-500'
+							}`}
 							key={index}
 							onClick={() => activeButton(item2.link)}
 						>
@@ -110,7 +116,7 @@ const SubMenuCustom = ({ item, openSideBar, activeButton, buttonActive }) => {
 					))}
 				</Popper>
 			) : null}
-		</>
+		</div>
 	)
 }
 export default SubMenuCustom
