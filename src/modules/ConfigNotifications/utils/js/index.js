@@ -1,6 +1,5 @@
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
-
 export const getConfigNotify = async () => {
 	const config = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getConfigNotify`, 'GET')
 	return config.data
@@ -22,6 +21,57 @@ export const formatterConfig = async (data) => {
 	return resultados
 }
 
+export const generateFileEvent = async (data) => {
+	try {
+		const idEventActive = data.filter((item) => item.priority < 3)
+
+		const textEvent = idEventActive.map((item) => `${item.id},${item.priority}`).join('\n')
+
+		const file = new Blob([textEvent], { type: 'text/plain' })
+
+		const formData = new FormData()
+		formData.append('file', file, 'output.txt')
+		return formData
+	} catch (error) {
+		throw error
+	}
+}
+
+export const downloadFromFormData = async (formData) => {
+	if (!formData) {
+		alert('Primero debes generar el FormData.')
+		return
+	}
+
+	// Extraer el archivo del FormData
+	const file = formData.get('file')
+
+	// Crear URL y descargar
+	const url = URL.createObjectURL(file)
+	const a = document.createElement('a')
+	a.href = url
+	a.download = 'output.txt'
+	a.click()
+	URL.revokeObjectURL(url) // Liberar memoria
+}
+export const generateFileAlarm = async (data) => {
+	try {
+		const idAlarm = data.filter((item) => item.alarm)
+
+		const textAlarm = idAlarm.map((item) => `${item.id},${item.alarm}\n`).join('\n')
+
+		const file = new Blob([textAlarm], { type: 'text/plain' })
+
+		// Crear FormData para enviarlo al backend
+		const formData = new FormData()
+		formData.append('file', file, 'output.txt')
+		return formData
+	} catch (error) {
+		throw error
+	}
+}
+
+// esta funcion no se esta utilizando pero se habiar echo para formatear los datos de las alarmas activas y luego enviar todo por mqtt
 export const generateSources = async (data, dataModify, cantReg) => {
 	try {
 		const mqttconfig = data.map((item) => {
