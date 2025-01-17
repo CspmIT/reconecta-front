@@ -54,7 +54,13 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 			setIsLoading(true)
 		}
 	}, [tableData])
-
+	const sendNotificationMQTT = async (dataInflux) => {
+		try {
+			await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/sendMqttMessagge`, 'POST', dataInflux)
+		} catch (error) {
+			throw new Error(error)
+		}
+	}
 	const saveData = async () => {
 		try {
 			const { value: result } = await Swal.fire({
@@ -68,15 +74,46 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 
 			if (result) {
 				SwalLoader()
-				// todo esto comentado es para pasar lo de alarmas por mqtt pero se cambio para hacerlo por ftp
-				// const dataModify = Object.values(newData).map((item) => item)
-				// CANTIDAD DE REGISTROS POR GRUPO
-				// const cantReg = 47
-				// const sources = await generateSources(tableData, dataModify, cantReg)
-				// await sendConfigMqtt(sources, tableData[0].type, tableData[0].id_version)
 
-				const fileEvent = await generateFileEvent(tableData)
-				const fileAlarm = await generateFileAlarm(tableData)
+				// BUSCO TODO LOS RECONECTADORES CON EL ID DE VERSION QUE SE MODIFICO PARA MANDARLE LA ALERTA DE QUE SE ACTUALIZO LAS ALARMAS Y LOS EVENTOS.
+				const listRecloser = await request(
+					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getRecloserxVersion?id_version=${
+						tableData[0].id_version
+					}`,
+					'GET'
+				)
+				const now = new Date()
+
+				const options = {
+					timeZone: 'America/Argentina/Buenos_Aires',
+					year: 'numeric',
+					month: '2-digit',
+					day: '2-digit',
+					hour: '2-digit',
+					minute: '2-digit',
+					second: '2-digit',
+				}
+
+				const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now).replace(/[\s:,/]/g, '')
+
+				const nameFile = `_${listRecloser.data?.[0]?.version?.brand?.name}_${listRecloser.data?.[0]?.version?.name}_${formattedDate}.txt`
+				const fileEvent = await generateFileEvent(tableData, nameFile)
+				const fileAlarm = await generateFileAlarm(tableData, nameFile)
+
+				if (listRecloser.data) {
+					listRecloser.data.forEach((info) => {
+						const dataInflux = {
+							url: 'eventUpdate',
+							brand: info?.version?.brand?.name,
+							serial: info?.serial,
+							data: `Event_${nameFile}`,
+						}
+						// COMENTE EL GUARDADO EN MQTT PARA NO GENERAR BASURA PERO ESTA FUNCIONAL.
+						// FALTA GENERAR EL ENVIO POR ALARMAS PERO ES EL MISMO dataInflux SOLO QUE CAMBIANDO EL URL A alarmUpdate y en el nombre del archivo pasarlo a Alarm_
+						// sendNotificationMQTT(dataInflux)
+					})
+				}
+				// FALTA EL GUARDADO DEL ARCHIVO EN EL SERVIDOR FTP
 				// para ver como queda el txt descomenta esta linea y pasale el formdata
 				// await downloadFromFormData(fileEvent)
 				// await downloadFromFormData(fileAlarm)

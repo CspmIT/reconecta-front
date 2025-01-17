@@ -21,7 +21,7 @@ export const formatterConfig = async (data) => {
 	return resultados
 }
 
-export const generateFileEvent = async (data) => {
+export const generateFileEvent = async (data, nameFile) => {
 	try {
 		const idEventActive = data.filter((item) => item.priority < 3)
 
@@ -30,7 +30,7 @@ export const generateFileEvent = async (data) => {
 		const file = new Blob([textEvent], { type: 'text/plain' })
 
 		const formData = new FormData()
-		formData.append('file', file, 'output.txt')
+		formData.append('file', file, `Event${nameFile}`)
 		return formData
 	} catch (error) {
 		throw error
@@ -54,17 +54,14 @@ export const downloadFromFormData = async (formData) => {
 	a.click()
 	URL.revokeObjectURL(url) // Liberar memoria
 }
-export const generateFileAlarm = async (data) => {
+export const generateFileAlarm = async (data, nameFile) => {
 	try {
 		const idAlarm = data.filter((item) => item.alarm)
-
 		const textAlarm = idAlarm.map((item) => `${item.id},${item.alarm}\n`).join('\n')
-
 		const file = new Blob([textAlarm], { type: 'text/plain' })
-
 		// Crear FormData para enviarlo al backend
 		const formData = new FormData()
-		formData.append('file', file, 'output.txt')
+		formData.append('file', file, `Alarm${nameFile}`)
 		return formData
 	} catch (error) {
 		throw error
