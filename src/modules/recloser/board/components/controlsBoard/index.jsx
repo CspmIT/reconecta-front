@@ -2,11 +2,8 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, IconButton, Typo
 import React, { useEffect, useState } from 'react'
 import { FaCheck } from 'react-icons/fa'
 import { BiSliderAlt } from 'react-icons/bi'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import Swal from 'sweetalert2'
-// import { controls } from '../../utils/controlsRecloser'
 import { Edit, Lock, LockOpen } from '@mui/icons-material'
-
 import DndComponent from './DndComponent'
 import { request } from '../../../../../utils/js/request'
 import { backend } from '../../../../../utils/routes/app.routes'

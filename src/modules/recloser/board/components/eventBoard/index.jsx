@@ -19,14 +19,27 @@ const EventBoard = ({ idRecloser }) => {
 			`${backend[`${import.meta.env.VITE_APP_NAME}`]}/eventsDevices?id=${id}&type=Reconectador`,
 			'GET'
 		)
-		const rows = data.data.map((item) => {
-			return {
-				dateAlert: item.dateAlert,
-				event: item.event,
-				infoAdd: item.infoAdd,
-				statusAlert: 0,
-			}
-		})
+		const rows = data.data.reduce(
+			(acc, item) => {
+				if (item.priority === 3) return acc
+				if (item.priority === 1) {
+					acc.critico.push({
+						dateAlert: item.dateAlert,
+						event: item.event,
+						infoAdd: item.infoAdd,
+						statusAlert: 0,
+					})
+				}
+				acc.all.push({
+					dateAlert: item.dateAlert,
+					event: item.event,
+					infoAdd: item.infoAdd,
+					statusAlert: 0,
+				})
+				return acc
+			},
+			{ critico: [], all: [] }
+		)
 		setRowCriticos(rows)
 	}
 
@@ -82,7 +95,7 @@ const EventBoard = ({ idRecloser }) => {
 							{selectedCardId === 1 && (
 								<div className='w-full'>
 									<TableCustom
-										data={rowCriticos}
+										data={rowCriticos.critico}
 										columns={ColumnsEvent()}
 										density='comfortable'
 										header={{
@@ -106,7 +119,7 @@ const EventBoard = ({ idRecloser }) => {
 							{selectedCardId === 2 && (
 								<div className='w-full'>
 									<TableCustom
-										data={[]}
+										data={rowCriticos.all}
 										columns={ColumnsEvent()}
 										density='comfortable'
 										header={{

@@ -98,7 +98,6 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 			console.error(error) // Captura y muestra el error
 		}
 	}
-	console.log(tableData)
 	return (
 		<Accordion
 			expanded={expanded}
