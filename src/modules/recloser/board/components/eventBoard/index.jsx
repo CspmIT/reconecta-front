@@ -21,6 +21,16 @@ const EventBoard = ({ idRecloser }) => {
 		)
 		const rows = data.data.reduce(
 			(acc, item) => {
+				const dateFormated = new Date(item.dateAlert)
+				item.dateAlert = dateFormated.toLocaleString()
+				const month = dateFormated.getMonth() + 1
+				const day = dateFormated.getDate()
+				const year = dateFormated.getFullYear()
+				const hours = dateFormated.getHours()
+				const minutes = dateFormated.getMinutes()
+				const seconds = dateFormated.getSeconds()
+				item.dateAlert = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year} 
+				${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`
 				if (item.priority === 3) return acc
 				if (item.priority === 1) {
 					acc.critico.push({
