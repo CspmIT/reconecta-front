@@ -4,6 +4,9 @@ import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { getRecloser, getVersions, saveRecloser } from '../../utils/js/recloser'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
+import AddNode from '../AddNode'
 
 function AddRecloser({ id }) {
 	const navigate = useNavigate()
@@ -11,9 +14,16 @@ function AddRecloser({ id }) {
 	const [info, setInfo] = useState({})
 	const [versionSelected, setVersionSelected] = useState('')
 	const [versiones, setVersiones] = useState([])
+	const [nodos, setNodos] = useState([])
+	const [abmNode, setAbmNode] = useState(false)
+	const [nodeId, setNodeId] = useState(0)
 	const listVersion = async () => {
 		const version = await getVersions()
 		setVersiones(version)
+	}
+	const listNodos = async () => {
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
+		setNodos(data)
 	}
 	const changeVersion = (value) => {
 		const selectedVersion = versiones.find((item) => item.version.some((ver) => ver.name === value))
@@ -38,7 +48,15 @@ function AddRecloser({ id }) {
 		setValue('id', data.id)
 		setInfo(data)
 	}
-
+	const handleChangeNode = (e) => {
+		const selectedNode = e.target.value
+		setAbmNode(selectedNode === 'new')
+		setNodeId(selectedNode)
+	}
+	const handleAddNode = () => {
+		listNodos()
+		setAbmNode(false)
+	}
 	const {
 		register,
 		setValue,
@@ -49,7 +67,7 @@ function AddRecloser({ id }) {
 	const onSubmit = async (info) => {
 		try {
 			await saveRecloser(info)
-			Swal.fire({ title: 'Perfecto!', icon: 'success', text: 'Recloser agregado correctamente' })
+			Swal.fire({ title: 'Perfecto!', icon: 'success', text: 'Reconectador agregado correctamente' })
 			navigate(info.id_recloser !== 0 ? '/tabs' : '/Home')
 		} catch (e) {
 			Swal.fire({
@@ -61,19 +79,21 @@ function AddRecloser({ id }) {
 	}
 	useEffect(() => {
 		listVersion()
+		listNodos()
 	}, [])
 	useEffect(() => {
 		if (id && versiones) {
 			getDataEdit(id)
 		}
 	}, [id, versiones])
+
 	return (
 		<>
 			<div className='mt-3'>
 				<p className='w-full text-center text-2xl'>Reconectador</p>
 			</div>
 			<form id='formAbmRecloser' onSubmit={handleSubmit(onSubmit)} className='w-full flex flex-wrap p-7'>
-				<div className='w-full mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3'>
+				<div className='w-full mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4'>
 					<TextField type='number' {...register('id')} className='!hidden' value={info.id || 0} />
 					<div className='w-full'>
 						<TextField
@@ -150,17 +170,33 @@ function AddRecloser({ id }) {
 							<MenuItem value=''>
 								<em>Configuración</em>
 							</MenuItem>
-							<MenuItem value={1}>Común</MenuItem>
+							<MenuItem value={1}>Normal</MenuItem>
 							<MenuItem value={2}>Especial</MenuItem>
 						</TextField>
 					</div>
+					<div className='w-full'>
+						<TextField select label='Nodo' className='w-full' onChange={handleChangeNode} value={nodeId}>
+							<MenuItem value={0}> Sin nodo </MenuItem>
+							<MenuItem value='new'> Nuevo nodo </MenuItem>
+							{nodos.map((nodo, index) => (
+								<MenuItem key={index} value={nodo.id}>
+									{nodo.name}
+								</MenuItem>
+							))}
+						</TextField>
+					</div>
 				</div>
-				<div className='w-full flex justify-center mt-5'>
-					<Button type='submit' variant='contained'>
-						Guardar
-					</Button>
-				</div>
+				{!abmNode && (
+					<div className='w-full flex justify-center mt-5'>
+						<Button type='submit' variant='contained'>
+							Guardar
+						</Button>
+					</div>
+				)}
 			</form>
+			{abmNode && ( // Si se selecciona nuevo nodo
+				<AddNode setNodeId={setNodeId} handleAddNode={handleAddNode} />
+			)}
 		</>
 	)
 }

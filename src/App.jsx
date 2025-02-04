@@ -25,6 +25,7 @@ import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
 import Binnacle from './modules/Binnacle'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
+import Abm from './modules/Abm/views'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -54,6 +55,7 @@ function App() {
 		{ path: '/config/notifications', element: <Notifications /> },
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
+		{ path: '/AddElement', element: <Abm /> },
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

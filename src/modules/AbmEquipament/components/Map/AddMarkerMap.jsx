@@ -34,6 +34,7 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 		setMaps(data.data)
 	}
 	useEffect(() => {
+		console.log('lat', lat, 'lng', lng)
 		if (lng && lat) {
 			changeUbication(lng, lat)
 		}
@@ -50,7 +51,7 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 	}, [])
 	return (
 		<>
-			<div className='row gap-3 my-3'>
+			<div className='row gap-3 my-3 w-full'>
 				{maps.length > 1 ? (
 					<TextField
 						id='id_map'
@@ -96,7 +97,7 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 					type='number'
 					disabled={markerEdit}
 					className={`w-1/3 `}
-					label={`Logitud`}
+					label={`Longitud`}
 					{...register('lng_marker', { required: 'Debe agregar una ubicación' })}
 					error={errors.lng_marker ? true : false}
 					helperText={errors.lng_marker && errors.lng_marker.message}
