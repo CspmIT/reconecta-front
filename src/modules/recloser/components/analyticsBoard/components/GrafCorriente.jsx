@@ -1,12 +1,13 @@
-import { useEffect, useState, useContext } from 'react'
-import { request } from '../../../../../../utils/js/request'
-import GrafLinea from '../../../../../../components/Graphs/linechart'
-import { backend } from '../../../../../../utils/routes/app.routes'
-import LoaderComponent from '../../../../../../components/Loader'
-function GrafTensionABC({ idRecloser }) {
+import { useEffect, useState } from 'react'
+import { request } from '../../../../../utils/js/request'
+import GrafLinea from '../../../../../components/Graphs/linechart'
+import { backend } from '../../../../../utils/routes/app.routes'
+import Swal from 'sweetalert2'
+import LoaderComponent from '../../../../../components/Loader'
+function GrafCorriente({ idRecloser }) {
 	const [dataGraf, setDataGraf] = useState(null)
 	const getTensionABC = async (id) => {
-		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`, 'GET')
+		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
@@ -39,7 +40,7 @@ function GrafTensionABC({ idRecloser }) {
 		<>
 			{dataGraf ? (
 				<GrafLinea
-					title={'Tensión ABC'}
+					title={'Corrientes'}
 					seriesData={dataGraf}
 					configxAxis={{ type: 'datetime' }}
 					labelxAxis={{ format: '{value:%Y-%m-%d %H:%M:%S}' }}
@@ -57,4 +58,4 @@ function GrafTensionABC({ idRecloser }) {
 	)
 }
 
-export default GrafTensionABC
+export default GrafCorriente

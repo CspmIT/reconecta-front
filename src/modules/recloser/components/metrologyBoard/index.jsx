@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { boardMetrology } from '../../utils/Objects'
-import CardCustom from '../../../../../components/CardCustom'
-import { request } from '../../../../../utils/js/request'
+import CardCustom from '../../../../components/CardCustom'
+import { request } from '../../../../utils/js/request'
 import Swal from 'sweetalert2'
-import { backend } from '../../../../../utils/routes/app.routes'
-import LoaderComponent from '../../../../../components/Loader'
+import { backend } from '../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../components/Loader'
 
 const MetrologyBoard = ({ idRecloser }) => {
 	const [dataMetrology, setDataMetrology] = useState(null)

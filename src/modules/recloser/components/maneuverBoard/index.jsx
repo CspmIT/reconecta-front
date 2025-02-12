@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import TableCustom from '../../../../../components/TableCustom'
+import TableCustom from '../../../../components/TableCustom'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { columnManeuver } from '../../utils/ColumnsManeuver'
 import { FormLabel } from '@mui/material'
 import Swal from 'sweetalert2'
-import { request } from '../../../../../utils/js/request'
-import { backend } from '../../../../../utils/routes/app.routes'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 const ManeuverBoard = ({ idRecloser }) => {
 	const [listManeuver, setListManeuver] = useState([])
 	const getManauver = async (id) => {

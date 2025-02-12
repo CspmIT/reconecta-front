@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react'
-import TableCustom from '../../../../../components/TableCustom'
+import TableCustom from '../../../../components/TableCustom'
 
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { request } from '../../../../../utils/js/request'
+import { request } from '../../../../utils/js/request'
 import { ColumnsEvent } from './ColumnsEvent'
-import { backend } from '../../../../../utils/routes/app.routes'
-import LoaderComponent from '../../../../../components/Loader'
+import { backend } from '../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../components/Loader'
 import { Tab, Tabs } from '@mui/material'
 import { FaTachometerAlt } from 'react-icons/fa'
 import { BsFiles } from 'react-icons/bs'
@@ -86,11 +86,10 @@ const EventBoard = ({ idRecloser }) => {
 						{boardCards.map((item) => (
 							<Tab
 								key={item.id}
-								className={`w-full ${
-									selectedCardId == item.id
+								className={`w-full ${selectedCardId == item.id
 										? '!bg-gray-100 dark:!bg-zinc-500 '
 										: '!bg-gray-300  dark:!bg-zinc-800 '
-								}   !border-t-2 !border-l-2 !border-r-2 ${classTabs} min-w-0 relative`}
+									}   !border-t-2 !border-l-2 !border-r-2 ${classTabs} min-w-0 relative`}
 								onClick={() => handleCard(item.id)}
 								label={
 									<div className='flex items-center justify-center '>

@@ -4,12 +4,12 @@ import { Button } from '@mui/material'
 import { FaCog, FaCogs, FaEdit, FaRedo, FaTrash } from 'react-icons/fa'
 import ControlsBoard from '../controlsBoard'
 import CardBoard from '../cardBoard'
-import { MainContext } from '../../../../../context/MainContext'
+import { MainContext } from '../../../../context/MainContext'
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom'
-import { request } from '../../../../../utils/js/request'
-import { backend } from '../../../../../utils/routes/app.routes'
-import LoaderComponent from '../../../../../components/Loader'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../components/Loader'
 
 const DataBoard = () => {
 	const [info, setInfo] = useState(null)

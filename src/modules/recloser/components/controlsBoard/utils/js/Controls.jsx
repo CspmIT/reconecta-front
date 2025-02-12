@@ -1,8 +1,8 @@
 import Swal from 'sweetalert2'
-import { request } from '../../../../../../../utils/js/request'
-import { backend } from '../../../../../../../utils/routes/app.routes'
-import { storage } from '../../../../../../../storage/storage'
-import SwalLoader from '../../../../../../../components/SwalLoader/SwalLoader'
+import { request } from '../../../../../../utils/js/request'
+import { backend } from '../../../../../../utils/routes/app.routes'
+import { storage } from '../../../../../../storage/storage'
+import SwalLoader from '../../../../../../components/SwalLoader/SwalLoader'
 
 export const enableControl = async (enabled) => {
 	if (!enabled) {

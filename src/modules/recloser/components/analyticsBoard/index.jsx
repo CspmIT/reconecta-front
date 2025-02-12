@@ -1,4 +1,4 @@
-import CardCustom from '../../../../../components/CardCustom'
+import CardCustom from '../../../../components/CardCustom'
 import GrafCorriente from './components/GrafCorriente'
 import GrafTensionABC from './components/GrafTensionABC'
 import TableInterruption from './components/TableInterruption'

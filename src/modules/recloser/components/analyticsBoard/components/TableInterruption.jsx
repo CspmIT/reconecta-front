@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import TableCustom from '../../../../../../components/TableCustom'
-import { request } from '../../../../../../utils/js/request'
+import TableCustom from '../../../../../components/TableCustom'
+import { request } from '../../../../../utils/js/request'
 import { ColumnTableInt } from '../utils/ColumnTableInt'
-import { backend } from '../../../../../../utils/routes/app.routes'
-import LoaderComponent from '../../../../../../components/Loader'
+import { backend } from '../../../../../utils/routes/app.routes'
+import LoaderComponent from '../../../../../components/Loader'
 import Swal from 'sweetalert2'
 import { Typography } from '@mui/material'
 

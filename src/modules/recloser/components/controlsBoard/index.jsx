@@ -5,11 +5,11 @@ import { BiSliderAlt } from 'react-icons/bi'
 import Swal from 'sweetalert2'
 import { Edit, Lock, LockOpen } from '@mui/icons-material'
 import DndComponent from './DndComponent'
-import { request } from '../../../../../utils/js/request'
-import { backend } from '../../../../../utils/routes/app.routes'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 import ControlSwitch from './components/ControlSwitch'
 import ControlCircle from './components/ControlCircle'
-import { storage } from '../../../../../storage/storage'
+import { storage } from '../../../../storage/storage'
 import { enableControl } from './utils/js/Controls'
 
 const ControlsBoard = ({ info }) => {
@@ -151,9 +151,8 @@ const ControlsBoard = ({ info }) => {
 					<BiSliderAlt className='!text-xl' />
 				</Button>
 				<IconButton
-					className={`!absolute right-0 sm:right-5 ${
-						!edit ? '!bg-yellow-300 hover:!bg-yellow-400' : ' !bg-green-300 hover:!bg-green-400 '
-					}  shadow-slate-400 shadow-md`}
+					className={`!absolute right-0 sm:right-5 ${!edit ? '!bg-yellow-300 hover:!bg-yellow-400' : ' !bg-green-300 hover:!bg-green-400 '
+						}  shadow-slate-400 shadow-md`}
 					type='button'
 					onClick={editControls}
 				>
@@ -172,7 +171,7 @@ const ControlsBoard = ({ info }) => {
 									className={`w-full sm:w-[48%] lg:w-[24%] flex p-3 ${
 										// (!boardcontrol.enabled || boardcontrol.status == 'sin Datos') && '!opacity-25'
 										''
-									} rounded-md items-center justify-between bg-gray-300 `}
+										} rounded-md items-center justify-between bg-gray-300 `}
 								>
 									{boardcontrol.type_input === 'switch' ? (
 										<ControlSwitch
@@ -208,10 +207,9 @@ const ControlsBoard = ({ info }) => {
 									return (
 										<div
 											key={index}
-											className={`w-full sm:w-[48%] lg:w-[24%] flex p-3 ${
-												(!boardcontrol.enabled || boardcontrol.status == 'sin Datos') &&
+											className={`w-full sm:w-[48%] lg:w-[24%] flex p-3 ${(!boardcontrol.enabled || boardcontrol.status == 'sin Datos') &&
 												'!opacity-25'
-											} rounded-md items-center justify-between bg-gray-300 `}
+												} rounded-md items-center justify-between bg-gray-300 `}
 										>
 											{boardcontrol.type_input === 'switch' ? (
 												<ControlSwitch info={info} control={boardcontrol} enabled={enabled} />
