@@ -63,7 +63,7 @@ const Abm = () => {
 	}
 	const handleNewEquipment = () => {
 		const id = numberEquipments.length === 0 ? 1 : numberEquipments[numberEquipments.length - 1].id + 1
-		setNumberEquipments([...numberEquipments, { id, id_model: '', serial: '', observation: '', configuration: '' }])
+		setNumberEquipments([...numberEquipments, { id, id_model: '', serial: '', observation: '', configuration: 1 }])
 	}
 
 	const handleDeleteEquipment = (id) => {

@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext } from 'react'
 import TableRecloser from '../components/Tables/TableRecloser'
 import { MainContext } from '../../../context/MainContext'
 import { useNavigate } from 'react-router-dom'
@@ -29,13 +29,13 @@ const Home = () => {
 			case 2:
 				component = <BoardMeter />
 				break
-			case 3:
+			/* case 2:
 				component = <SubstationUrbanBoard />
 				break
-			case 5:
+			case 3:
 				component = <SubstationRuralBoard />
-				break
-			case 4:
+				break */
+			case 3:
 				component = <AnalyzerBoard />
 				break
 			default:
@@ -45,7 +45,7 @@ const Home = () => {
 	}
 	const newTabBoard = (data) => {
 		const existingTabIndex = tabs.findIndex(
-			(tab) => tab.name === data.name && tab.id === data.id && tab.typeEquipment === data.type_recloser
+			(tab) => tab.name === data.name && tab.id === data.id
 		)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
@@ -53,49 +53,17 @@ const Home = () => {
 			setTabs((prevTabs) => [
 				...prevTabs,
 				{
-					name: data.name,
+					name: data.serial,
 					id: data.id,
-					typeEquipment: data.type_recloser,
+					typeEquipment: data.equipmentmodels.type,
 					link: '/board',
-					component: typeEquipment(data.type_recloser),
+					component: typeEquipment(data.equipmentmodels.type),
 				},
 			])
 			setTabCurrent(tabs.length)
 		}
 		navigate('/tabs')
 	}
-	const tabsHome = [
-		{
-			id: 1,
-			title: 'Reconectadores',
-			component: <TableRecloser newTab={newTabBoard} />,
-		},
-		{
-			id: 4,
-			title: 'Medidores',
-			component: <TableMeter newTab={newTabBoard} />,
-		},
-		{
-			id: 2,
-			title: 'Sub Estación Urbana',
-			component: <TableSubStationUrban newTab={newTabBoard} />,
-		},
-		{
-			id: 3,
-			title: 'Sub Estación Rural',
-			component: <TableSubStationRural newTab={newTabBoard} />,
-		},
-		{
-			id: 5,
-			title: 'Analizador de red',
-			component: <TableAnalyzer newTab={newTabBoard} />,
-		},
-		{
-			id: 6,
-			title: 'Nodos',
-			component: <TableNodo />,
-		},
-	]
 	return (
 		<div className='flex flex-col w-full pt-4'>
 			{!isMobile ? (
@@ -103,7 +71,7 @@ const Home = () => {
 					<CardDashboard />
 				</div>
 			) : null}
-			<TabsHome tabs={tabsHome} />
+			<TabsHome newTab={newTabBoard} />
 		</div>
 	)
 }

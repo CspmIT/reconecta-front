@@ -26,6 +26,7 @@ import AbmDevice from './modules/AbmDevice/views'
 import Binnacle from './modules/Binnacle'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
+import Equipment from './modules/Equipment/view'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -56,6 +57,7 @@ function App() {
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },
+		{ path: '/Equipment/:id', element: <Equipment /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({
