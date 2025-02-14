@@ -49,7 +49,7 @@ const DataBoard = () => {
 
 	const editRecloser = (info) => {
 		setInfoNav([info])
-		navigate('/AbmDevice/recloser/' + info.recloser.id)
+		navigate('/Equipment/' + info.recloser.id)
 	}
 	const refreshInflux = async () => {
 		getDataRecloser(data.id)
