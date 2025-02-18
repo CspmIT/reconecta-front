@@ -28,32 +28,32 @@ export const columnsTableCurve = [
 	},
 	{
 		header: 'Canal 4',
-		accessorKey: 'cos',
+		accessorKey: 'cos_total',
 		muiFilterTextFieldProps: { placeholder: 'Canal 4' },
 		size: 40,
 	},
 
 	{
 		header: 'Canal 5 (kW)',
-		accessorKey: 'pr',
+		accessorKey: 'p0',
 		muiFilterTextFieldProps: { placeholder: 'Canal 5' },
 		size: 40,
 	},
 	{
 		header: 'Canal 6 (kW)',
-		accessorKey: 'ps',
+		accessorKey: 'p1',
 		muiFilterTextFieldProps: { placeholder: 'Canal 6' },
 		size: 40,
 	},
 	{
 		header: 'Canal 7 (kW)',
-		accessorKey: 'pt',
+		accessorKey: 'p2',
 		muiFilterTextFieldProps: { placeholder: 'Canal 7' },
 		size: 40,
 	},
 	{
 		header: 'Canal 8 (kVA)',
-		accessorKey: 'aparente',
+		accessorKey: 'aparente_total',
 		muiFilterTextFieldProps: { placeholder: 'Canal 8' },
 		size: 40,
 	},
@@ -119,20 +119,69 @@ export const columnsTableCoseno = [
 	},
 	{
 		header: 'Cos R',
-		accessorKey: 'cosr',
+		accessorKey: 'cos_0',
 		muiFilterTextFieldProps: { placeholder: 'Cos R' },
 		size: 40,
 	},
 	{
 		header: 'Cos S',
-		accessorKey: 'coss',
+		accessorKey: 'cos_1',
 		muiFilterTextFieldProps: { placeholder: 'Cos S' },
 		size: 40,
 	},
 	{
 		header: 'Cos T',
-		accessorKey: 'cost',
+		accessorKey: 'cos_2',
 		muiFilterTextFieldProps: { placeholder: 'Cos T' },
 		size: 40,
 	},
+]
+
+export const columnsTableEnergia = [
+	{
+		accessorFn: (originalRow) => new Date(originalRow.date), //convert to date for sorting and filtering
+		size: 100,
+		id: 'date',
+		header: 'Fecha',
+		accessorKey: 'date',
+		filterVariant: 'date-range',
+		Cell: ({ cell }) => `${cell.getValue().toLocaleDateString()} ${cell.getValue().toLocaleTimeString()}`, // convert back to string for display
+	},
+	{
+		header: 'Activa R (kWh)',
+		accessorKey: 'a0',
+		muiFilterTextFieldProps: { placeholder: 'Activa R' },
+		size: 40,
+	},
+	{
+		header: 'Activa S (kWh)',
+		accessorKey: 'a1',
+		muiFilterTextFieldProps: { placeholder: 'Activa S' },
+		size: 40,
+	},
+	{
+		header: 'Activa T (kWh)',
+		accessorKey: 'a2',
+		muiFilterTextFieldProps: { placeholder: 'Activa T' },
+		size: 40,
+	},
+	{
+		header: 'Reactiva R (kVArh)',
+		accessorKey: 'r0',
+		muiFilterTextFieldProps: { placeholder: 'Reactiva R' },
+		size: 40,
+	},
+	{
+		header: 'Reactiva S (kVArh)',
+		accessorKey: 'r1',
+		muiFilterTextFieldProps: { placeholder: 'Reactiva S' },
+		size: 40,
+	},
+	{
+		header: 'Reactiva T (kVArh)',
+		accessorKey: 'r2',
+		muiFilterTextFieldProps: { placeholder: 'Reactiva T' },
+		size: 40,
+	},
+
 ]
