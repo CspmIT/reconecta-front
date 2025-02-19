@@ -11,7 +11,7 @@ import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import LoaderComponent from '../../../../components/Loader'
 
-const DataBoard = () => {
+const DataBoard = ({ recloser }) => {
 	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
 	const { setInfoNav, tabCurrent, setTabCurrent, setTabActive, tabs, setTabs } = useContext(MainContext)
@@ -24,8 +24,8 @@ const DataBoard = () => {
 		setSelectedCardId(id)
 	}
 	const getDataRecloser = async (id) => {
-		const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${id}`, 'GET')
-		setInfo(recloser.data)
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${id}`, 'GET')
+		setInfo(data)
 		setSelectedCardId(1)
 	}
 
