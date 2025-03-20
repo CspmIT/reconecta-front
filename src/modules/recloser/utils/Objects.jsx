@@ -11,8 +11,9 @@ export const boardFields = [
 	{ id: 2, field: 'number', name: 'Número' },
 	{ id: 3, field: 'serial', name: 'Nro de serie' },
 	{ id: 4, field: 'brand', name: 'Fabricante' },
+	{ id: 5, field: 'version', name: 'Versión' },
 	{
-		id: 5,
+		id: 6,
 		field: 'ac',
 		name: 'Alimentación',
 		options: {
@@ -21,7 +22,7 @@ export const boardFields = [
 		},
 	},
 	{
-		id: 6,
+		id: 7,
 		field: 'local',
 		name: 'Modo',
 		options: {

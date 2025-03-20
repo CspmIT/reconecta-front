@@ -17,10 +17,11 @@ const HeaderBoard = ({ info }) => {
 				)
 			}
 			setDataHead({
-				name: info?.recloser?.relation?.nodes?.['name'] || 'S/D',
+				name: info?.recloser?.name || 'S/D',
 				number: info?.recloser?.relation?.nodes?.['number'] || 'S/D',
-				serial: info?.recloser?.['serial'] || 'S/D',
-				brand: info?.recloser?.['brand'] || 'S/D',
+				serial: info?.recloser?.number || 'S/D',
+				brand: info?.recloser?.brand || 'S/D',
+				version: info?.recloser?.version || 'S/D',
 				ac: info?.instantaneo['ac']?.[0].value,
 				local: info?.instantaneo['local']?.[0].value,
 			})
@@ -45,13 +46,12 @@ const HeaderBoard = ({ info }) => {
 			</div>
 			<div className='w-full sm:w-2/4 flex flex-row justify-center'>
 				<div
-					className={`rounded-full grid min-w-40 max-w-40 min-h-40 max-h-40  ${
-						statusReco === 1
-							? 'bg-red-500 shadow-red-700'
-							: statusReco === 0
+					className={`rounded-full grid min-w-40 max-w-40 min-h-40 max-h-40  ${statusReco === 1
+						? 'bg-red-500 shadow-red-700'
+						: statusReco === 0
 							? 'bg-green-500 shadow-green-700'
 							: 'bg-yellow-500 shadow-yellow-700'
-					} justify-center items-center shadow-md `}
+						} justify-center items-center shadow-md `}
 				>
 					<div
 						onClick={async () => {

@@ -26,18 +26,18 @@ const ControlsBoard = ({ info }) => {
 	const getControls = async (version) => {
 		const listControls = await request(`${backend.Reconecta}/getControlsRecloserUser`, 'POST', { user, version })
 		const basico = listControls.data
-			.filter((item) => item.level == 1)
+			.filter((item) => item.control.level == 1)
 			.map((item) => {
-				const checked = info?.instantaneo[item.field] ? info?.instantaneo[item.field][0].value : 'sin Datos'
-				item.status = checked
-				return item
+				const checked = info?.instantaneo[item.control.field] ? info?.instantaneo[item.control.field][0].value : 'sin Datos'
+				item.control.status = checked
+				return item.control
 			})
 		const avanzado = listControls.data
-			.filter((item) => item.level == 2)
+			.filter((item) => item.control.level == 2)
 			.map((item) => {
-				const checked = info?.instantaneo[item.field] ? info?.instantaneo[item.field][0].value : 'sin Datos'
-				item.status = checked
-				return item
+				const checked = info?.instantaneo[item.control.field] ? info?.instantaneo[item.control.field][0].value : 'sin Datos'
+				item.control.status = checked
+				return item.control
 			})
 		setControlBasic(basico)
 		setControlAdvance(avanzado)
@@ -46,7 +46,7 @@ const ControlsBoard = ({ info }) => {
 	}
 	useEffect(() => {
 		if (info) {
-			getControls(info.recloser.version)
+			getControls(info.recloser.id_version)
 		}
 	}, [info])
 

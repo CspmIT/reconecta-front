@@ -87,8 +87,8 @@ const EventBoard = ({ idRecloser }) => {
 							<Tab
 								key={item.id}
 								className={`w-full ${selectedCardId == item.id
-										? '!bg-gray-100 dark:!bg-zinc-500 '
-										: '!bg-gray-300  dark:!bg-zinc-800 '
+									? '!bg-gray-100 dark:!bg-zinc-500 '
+									: '!bg-gray-300  dark:!bg-zinc-800 '
 									}   !border-t-2 !border-l-2 !border-r-2 ${classTabs} min-w-0 relative`}
 								onClick={() => handleCard(item.id)}
 								label={

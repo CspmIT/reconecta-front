@@ -37,7 +37,7 @@ const Home = () => {
 	}
 	const newTabBoard = (data) => {
 		const existingTabIndex = tabs.findIndex(
-			(tab) => tab.name === data.name && tab.id === data.id
+			(tab) => tab.equipmentId === data.equipmentmodels.id
 		)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
@@ -47,6 +47,7 @@ const Home = () => {
 				{
 					name: data.serial,
 					id: data.id,
+					equipmentId: data.equipmentmodels.id,
 					typeEquipment: data.equipmentmodels.type,
 					link: '/board',
 					component: typeEquipment(data.equipmentmodels.type),
