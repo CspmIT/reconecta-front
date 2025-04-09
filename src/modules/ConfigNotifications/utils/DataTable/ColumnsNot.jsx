@@ -7,7 +7,25 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 		header: '',
 		accessorKey: 'type_var',
 		muiTableBodyCellProps: {
-			style: { minWidth: '1vw', maxWidth: '1vw', textWrap: 'wrap' },
+			style: { minWidth: '15px', maxWidth: '15px', textWrap: 'wrap' },
+		},
+	},
+	{
+		header: 'Database ID',
+		accessorKey: 'id_database',
+		size: 50,
+		muiTableBodyCellProps: {
+			align: 'center',
+		},
+		muiTableHeadCellProps: {
+			align: 'center',
+		},
+		Cell: ({ row }) => {
+			return (
+				<div>
+					{row.original.id_database}
+				</div>
+			)
 		},
 	},
 	{

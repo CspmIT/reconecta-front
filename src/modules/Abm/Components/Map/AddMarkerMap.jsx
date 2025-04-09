@@ -34,7 +34,6 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 		setMaps(data.data)
 	}
 	useEffect(() => {
-		console.log('lat', lat, 'lng', lng)
 		if (lng && lat) {
 			changeUbication(lng, lat)
 		}
