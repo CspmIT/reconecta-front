@@ -6,19 +6,23 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 	{
 		header: '',
 		accessorKey: 'type_var',
+		size: 10,
+		muiTableHeadCellProps: {
+			style: { width: '10px', padding: 0, textAlign: 'center' },
+		},
 		muiTableBodyCellProps: {
-			style: { minWidth: '15px', maxWidth: '15px', textWrap: 'wrap' },
+			style: { width: '10px', padding: 0, textAlign: 'center' },
 		},
 	},
 	{
 		header: 'Database ID',
 		accessorKey: 'id_database',
 		size: 50,
-		muiTableBodyCellProps: {
-			align: 'center',
-		},
 		muiTableHeadCellProps: {
 			align: 'center',
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: '20vw', maxWidth: '30vw', textWrap: 'wrap' },
 		},
 		Cell: ({ row }) => {
 			return (
@@ -35,7 +39,7 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 			align: 'center',
 		},
 		muiTableBodyCellProps: {
-			style: { minWidth: '35vw', maxWidth: '50vw', textWrap: 'wrap' },
+			style: { minWidth: '25vw', maxWidth: '35vw', textWrap: 'wrap' },
 		},
 		Cell: ({ row }) => {
 			const [open, setOpen] = useState(false)
