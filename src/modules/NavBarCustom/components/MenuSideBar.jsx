@@ -4,6 +4,7 @@ import { FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram } from 'react-icons/fa
 import { MdContentPaste, MdNotificationsActive } from 'react-icons/md'
 import { PiTabsFill } from 'react-icons/pi'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
+import { GrConfigure } from "react-icons/gr";
 
 const MenuSideBar = (tabActive, infoNav) => [
 	{ name: 'Alerta', link: '/Alert', icon: <RiAlertFill className=' text-3xl' /> },
@@ -36,6 +37,11 @@ const MenuSideBar = (tabActive, infoNav) => [
 				name: 'Notificaciones',
 				link: '/config/notifications',
 				icon: <MdNotificationsActive className='dark:text-white text-2xl my-1' />,
+			},
+			{
+				name: 'Hardware',
+				link: '/config/hardware',
+				icon: <GrConfigure className='dark:text-white text-2xl my-1' />,
 			},
 		],
 	},

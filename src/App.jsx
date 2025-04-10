@@ -23,10 +23,11 @@ import Notifications from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
-import Binnacle from './modules/Binnacle'
+import Binnacle from './modules/Binnacle/views'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
+import ConfigHardware from './modules/ConfigHardware/view'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -57,7 +58,8 @@ function App() {
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },
-		{ path: '/Equipment/:id', element: <Equipment /> }
+		{ path: '/Equipment/:id', element: <Equipment /> },
+		{ path: '/config/hardware', element: <ConfigHardware /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({
