@@ -123,15 +123,12 @@ function BinnacleList({ changeView }) {
       accessorKey: "status",
       header: "Estado",
       size: autoTable,
-      muiTableBodyCellProps: {
-        align: 'center',
-      },
       muiTableHeadCellProps: { align: 'center' },
       Cell: ({ row }) => {
         const status = row.original.status;
         const color = status === "En Servicio" ? "text-green-500" : status === "Fuera de Servicio" ? "text-red-500" : "text-gray-500";
         return (
-          <div className="flex justify-center items-center">
+          <div className="flex justify-start items-center">
             <FaCircle className={`${color} mr-2`} />
             <span className="hidden sm:inline">{status}</span>
           </div>
@@ -373,7 +370,7 @@ function BinnacleList({ changeView }) {
                 >
                   <MenuItem value="Todos">Todos...</MenuItem>
                   {type_task.map((tipo) => (
-                    <MenuItem key={tipo.id} value={tipo.id}>
+                    <MenuItem key={tipo.id} value={tipo.name}>
                       {tipo.name}
                     </MenuItem>
                   ))}

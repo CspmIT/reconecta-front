@@ -234,7 +234,7 @@ function BinnacleAdd({ changeView, id }) {
             label="Longitud *"
             type="text"
             {...register('longitud', { required: 'La longitud es requerida' })}
-            disabled={!isCustomActivo && watch('longitud')}
+            disabled={!isCustomActivo && !!watch('longitud')}
             error={!!errors.longitud}
             helperText={errors.longitud?.message}
             InputLabelProps={{ shrink: Boolean(watch('longitud')) }}
@@ -245,9 +245,9 @@ function BinnacleAdd({ changeView, id }) {
             label="Latitud *"
             type="text"
             {...register('latitud', { required: 'La latitud es requerida' })}
+            disabled={!isCustomActivo && !!watch('latitud')}
             error={!!errors.latitud}
             helperText={errors.latitud?.message}
-            disabled={!isCustomActivo && watch('latitud')}
             InputLabelProps={{ shrink: Boolean(watch('latitud')) }}
           />
 
