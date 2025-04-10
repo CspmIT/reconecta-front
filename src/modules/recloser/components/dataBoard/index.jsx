@@ -151,7 +151,7 @@ const DataBoard = ({ recloser }) => {
 							>
 								<FaEdit />
 							</Button>
-							<Button
+							{/* <Button
 								type='button'
 								onClick={() => deleteRecloser(info)}
 								className='!ml-3'
@@ -160,7 +160,7 @@ const DataBoard = ({ recloser }) => {
 								variant='contained'
 							>
 								<FaCog />
-							</Button>
+							</Button> */}
 						</div>
 					</div>
 					<div className='mb-8'>
