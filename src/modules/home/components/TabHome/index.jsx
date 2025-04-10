@@ -36,6 +36,10 @@ function TabsHome({ newTab }) {
 				<div className='w-10/12 sm:w-11/12 flex justify-start items-center'>
 					<div className='md:flex items-center space-x-4 flex-wrap sm:flex-nowrap hidden'>
 						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
+							<b className='text-black dark:text-white text-lg'>ET</b>
+						</label>
+						<label className='flex items-center'>
 							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[1]} onClick={() => handleChecked(1)} />
 							<b className='text-black dark:text-white text-lg'>Reconexión</b>
 						</label>
@@ -46,10 +50,6 @@ function TabsHome({ newTab }) {
 						<label className='flex items-center'>
 							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[3]} onClick={() => handleChecked(3)} />
 							<b className='text-black dark:text-white text-lg'>Subestacion rural</b>
-						</label>
-						<label className='flex items-center'>
-							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
-							<b className='text-black dark:text-white text-lg'>ET132</b>
 						</label>
 						<label className='flex items-center'>
 							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleChecked(5)} />
