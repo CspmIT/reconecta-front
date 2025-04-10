@@ -11,7 +11,7 @@ export const saveNode = async (data) => {
 		lng_location: data.lng_marker,
 		id_map: data.id_map || 1,
 		status: 1,
-		devices: data.devices,
+		devices: data.devices || [],
 		type: data.type,
 	}
 	const recloser = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/saveNode`, 'POST', dataNode)

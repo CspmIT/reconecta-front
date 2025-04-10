@@ -29,7 +29,7 @@ function AbmEquipament() {
 	const onSubmit = async (info) => {
 		try {
 			await saveNode(info)
-			Swal.fire({ title: 'Perfecto!', icon: 'success', text: 'Recloser agregado correctamente' })
+			Swal.fire({ title: 'Perfecto!', icon: 'success', text: 'Reconectador agregado correctamente' })
 			if (info.id_recloser != 0) {
 				navigate('/tabs')
 			} else {

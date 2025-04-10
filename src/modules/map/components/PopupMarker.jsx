@@ -3,7 +3,7 @@ import { Marker, Tooltip } from 'react-leaflet'
 import { useNavigate } from 'react-router-dom'
 import { yellowIcon } from '../utils/js/markerClass'
 import { MainContext } from '../../../context/MainContext'
-import Board from '../../recloser/board/views'
+import Board from '../../recloser/views'
 import CustomPopUpRecloser from './CustomPopUp'
 
 const PopupMarker = ({ position, icon, alert, popupData, id, layerControl, drawnItems, recloser = [] }) => {

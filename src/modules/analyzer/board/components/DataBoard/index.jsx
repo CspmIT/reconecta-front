@@ -8,9 +8,9 @@ import CardBoard from '../cardBoard'
 import HistoryBoard from '../historyBoard'
 import GraphicBoard from '../GraphicBoard'
 import MetrologyBoard from '../metrologyBoard'
-// import { recloser } from '../../utils/objects'
 
-const DataBoard = () => {
+const DataBoard = ({ analyzer }) => {
+	console.log(analyzer)
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	// const [info, setInfo] = useState([])
 	const navigate = useNavigate()
@@ -43,20 +43,23 @@ const DataBoard = () => {
 					<Button variant='contained' title='Recargar Datos'>
 						<FaRedo />
 					</Button>
-					<Button /* onClick={() => navigate('/AbmAnalyzer/' + info.id)} */ className='!ml-3' color='warning' title='Editar Analizador' variant='contained'>
+					<Button onClick={() => navigate('/Equipment/' + analyzer.id)} className='!ml-3' color='warning' title='Editar Analizador' variant='contained'>
 						<FaEdit />
 					</Button>
 				</div>
 			</div>
 			<div className='flex flex-wrap justify-center w-full pt-5'>
-				<div className='w-full sm:w-1/6'>
-					<b>Marca: </b>
+				<div className='w-full sm:w-1/6 text-center'>
+					<b>Marca:</b> <br />
+					<b className='text-lg'>{analyzer?.equipmentmodels?.name}</b>
 				</div>
-				<div className='w-full sm:w-1/6'>
-					<b>Versión: </b>
+				<div className='w-full sm:w-1/6 text-center'>
+					<b>Versión: </b> <br />
+					<b className='text-lg'>{analyzer?.equipmentmodels?.brand}</b>
 				</div>
-				<div className='w-full sm:w-1/6'>
-					<b>Nro de serie: </b>
+				<div className='w-full sm:w-1/6 text-center'>
+					<b>Nro de serie: </b> <br />
+					<b className='text-lg'>{analyzer?.serial}</b>
 				</div>
 			</div>
 			<div>
@@ -65,16 +68,16 @@ const DataBoard = () => {
 			<div className='w-full text-center'>
 				<b>Último registro de datos: </b>
 			</div>
-			<div className='p-3'>
+			<div className=''>
 				<CardBoard onCardSelect={handleCardSelect} />
 			</div>
 			<div className='w-full'>
 				<hr className='my-4 border-slate-400 dark:border-slate-200' />
 			</div>
 			<div className='w-full'>
-				{selectedCardId === 1 && <MetrologyBoard />}
-				{selectedCardId === 2 && <GraphicBoard />}
-				{selectedCardId === 3 && <HistoryBoard />}
+				{selectedCardId === 1 && <MetrologyBoard analyzer={analyzer} />}
+				{selectedCardId === 2 && <GraphicBoard analyzer={analyzer} />}
+				{selectedCardId === 3 && <HistoryBoard analyzer={analyzer} />}
 			</div>
 		</div>
 	)

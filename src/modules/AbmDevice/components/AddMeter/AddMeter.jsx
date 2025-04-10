@@ -32,9 +32,7 @@ function AddMeter() {
 		setVersionSelected(value)
 	}
 	const getDataEdit = async () => {
-		console.log(id)
 		const data = await getMeter(id)
-		console.log(data)
 		changeVersion(data.version)
 		setValue('serial', data.serial)
 		setValue('id', data.id)
@@ -69,7 +67,6 @@ function AddMeter() {
 			getDataEdit()
 		}
 	}, [id])
-	console.log(info.serial)
 	return (
 		<>
 			<div className='mt-3'>
