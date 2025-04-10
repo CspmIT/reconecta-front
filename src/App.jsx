@@ -58,6 +58,7 @@ function App() {
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },
+		{ path: '/Equipment', element: <Equipment /> },
 		{ path: '/Equipment/:id', element: <Equipment /> },
 		{ path: '/config/hardware', element: <ConfigHardware /> }
 	]

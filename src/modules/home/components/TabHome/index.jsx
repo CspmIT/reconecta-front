@@ -1,10 +1,10 @@
-import { useMediaQuery, Fab } from '@mui/material'
+import { Fab } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
-import { CustomTabPanel } from './PanelTab'
-import { Add, Checklist } from '@mui/icons-material'
+import { Checklist } from '@mui/icons-material'
 import { useNavigate } from 'react-router-dom'
 import { MainContext } from '../../../../context/MainContext'
 import TableGeneral from '../TableGeneral'
+import ButtonAddElement from '../ButtonAddElement'
 
 function TabsHome({ newTab }) {
 	const navigate = useNavigate()
@@ -91,7 +91,7 @@ function TabsHome({ newTab }) {
 					</div>
 				</div>
 				<div className='flex w-2/12 sm:w-1/12 justify-end relative mb-3'>
-					<Fab
+					{/* <Fab
 						onClick={handleNew}
 						className='!flex !justify-center !items-center'
 						size='small'
@@ -99,7 +99,8 @@ function TabsHome({ newTab }) {
 						aria-label='add'
 					>
 						<Add />
-					</Fab>
+					</Fab> */}
+					<ButtonAddElement />
 				</div>
 				<TableGeneral filters={filters} setElementSelected={setElementSelected} />
 			</div>
