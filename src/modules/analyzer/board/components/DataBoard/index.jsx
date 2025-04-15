@@ -10,7 +10,6 @@ import GraphicBoard from '../GraphicBoard'
 import MetrologyBoard from '../metrologyBoard'
 
 const DataBoard = ({ analyzer }) => {
-	console.log(analyzer)
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	// const [info, setInfo] = useState([])
 	const navigate = useNavigate()
