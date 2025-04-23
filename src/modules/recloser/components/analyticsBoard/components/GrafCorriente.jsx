@@ -4,10 +4,11 @@ import GrafLinea from '../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../../../components/Loader'
+import RecloserLineChart from './linecharts'
 function GrafCorriente({ idRecloser }) {
 	const [dataGraf, setDataGraf] = useState(null)
 	const getTensionABC = async (id) => {
-		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'GET')
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
@@ -16,14 +17,7 @@ function GrafCorriente({ idRecloser }) {
 			})
 			return
 		}
-
-		const returnData = Object.keys(data.data).map((key, index) => {
-			return {
-				name: key,
-				data: data.data[key].map(([time, value]) => [new Date(time).getTime(), value]),
-			}
-		})
-		setDataGraf(returnData)
+		setDataGraf(data)
 	}
 
 	useEffect(() => {
@@ -39,18 +33,7 @@ function GrafCorriente({ idRecloser }) {
 	return (
 		<>
 			{dataGraf ? (
-				<GrafLinea
-					title={'Corrientes'}
-					seriesData={dataGraf}
-					configxAxis={{ type: 'datetime' }}
-					labelxAxis={{ format: '{value:%Y-%m-%d %H:%M:%S}' }}
-					tooltip={{
-						tooltip: {
-							xDateFormat: '%Y-%m-%d %H:%M:%S',
-							shared: true,
-						},
-					}}
-				/>
+				<RecloserLineChart title={'Corrientes'} values={dataGraf} />
 			) : (
 				<LoaderComponent image={false} />
 			)}

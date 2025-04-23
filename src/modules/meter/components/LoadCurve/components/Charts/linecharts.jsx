@@ -1,9 +1,10 @@
-import { useState } from 'react'
-import EChart from '../../../../../components/Charts';
+import { useState } from "react";
+import EChart from "../../../../../../components/Charts";
 
-const AnalyzerLineChart = ({ values, title }) => {
+const MeterLineChart = ({ values, title }) => {
     const maxLabels = 24
-    const interval = Math.ceil(values.time.length / maxLabels)
+    const time = values.DatePeriod
+    const interval = Math.ceil(time.length / maxLabels)
     const [autoScale, setAutoScale] = useState(false)
     const option = {
         title: {
@@ -23,7 +24,7 @@ const AnalyzerLineChart = ({ values, title }) => {
         xAxis: {
             visible: true,
             type: 'category',
-            data: values.time,
+            data: time,
             splitNumber: 5,
             axisLabel: {
                 interval: interval,
@@ -49,30 +50,21 @@ const AnalyzerLineChart = ({ values, title }) => {
             type: 'value',
             ...(autoScale ? { min: 'dataMin', max: 'dataMax' } : {}),
         },
-        series: [
-            {
-                name: 'Fase R',
-                data: values.R.values,
-                type: 'line',
-                smooth: true
-            },
-            {
-                name: 'Fase S',
-                data: values.S.values,
-                type: 'line',
-                smooth: true
-            },
-            {
-                name: 'Fase T',
-                data: values.T.values,
-                type: 'line',
-                smooth: true
+        series: Object.keys(values).map((key) => {
+            if (key !== 'DatePeriod') {
+                return {
+                    name: key,
+                    type: 'line',
+                    data: values[key],
+                    smooth: true,
+                }
             }
-        ]
+        }
+        ),
     };
     return (
         <EChart config={option} />
     )
 }
 
-export default AnalyzerLineChart
+export default MeterLineChart
