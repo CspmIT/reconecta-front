@@ -27,6 +27,7 @@ import Binnacle from './modules/Binnacle'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
+import AddConfigNotification from './modules/ConfigNotifications/views/add'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -54,6 +55,7 @@ function App() {
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
 		{ path: '/config/notifications', element: <Notifications /> },
+		/* { path: '/config/addnotifications', element: <AddConfigNotification /> }, */
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },

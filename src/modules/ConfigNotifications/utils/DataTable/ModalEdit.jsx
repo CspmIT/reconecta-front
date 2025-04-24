@@ -4,6 +4,7 @@ import { useState } from "react"
 import { FaPen } from "react-icons/fa"
 import { request } from "../../../../utils/js/request"
 import { backend } from "../../../../utils/routes/app.routes"
+import Swal from "sweetalert2"
 
 
 const ModalEdit = ({ data, setValueName }) => {
@@ -13,13 +14,32 @@ const ModalEdit = ({ data, setValueName }) => {
         setValue(event.target.value)
     }
     const handleSubmit = async () => {
-        const formData = {
-            id: data.id,
-            name: value,
+        try {
+            const formData = {
+                id: data.id,
+                name: value,
+            }
+            await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', formData)
+            setValueName(value)
+            setOpen(false)
+            Swal.fire({
+                icon: 'success',
+                title: 'Configuración editada correctamente',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+            })
+        } catch (e) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al editar la configuración',
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 1500,
+            })
         }
-        setValueName(value)
-        await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', formData)
-        setOpen(false)
     }
     return (
         <>
