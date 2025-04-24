@@ -23,7 +23,10 @@ function MapUbication({ center, id, zoom, activeZoom = true, markersData, polyli
 		>
 			<LayersControl position='topright'>
 				<LayersControl.BaseLayer checked name='Street'>
-					<TileLayer url='https://wms.ign.gob.ar/geoserver/gwc/service/tms/1.0.0/capabaseargenmap@EPSG%3A3857@png/{z}/{x}/{-y}.png' />
+					<TileLayer
+						url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+						attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+					/>
 				</LayersControl.BaseLayer>
 				<LayersControl.BaseLayer name='Satelital'>
 					<TileLayer url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' />
