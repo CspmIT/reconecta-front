@@ -8,6 +8,7 @@ import { getFormatterGraf } from './utils/js/actions'
 import LoaderComponent from '../../../../../../components/Loader'
 import { MenuItem, TextField } from '@mui/material'
 import { dataGraficos } from './utils/dataGraf'
+import MeterLineChart from '../Charts/linecharts'
 
 function Grafic({ info }) {
 	const navigate = useNavigate()
@@ -27,6 +28,7 @@ function Grafic({ info }) {
 
 			const dataGrafico = await Promise.all(dataGraficos.map((grafico) => getFormatterGraf(data, grafico)))
 			setDataGraf(dataGrafico)
+
 		} catch (error) {
 			console.error(error)
 			Swal.fire({
@@ -60,8 +62,8 @@ function Grafic({ info }) {
 				disable: item.titleGraf.includes('Exportada')
 					? value !== 'Exportada'
 					: item.titleGraf.includes('Importada')
-					? value !== 'Importada'
-					: item.disable,
+						? value !== 'Importada'
+						: item.disable,
 			}))
 		)
 	}
@@ -84,19 +86,8 @@ function Grafic({ info }) {
 								</TextField>
 							) : null}
 
-							<div className={`w-full shadow-lg shadow-slate-300 p-4`}>
-								<GrafLinea
-									key={index}
-									title={graf.titleGraf}
-									seriesData={graf.graf}
-									axisX={graf.data.DatePeriod}
-									configyAxis={graf.config}
-									exporting={true}
-									colors={['#ff4c4c', '#6cff6c', '#6161ff', '#ffff62']}
-									configMarks={{
-										radius: 1,
-									}}
-								/>
+							<div className={`w-full h-96 shadow-lg shadow-slate-300 p-4`}>
+								<MeterLineChart title={graf.titleGraf} values={graf.data} />
 							</div>
 						</div>
 					)

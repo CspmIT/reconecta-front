@@ -3,10 +3,11 @@ import { request } from '../../../../../utils/js/request'
 import GrafLinea from '../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../utils/routes/app.routes'
 import LoaderComponent from '../../../../../components/Loader'
+import RecloserLineChart from './linecharts'
 function GrafTensionABC({ idRecloser }) {
 	const [dataGraf, setDataGraf] = useState(null)
 	const getTensionABC = async (id) => {
-		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`, 'GET')
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`, 'GET')
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
@@ -15,14 +16,7 @@ function GrafTensionABC({ idRecloser }) {
 			})
 			return
 		}
-
-		const returnData = Object.keys(data.data).map((key, index) => {
-			return {
-				name: key,
-				data: data.data[key].map(([time, value]) => [new Date(time).getTime(), value]),
-			}
-		})
-		setDataGraf(returnData)
+		setDataGraf(data)
 	}
 
 	useEffect(() => {
@@ -38,17 +32,9 @@ function GrafTensionABC({ idRecloser }) {
 	return (
 		<>
 			{dataGraf ? (
-				<GrafLinea
+				<RecloserLineChart
 					title={'Tensión ABC'}
-					seriesData={dataGraf}
-					configxAxis={{ type: 'datetime' }}
-					labelxAxis={{ format: '{value:%Y-%m-%d %H:%M:%S}' }}
-					tooltip={{
-						tooltip: {
-							xDateFormat: '%Y-%m-%d %H:%M:%S',
-							shared: true,
-						},
-					}}
+					values={dataGraf}
 				/>
 			) : (
 				<LoaderComponent image={false} />

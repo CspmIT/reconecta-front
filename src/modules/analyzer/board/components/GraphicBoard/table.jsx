@@ -9,9 +9,9 @@ const TableBoard = ({ tab, analyzer }) => {
 	const [rowsTable, setRowsTable] = useState([])
 	const [columns, setColumns] = useState([])
 	const getData = async () => {
-		const dateCurrent = new Date()
+		/* const dateCurrent = new Date()
 		const dateStart = new Date(dateCurrent)
-		dateStart.setHours(dateCurrent.getHours() - 12)
+		dateStart.setHours(dateCurrent.getHours() - 12) */
 		const body = {
 			brand: analyzer?.equipmentmodels?.name.toLowerCase(),
 			version: analyzer?.equipmentmodels?.brand.toLowerCase(),

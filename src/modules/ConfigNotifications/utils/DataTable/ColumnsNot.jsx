@@ -1,6 +1,8 @@
 import { Close, Info } from '@mui/icons-material'
 import { Box, IconButton, MenuItem, Modal, Select, Typography } from '@mui/material'
 import { useState } from 'react'
+import { FaPen } from 'react-icons/fa'
+import ModalEdit from './ModalEdit'
 
 export const ColumnsNot = (handlePriority, handleCheck, access) => [
 	{
@@ -43,13 +45,14 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 		},
 		Cell: ({ row }) => {
 			const [open, setOpen] = useState(false)
-
 			const handleOpen = () => setOpen(true)
 			const handleClose = () => setOpen(false)
 
+			const [valueName, setValueName] = useState(row.original.name)
+
 			return (
 				<div>
-					{row.original.name}
+					{valueName}
 					{row.original.description ? (
 						<>
 							<IconButton onClick={handleOpen}>
@@ -88,6 +91,7 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 							</Modal>
 						</>
 					) : null}
+					<ModalEdit data={row.original} setValueName={setValueName} />
 				</div>
 			)
 		},
