@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react'
 import { request } from '../../../../../utils/js/request'
-import GrafLinea from '../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../../../components/Loader'
 import RecloserLineChart from './linecharts'
-function GrafCorriente({ idRecloser }) {
+function GrafCorriente({ idRecloser, dateStart, dateFinished, search }) {
 	const [dataGraf, setDataGraf] = useState(null)
 	const getTensionABC = async (id) => {
-		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'GET')
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'POST', {
+			dateStart,
+			dateFinished,
+		})
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
@@ -29,6 +31,10 @@ function GrafCorriente({ idRecloser }) {
 			return () => clearInterval(intervalId)
 		}
 	}, [idRecloser])
+
+	useEffect(() => {
+		getTensionABC(idRecloser)
+	}, [search])
 
 	return (
 		<>

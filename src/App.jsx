@@ -28,6 +28,7 @@ import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
 import AddConfigNotification from './modules/ConfigNotifications/views/add'
+import NotFound from './modules/NotFound'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -36,9 +37,11 @@ function App() {
 		{ path: '/ListClients', element: <ListClients /> },
 		{ path: '/ListClients/:action', element: <ListClients /> },
 		{ path: '/LoginCooptech/:token', element: <LoginCooptech /> },
+		{ path: '/*', element: <NotFound /> }
 	]
 	const userRoutes = [
-		{ path: '/*', element: <Home /> },
+		{ path: '/', element: <Home /> },
+		{ path: '/home', element: <Home /> },
 		{ path: '/Dashboard', element: <DashBoard /> },
 		{ path: '/map', element: <Map /> },
 		{ path: '/Alert', element: <Alert /> },
@@ -55,7 +58,7 @@ function App() {
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
 		{ path: '/config/notifications', element: <Notifications /> },
-		/* { path: '/config/addnotifications', element: <AddConfigNotification /> }, */
+		{ path: '/config/addnotifications', element: <AddConfigNotification /> },
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },

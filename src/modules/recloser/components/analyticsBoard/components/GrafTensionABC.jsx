@@ -1,13 +1,15 @@
 import { useEffect, useState, useContext } from 'react'
 import { request } from '../../../../../utils/js/request'
-import GrafLinea from '../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../utils/routes/app.routes'
 import LoaderComponent from '../../../../../components/Loader'
 import RecloserLineChart from './linecharts'
-function GrafTensionABC({ idRecloser }) {
+function GrafTensionABC({ idRecloser, dateStart, dateFinished, search }) {
 	const [dataGraf, setDataGraf] = useState(null)
 	const getTensionABC = async (id) => {
-		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`, 'GET')
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`, 'POST', {
+			dateStart,
+			dateFinished
+		})
 		if (!Object.keys(data).length) {
 			Swal.fire({
 				title: 'Atención!',
@@ -28,6 +30,11 @@ function GrafTensionABC({ idRecloser }) {
 			return () => clearInterval(intervalId)
 		}
 	}, [idRecloser])
+
+
+	useEffect(() => {
+		getTensionABC(idRecloser)
+	}, [search])
 
 	return (
 		<>
