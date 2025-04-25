@@ -59,31 +59,33 @@ function Map() {
 
 	const getdisplay = async () => {
 		try {
-			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getListNode`, 'GET')
+			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements`, 'GET')
 			// Group markers by id_map
+			console.log(nodes.data)
 			const markersByMap = {}
 			if (nodes.data.length > 0) {
 				await Promise.all(
 					nodes.data.map(async (item) => {
-						const info = item.node_history.length
+						if (item.type === 0) return null
+						const info = item.equipments.length
 							? {
-									name: item.name,
-									number: item.number,
-							  }
+								name: item.name,
+								number: item.description,
+							}
 							: {}
-						const recloser = item.node_history.filter(
-							(historyItem) => historyItem.type_device == 'Reconectador'
+						const recloser = item.equipments.filter(
+							(equipItem) => equipItem.equipmentmodels.type == 1
 						)
 
 						// Create a new marker
 						const marker = new markerCustom(
 							item.id,
-							item.number,
-							item.lat_location,
-							item.lng_location,
+							item.name,
+							item.lat,
+							item.lon,
 							3,
 							info,
-							item.alert,
+							item.alert || '',
 							recloser
 						)
 
@@ -100,7 +102,6 @@ function Map() {
 					})
 				)
 			}
-
 			setMarkersRecloser(markersByMap)
 		} catch (error) {
 			console.error('Error al obtener los nodos:', error)
@@ -144,9 +145,8 @@ function Map() {
 						return (
 							<div
 								key={index}
-								className={`!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 sm:m-0 m-2 ${
-									widthMap[dataMap.length > 1 ? 0 : 1]
-								} w-full relative`}
+								className={`!min-h-[inherit] !shadow-md !shadow-black/40 !rounded-2xl p-2 sm:m-0 m-2 ${widthMap[dataMap.length > 1 ? 0 : 1]
+									} w-full relative`}
 							>
 								<IconButton
 									className={`!absolute !top-5 !left-4 z-[9999] !bg-slate-300`}

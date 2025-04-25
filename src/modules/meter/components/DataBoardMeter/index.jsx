@@ -74,7 +74,7 @@ function DataBoardMeter() {
 
 	const editMeter = () => {
 		setInfoNav([info])
-		navigate('/AbmDevice/meter/' + info.id)
+		navigate('/Equipment/' + info.id)
 	}
 	const [selectedCardId, setSelectedCardId] = useState(null)
 	const handleCardSelect = (id) => {

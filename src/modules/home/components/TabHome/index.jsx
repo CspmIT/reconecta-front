@@ -1,80 +1,111 @@
-import { Tab, Tabs, MenuItem, Select, useMediaQuery } from '@mui/material'
-import { useState } from 'react'
-import { CustomTabPanel, a11yProps } from './PanelTab'
+import { Fab } from '@mui/material'
+import { useContext, useEffect, useState } from 'react'
+import { Checklist } from '@mui/icons-material'
+import { useNavigate } from 'react-router-dom'
+import { MainContext } from '../../../../context/MainContext'
+import TableGeneral from '../TableGeneral'
 import ButtonAddElement from '../ButtonAddElement'
 
-function TabsHome({ tabs }) {
-  const [value, setValue] = useState(0)
-  const isSmallScreen = useMediaQuery('(max-width: 640px)') // Detectar pantallas pequeñas
+function TabsHome({ newTab }) {
+	const navigate = useNavigate()
+	const { setInfoNav } = useContext(MainContext)
+	const [value, setValue] = useState(0)
+	const [filters, setFilters] = useState([true, true, true, true, true, true]) // Por defecto dejo todos los checks seleccionados
+	const [showSelectChecks, setShowSelectChecks] = useState(false)
+	const [elementSelected, setElementSelected] = useState(null)
+	//const isSmallScreen = useMediaQuery('(max-width: 640px)') // Detectar pantallas pequeñas
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue)
-  }
+	const handleNew = () => {
+		navigate('/addElement')
+	}
 
-  const handleSelectChange = (event) => {
-    setValue(event.target.value)
-  }
+	const handleChecked = (check) => {
+		const newFilters = filters.map((item, index) => (index === check ? !item : item))
+		setFilters(newFilters)
+	}
 
-  const classTabs =
-    '!border-solid !border-gray-200 !rounded-t-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
-  const classTabStatus = [
-    '!bg-white !border-r-2 !border-t-2 !border-l-2 dark:!bg-zinc-500',
-    '!border-b-2 !bg-gray-300 dark:!bg-zinc-700 hover:dark:!bg-zinc-500 hover:!bg-zinc-400',
-  ]
+	useEffect(() => {
+		if (elementSelected) {
+			newTab(elementSelected)
+		}
+	}, [elementSelected])
 
-  return (
-    <div className={`w-full !rounded-xl flex flex-col items-start`}>
-      {isSmallScreen ? (
-        <Select
-          value={value}
-          onChange={handleSelectChange}
-          className="w-full mb-4 bg-white dark:bg-zinc-700 dark:text-white rounded-lg"
-        >
-          {tabs.map((item, index) => (
-            <MenuItem key={index} value={index}>
-              {item.title}
-            </MenuItem>
-          ))}
-        </Select>
-      ) : (
-        <Tabs
-          indicatorColor='transparent'
-          value={value}
-          onChange={handleChange}
-          aria-label='basic tabs example'
-          className='w-full flex flex-wrap justify-center md:justify-start'
-        >
-          {tabs.map((item, index) => (
-            <Tab
-              key={index}
-              className={`flex-grow sm:w-auto w-full !mr-1 relative ${classTabStatus[value === index ? 0 : 1]
-                } ${classTabs}`}
-              label={
-                <p className='text-black dark:text-white w-full text-center'>
-                  {item.title}
-                </p>
-              }
-              {...a11yProps(index)}
-            />
-          ))}
-        </Tabs>
-      )}
-
-      <div className={`bg-white dark:bg-zinc-500 w-full h-full flex-col justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700`}>
-        <ButtonAddElement />
-        {tabs.map((item, index) => (
-          <CustomTabPanel
-            key={index}
-            value={value}
-            index={index}
-            className={'w-full flex max-sm:flex-col flex-wrap justify-evenly'}
-          >
-            {item.component}
-          </CustomTabPanel>
-        ))}
-      </div>
-    </div>
-  )
+	return (
+		<div className={`w-full !rounded-xl flex flex-col items-start`}>
+			<div className='bg-white dark:bg-zinc-500 w-full h-full flex justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700 flex-wrap'>
+				<div className='w-10/12 sm:w-11/12 flex justify-start items-center'>
+					<div className='md:flex items-center space-x-4 flex-wrap sm:flex-nowrap hidden'>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
+							<b className='text-black dark:text-white text-lg'>ET</b>
+						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[1]} onClick={() => handleChecked(1)} />
+							<b className='text-black dark:text-white text-lg'>Reconexión</b>
+						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[2]} onClick={() => handleChecked(2)} />
+							<b className='text-black dark:text-white text-lg'>Subestacion urbana</b>
+						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[3]} onClick={() => handleChecked(3)} />
+							<b className='text-black dark:text-white text-lg'>Subestacion rural</b>
+						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleChecked(5)} />
+							<b className='text-black dark:text-white text-lg'>Consumos puntuales</b>
+						</label>
+					</div>
+					<div className='flex justify-end md:hidden relative mb-3'>
+						<Fab
+							size='small'
+							className='!flex !justify-center !items-center'
+							onClick={() => setShowSelectChecks(!showSelectChecks)}
+						>
+							<Checklist />
+						</Fab>
+						{showSelectChecks && (
+							<div className='bg-white dark:bg-zinc-500 p-5 border-2 w-80 border-gray-200 dark:border-gray-700 absolute top-12 left-0 z-10'>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[1]} onClick={() => handleChecked(1)} />
+									<b className='text-black dark:text-white'>Reconexión</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[2]} onClick={() => handleChecked(2)} />
+									<b className='text-black dark:text-white'>Subestacion urbana</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[3]} onClick={() => handleChecked(3)} />
+									<b className='text-black dark:text-white'>Subestacion rural</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
+									<b className='text-black dark:text-white'>ET132</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleChecked(5)} />
+									<b className='text-black dark:text-white'>Consumos puntuales</b>
+								</label>
+							</div>
+						)}
+					</div>
+				</div>
+				<div className='flex w-2/12 sm:w-1/12 justify-end relative mb-3'>
+					{/* <Fab
+						onClick={handleNew}
+						className='!flex !justify-center !items-center'
+						size='small'
+						color='primary'
+						aria-label='add'
+					>
+						<Add />
+					</Fab> */}
+					<ButtonAddElement />
+				</div>
+				<TableGeneral filters={filters} setElementSelected={setElementSelected} />
+			</div>
+		</div>
+	)
 }
 
 export default TabsHome

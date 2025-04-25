@@ -1,11 +1,27 @@
 import React, { useEffect, useState } from 'react'
 import TableCustom from '../../../../../components/TableCustom'
-import { rowsTable } from '../../utils/objects'
-import { columnsTableCoseno, columnsTableCurve, columnsTableTension } from '../../utils/ColumnsTable'
+//import { rowsTable } from '../../utils/objects'
+import { columnsTableCoseno, columnsTableCurve, columnsTableTension, columnsTableEnergia } from '../../utils/ColumnsTable'
+import { request } from '../../../../../utils/js/request'
+import { backend } from '../../../../../utils/routes/app.routes'
 
-const TableBoard = ({ tab }) => {
+const TableBoard = ({ tab, analyzer }) => {
+	const [rowsTable, setRowsTable] = useState([])
 	const [columns, setColumns] = useState([])
+	const getData = async () => {
+		/* const dateCurrent = new Date()
+		const dateStart = new Date(dateCurrent)
+		dateStart.setHours(dateCurrent.getHours() - 12) */
+		const body = {
+			brand: analyzer?.equipmentmodels?.name.toLowerCase(),
+			version: analyzer?.equipmentmodels?.brand.toLowerCase(),
+			serial: analyzer?.serial,
+		}
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/AnalyzerHistory`, 'POST', body)
+		setRowsTable(data)
+	}
 	useEffect(() => {
+		getData()
 		switch (tab) {
 			case 0:
 				setColumns(columnsTableCurve)
@@ -15,6 +31,9 @@ const TableBoard = ({ tab }) => {
 				break
 			case 2:
 				setColumns(columnsTableCoseno)
+				break
+			case 3:
+				setColumns(columnsTableEnergia)
 				break
 			default:
 				break

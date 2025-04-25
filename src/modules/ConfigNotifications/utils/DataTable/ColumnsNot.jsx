@@ -1,13 +1,37 @@
 import { Close, Info } from '@mui/icons-material'
 import { Box, IconButton, MenuItem, Modal, Select, Typography } from '@mui/material'
 import { useState } from 'react'
+import { FaPen } from 'react-icons/fa'
+import ModalEdit from './ModalEdit'
 
 export const ColumnsNot = (handlePriority, handleCheck, access) => [
 	{
 		header: '',
 		accessorKey: 'type_var',
+		size: 10,
+		muiTableHeadCellProps: {
+			style: { width: '10px', padding: 0, textAlign: 'center' },
+		},
 		muiTableBodyCellProps: {
-			style: { minWidth: '1vw', maxWidth: '1vw', textWrap: 'wrap' },
+			style: { width: '10px', padding: 0, textAlign: 'center' },
+		},
+	},
+	{
+		header: 'Database ID',
+		accessorKey: 'id_database',
+		size: 50,
+		muiTableHeadCellProps: {
+			align: 'center',
+		},
+		muiTableBodyCellProps: {
+			style: { minWidth: '20vw', maxWidth: '30vw', textWrap: 'wrap' },
+		},
+		Cell: ({ row }) => {
+			return (
+				<div>
+					{row.original.id_database}
+				</div>
+			)
 		},
 	},
 	{
@@ -17,17 +41,18 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 			align: 'center',
 		},
 		muiTableBodyCellProps: {
-			style: { minWidth: '35vw', maxWidth: '50vw', textWrap: 'wrap' },
+			style: { minWidth: '25vw', maxWidth: '35vw', textWrap: 'wrap' },
 		},
 		Cell: ({ row }) => {
 			const [open, setOpen] = useState(false)
-
 			const handleOpen = () => setOpen(true)
 			const handleClose = () => setOpen(false)
 
+			const [valueName, setValueName] = useState(row.original.name)
+
 			return (
 				<div>
-					{row.original.name}
+					{valueName}
 					{row.original.description ? (
 						<>
 							<IconButton onClick={handleOpen}>
@@ -66,6 +91,7 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 							</Modal>
 						</>
 					) : null}
+					<ModalEdit data={row.original} setValueName={setValueName} />
 				</div>
 			)
 		},

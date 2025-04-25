@@ -15,7 +15,7 @@ import TabDinamic from './modules/tabs/views'
 import Notification from './modules/Notification'
 import Home from './modules/home/views'
 import './App.css'
-import Board from './modules/recloser/board/views'
+import Board from './modules/recloser/views'
 import AbmEquipament from './modules/AbmEquipament/views'
 import ConfigMenu from './modules/ConfigMenu/view'
 import Profile from './modules/profile/views'
@@ -25,6 +25,10 @@ import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
 import Binnacle from './modules/Binnacle'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
+import Abm from './modules/Abm/views'
+import Equipment from './modules/Equipment/view'
+import AddConfigNotification from './modules/ConfigNotifications/views/add'
+import NotFound from './modules/NotFound'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -33,9 +37,11 @@ function App() {
 		{ path: '/ListClients', element: <ListClients /> },
 		{ path: '/ListClients/:action', element: <ListClients /> },
 		{ path: '/LoginCooptech/:token', element: <LoginCooptech /> },
+		{ path: '/*', element: <NotFound /> }
 	]
 	const userRoutes = [
-		{ path: '/*', element: <Home /> },
+		{ path: '/', element: <Home /> },
+		{ path: '/home', element: <Home /> },
 		{ path: '/Dashboard', element: <DashBoard /> },
 		{ path: '/map', element: <Map /> },
 		{ path: '/Alert', element: <Alert /> },
@@ -52,8 +58,12 @@ function App() {
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
 		{ path: '/config/notifications', element: <Notifications /> },
+		{ path: '/config/addnotifications', element: <AddConfigNotification /> },
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
+		{ path: '/AddElement', element: <Abm /> },
+		{ path: '/Equipment', element: <Equipment /> },
+		{ path: '/Equipment/:id', element: <Equipment /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

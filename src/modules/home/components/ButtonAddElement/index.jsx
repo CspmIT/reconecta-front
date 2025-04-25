@@ -19,7 +19,7 @@ function ButtonAddElement() {
 		setAnchorEl(evento.currentTarget)
 	}
 	return (
-		<div className='flex justify-end w-full relative mb-3'>
+		<>
 			<Fab
 				onClick={handleOpen}
 				className='!flex !justify-center !items-center'
@@ -35,36 +35,22 @@ function ButtonAddElement() {
 				open={openSub}
 				anchorEl={anchorEl}
 			>
-				<em className='!text-black ml-3 underline'>Nomenclatura Catastral</em>
 				<div className='ml-3'>
-					<MenuItem onClick={() => changeView('/Abm/node')} className='hover:!bg-slate-300 !rounded-lg'>
-						<p className='text-black font-semibold'>Nuevo Nodo de Infraestructura</p>
+					<MenuItem onClick={() => changeView('/addElement')} className='hover:!bg-slate-300 !rounded-lg'>
+						<p className='text-black font-semibold'>Nuevo Nodo</p>
 					</MenuItem>
 				</div>
 				<Divider sx={{ my: 0.5 }} />
-				<em className='!text-black ml-3 underline'>Dispositivos</em>
 				<div className='ml-3'>
 					<MenuItem
-						onClick={() => changeView('/AbmDevice/recloser')}
+						onClick={() => changeView('/Equipment')}
 						className='hover:!bg-slate-300 !rounded-lg'
 					>
-						<p className='text-black font-semibold'>Nuevo Reconectador</p>
+						<p className='text-black font-semibold'>Nuevo Equipo</p>
 					</MenuItem>
-					<MenuItem
-						onClick={() => changeView('/AbmDevice/meter')}
-						className='hover:!bg-slate-300 !rounded-lg'
-					>
-						<p className='text-black font-semibold'>Nuevo Medidor</p>
-					</MenuItem>
-					{/* <MenuItem
-					onClick={() => changeView('/AbmDevice/netAnalyzer')}
-					className='hover:!bg-slate-300 !rounded-lg'
-				>
-					<p className='text-black font-semibold'>Analizador de Red</p>
-				</MenuItem> */}
 				</div>
 			</Popper>
-		</div>
+		</>
 	)
 }
 
