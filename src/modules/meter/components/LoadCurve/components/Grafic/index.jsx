@@ -9,12 +9,17 @@ import LoaderComponent from '../../../../../../components/Loader'
 import { MenuItem, TextField } from '@mui/material'
 import { dataGraficos } from './utils/dataGraf'
 import MeterLineChart from '../Charts/linecharts'
+import { DateTimePicker, LocalizationProvider, renderTimeViewClock } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 
 function Grafic({ info }) {
 	const navigate = useNavigate()
+	const [dateCurrent, setDateCurrent] = useState(dayjs())
+	const [dateStart, setDateStart] = useState(dayjs().subtract(12, 'hour'))
 	const [isLoading, setIsLoading] = useState(true)
 	const [dataGraf, setDataGraf] = useState([])
-	const getDataGraf = async (dateStart = null, dateFinished = null) => {
+	const getDataGraf = async () => {
 		try {
 			setIsLoading(true)
 			const dataGraf = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getInfoGraf`, 'POST', {
@@ -22,7 +27,7 @@ function Grafic({ info }) {
 				version: info.version,
 				brand: info.brand,
 				dateStart,
-				dateFinished,
+				dateFinished: dateCurrent
 			})
 			const data = dataGraf.data
 
@@ -70,6 +75,45 @@ function Grafic({ info }) {
 	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<>
+			<div className='w-full flex justify-center my-5'>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<DateTimePicker
+						className='bg-white dark:bg-slate-800'
+						ampm={false}
+						label="Fecha de inicio"
+						format='DD/MM/YYYY HH:mm'
+						viewRenderers={{
+							hours: renderTimeViewClock,
+							minutes: renderTimeViewClock,
+							seconds: renderTimeViewClock,
+						}}
+						value={dateStart}
+						onChange={(newValue) => {
+							setDateStart(newValue)
+						}}
+					/>
+					<DateTimePicker
+						className='bg-white dark:bg-slate-800'
+						label="Fecha de fin"
+						ampm={false}
+						format='DD/MM/YYYY HH:mm'
+						viewRenderers={{
+							hours: renderTimeViewClock,
+							minutes: renderTimeViewClock,
+							seconds: renderTimeViewClock,
+						}}
+						value={dateCurrent}
+						onChange={(newValue) => {
+							setDateCurrent(newValue)
+						}}
+					/>
+				</LocalizationProvider>
+				<div className='flex flex-row items-center'>
+					<button className='bg-blue-500 text-white rounded-lg px-4 py-2 ml-3' onClick={getDataGraf}>
+						Filtrar
+					</button>
+				</div>
+			</div>
 			{dataGraf.map((graf, index) => {
 				if (!graf.disable)
 					return (
