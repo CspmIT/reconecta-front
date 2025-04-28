@@ -26,6 +26,7 @@ function TabsHome({ newTab }) {
 
 	useEffect(() => {
 		if (elementSelected) {
+			console.log("Elemento seleccionado", elementSelected)
 			newTab(elementSelected)
 		}
 	}, [elementSelected])
@@ -91,15 +92,6 @@ function TabsHome({ newTab }) {
 					</div>
 				</div>
 				<div className='flex w-2/12 sm:w-1/12 justify-end relative mb-3'>
-					{/* <Fab
-						onClick={handleNew}
-						className='!flex !justify-center !items-center'
-						size='small'
-						color='primary'
-						aria-label='add'
-					>
-						<Add />
-					</Fab> */}
 					<ButtonAddElement />
 				</div>
 				<TableGeneral filters={filters} setElementSelected={setElementSelected} />

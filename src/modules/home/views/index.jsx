@@ -36,6 +36,7 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
+		console.log('tab', data)
 		const existingTabIndex = tabs.findIndex(
 			(tab) => tab.id === data.id
 		)
