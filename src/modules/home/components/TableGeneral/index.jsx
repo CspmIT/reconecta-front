@@ -89,11 +89,15 @@ export default function TableGeneral({ filters, setElementSelected }) {
                                     )}
                                     <StyledTableCell>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}</StyledTableCell>
                                     <StyledTableCell>{equipment.serial}</StyledTableCell>
-                                    <StyledTableCell > <span className='flex items-center gap-x-2'>
-                                        <FaCircle className={`${row.status ? "text-red-500" : "text-green-500"}`} />  {row.status ? "Cerrado" : "Abierto"}
-                                    </span>
+                                    <StyledTableCell >
+                                        {equipment.equipmentmodels.type === 1 && (
+                                            <span className='flex items-center gap-x-2'>
+                                                <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
+                                                {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Sin señal"}
+                                            </span>
+                                        )}
                                     </StyledTableCell>
-                                    <StyledTableCell>Conectado</StyledTableCell>
+                                    <StyledTableCell>{equipment.influxData?.["d/c"] ? "Conectado" : "Desconectado"}  </StyledTableCell>
                                     {index === 0 && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
                                             {row.lat}

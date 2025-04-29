@@ -26,7 +26,6 @@ function TabsHome({ newTab }) {
 
 	useEffect(() => {
 		if (elementSelected) {
-			console.log("Elemento seleccionado", elementSelected)
 			newTab(elementSelected)
 		}
 	}, [elementSelected])
