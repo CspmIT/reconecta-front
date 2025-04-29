@@ -18,7 +18,7 @@ const HeaderBoard = ({ info }) => {
 			}
 			setDataHead({
 				name: info?.recloser?.name || 'S/D',
-				number: info?.recloser?.relation?.nodes?.['number'] || 'S/D',
+				number: info?.recloser?.element || 'S/D',
 				serial: info?.recloser?.number || 'S/D',
 				brand: info?.recloser?.brand || 'S/D',
 				version: info?.recloser?.version || 'S/D',

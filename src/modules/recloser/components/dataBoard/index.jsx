@@ -52,6 +52,12 @@ const DataBoard = ({ recloser }) => {
 		navigate('/Equipment/' + info.recloser.id)
 	}
 	const refreshInflux = async () => {
+		const requestData = {
+			brand: info.recloser.brand,
+			serial: info.recloser.number,
+			action: "REFRESH"
+		}
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/sendMQTT`, 'POST', requestData)
 		getDataRecloser(data.id)
 	}
 	const deleteRecloser = async (data) => {
