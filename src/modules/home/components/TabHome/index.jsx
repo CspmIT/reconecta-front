@@ -1,27 +1,61 @@
 import { Fab } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Checklist } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
-import { MainContext } from '../../../../context/MainContext'
 import TableGeneral from '../TableGeneral'
 import ButtonAddElement from '../ButtonAddElement'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TabsHome({ newTab }) {
-	const navigate = useNavigate()
-	const { setInfoNav } = useContext(MainContext)
-	const [value, setValue] = useState(0)
 	const [filters, setFilters] = useState([true, true, true, true, true, true]) // Por defecto dejo todos los checks seleccionados
+	const [filtersEquipments, setFiltersEquipments] = useState([false, true, true, true]) // Reconectadores, medidores, analizadores de red
 	const [showSelectChecks, setShowSelectChecks] = useState(false)
 	const [elementSelected, setElementSelected] = useState(null)
 	//const isSmallScreen = useMediaQuery('(max-width: 640px)') // Detectar pantallas pequeñas
 
-	const handleNew = () => {
-		navigate('/addElement')
+	const getChecksUser = async () => {
+		try {
+			const { data } = await request(`${backend.Reconecta}/UserChecksHome`, 'GET')
+			if (data.length > 0) {
+				let newFilters = [...filters]
+				let newFiltersEquipments = [...filtersEquipments]
+
+				data.forEach((item) => {
+					if (item.type === 1) {
+						newFilters[item.check] = false
+					} else {
+						newFiltersEquipments[item.check] = false
+					}
+				})
+
+				setFilters(newFilters)
+				setFiltersEquipments(newFiltersEquipments)
+			}
+		} catch (e) {
+			console.log(e)
+		}
 	}
 
 	const handleChecked = (check) => {
 		const newFilters = filters.map((item, index) => (index === check ? !item : item))
 		setFilters(newFilters)
+		const body = {
+			check,
+			status: newFilters[check] ? 1 : 0,
+			type: 1
+		}
+		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
+	}
+
+	const handleCheckedEquipments = (check) => {
+		const newFilters = filtersEquipments.map((item, index) => (index === check ? !item : item))
+		setFiltersEquipments(newFilters)
+		const body = {
+			check,
+			status: newFilters[check] ? 1 : 0,
+			type: 2
+		}
+		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
 	}
 
 	useEffect(() => {
@@ -29,6 +63,10 @@ function TabsHome({ newTab }) {
 			newTab(elementSelected)
 		}
 	}, [elementSelected])
+
+	useEffect(() => {
+		getChecksUser()
+	}, [])
 
 	return (
 		<div className={`w-full !rounded-xl flex flex-col items-start`}>
@@ -55,6 +93,18 @@ function TabsHome({ newTab }) {
 							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleChecked(5)} />
 							<b className='text-black dark:text-white text-lg'>Consumos puntuales</b>
 						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6 accent-amber-600 ' checked={filtersEquipments[1]} onClick={() => handleCheckedEquipments(1)} />
+							<b className='text-black dark:text-white text-lg'>Reconectadores</b>
+						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6 accent-red-600' checked={filtersEquipments[2]} onClick={() => handleCheckedEquipments(2)} />
+							<b className='text-black dark:text-white text-lg'>Medidores</b>
+						</label>
+						<label className='flex items-center'>
+							<input type='checkbox' className='mr-2 !w-6 !h-6 accent-purple-600' checked={filtersEquipments[3]} onClick={() => handleCheckedEquipments(3)} />
+							<b className='text-black dark:text-white text-lg'>Analizadores de red</b>
+						</label>
 					</div>
 					<div className='flex justify-end md:hidden relative mb-3'>
 						<Fab
@@ -66,6 +116,10 @@ function TabsHome({ newTab }) {
 						</Fab>
 						{showSelectChecks && (
 							<div className='bg-white dark:bg-zinc-500 p-5 border-2 w-80 border-gray-200 dark:border-gray-700 absolute top-12 left-0 z-10'>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
+									<b className='text-black dark:text-white'>ET</b>
+								</label>
 								<label className='flex items-center my-2'>
 									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[1]} onClick={() => handleChecked(1)} />
 									<b className='text-black dark:text-white'>Reconexión</b>
@@ -79,12 +133,20 @@ function TabsHome({ newTab }) {
 									<b className='text-black dark:text-white'>Subestacion rural</b>
 								</label>
 								<label className='flex items-center my-2'>
-									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
-									<b className='text-black dark:text-white'>ET132</b>
-								</label>
-								<label className='flex items-center my-2'>
 									<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleChecked(5)} />
 									<b className='text-black dark:text-white'>Consumos puntuales</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6 accent-amber-600' checked={filtersEquipments[1]} onClick={() => handleCheckedEquipments(1)} />
+									<b className='text-black dark:text-white'>Reconectadores</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6 accent-red-600' checked={filtersEquipments[2]} onClick={() => handleCheckedEquipments(2)} />
+									<b className='text-black dark:text-white'>Medidores</b>
+								</label>
+								<label className='flex items-center my-2'>
+									<input type='checkbox' className='mr-2 !w-6 !h-6 accent-purple-600' checked={filtersEquipments[3]} onClick={() => handleCheckedEquipments(3)} />
+									<b className='text-black dark:text-white'>Analizadores de red</b>
 								</label>
 							</div>
 						)}
@@ -93,7 +155,7 @@ function TabsHome({ newTab }) {
 				<div className='flex w-2/12 sm:w-1/12 justify-end relative mb-3'>
 					<ButtonAddElement />
 				</div>
-				<TableGeneral filters={filters} setElementSelected={setElementSelected} />
+				<TableGeneral filters={filters} filtersEquipments={filtersEquipments} setElementSelected={setElementSelected} />
 			</div>
 		</div>
 	)
