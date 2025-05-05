@@ -49,7 +49,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
         1: "border-l-amber-600",
         2: "border-l-red-600",
         3: "border-l-purple-600"
-      };
+    };
     const getElements = async () => {
         try {
             const { data } = await request(`${backend.Reconecta}/Elements`, 'GET')
@@ -60,11 +60,8 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
             console.log(e)
         }
     }
-    useEffect(() => {
-        getElements()
-    }, [])
 
-    useEffect(() => {
+    const filterElements = async () => {
         const elementEquipments = allElements.map((element) => {
             const filteredEquipments = element.equipments.filter((equipment) => {
                 return filtersEquipments[equipment.equipmentmodels.type]
@@ -72,7 +69,15 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
             return { ...element, equipments: filteredEquipments }
         })
         setElements(elementEquipments)
-    }, [filtersEquipments])
+    }
+
+    useEffect(() => {
+        getElements()
+    }, [])
+
+    useEffect(() => {
+        filterElements()
+    }, [filtersEquipments, allElements])
 
     const handleChangePage = (_, newPage) => {
         setPage(newPage);

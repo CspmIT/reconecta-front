@@ -1,30 +1,61 @@
 import { Fab } from '@mui/material'
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Checklist } from '@mui/icons-material'
-import { useNavigate } from 'react-router-dom'
-import { MainContext } from '../../../../context/MainContext'
 import TableGeneral from '../TableGeneral'
 import ButtonAddElement from '../ButtonAddElement'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 function TabsHome({ newTab }) {
-	const navigate = useNavigate()
-	const { setInfoNav } = useContext(MainContext)
-	const [value, setValue] = useState(0)
 	const [filters, setFilters] = useState([true, true, true, true, true, true]) // Por defecto dejo todos los checks seleccionados
 	const [filtersEquipments, setFiltersEquipments] = useState([false, true, true, true]) // Reconectadores, medidores, analizadores de red
 	const [showSelectChecks, setShowSelectChecks] = useState(false)
 	const [elementSelected, setElementSelected] = useState(null)
 	//const isSmallScreen = useMediaQuery('(max-width: 640px)') // Detectar pantallas pequeñas
 
+	const getChecksUser = async () => {
+		try {
+			const { data } = await request(`${backend.Reconecta}/UserChecksHome`, 'GET')
+			if (data.length > 0) {
+				let newFilters = [...filters]
+				let newFiltersEquipments = [...filtersEquipments]
+
+				data.forEach((item) => {
+					if (item.type === 1) {
+						newFilters[item.check] = false
+					} else {
+						newFiltersEquipments[item.check] = false
+					}
+				})
+
+				setFilters(newFilters)
+				setFiltersEquipments(newFiltersEquipments)
+			}
+		} catch (e) {
+			console.log(e)
+		}
+	}
 
 	const handleChecked = (check) => {
 		const newFilters = filters.map((item, index) => (index === check ? !item : item))
 		setFilters(newFilters)
+		const body = {
+			check,
+			status: newFilters[check] ? 1 : 0,
+			type: 1
+		}
+		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
 	}
 
 	const handleCheckedEquipments = (check) => {
 		const newFilters = filtersEquipments.map((item, index) => (index === check ? !item : item))
 		setFiltersEquipments(newFilters)
+		const body = {
+			check,
+			status: newFilters[check] ? 1 : 0,
+			type: 2
+		}
+		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
 	}
 
 	useEffect(() => {
@@ -32,6 +63,10 @@ function TabsHome({ newTab }) {
 			newTab(elementSelected)
 		}
 	}, [elementSelected])
+
+	useEffect(() => {
+		getChecksUser()
+	}, [])
 
 	return (
 		<div className={`w-full !rounded-xl flex flex-col items-start`}>
