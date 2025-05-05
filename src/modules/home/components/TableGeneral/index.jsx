@@ -33,20 +33,27 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
     // hide last border
     '&:last-child td, &:last-child th': {
-        border: 0,
+        borderBottom: 0
     },
 }));
 
 
-export default function TableGeneral({ filters, setElementSelected }) {
+export default function TableGeneral({ filters, filtersEquipments, setElementSelected }) {
     const [loading, setLoading] = useState(true)
     const [elements, setElements] = useState([])
+    const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const headers = ["Matrícula", "Equipo", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", ""]
+    const borderClasses = {
+        1: "border-l-amber-600",
+        2: "border-l-red-600",
+        3: "border-l-purple-600"
+      };
     const getElements = async () => {
         try {
             const { data } = await request(`${backend.Reconecta}/Elements`, 'GET')
+            setAllElements(data)
             setElements(data)
             setLoading(false)
         } catch (e) {
@@ -56,6 +63,16 @@ export default function TableGeneral({ filters, setElementSelected }) {
     useEffect(() => {
         getElements()
     }, [])
+
+    useEffect(() => {
+        const elementEquipments = allElements.map((element) => {
+            const filteredEquipments = element.equipments.filter((equipment) => {
+                return filtersEquipments[equipment.equipmentmodels.type]
+            })
+            return { ...element, equipments: filteredEquipments }
+        })
+        setElements(elementEquipments)
+    }, [filtersEquipments])
 
     const handleChangePage = (_, newPage) => {
         setPage(newPage);
@@ -87,7 +104,7 @@ export default function TableGeneral({ filters, setElementSelected }) {
                                             {row.name} <br /> {row.description}
                                         </StyledTableCell>
                                     )}
-                                    <StyledTableCell>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}</StyledTableCell>
+                                    <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}</StyledTableCell>
                                     <StyledTableCell>{equipment.serial}</StyledTableCell>
                                     <StyledTableCell >
                                         {equipment.equipmentmodels.type === 1 && (
@@ -127,7 +144,7 @@ export default function TableGeneral({ filters, setElementSelected }) {
                                 count={elements.length}
                                 rowsPerPage={rowsPerPage}
                                 page={page}
-                                labelRowsPerPage="Número de registros"
+                                labelRowsPerPage="Cantidad de nodos"
                                 onPageChange={handleChangePage}
                                 onRowsPerPageChange={handleChangeRowsPerPage}
                             />
