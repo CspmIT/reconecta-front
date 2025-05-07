@@ -29,6 +29,7 @@ import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
 import AddConfigNotification from './modules/ConfigNotifications/views/add'
 import NotFound from './modules/NotFound'
+import AddChart from './modules/diagrams/views/addChart'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -46,6 +47,7 @@ function App() {
 		{ path: '/map', element: <Map /> },
 		{ path: '/Alert', element: <Alert /> },
 		{ path: '/Diagram', element: <Diagrams /> },
+		{ path: '/AddChart', element: <AddChart /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/config/security', element: <ConfigSecurity /> },

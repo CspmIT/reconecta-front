@@ -1,12 +1,15 @@
 import DiagramElectricity from '../components/DiagramElectricity'
 import GrafTensiones from '../components/GrafTensiones'
+import SunburstChart from '../components/sunburstChart'
 
 const Diagrams = () => {
 	return (
 		<div className='w-full flex flex-wrap justify-center text-black dark:text-white relative'>
-			<div className='w-full shadow-md  overflow-hidden !h-[90vh] relative rounded-md bg-[#CFC4BE] dark:bg-[#303b41] '>
-				<DiagramElectricity />
+			<div className='w-full shadow-md  overflow-hidden !h-[90vh] relative rounded-md bg-white dark:bg-[#303b41] '>
+
+				<SunburstChart />
 			</div>
+			{/* 
 			<div className='w-full flex flex-wrap'>
 				<div className='p-2 w-full'>
 					<div className='bg-white shadow-md dark:bg-gray-800 rounded-md h-full flex justify-center items-center p-2'>
@@ -29,13 +32,13 @@ const Diagrams = () => {
 							key={1}
 						/>
 					</div>
-				</div>
-				{/* <div className='p-2 md:w-1/2 w-full'>
+				</div> */}
+			{/* <div className='p-2 md:w-1/2 w-full'>
 					<div className='bg-white shadow-md dark:bg-gray-800 rounded-md h-full flex justify-center items-center p-2'>
 						<GrafTensiones data={[3, 2, 3, 5, 10, 8, 9, 3, 5]} title={'Grafico 2'} key={2} />
 					</div>
-				</div> */}
-			</div>
+				</div> 
+			</div>*/}
 		</div>
 	)
 }
