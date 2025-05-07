@@ -45,7 +45,7 @@ const Home = () => {
 			setTabs((prevTabs) => [
 				...prevTabs,
 				{
-					name: data.serial,
+					name: `${data.elementName} - ${data.observation ? data.observation : `${data.equipmentmodels.name} ${data.equipmentmodels.brand}`}`,
 					id: data.id,
 					equipmentId: data.equipmentmodels.id,
 					typeEquipment: data.equipmentmodels.type,

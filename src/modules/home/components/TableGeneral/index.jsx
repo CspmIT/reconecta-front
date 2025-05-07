@@ -71,6 +71,12 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
         setElements(elementEquipments)
     }
 
+    const handleSelected = (equipment, element) => {
+        equipment.elementName = element.name
+        equipment.elementDescription = element.description
+        setElementSelected(equipment)
+    }
+
     useEffect(() => {
         getElements()
     }, [])
@@ -136,7 +142,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
                                         </StyledTableCell>
                                     )}
                                     <StyledTableCell align='center'>
-                                        <Fab size='small' className='!bg-blue-300' onClick={() => setElementSelected(equipment)} ><FaTableCellsLarge /> </Fab>
+                                        <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))
