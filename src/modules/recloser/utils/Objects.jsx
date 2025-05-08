@@ -99,8 +99,8 @@ export const boardMetrology = [
 		name: 'UPS',
 		children: [
 			{ name: 'Tensión de batería', field: 'bat_0', unit: 'V' },
-			{ name: 'Corriente de carga', field: 'bat_1', unit: 'V' },
-			{ name: 'Carga efectiva', field: 'bat_2', unit: 'V' },
+			{ name: 'Corriente de carga', field: 'bat_1', unit: 'A' },
+			{ name: 'Carga efectiva', field: 'bat_2', unit: '%' },
 		],
 	},
 	{

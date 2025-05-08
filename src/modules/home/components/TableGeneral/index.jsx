@@ -68,7 +68,20 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
             })
             return { ...element, equipments: filteredEquipments }
         })
-        setElements(elementEquipments)
+        const filteredElements = elementEquipments.filter((element) => {
+            return filters[element.type] && element.equipments.length > 0
+        })
+        setElements(filteredElements)
+        if (filteredElements.length < rowsPerPage) {
+            setPage(0)
+        }
+    }
+
+    const handleSelected = (equipment, element) => {
+        equipment.elementName = element.name
+        equipment.elementDescription = element.description
+        equipment.elementType = element.type
+        setElementSelected(equipment)
     }
 
     useEffect(() => {
@@ -77,7 +90,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
 
     useEffect(() => {
         filterElements()
-    }, [filtersEquipments, allElements])
+    }, [filtersEquipments, allElements, rowsPerPage])
 
     const handleChangePage = (_, newPage) => {
         setPage(newPage);
@@ -136,7 +149,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
                                         </StyledTableCell>
                                     )}
                                     <StyledTableCell align='center'>
-                                        <Fab size='small' className='!bg-blue-300' onClick={() => setElementSelected(equipment)} ><FaTableCellsLarge /> </Fab>
+                                        <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))
