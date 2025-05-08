@@ -71,8 +71,11 @@ function TabsHome({ newTab }) {
 	return (
 		<div className={`w-full !rounded-xl flex flex-col items-start`}>
 			<div className='bg-white dark:bg-zinc-500 w-full h-full flex justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700 flex-wrap'>
-				<div className='w-10/12 sm:w-11/12 flex justify-start items-center'>
-					<div className='md:flex items-center space-x-4 flex-wrap sm:flex-nowrap hidden'>
+				<div className='w-10/12 sm:w-11/12 flex justify-start items-center sm:justify-between'>
+					<div className='relative md:flex items-center space-x-4 flex-wrap sm:flex-nowrap hidden border-4 p-3 mb-1 rounded-xl'>
+						<span className='absolute -top-3 left-4 bg-white dark:bg-zinc-500 px-2 text-black dark:text-white text-sm font-semibold'>
+							Filtrar por nodos
+						</span>
 						<label className='flex items-center'>
 							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleChecked(4)} />
 							<b className='text-black dark:text-white text-lg'>ET</b>
@@ -93,6 +96,11 @@ function TabsHome({ newTab }) {
 							<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleChecked(5)} />
 							<b className='text-black dark:text-white text-lg'>Consumos puntuales</b>
 						</label>
+					</div>
+					<div className='relative md:flex items-center space-x-4 flex-wrap sm:flex-nowrap hidden border-4 p-3 mb-1 rounded-xl'>
+						<span className='absolute -top-3 left-4 bg-white dark:bg-zinc-500 px-2 text-black dark:text-white text-sm font-semibold'>
+							Filtrar por equipos
+						</span>
 						<label className='flex items-center'>
 							<input type='checkbox' className='mr-2 !w-6 !h-6 accent-amber-600 ' checked={filtersEquipments[1]} onClick={() => handleCheckedEquipments(1)} />
 							<b className='text-black dark:text-white text-lg'>Reconectadores</b>

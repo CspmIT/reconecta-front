@@ -7,9 +7,9 @@ function Header({ info }) {
 				<TextField
 					type='text'
 					disabled
-					label='Name'
+					label='Nombre'
 					className='w-full !text-black'
-					defaultValue={info?.number}
+					defaultValue={`${info?.elements?.name} - ${info?.observation}`}
 				/>
 				<TextField
 					type='text'
@@ -21,9 +21,9 @@ function Header({ info }) {
 				<TextField
 					type='text'
 					disabled
-					label='Ubicación'
+					label='Configuración'
 					className='w-full !text-black'
-					defaultValue={info?.history?.nodes?.description}
+					defaultValue={info?.configuration === 1 ? 'Estandar' : "Especial"}
 				/>
 				<div className='w-full grid gap-3 grid-cols-2'>
 					<TextField

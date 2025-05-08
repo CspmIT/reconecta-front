@@ -41,7 +41,6 @@ function DataBoardMeter() {
 	}
 
 	useEffect(() => {
-		console.log("pasa", data)
 		if (!data) {
 			Swal.fire({
 				title: 'Atención!',

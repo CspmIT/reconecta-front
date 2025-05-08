@@ -7,6 +7,7 @@ import BoardMeter from '../../meter/views'
 import TabsHome from '../components/TabHome'
 import CardDashboard from '../components/CardDashboard/CardDashboard'
 import { useMediaQuery } from '@mui/material'
+import SubstationRuralBoard from '../../substationRural/views'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -23,12 +24,12 @@ const Home = () => {
 				break
 			/* case 2:
 				component = <SubstationUrbanBoard />
-				break
-			case 3:
-				component = <SubstationRuralBoard />
 				break */
 			case 3:
 				component = <AnalyzerBoard />
+				break
+			case 4:
+				component = <SubstationRuralBoard />
 				break
 			default:
 				break
@@ -36,6 +37,9 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
+		//const component = data.elementType === 3 ? 4 : data.equipmentmodels.type
+		const name = data.elementType === 3 ? data.elementName :
+			`${data.elementName} - ${data.observation ? data.observation : `${data.equipmentmodels.name} ${data.equipmentmodels.brand}`}`
 		const existingTabIndex = tabs.findIndex(
 			(tab) => tab.id === data.id
 		)
@@ -45,7 +49,7 @@ const Home = () => {
 			setTabs((prevTabs) => [
 				...prevTabs,
 				{
-					name: `${data.elementName} - ${data.observation ? data.observation : `${data.equipmentmodels.name} ${data.equipmentmodels.brand}`}`,
+					name,
 					id: data.id,
 					equipmentId: data.equipmentmodels.id,
 					typeEquipment: data.equipmentmodels.type,
