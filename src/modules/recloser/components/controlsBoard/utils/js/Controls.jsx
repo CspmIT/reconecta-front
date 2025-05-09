@@ -57,18 +57,16 @@ export const sendAction = async (field, action, contador, info) => {
 		const dataSend = {
 			action: `${field.toUpperCase()}${field === 'grp' ? action : !action ? '_ON' : '_OFF'}`,
 			brand: info.recloser.brand,
-			serial: info.recloser.serial,
+			serial: info.recloser.number,
 			id_recloser: info.recloser.id,
 		}
-		// await request(`${backend.Reconecta}/sendMQTT`, 'POST', dataSend)
+		await request(`${backend.Reconecta}/sendMQTT`, 'POST', dataSend)
 
 		const dataControl = {
 			action: field === 'grp' ? action : !action ? 1 : 0,
 			field: field,
-			brand: "sasa",
-			serial: "sasa"
-			//brand: info.recloser.brand,
-			//serial: info.recloser.serial,
+			brand: info.recloser.brand,
+			serial: info.recloser.number,
 		}
 		await request(`${backend.Reconecta}/controlAction`, 'POST', dataControl)
 		Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente', icon: 'success' })
