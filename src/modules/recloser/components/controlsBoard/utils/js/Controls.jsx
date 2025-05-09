@@ -69,7 +69,7 @@ export const sendAction = async (field, action, contador, info) => {
 			serial: info.recloser.number,
 		}
 		await request(`${backend.Reconecta}/controlAction`, 'POST', dataControl)
-		Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente', icon: 'success' })
+		Swal.fire({ title: 'Perfecto!', text: 'La acción se ejecutó correctamente', icon: 'success' })
 		return field === 'grp' ? action : !action
 	} catch (error) {
 		console.log(error)
