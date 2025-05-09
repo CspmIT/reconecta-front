@@ -1,7 +1,12 @@
 import Swal from 'sweetalert2'
 import { sendAction } from '../utils/js/Controls'
+import { useEffect, useState } from 'react'
 
 function ControlSwitch({ control, contador, enabled, info }) {
+	const [status, setStatus] = useState(control.status)
+	useEffect(() => {
+		setStatus(control.status)
+	}, [control.status])
 	const toggleCheck = async (field) => {
 		if (!enabled) {
 			Swal.fire({
@@ -20,10 +25,8 @@ function ControlSwitch({ control, contador, enabled, info }) {
 			confirmButtonText: 'Si',
 		}).then(async (result) => {
 			if (result.isConfirmed) {
-				const status = await sendAction(field, control.status, contador, info)
-				if (status) {
-					control.status = status
-				}
+				const newStatus = await sendAction(field, status, contador, info)
+				setStatus(newStatus)
 			}
 		})
 	}
@@ -40,11 +43,11 @@ function ControlSwitch({ control, contador, enabled, info }) {
 				<input
 					disabled={!control.enabled}
 					type='checkbox'
-					checked={control.status === 'sin Datos' ? false : control.status}
+					checked={status === "sin Datos" ? false : status}
 					id={control.id}
 					onChange={() => {}}
 					onClick={() => {
-						if (control.status !== 'sin Datos') toggleCheck(control.field)
+						if (status !== 'sin Datos') toggleCheck(control.field)
 					}}
 					className='sr-only peer'
 				/>
