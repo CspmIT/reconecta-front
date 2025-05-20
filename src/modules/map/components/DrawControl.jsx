@@ -62,10 +62,12 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 			if (event.layerType === 'marker') {
 				const { lat, lng } = layer.getLatLng()
 				const newMarker = new markerCustom('', lat, lng, 1)
+				console.log(newMarker)
 				if (getLatLngMarker) {
 					getLatLngMarker(lat, lng)
 				}
 				setCreatedMarkers([newMarker])
+				console.log(newMarker)
 				// Add the marker to the drawnItems group to enable editing
 				drawnItems.clearLayers()
 				drawnItems.addLayer(layer)
@@ -105,6 +107,7 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 				if (layer instanceof L.Marker) {
 					const { lat, lng } = layer.getLatLng()
 					const newMarker = new markerCustom('', '', lat, lng, 3)
+					console.log(newMarker)
 					if (getLatLngMarker) {
 						getLatLngMarker(lat, lng)
 					}
@@ -140,12 +143,9 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 				createdMarkers.map((marker, index) => (
 					<PopupMarker
 						key={index}
-						id={marker.id}
 						position={[marker.lat, marker.lng]}
 						icon={marker.icon}
-						alert={marker.alert}
-						popupData={marker.info}
-						recloser={marker.recloser}
+						popupData={marker}
 						drawnItems={drawnItemsRef.current}
 						layerControl={markersListRef.current}
 					/>

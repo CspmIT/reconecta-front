@@ -10,11 +10,13 @@ import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import { useNavigate } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import SubstationClient from '../Components/SubstationClient'
 
 const Abm = () => {
 	const navigate = useNavigate()
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const [numberEquipments, setNumberEquipments] = useState([])
+	const [numberClients, setNumberClients] = useState([])
 	const [typeSelected, setTypeSelected] = useState(null)
 	const [elementSelected, setElementSelected] = useState([])
 	const [abrevSelected, setAbrevSelected] = useState(null)
@@ -38,6 +40,7 @@ const Abm = () => {
 		const requestData = {
 			element: data,
 			equipment: numberEquipments,
+			client: numberClients
 		}
 		try {
 			await request(`${backend.Reconecta}/Elements`, 'POST', requestData)
@@ -74,6 +77,23 @@ const Abm = () => {
 		const updatedEquipments = [...numberEquipments]
 		updatedEquipments[index][field] = value
 		setNumberEquipments(updatedEquipments)
+	}
+
+	const handleNewClient = () => {
+		const id = numberClients.length === 0 ? 1 : numberClients[numberClients.length - 1].id + 1
+		setNumberClients([
+			...numberClients,
+			{ id, name: '', feed: 1, power: '', pat: '' },
+		])
+	}
+	const handleDeleteClient = (id) => {
+		const updatedClients = numberClients.filter((client) => client.id !== id)
+		setNumberClients(updatedClients)
+	}
+	const handleChangeClient = (index, field, value) => {
+		const updatedClients = [...numberClients]
+		updatedClients[index][field] = value
+		setNumberClients(updatedClients)
 	}
 	useEffect(() => {
 		if (selectMarkers?.lat) {
@@ -160,6 +180,17 @@ const Abm = () => {
 							/>
 							{errors.power && <p className='text-red-500'>{errors.power.message}</p>}
 						</div>
+						{elementSelected?.id === 3 && (
+							<div className='w-full md:w-1/3 '>
+								<TextField
+									className='w-full'
+									label='Numero de Medidor'
+									name='serial'
+									{...register('serial', { required: 'Campo obligatorio' })}
+								/>
+								{errors.serial && <p className='text-red-500'>{errors.serial.message}</p>}
+							</div>
+						)}
 					</div>
 					<AddMarkerMap
 						register={register}
@@ -167,23 +198,47 @@ const Abm = () => {
 						dataEdit={[]}
 						setSelectMarkers={setSelectMarkers}
 					/>
-					<div className='w-full flex my-5 items-center'>
-						<p className='text-start text-xl my-3'>Equipos</p>
-						<button type='button' onClick={handleNewEquipment} className='text-green-500'>
-							<FaPlusCircle size={25} />
-						</button>
-					</div>
-					<div className='w-full'>
-						{numberEquipments.map((equipment, index) => (
-							<Equipment
-								key={equipment.id}
-								data={equipment}
-								onChange={(field, value) => handleChangeEquipment(index, field, value)}
-								type={typeSelected}
-								handleDeleteEquipment={handleDeleteEquipment}
-							/>
-						))}
-					</div>
+					{elementSelected?.id !== 3 ? (
+						<>
+							<div className='w-full flex my-5 items-center'>
+								<p className='text-start text-xl my-3'>Equipos</p>
+								<button type='button' onClick={handleNewEquipment} className='text-green-500'>
+									<FaPlusCircle size={25} />
+								</button>
+							</div>
+							<div className='w-full'>
+								{numberEquipments.map((equipment, index) => (
+									<Equipment
+										key={equipment.id}
+										data={equipment}
+										onChange={(field, value) => handleChangeEquipment(index, field, value)}
+										type={typeSelected}
+										handleDeleteEquipment={handleDeleteEquipment}
+									/>
+								))}
+							</div>
+						</>
+					) : (
+						<>
+							<div className='w-full flex my-5 items-center'>
+								<p className='text-start text-xl my-3'>Clientes asociados</p>
+								<button type='button' onClick={handleNewClient} className='text-green-500'>
+									<FaPlusCircle size={25} />
+								</button>
+							</div>
+							<div className='w-full'>
+								{numberClients.map((client, index) => (
+									<SubstationClient
+										key={client.id}
+										data={client}
+										onChange={(field, value) => handleChangeClient(index, field, value)}
+										type={typeSelected}
+										handleDeleteClient={handleDeleteClient}
+									/>
+								))}
+							</div>
+						</>
+					)}
 					<div className='w-full flex justify-center mt-5'>
 						<button type='submit' className='bg-green-600 hover:bg-green-500 text-white rounded-md p-2'>
 							Guardar todo

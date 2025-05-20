@@ -16,6 +16,9 @@ const Home = () => {
 	const typeEquipment = (key) => {
 		let component
 		switch (key) {
+			case 0:
+				component = <SubstationRuralBoard />
+				break
 			case 1:
 				component = <Board />
 				break
@@ -28,20 +31,16 @@ const Home = () => {
 			case 3:
 				component = <AnalyzerBoard />
 				break
-			case 4:
-				component = <SubstationRuralBoard />
-				break
 			default:
 				break
 		}
 		return component
 	}
 	const newTabBoard = (data) => {
-		//const component = data.elementType === 3 ? 4 : data.equipmentmodels.type
-		const name = data.elementType === 3 ? data.elementName :
+		const name = data.elementType === 3 ? `${data.elementName} - ${data.elementDescription}` :
 			`${data.elementName} - ${data.observation ? data.observation : `${data.equipmentmodels.name} ${data.equipmentmodels.brand}`}`
 		const existingTabIndex = tabs.findIndex(
-			(tab) => tab.id === data.id
+			(tab) => tab.id === data.id && tab.typeEquipment === data.equipmentmodels.type
 		)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
@@ -53,6 +52,7 @@ const Home = () => {
 					id: data.id,
 					equipmentId: data.equipmentmodels.id,
 					typeEquipment: data.equipmentmodels.type,
+					clients: data.clients,
 					link: '/board',
 					component: typeEquipment(data.equipmentmodels.type),
 				},

@@ -61,7 +61,6 @@ function Map() {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements`, 'GET')
 			// Group markers by id_map
-			console.log(nodes.data)
 			const markersByMap = {}
 			if (nodes.data.length > 0) {
 				await Promise.all(
@@ -86,7 +85,8 @@ function Map() {
 							3,
 							info,
 							item.alert || '',
-							recloser
+							recloser,
+							item.equipments,
 						)
 
 						// Fetch additional information if needed
