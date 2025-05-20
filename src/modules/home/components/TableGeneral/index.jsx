@@ -38,7 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-export default function TableGeneral({ filters, filtersEquipments, setElementSelected }) {
+export default function TableGeneral({ filters, filtersEquipments, setElementSelected, searchValue }) {
     const [loading, setLoading] = useState(true)
     const [elements, setElements] = useState([])
     const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
@@ -46,6 +46,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
     const [rowsPerPage, setRowsPerPage] = useState(5)
     const headers = ["Matrícula", "Equipo", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", ""]
     const borderClasses = {
+        0: "border-l-green-600",
         1: "border-l-amber-600",
         2: "border-l-red-600",
         3: "border-l-purple-600"
@@ -62,7 +63,26 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
     }
 
     const filterElements = async () => {
-        const elementEquipments = allElements.map((element) => {
+        const elementsxType = allElements.filter((element) => {
+            if (filters[element.type]) {
+                return element
+            }
+        })
+        const elementEquipments = elementsxType.map((element) => {
+            if (element.type === 3) {
+                element.equipments = [{
+                    id: element.clients.id,
+                    serial: element.serial,
+                    equipmentmodels: {
+                        name: "",
+                        brand: "",
+                        type: 0
+                    },
+                    influxData: {
+                        "d/c": true
+                    }
+                }]
+            }
             const filteredEquipments = element.equipments.filter((equipment) => {
                 return filtersEquipments[equipment.equipmentmodels.type]
             })
@@ -71,8 +91,18 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
         const filteredElements = elementEquipments.filter((element) => {
             return filters[element.type] && element.equipments.length > 0
         })
-        setElements(filteredElements)
-        if (filteredElements.length < rowsPerPage) {
+        const filteredBySearch = filteredElements.filter((element) => {
+            return element.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+                element.description?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                element.equipments.some(equipment =>
+                    equipment.serial?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                    equipment.equipmentmodels.name?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                    equipment.equipmentmodels.brand?.toLowerCase().includes(searchValue.toLowerCase()) ||
+                    equipment.observation?.toLowerCase().includes(searchValue.toLowerCase())
+                );
+        })
+        setElements(filteredBySearch)
+        if (filteredBySearch.length < rowsPerPage) {
             setPage(0)
         }
     }
@@ -81,6 +111,11 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
         equipment.elementName = element.name
         equipment.elementDescription = element.description
         equipment.elementType = element.type
+        equipment.clients = element.clients
+        equipment.substationSerial = element.serial
+        if (!equipment.id) {
+            equipment.id = element.id
+        }
         setElementSelected(equipment)
     }
 
@@ -90,7 +125,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
 
     useEffect(() => {
         filterElements()
-    }, [filtersEquipments, allElements, rowsPerPage])
+    }, [filters, filtersEquipments, allElements, rowsPerPage, searchValue])
 
     const handleChangePage = (_, newPage) => {
         setPage(newPage);
@@ -114,7 +149,6 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
                     </TableHead>
                     <TableBody>
                         {elementsFiltered.map((row) =>
-                            filters[row.type] &&
                             row.equipments.map((equipment, index) => (
                                 <StyledTableRow key={`${row.id}-${index}`}>
                                     {index === 0 && (
@@ -122,7 +156,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
                                             {row.name} <br /> {row.description}
                                         </StyledTableCell>
                                     )}
-                                    <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}</StyledTableCell>
+                                    <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
                                     <StyledTableCell>{equipment.serial}</StyledTableCell>
                                     <StyledTableCell >
                                         {equipment.equipmentmodels.type === 1 && (

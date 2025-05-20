@@ -129,7 +129,8 @@ class markerCustom {
 			data: [],
 		},
 		alert = false,
-		recloser = []
+		recloser = [],
+		equipments = []
 	) {
 		this.id = id || ''
 		this.lat = lat
@@ -139,10 +140,11 @@ class markerCustom {
 		this.number = number
 		this.icon = getIcon(status, number)
 		this.recloser = recloser
+		this.equipments = equipments
 	}
 	async fetchInfo() {
 		try {
-			if (this.recloser.length > 0) {
+			/* if (this.recloser.length > 0) {
 				// Reemplaza la URL con la API o endpoint que necesites
 				const response = await request(
 					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${
@@ -173,7 +175,7 @@ class markerCustom {
 					: 3
 				this.icon = getIcon(status, this.number)
 				this.alert = recloser?.data?.alarm || false
-			}
+			} */
 		} catch (error) {
 			console.error('Error al obtener la información del marcador:', error)
 		}

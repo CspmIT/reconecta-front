@@ -4,6 +4,7 @@ import { grayIcon } from '../../../map/utils/js/markerClass'
 import { useEffect, useState } from 'react'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
+import { polylines } from '../../utils/data'
 function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 	const [centerMap, setCenterMap] = useState([-30.680865, -62.011055])
 	const [markerEdit, setMarkerEdit] = useState(false)
@@ -119,6 +120,7 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 					zoom={11}
 					getLatLngMarker={getLatLngMarker}
 					markers={markerDraw}
+					polylines={polylines[selectMap] ? polylines[selectMap] : []}
 				/>
 			</div>
 			<p className='text-red-500 text-xs mt-2 ml-3'>

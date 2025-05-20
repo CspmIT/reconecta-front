@@ -5,6 +5,7 @@ import { removeData } from '../../../../storage/cookies-store'
 import { Button } from '@mui/material'
 import { storage } from '../../../../storage/storage'
 import { MainContext } from '../../../../context/MainContext'
+import logo from '../../../../assets/img/Logo/Iso_Cooptech.png'
 
 const DropdownImage = () => {
 	const { setInfoNav, setTabs, setTabCurrent, setTabActive } = useContext(MainContext)
@@ -59,7 +60,7 @@ const DropdownImage = () => {
 				>
 					<img
 						className='h-6 w-6 rounded-full'
-						src='https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80'
+						src={logo}
 						alt='imagen de perfil'
 					/>
 				</button>

@@ -2,13 +2,15 @@ import React, { useContext, useEffect, useState } from 'react'
 import DataBoard from '../components/DataBoard'
 import TableBoard from '../components/TableBoard'
 import { MainContext } from '../../../context/MainContext'
-import { dataUser, substation } from '../utils/objects'
+import { request } from '../../../utils/js/request'
+import { backend } from '../../../utils/routes/app.routes'
+import LoaderComponent from '../../../components/Loader'
 
 const SubstationRuralBoard = () => {
 	const { tabCurrent, tabs } = useContext(MainContext)
 	const [info, setInfo] = useState([])
 	const [data] = useState(tabs[tabCurrent] || null)
-	const loadData = (data) => {
+	const loadData = async (data) => {
 		if (!data) {
 			Swal.fire({
 				title: 'Atención!',
@@ -17,11 +19,8 @@ const SubstationRuralBoard = () => {
 			})
 			navigate('/Home')
 		} else {
-			const subStation = substation.filter((item) => item.id == data.id)[0]
-			subStation.user = dataUser.filter((item) => item.id_user_recloser == data.id)[0].name_user_recloser
-			const powers = ['No definida', 'Monofásica', 'Trifásica']
-			subStation.power = powers[subStation.type_power]
-			setInfo(subStation)
+			const response = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements/${data.id}`, 'GET')
+			setInfo(response.data)
 		}
 	}
 	useEffect(() => {
@@ -31,13 +30,15 @@ const SubstationRuralBoard = () => {
 		<div className='w-full flex flex-row justify-center text-black dark:text-white relative pr-3'>
 			<div className='w-full h-min flex-row flex flex-wrap justify-between rounded-md bg-slate-50 dark:bg-gray-800 p-4 pb-8'>
 				<div className='w-full items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
-					<div className='flex flex-row relative justify-between mb-8'>
-						<div className='flex-grow flex justify-center'>
-							<h2 className='text-2xl'>Registro de eventos</h2>
-						</div>
-					</div>
-					<DataBoard info={info} />
-					<TableBoard />
+					{info.length === 0 ? <LoaderComponent /> : (
+						<>
+							<div className='flex flex-row relative justify-between mb-8'>
+								<div className='flex-grow flex justify-center'>
+									<h2 className='text-2xl'>Registro de eventos</h2>
+								</div>
+							</div> <DataBoard info={info[0]} />
+						</>)}
+					{/* <TableBoard /> */}
 				</div>
 			</div>
 		</div>

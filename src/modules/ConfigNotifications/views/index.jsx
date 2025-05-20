@@ -63,9 +63,9 @@ function ConfigNotifications() {
 									<>
 										<FormLabel>{item.router.device}</FormLabel>
 										<FaArrowRight className='mt-1 mx-2' />
-										<FormLabel>{item.router.brand}</FormLabel>
-										<FaArrowRight className='mt-1 mx-2' />
 										<FormLabel>{item.router.version}</FormLabel>
+										<FaArrowRight className='mt-1 mx-2' />
+										<FormLabel>{item.router.brand}</FormLabel>
 									</>
 								}
 								dataTable={item.objets}
