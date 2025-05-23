@@ -15,7 +15,7 @@ const PopupMarker = ({ position, icon, popupData, layerControl, drawnItems }) =>
             layerControl.addLayer(marker)
             if (Object.keys(popupData).length <= 1) return
             marker.on('click', () => {
-                setOpen((prev) => !prev)
+                setOpen(!open)
             })
             /* const handleMouseClick = () => {
                 marker.openPopup()
