@@ -153,6 +153,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 		enablePagination: prop.pagination ?? false,
 		defaultColumn: {
 			minSize: 10,
+			size: 500
 		},
 		displayColumnDefOptions: {
 			'mrt-row-expand': {

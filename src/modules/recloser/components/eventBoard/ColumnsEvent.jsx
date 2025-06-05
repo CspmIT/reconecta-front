@@ -22,6 +22,7 @@ export const ColumnsEvent = (handleChecked) => [
 	{
 		header: 'Personalizado',
 		accessorKey: 'custom',
+		size: 150,
 		muiFilterTextFieldProps: { placeholder: 'Personalizado' },
 		Cell: ({ cell, row }) => (
 			<input className="w-5 h-5" type="checkbox" checked={cell.getValue()} onClick={() => handleChecked(row.original)} />
