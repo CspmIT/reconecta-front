@@ -10,6 +10,7 @@ import DropdownCheckbox from './dropdownCheckbox'
 function TabsHome({ newTab }) {
 	const [filters, setFilters] = useState([true, true, true, true, true, true]) // Por defecto dejo todos los checks seleccionados
 	const [filtersEquipments, setFiltersEquipments] = useState([true, true, true, true]) // Reconectadores, medidores, analizadores de red
+	const [filtersColumns, setFiltersColumns] = useState([true, true, true, true, true, true, true, true, true])
 	const [showSelectChecks, setShowSelectChecks] = useState(false)
 	const [elementSelected, setElementSelected] = useState(null)
 	const [searchValue, setSearchValue] = useState('')
@@ -21,17 +22,26 @@ function TabsHome({ newTab }) {
 			if (data.length > 0) {
 				let newFilters = [...filters]
 				let newFiltersEquipments = [...filtersEquipments]
-
+				let newFiltersColumns = [...filtersColumns]
 				data.forEach((item) => {
-					if (item.type === 1) {
-						newFilters[item.check] = false
-					} else {
-						newFiltersEquipments[item.check] = false
+					switch (item.type) {
+						case 1:
+							newFilters[item.check] = false
+							break
+						case 2:
+							newFiltersEquipments[item.check] = false
+							break
+						case 3:
+							newFiltersColumns[item.check] = false
+							break
+						default:
+							break
 					}
 				})
 
 				setFilters(newFilters)
 				setFiltersEquipments(newFiltersEquipments)
+				setFiltersColumns(newFiltersColumns)
 			}
 		} catch (e) {
 			console.log(e)
@@ -56,6 +66,17 @@ function TabsHome({ newTab }) {
 			check,
 			status: newFilters[check] ? 1 : 0,
 			type: 2
+		}
+		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
+	}
+
+	const handleCheckedColumns = (check) => {
+		const newFilters = filtersColumns.map((item, index) => (index === check ? !item : item))
+		setFiltersColumns(newFilters)
+		const body = {
+			check,
+			status: newFilters[check] ? 1 : 0,
+			type: 3
 		}
 		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
 	}
@@ -96,6 +117,19 @@ function TabsHome({ newTab }) {
 						]}
 						values={filtersEquipments}
 						onToggle={handleCheckedEquipments}
+					/>
+					<DropdownCheckbox
+						title="Columnas"
+						options={[
+							{ value: 2, label: 'Nro de serie' },
+							{ value: 3, label: 'Estado' },
+							{ value: 4, label: 'Conexión' },
+							{ value: 5, label: 'Latitud' },
+							{ value: 6, label: 'Longitud' },
+							{ value: 7, label: 'Potencia' },
+						]}
+						values={filtersColumns}
+						onToggle={handleCheckedColumns}
 					/>
 
 				</div>
@@ -143,11 +177,36 @@ function TabsHome({ newTab }) {
 								<input type='checkbox' className='mr-2 !w-6 !h-6 accent-purple-600' checked={filtersEquipments[3]} onClick={() => handleCheckedEquipments(3)} />
 								<b className='text-black dark:text-white'>Analizadores de red</b>
 							</label>
+							<label className='italic text-black dark:text-white'>Columnas</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[2]} onClick={() => handleCheckedColumns(2)} />
+								<b className='text-black dark:text-white'>Nro de serie</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[3]} onClick={() => handleCheckedColumns(3)} />
+								<b className='text-black dark:text-white'>Estado</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[4]} onClick={() => handleCheckedColumns(4)} />
+								<b className='text-black dark:text-white'>Conexión</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[5]} onClick={() => handleCheckedColumns(5)} />
+								<b className='text-black dark:text-white'>Latitud</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[6]} onClick={() => handleCheckedColumns(6)} />
+								<b className='text-black dark:text-white'>Longitud</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[7]} onClick={() => handleCheckedColumns(7)} />
+								<b className='text-black dark:text-white'>Potencia</b>
+							</label>
 						</div>
 					)}
 					<ButtonAddElement />
 				</div>
-				<TableGeneral filters={filters} filtersEquipments={filtersEquipments} setElementSelected={setElementSelected} searchValue={searchValue} />
+				<TableGeneral filters={filters} filtersEquipments={filtersEquipments} filtersColumns={filtersColumns} setElementSelected={setElementSelected} searchValue={searchValue} />
 			</div>
 		</div>
 	)

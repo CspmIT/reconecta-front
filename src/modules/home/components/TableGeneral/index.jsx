@@ -38,7 +38,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 
-export default function TableGeneral({ filters, filtersEquipments, setElementSelected, searchValue }) {
+export default function TableGeneral({ filters, filtersEquipments, filtersColumns, setElementSelected, searchValue }) {
     const [loading, setLoading] = useState(true)
     const [elements, setElements] = useState([])
     const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
@@ -143,7 +143,7 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
                     <TableHead>
                         <TableRow>
                             {headers.map((header, index) => (
-                                <StyledTableCell key={index}>{header}</StyledTableCell>
+                                filtersColumns[index] && <StyledTableCell key={index}>{header}</StyledTableCell>
                             ))}
                         </TableRow>
                     </TableHead>
@@ -157,27 +157,33 @@ export default function TableGeneral({ filters, filtersEquipments, setElementSel
                                         </StyledTableCell>
                                     )}
                                     <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
-                                    <StyledTableCell>{equipment.serial}</StyledTableCell>
-                                    <StyledTableCell >
-                                        {equipment.equipmentmodels.type === 1 && (
-                                            <span className='flex items-center gap-x-2'>
-                                                <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
-                                                {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Sin señal"}
-                                            </span>
-                                        )}
-                                    </StyledTableCell>
-                                    <StyledTableCell>{equipment.influxData?.["d/c"] ? "Conectado" : "Desconectado"}  </StyledTableCell>
-                                    {index === 0 && (
+                                    {filtersColumns[2] && (
+                                        <StyledTableCell>{equipment.serial}</StyledTableCell>
+                                    )}
+                                    {filtersColumns[3] && (
+                                        <StyledTableCell >
+                                            {equipment.equipmentmodels.type === 1 && (
+                                                <span className='flex items-center gap-x-2'>
+                                                    <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
+                                                    {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Sin señal"}
+                                                </span>
+                                            )}
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[4] && (
+                                        <StyledTableCell>{equipment.influxData?.["d/c"] ? "Conectado" : "Desconectado"}  </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[5] && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
                                             {row.lat}
                                         </StyledTableCell>
                                     )}
-                                    {index === 0 && (
+                                    {index === 0 && filtersColumns[6] && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
                                             {row.lon}
                                         </StyledTableCell>
                                     )}
-                                    {index === 0 && (
+                                    {index === 0 && filtersColumns[7] && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
                                             {row.power}
                                         </StyledTableCell>

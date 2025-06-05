@@ -1,4 +1,4 @@
-export const ColumnsEvent = () => [
+export const ColumnsEvent = (handleChecked) => [
 	{
 		accessorFn: (originalRow) => originalRow.dateAlert,
 		size: 200,
@@ -19,4 +19,12 @@ export const ColumnsEvent = () => [
 		muiFilterTextFieldProps: { placeholder: 'Info adic.' },
 		enableColumnFilter: false,
 	},
+	{
+		header: 'Personalizado',
+		accessorKey: 'custom',
+		muiFilterTextFieldProps: { placeholder: 'Personalizado' },
+		Cell: ({ cell, row }) => (
+			<input className="w-5 h-5" type="checkbox" checked={cell.getValue()} onClick={() => handleChecked(row.original)} />
+		),
+	}
 ]
