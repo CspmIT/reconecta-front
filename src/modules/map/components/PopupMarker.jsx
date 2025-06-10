@@ -2,14 +2,14 @@ import { useEffect, useRef, useState } from 'react'
 import { Marker, Tooltip } from 'react-leaflet'
 import CustomPopUpRecloser from './CustomPopUp'
 
-const PopupMarker = ({ position, icon, popupData, layerControl, drawnItems }) => {
+const PopupMarker = ({ abm, position, icon, popupData = [], layerControl, drawnItems }) => {
     const markerRef = useRef(null)
     const [open, setOpen] = useState(false)
     const handleClose = () => {
         setOpen(false)
     }
     useEffect(() => {
-        if (markerRef.current) {
+        if (markerRef.current && !abm) {
             const marker = markerRef.current
             drawnItems.addLayer(marker)
             layerControl.addLayer(marker)
@@ -29,7 +29,7 @@ const PopupMarker = ({ position, icon, popupData, layerControl, drawnItems }) =>
 
     return (
         <Marker ref={markerRef} position={position} icon={icon}>
-            {Object.keys(popupData).length > 1 && (
+            {Object.keys(popupData).length > 1 && !abm && (
                 <Tooltip permanent={false}>
                     <CustomPopUpRecloser content={popupData} open={open} handleClose={handleClose} />
                 </Tooltip>

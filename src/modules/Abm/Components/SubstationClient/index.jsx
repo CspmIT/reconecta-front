@@ -46,9 +46,11 @@ const SubstationClient = ({ data, onChange, type, handleDeleteClient }) => {
                 onChange={(e) => onChange('pat', e.target.value)}
                 type='number'
             />
-            <button type='button' onClick={handleDelete} className='text-red-500'>
-                <FaMinusCircle size={25} />
-            </button>
+            {!data.bd_id && (
+                <button type='button' onClick={handleDelete} className='text-red-500'>
+                    <FaMinusCircle size={25} />
+                </button>
+            )}
         </div>
     )
 }

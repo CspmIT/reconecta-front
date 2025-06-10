@@ -40,7 +40,7 @@ function CardDashboard() {
 				{
 					recoOpen: 0,
 					recoOffline: 0,
-					recoAlarm: dataAlarm.data,
+					recoAlarm: Object.keys(dataAlarm.data).length,
 					recoAlimAC: recloserSN_AC,
 					recoCant: dataRecloser.data.length,
 				}

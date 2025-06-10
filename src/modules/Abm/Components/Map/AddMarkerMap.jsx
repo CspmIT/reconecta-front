@@ -7,13 +7,12 @@ import { backend } from '../../../../utils/routes/app.routes'
 import { polylines } from '../../utils/data'
 function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 	const [centerMap, setCenterMap] = useState([-30.680865, -62.011055])
-	const [markerEdit, setMarkerEdit] = useState(false)
 	const [markerDraw, setMarkerDraw] = useState(false)
 	const [selectMap, setSelectMap] = useState(0)
 	const [maps, setMaps] = useState([])
-	const [lng, setLng] = useState('')
-	const [lat, setLat] = useState('')
-	const numberValue = ''
+	const [lng, setLng] = useState(null)
+	const [lat, setLat] = useState(null)
+	const numberValue = null
 	const getLatLngMarker = (lat, lng) => {
 		setLng(lng)
 		setLat(lat)
@@ -40,10 +39,9 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 		}
 	}, [lng, lat, numberValue])
 	useEffect(() => {
-		if (dataEdit.lat_location && dataEdit.lng_location) {
-			getLatLngMarker(dataEdit.lat_location, dataEdit.lng_location)
-			setSelectMap(dataEdit.maps.id)
-			setMarkerEdit(true)
+		if (dataEdit.lat && dataEdit.lon) {
+			setSelectMap(dataEdit.id_map)
+			getLatLngMarker(dataEdit.lat, dataEdit.lon)
 		}
 	}, [dataEdit])
 	useEffect(() => {
@@ -80,7 +78,6 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 				<TextField
 					id='lat_marker'
 					type='number'
-					disabled={markerEdit}
 					className={`w-1/3 `}
 					label={`Latitud`}
 					{...register('lat_marker', { required: 'Debe agregar una ubicación' })}
@@ -90,12 +87,12 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 						setLat(e.target.value)
 						register('lat_marker').onChange(e)
 					}}
+					InputLabelProps={{ shrink: lat ? true : false }}
 					value={lat}
 				/>
 				<TextField
 					id='lng_marker'
 					type='number'
-					disabled={markerEdit}
 					className={`w-1/3 `}
 					label={`Longitud`}
 					{...register('lng_marker', { required: 'Debe agregar una ubicación' })}
@@ -105,6 +102,7 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 						setLng(e.target.value)
 						register('lng_marker').onChange(e)
 					}}
+					InputLabelProps={{ shrink: lng ? true : false }}
 					value={lng}
 				/>
 			</div>
@@ -115,7 +113,8 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 				<MapCustom
 					center={centerMap}
 					id={155}
-					editor={markerEdit ? false : true}
+					editor={true}
+					abm={true}
 					activeZoom
 					zoom={11}
 					getLatLngMarker={getLatLngMarker}

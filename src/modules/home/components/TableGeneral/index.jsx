@@ -13,7 +13,8 @@ import { backend } from '../../../../utils/routes/app.routes';
 import LoadingTable from '../../../../components/LoadingTable';
 import { Fab, TableFooter, TablePagination } from '@mui/material';
 import { FaCircle } from 'react-icons/fa';
-import { FaTableCellsLarge } from 'react-icons/fa6';
+import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -39,6 +40,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 
 export default function TableGeneral({ filters, filtersEquipments, filtersColumns, setElementSelected, searchValue }) {
+    const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [elements, setElements] = useState([])
     const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
@@ -153,7 +155,16 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                 <StyledTableRow key={`${row.id}-${index}`}>
                                     {index === 0 && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
-                                            {row.name} <br /> {row.description}
+                                            <div className='w-full flex'>
+                                                <div className='w-11/12'>
+                                                    {row.name} <br /> {row.description}
+                                                </div>
+                                                <div className='w-1/12'>
+                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                        <FaPen />
+                                                    </Fab>
+                                                </div>
+                                            </div>
                                         </StyledTableCell>
                                     )}
                                     <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
