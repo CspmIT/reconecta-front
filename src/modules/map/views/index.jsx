@@ -7,12 +7,14 @@ import markerCustom from '../utils/js/markerClass'
 import { IconButton } from '@mui/material'
 import { Lock, LockOpen } from '@mui/icons-material'
 import LoaderComponent from '../../../components/Loader'
+import FilterNodesButton from '../components/FilterNodes'
 function Map() {
 	const [markersRecloser, setMarkersRecloser] = useState(null)
 	const [dataMap, setDataMap] = useState([])
 	const [zoomActive, setZoomActive] = useState([])
 	const [activeMove, setActiveMove] = useState([])
 	const [changeZoom, setChangeZoom] = useState(false)
+	const [filtersMap, setFiltersMap] = useState([false, true, true, true, true, true])
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -65,7 +67,8 @@ function Map() {
 			if (nodes.data.length > 0) {
 				await Promise.all(
 					nodes.data.map(async (item) => {
-						if (item.type === 0) return null
+						if (item.type === 0 || !filtersMap[item.type]) return null
+
 						const info = item.equipments.length
 							? {
 								name: item.name,
@@ -122,6 +125,12 @@ function Map() {
 		})
 		setChangeZoom(true)
 	}
+
+	const handleFilter = (index) => {
+		const newFilters = [...filtersMap]
+		newFilters[index] = !newFilters[index]
+		setFiltersMap(newFilters)
+	}
 	useEffect(() => {
 		if (markersRecloser && dataMap && !changeZoom) {
 			setZoomActive(Array(dataMap.length).fill(false))
@@ -136,6 +145,9 @@ function Map() {
 		}, 15000)
 		return () => clearInterval(intervalId)
 	}, [])
+	useEffect(() => {
+		getdisplay()
+	}, [filtersMap])
 	const widthMap = ['lg:w-1/2', 'lg:w-full']
 	return (
 		<>
@@ -154,6 +166,7 @@ function Map() {
 								>
 									{!zoomActive[index] ? <Lock /> : <LockOpen />}
 								</IconButton>
+								<FilterNodesButton filters={filtersMap} handleFilter={handleFilter} />
 								<MapCustom
 									key={index}
 									center={map.center}
