@@ -127,6 +127,7 @@ function Map() {
 			setZoomActive(Array(dataMap.length).fill(false))
 			setActiveMove(Array(dataMap.length).fill(false))
 		}
+		console.log(markersRecloser)
 	}, [markersRecloser])
 	useEffect(() => {
 		getdisplay()

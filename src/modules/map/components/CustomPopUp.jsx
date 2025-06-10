@@ -70,7 +70,7 @@ function CustomPopUpRecloser({ content, open, handleClose }) {
 	return (
 		<div className='rounded-lg p-0 min-w-36 border-2 border-gray-900 overflow-hidden'>
 			<div className='bg-slate-400 border-b-2 border-gray-900 p-1 row'>
-				<p className='namePopUp !m-0 text-md text-white font-semibold'>{content.info.name}</p>
+				<p className='namePopUp !m-0 text-md text-white font-semibold'>{content.info.name || content.number}</p>
 			</div>
 			<div className='bg-slate-800 text-white pl-1 row items-center'>
 				<p className='!m-0 font-bold !mr'>Equipos instalados: {content.equipments.length}</p>
@@ -78,7 +78,7 @@ function CustomPopUpRecloser({ content, open, handleClose }) {
 			<Modal open={open} onClose={handleClose} className="flex items-center justify-center">
 				<div className="bg-slate-800 text-white p-6 rounded-xl w-full max-w-4xl shadow-xl">
 					<div className="mb-6">
-						<h4 className="text-center font-bold text-2xl">{content.info.name}</h4>
+						<h4 className="text-center font-bold text-2xl">{content.info.name || content.number}</h4>
 						<h5 className="text-center text-xl text-slate-300">{content.info.number}</h5>
 					</div>
 

@@ -10,6 +10,7 @@ import '../utils/css/toastCustom.modules.css'
 import '../utils/css/AlertSwal.modules.css'
 
 function MapCustom({
+	abm = false,
 	center,
 	zoom,
 	activeMove = true,
@@ -20,7 +21,6 @@ function MapCustom({
 	getLatLngMarker = false,
 }) {
 	const mapRef = useRef(null)
-
 	useEffect(() => {
 		if (mapRef.current) {
 			const map = mapRef.current // Accedemos al mapa
@@ -63,7 +63,9 @@ function MapCustom({
 					<TileLayer url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' />
 				</LayersControl.BaseLayer>
 			</LayersControl>
-			<DrawControl polylines={polylines} markers={markers} editor={editor} getLatLngMarker={getLatLngMarker} />
+			{markers && (
+				<DrawControl abm={abm} polylines={polylines} markers={markers} editor={editor} getLatLngMarker={getLatLngMarker} />
+			)}
 		</MapContainer>
 	)
 }

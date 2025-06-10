@@ -63,9 +63,11 @@ const Equipment = ({ data, onChange, type, handleDeleteEquipment }) => {
 					</MenuItem>
 				</TextField>
 			)}
-			<button type='button' onClick={handleDelete} className='text-red-500'>
-				<FaMinusCircle size={25} />
-			</button>
+			{!data.bd_id && (
+				<button type='button' onClick={handleDelete} className='text-red-500'>
+					<FaMinusCircle size={25} />
+				</button>
+			)}
 		</div>
 	)
 }

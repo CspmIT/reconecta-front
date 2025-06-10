@@ -40,9 +40,7 @@ export const blueIcon = (nro) =>
 		<span class="marcador_ubicacion_map" style="background: blue;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 		</span>
-			<p class="sing">
-				${nro}
-			</p>
+		${nro ? `<p class="sing">${nro}</p>` : ''}
 		</div>`,
 	})
 export const greenIcon = (nro) =>
@@ -56,9 +54,7 @@ export const greenIcon = (nro) =>
 		<span class="marcador_ubicacion_map" style="background: green;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 		</span>
-			<p class="sing">
-				${nro}
-			</p>
+		${nro ? `<p class="sing">${nro}</p>` : ''}
 		</div>`,
 		// html: `<span class="marcador_ubicacion_map" style="background: green;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
@@ -73,9 +69,7 @@ export const yellowIcon = (nro) =>
 				<span class="marcador_ubicacion_map" style="background: yellow;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 				</span>
-					<p class="sing">
-						${nro}
-					</p>
+				${nro ? `<p class="sing">${nro}</p>` : ''}
 				</div>`,
 	})
 export const grayIcon = (nro) =>
@@ -89,9 +83,7 @@ export const grayIcon = (nro) =>
 				<span class="marcador_ubicacion_map" style="background: gray;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 				</span>
-					<p class="sing">
-						${nro}
-					</p>
+					${nro ? `<p class="sing">${nro}</p>` : ''}
 				</div>`,
 	})
 

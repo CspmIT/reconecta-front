@@ -8,18 +8,20 @@ import AddMarkerMap from '../Components/Map/AddMarkerMap'
 import { FaPlusCircle } from 'react-icons/fa'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import SubstationClient from '../Components/SubstationClient'
 
 const Abm = () => {
 	const navigate = useNavigate()
+	const { elementId } = useParams()
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const [numberEquipments, setNumberEquipments] = useState([])
 	const [numberClients, setNumberClients] = useState([])
 	const [typeSelected, setTypeSelected] = useState(null)
 	const [elementSelected, setElementSelected] = useState([])
 	const [abrevSelected, setAbrevSelected] = useState(null)
+	const [dataEdit, setDataEdit] = useState([])
 	const {
 		register,
 		setValue,
@@ -32,6 +34,9 @@ const Abm = () => {
 		setTypeSelected(e.target.value)
 	}
 	const onSubmit = async (data) => {
+		if (elementId) {
+			data.id = elementId
+		}
 		data.name = `${abrevSelected}${data.name}`
 		data.lon = data.lng_marker
 		data.lat = data.lat_marker
@@ -43,11 +48,12 @@ const Abm = () => {
 			client: numberClients
 		}
 		try {
-			await request(`${backend.Reconecta}/Elements`, 'POST', requestData)
+			const method = elementId ? 'PATCH' : 'POST'
+			await request(`${backend.Reconecta}/Elements`, method, requestData)
 			navigate('/')
 			Swal.fire({
 				icon: 'success',
-				title: 'Elemento creado correctamente',
+				title: 'Se guardó correctamente',
 				toast: true,
 				position: 'top-end',
 				showConfirmButton: false,
@@ -111,6 +117,53 @@ const Abm = () => {
 			setAbrevSelected(elementSelected.abrev[0])
 		}
 	}, [elementSelected])
+	useEffect(() => {
+		if (elementId) {
+			const fetchElement = async () => {
+				try {
+					const { data } = await request(`${backend.Reconecta}/Elements/${elementId}`, 'GET')
+					if (data[0]) {
+						setDataEdit(data[0])
+						setValue('type', data[0].type)
+						setValue('name', data[0].name.slice(2))
+						setValue('description', data[0].description)
+						setValue('power', data[0].power)
+						setValue('serial', data[0].serial || '')
+						setValue('lng_marker', data[0].lon)
+						setValue('lat_marker', data[0].lat)
+						setValue('id_map', data[0].id_map)
+						setElementSelected(elements.find((el) => el.id === data[0].type))
+						setAbrevSelected(data[0].name.slice(0, 2))
+						setTypeSelected(data[0].type)
+						if (data[0].type === 3) {
+							const clients = data[0].clients.map((client, index) => ({
+								id: index + 1,
+								name: client.name,
+								feed: client.feed,
+								power: client.power,
+								pat: client.pat,
+								bd_id: client.id
+							}))
+							setNumberClients(clients)
+						}
+						const equipments = data[0].equipments.map((equipment, index) => ({
+							id: index + 1,
+							id_model: equipment.id_model,
+							serial: equipment.serial,
+							observation: equipment.observation,
+							configuration: equipment.configuration || 1,
+							bd_id: equipment.id
+						}))
+						setNumberEquipments(equipments)
+						setSelectMarkers([{ lat: data[0].lat, lng: data[0].lon }])
+					}
+				} catch (error) {
+					console.error('Error fetching element:', error)
+				}
+			}
+			fetchElement()
+		}
+	}, [elementId])
 	return (
 		<div className={'w-full flex justify-center items-center rounded-md text-black'}>
 			<CardCustom className={'w-full rounded-md text-black flex justify-center flex-wrap gap-y-3'}>
@@ -131,6 +184,8 @@ const Abm = () => {
 								handleChange(e)
 								setValue('type', e.target.value)
 							}}
+							value={typeSelected}
+							InputLabelProps={{ shrink: elementId ? true : false }}
 						>
 							{elements.map((element) => (
 								<MenuItem key={element.id} value={element.id}>
@@ -146,6 +201,7 @@ const Abm = () => {
 								select
 								value={abrevSelected || ''}
 								onChange={(e) => setAbrevSelected(e.target.value)}
+								InputLabelProps={{ shrink: elementId ? true : false }}
 							>
 								{elementSelected?.abrev?.map((abrev) => (
 									<MenuItem key={abrev} value={abrev}>
@@ -158,6 +214,7 @@ const Abm = () => {
 								label='Matricula'
 								name='name'
 								{...register('name', { required: 'Nombre obligatorio' })}
+								InputLabelProps={{ shrink: elementId ? true : false }}
 							/>
 							{errors.name && <p className='text-red-500'>{errors.name.message}</p>}
 						</div>
@@ -168,6 +225,7 @@ const Abm = () => {
 								name='description'
 								onChange={handleChange}
 								{...register('description', { required: 'Campo obligatorio' })}
+								InputLabelProps={{ shrink: elementId ? true : false }}
 							/>
 							{errors.description && <p className='text-red-500'>{errors.description.message}</p>}
 						</div>
@@ -177,6 +235,7 @@ const Abm = () => {
 								label='Potencia instalada'
 								name='power'
 								{...register('power', { required: 'Campo obligatorio' })}
+								InputLabelProps={{ shrink: elementId ? true : false }}
 							/>
 							{errors.power && <p className='text-red-500'>{errors.power.message}</p>}
 						</div>
@@ -195,7 +254,7 @@ const Abm = () => {
 					<AddMarkerMap
 						register={register}
 						errors={errors}
-						dataEdit={[]}
+						dataEdit={dataEdit}
 						setSelectMarkers={setSelectMarkers}
 					/>
 					{elementSelected?.id !== 3 ? (
