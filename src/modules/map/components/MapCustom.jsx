@@ -19,6 +19,7 @@ function MapCustom({
 	polylines,
 	editor = false,
 	getLatLngMarker = false,
+	filters = {}
 }) {
 	const mapRef = useRef(null)
 	useEffect(() => {
@@ -64,7 +65,7 @@ function MapCustom({
 				</LayersControl.BaseLayer>
 			</LayersControl>
 			{markers && (
-				<DrawControl abm={abm} polylines={polylines} markers={markers} editor={editor} getLatLngMarker={getLatLngMarker} />
+				<DrawControl abm={abm} polylines={polylines} markers={markers} editor={editor} getLatLngMarker={getLatLngMarker} filters={filters} />
 			)}
 		</MapContainer>
 	)

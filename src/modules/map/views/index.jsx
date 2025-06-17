@@ -14,7 +14,7 @@ function Map() {
 	const [zoomActive, setZoomActive] = useState([])
 	const [activeMove, setActiveMove] = useState([])
 	const [changeZoom, setChangeZoom] = useState(false)
-	const [filtersMap, setFiltersMap] = useState([false, true, true, true, true, true])
+	const [filtersMap, setFiltersMap] = useState(false)
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -64,10 +64,26 @@ function Map() {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements`, 'GET')
 			// Group markers by id_map
 			const markersByMap = {}
+			let mapFilters = filtersMap
 			if (nodes.data.length > 0) {
+				if (!mapFilters) {
+					const maps = nodes.data.map((item) => item.id_map)
+
+					// Obtenemos IDs únicos
+					const idMaps = [...new Set(maps)]
+
+					// Creamos un objeto indexado por id_map
+					mapFilters = {}
+					idMaps.forEach((id) => {
+						mapFilters[id] = { status: [false, true, true, true, true, true] }
+					})
+
+					setFiltersMap(mapFilters)
+				}
 				await Promise.all(
 					nodes.data.map(async (item) => {
-						if (item.type === 0 || !filtersMap[item.type]) return null
+						const mapFilter = mapFilters?.[item.id_map]
+						if (!mapFilter || item.type === 0 || !mapFilter.status[item.type]) return null
 
 						const info = item.equipments.length
 							? {
@@ -107,7 +123,7 @@ function Map() {
 			}
 			setMarkersRecloser(markersByMap)
 		} catch (error) {
-			console.error('Error al obtener los nodos:', error)
+			console.error(error)
 		}
 	}
 
@@ -126,9 +142,9 @@ function Map() {
 		setChangeZoom(true)
 	}
 
-	const handleFilter = (index) => {
-		const newFilters = [...filtersMap]
-		newFilters[index] = !newFilters[index]
+	const handleFilter = (index, mapId) => {
+		const newFilters = { ...filtersMap }
+		newFilters[mapId].status[index] = !newFilters[mapId].status[index]
 		setFiltersMap(newFilters)
 	}
 	useEffect(() => {
@@ -166,7 +182,7 @@ function Map() {
 								>
 									{!zoomActive[index] ? <Lock /> : <LockOpen />}
 								</IconButton>
-								<FilterNodesButton filters={filtersMap} handleFilter={handleFilter} />
+								<FilterNodesButton filters={filtersMap?.[map.id].status} handleFilter={handleFilter} indexMap={map.id} />
 								<MapCustom
 									key={index}
 									center={map.center}
@@ -175,6 +191,7 @@ function Map() {
 									zoom={map.zoom}
 									markers={markersRecloser[map.id]}
 									polylines={polylines[map.id]}
+									filters={filtersMap}
 								/>
 							</div>
 						)

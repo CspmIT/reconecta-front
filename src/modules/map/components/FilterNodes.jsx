@@ -2,7 +2,7 @@ import { Checklist } from '@mui/icons-material'
 import { IconButton, Popper } from '@mui/material'
 import React, { useState } from 'react'
 
-const FilterNodesButton = ({ filters, handleFilter }) => {
+const FilterNodesButton = ({ filters, handleFilter, indexMap }) => {
     const [anchorEl, setAnchorEl] = useState(null)
     const [open, setOpen] = useState(false)
     const handleOpen = (event) => {
@@ -24,23 +24,23 @@ const FilterNodesButton = ({ filters, handleFilter }) => {
                 anchorEl={anchorEl}
             >
                 <label className='flex items-center my-2'>
-                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleFilter(4)} />
+                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[4]} onClick={() => handleFilter(4, indexMap)} />
                     <b className='text-black dark:text-white'>ET</b>
                 </label>
                 <label className='flex items-center my-2'>
-                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[1]} onClick={() => handleFilter(1)} />
+                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[1]} onClick={() => handleFilter(1, indexMap)} />
                     <b className='text-black dark:text-white'>Reconexión</b>
                 </label>
                 <label className='flex items-center my-2'>
-                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[2]} onClick={() => handleFilter(2)} />
+                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[2]} onClick={() => handleFilter(2, indexMap)} />
                     <b className='text-black dark:text-white'>Subestacion urbana</b>
                 </label>
                 <label className='flex items-center my-2'>
-                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[3]} onClick={() => handleFilter(3)} />
+                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[3]} onClick={() => handleFilter(3, indexMap)} />
                     <b className='text-black dark:text-white'>Subestacion rural</b>
                 </label>
                 <label className='flex items-center my-2'>
-                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleFilter(5)} />
+                    <input type='checkbox' className='mr-2 !w-6 !h-6' checked={filters[5]} onClick={() => handleFilter(5, indexMap)} />
                     <b className='text-black dark:text-white'>Consumos puntuales</b>
                 </label>
             </Popper>

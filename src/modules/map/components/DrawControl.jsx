@@ -4,7 +4,7 @@ import { useMap } from 'react-leaflet'
 import PopupMarker from './PopupMarker'
 import markerCustom, { getIcon } from '../utils/js/markerClass'
 
-function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
+function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters }) {
 	const map = useMap()
 	const [createdMarkers, setCreatedMarkers] = useState(markers)
 	const drawnItemsRef = useRef(new L.FeatureGroup())
@@ -15,7 +15,6 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
 		const drawnItems = drawnItemsRef.current
 		const markersList = markersListRef.current
 		const polylineList = polylineListRef.current
-
 		map.addLayer(drawnItems)
 		map.addLayer(markersList)
 
@@ -138,7 +137,7 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
 			map.off('draw:edited', handleDrawEdited)
 			map.off('draw:deleted', handleDrawDelete)
 		}
-	}, [map, polylines, editor])
+	}, [map, polylines, editor, filters])
 	useEffect(() => {
 		setCreatedMarkers(markers)
 	}, [])
