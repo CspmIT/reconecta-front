@@ -185,7 +185,7 @@ const Abm = () => {
 								setValue('type', e.target.value)
 							}}
 							value={typeSelected}
-							InputLabelProps={{ shrink: elementId ? true : false }}
+							InputLabelProps={{ shrink: elementId || typeSelected ? true : false }}
 						>
 							{elements.map((element) => (
 								<MenuItem key={element.id} value={element.id}>
@@ -201,7 +201,7 @@ const Abm = () => {
 								select
 								value={abrevSelected || ''}
 								onChange={(e) => setAbrevSelected(e.target.value)}
-								InputLabelProps={{ shrink: elementId ? true : false }}
+								InputLabelProps={{ shrink: elementId || abrevSelected ? true : false }}
 							>
 								{elementSelected?.abrev?.map((abrev) => (
 									<MenuItem key={abrev} value={abrev}>

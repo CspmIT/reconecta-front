@@ -1,5 +1,5 @@
 import MapCustom from '../components/MapCustom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { polylines } from '../utils/js/polilines'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
@@ -15,6 +15,8 @@ function Map() {
 	const [activeMove, setActiveMove] = useState([])
 	const [changeZoom, setChangeZoom] = useState(false)
 	const [filtersMap, setFiltersMap] = useState(false)
+	const [mapVersions, setMapVersions] = useState({})
+	const filtersRef = useRef(filtersMap)
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -59,12 +61,12 @@ function Map() {
 		return baseZoom * scaleFactor
 	}
 
-	const getdisplay = async () => {
+	const getdisplay = async (currentFilters = filtersRef.current) => {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements`, 'GET')
 			// Group markers by id_map
 			const markersByMap = {}
-			let mapFilters = filtersMap
+			let mapFilters = currentFilters
 			if (nodes.data.length > 0) {
 				if (!mapFilters) {
 					const maps = nodes.data.map((item) => item.id_map)
@@ -77,11 +79,10 @@ function Map() {
 					idMaps.forEach((id) => {
 						mapFilters[id] = { status: [false, true, true, true, true, true] }
 					})
-
 					setFiltersMap(mapFilters)
 				}
 				await Promise.all(
-					nodes.data.map(async (item) => {
+					nodes.data.map(async (item, index) => {
 						const mapFilter = mapFilters?.[item.id_map]
 						if (!mapFilter || item.type === 0 || !mapFilter.status[item.type]) return null
 
@@ -142,10 +143,15 @@ function Map() {
 		setChangeZoom(true)
 	}
 
-	const handleFilter = (index, mapId) => {
+	const handleFilter = async (index, mapId) => {
 		const newFilters = { ...filtersMap }
 		newFilters[mapId].status[index] = !newFilters[mapId].status[index]
 		setFiltersMap(newFilters)
+		await getdisplay(newFilters)
+		setMapVersions(prev => ({
+			...prev,
+			[mapId]: (prev[mapId] || 0) + 1
+		}))
 	}
 	useEffect(() => {
 		if (markersRecloser && dataMap && !changeZoom) {
@@ -154,15 +160,15 @@ function Map() {
 		}
 	}, [markersRecloser])
 	useEffect(() => {
-		getdisplay()
+		getdisplay(filtersRef.current)
 
 		const intervalId = setInterval(() => {
-			getdisplay()
+			getdisplay(filtersRef.current)
 		}, 15000)
 		return () => clearInterval(intervalId)
 	}, [])
 	useEffect(() => {
-		getdisplay()
+		filtersRef.current = filtersMap
 	}, [filtersMap])
 	const widthMap = ['lg:w-1/2', 'lg:w-full']
 	return (
@@ -184,7 +190,7 @@ function Map() {
 								</IconButton>
 								<FilterNodesButton filters={filtersMap?.[map.id].status} handleFilter={handleFilter} indexMap={map.id} />
 								<MapCustom
-									key={index}
+									key={`${map.id}-${mapVersions[map.id] || 0}`}
 									center={map.center}
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}

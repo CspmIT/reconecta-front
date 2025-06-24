@@ -34,6 +34,11 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 		setMaps(data.data)
 	}
 	useEffect(() => {
+		if (selectMap && !markerDraw) {
+			setMarkerDraw(true)
+		}
+	}, [selectMap])
+	useEffect(() => {
 		if (lng && lat) {
 			changeUbication(lng, lat)
 		}
@@ -50,7 +55,7 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 	return (
 		<>
 			<div className='row gap-3 my-3 w-full'>
-				{maps.length > 1 ? (
+				{maps.length >= 1 ? (
 					<TextField
 						id='id_map'
 						select
