@@ -1,5 +1,5 @@
 import MapCustom from '../components/MapCustom'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { polylines } from '../utils/js/polilines'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
@@ -7,12 +7,16 @@ import markerCustom from '../utils/js/markerClass'
 import { IconButton } from '@mui/material'
 import { Lock, LockOpen } from '@mui/icons-material'
 import LoaderComponent from '../../../components/Loader'
+import FilterNodesButton from '../components/FilterNodes'
 function Map() {
 	const [markersRecloser, setMarkersRecloser] = useState(null)
 	const [dataMap, setDataMap] = useState([])
 	const [zoomActive, setZoomActive] = useState([])
 	const [activeMove, setActiveMove] = useState([])
 	const [changeZoom, setChangeZoom] = useState(false)
+	const [filtersMap, setFiltersMap] = useState(false)
+	const [mapVersions, setMapVersions] = useState({})
+	const filtersRef = useRef(filtersMap)
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -57,15 +61,31 @@ function Map() {
 		return baseZoom * scaleFactor
 	}
 
-	const getdisplay = async () => {
+	const getdisplay = async (currentFilters = filtersRef.current) => {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements`, 'GET')
 			// Group markers by id_map
 			const markersByMap = {}
+			let mapFilters = currentFilters
 			if (nodes.data.length > 0) {
+				if (!mapFilters) {
+					const maps = nodes.data.map((item) => item.id_map)
+
+					// Obtenemos IDs únicos
+					const idMaps = [...new Set(maps)]
+
+					// Creamos un objeto indexado por id_map
+					mapFilters = {}
+					idMaps.forEach((id) => {
+						mapFilters[id] = { status: [false, true, true, true, true, true] }
+					})
+					setFiltersMap(mapFilters)
+				}
 				await Promise.all(
-					nodes.data.map(async (item) => {
-						if (item.type === 0) return null
+					nodes.data.map(async (item, index) => {
+						const mapFilter = mapFilters?.[item.id_map]
+						if (!mapFilter || item.type === 0 || !mapFilter.status[item.type]) return null
+
 						const info = item.equipments.length
 							? {
 								name: item.name,
@@ -104,7 +124,7 @@ function Map() {
 			}
 			setMarkersRecloser(markersByMap)
 		} catch (error) {
-			console.error('Error al obtener los nodos:', error)
+			console.error(error)
 		}
 	}
 
@@ -122,6 +142,17 @@ function Map() {
 		})
 		setChangeZoom(true)
 	}
+
+	const handleFilter = async (index, mapId) => {
+		const newFilters = { ...filtersMap }
+		newFilters[mapId].status[index] = !newFilters[mapId].status[index]
+		setFiltersMap(newFilters)
+		await getdisplay(newFilters)
+		setMapVersions(prev => ({
+			...prev,
+			[mapId]: (prev[mapId] || 0) + 1
+		}))
+	}
 	useEffect(() => {
 		if (markersRecloser && dataMap && !changeZoom) {
 			setZoomActive(Array(dataMap.length).fill(false))
@@ -129,13 +160,16 @@ function Map() {
 		}
 	}, [markersRecloser])
 	useEffect(() => {
-		getdisplay()
+		getdisplay(filtersRef.current)
 
 		const intervalId = setInterval(() => {
-			getdisplay()
+			getdisplay(filtersRef.current)
 		}, 15000)
 		return () => clearInterval(intervalId)
 	}, [])
+	useEffect(() => {
+		filtersRef.current = filtersMap
+	}, [filtersMap])
 	const widthMap = ['lg:w-1/2', 'lg:w-full']
 	return (
 		<>
@@ -154,14 +188,16 @@ function Map() {
 								>
 									{!zoomActive[index] ? <Lock /> : <LockOpen />}
 								</IconButton>
+								<FilterNodesButton filters={filtersMap?.[map.id].status} handleFilter={handleFilter} indexMap={map.id} />
 								<MapCustom
-									key={index}
+									key={`${map.id}-${mapVersions[map.id] || 0}`}
 									center={map.center}
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}
 									zoom={map.zoom}
 									markers={markersRecloser[map.id]}
 									polylines={polylines[map.id]}
+									filters={filtersMap}
 								/>
 							</div>
 						)

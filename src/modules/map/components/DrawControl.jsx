@@ -4,7 +4,7 @@ import { useMap } from 'react-leaflet'
 import PopupMarker from './PopupMarker'
 import markerCustom, { getIcon } from '../utils/js/markerClass'
 
-function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
+function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters }) {
 	const map = useMap()
 	const [createdMarkers, setCreatedMarkers] = useState(markers)
 	const drawnItemsRef = useRef(new L.FeatureGroup())
@@ -15,11 +15,23 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
 		const drawnItems = drawnItemsRef.current
 		const markersList = markersListRef.current
 		const polylineList = polylineListRef.current
-
 		map.addLayer(drawnItems)
 		map.addLayer(markersList)
 
+		const clearPolylines = () => {
+			const drawnItems = drawnItemsRef.current
+			const polylineList = polylineListRef.current
+
+			drawnItems.eachLayer((layer) => {
+				if (layer instanceof L.Polyline) {
+					drawnItems.removeLayer(layer)
+				}
+			})
+			polylineList.length = 0
+		}
+
 		if (polylines?.length) {
+			polylineList.length = 0 // Limpiar la lista de polilíneas
 			polylines.forEach((poly) => {
 				const borderPolyline = L.polyline(poly.points, {
 					color: '#0000006e',
@@ -35,6 +47,8 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
 				drawnItems.addLayer(polyline)
 				polylineList.push({ borderPolyline, polyline })
 			})
+		} else {
+			clearPolylines()
 		}
 
 		const drawControl = new L.Control.Draw({
@@ -138,7 +152,7 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker }) {
 			map.off('draw:edited', handleDrawEdited)
 			map.off('draw:deleted', handleDrawDelete)
 		}
-	}, [map, polylines, editor])
+	}, [map, polylines, editor, filters])
 	useEffect(() => {
 		setCreatedMarkers(markers)
 	}, [])
