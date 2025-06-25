@@ -6,7 +6,7 @@ import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import { polylines } from '../../utils/data'
 function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
-	const [centerMap, setCenterMap] = useState([-30.680865, -62.011055])
+	const [centerMap, setCenterMap] = useState([0, 0])
 	const [markerDraw, setMarkerDraw] = useState(false)
 	const [selectMap, setSelectMap] = useState(0)
 	const [maps, setMaps] = useState([])
@@ -32,8 +32,15 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 	const getMaps = async () => {
 		const data = await request(`${backend.Reconecta}/getMaps`, 'GET')
 		setMaps(data.data)
+		if (data.data.length > 0) {
+			setSelectMap(data.data[0].id)
+		}
 	}
 	useEffect(() => {
+		const ubication = maps.find((item) => item.id === selectMap)
+		if (ubication?.lat_location && ubication?.lng_location) {
+			setCenterMap([ubication.lat_location, ubication.lng_location])
+		}
 		if (selectMap && !markerDraw) {
 			setMarkerDraw(true)
 		}

@@ -8,6 +8,7 @@ import DrawControl from './DrawControl'
 import 'react-toastify/dist/ReactToastify.css'
 import '../utils/css/toastCustom.modules.css'
 import '../utils/css/AlertSwal.modules.css'
+import { map } from 'leaflet'
 
 function MapCustom({
 	abm = false,
@@ -42,6 +43,12 @@ function MapCustom({
 			}
 		}
 	}, [activeZoom]) // Escuchamos cambios en activeZoom
+	useEffect(() => {
+		console.log(center)
+		if (mapRef.current) {
+			mapRef.current.setView(center)
+		}
+	}, [center])
 	return (
 		<MapContainer
 			ref={mapRef}
@@ -55,6 +62,9 @@ function MapCustom({
 			maxZoom={activeZoom ? 18 : zoom}
 			minZoom={activeZoom ? zoom : zoom}
 			style={{ minHeight: '100%', width: '100%', borderRadius: '10px' }}
+			whenCreated={(mapInstance) => {
+				mapRef.current = mapInstance;
+			}}
 		>
 			<LayersControl position='topright'>
 				<LayersControl.BaseLayer checked name='Street'>
