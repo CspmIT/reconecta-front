@@ -21,7 +21,6 @@ function MapCustom({
 	getLatLngMarker = false,
 	filters = {}
 }) {
-	console.log(markers)
 	const mapRef = useRef(null)
 	useEffect(() => {
 		if (mapRef.current) {

@@ -18,7 +18,20 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters
 		map.addLayer(drawnItems)
 		map.addLayer(markersList)
 
+		const clearPolylines = () => {
+			const drawnItems = drawnItemsRef.current
+			const polylineList = polylineListRef.current
+
+			drawnItems.eachLayer((layer) => {
+				if (layer instanceof L.Polyline) {
+					drawnItems.removeLayer(layer)
+				}
+			})
+			polylineList.length = 0
+		}
+
 		if (polylines?.length) {
+			polylineList.length = 0 // Limpiar la lista de polilíneas
 			polylines.forEach((poly) => {
 				const borderPolyline = L.polyline(poly.points, {
 					color: '#0000006e',
@@ -34,6 +47,8 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters
 				drawnItems.addLayer(polyline)
 				polylineList.push({ borderPolyline, polyline })
 			})
+		} else {
+			clearPolylines()
 		}
 
 		const drawControl = new L.Control.Draw({
