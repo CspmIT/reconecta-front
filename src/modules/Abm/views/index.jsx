@@ -24,6 +24,7 @@ const Abm = () => {
 	const [dataEdit, setDataEdit] = useState([])
 	const {
 		register,
+		watch,
 		setValue,
 		clearErrors,
 		formState: { errors },
@@ -101,6 +102,10 @@ const Abm = () => {
 		updatedClients[index][field] = value
 		setNumberClients(updatedClients)
 	}
+	const shouldShrink = (value) => {
+		return value !== undefined && value !== null && value !== '';
+	}
+
 	useEffect(() => {
 		if (selectMarkers?.lat) {
 			clearErrors('lng_marker')
@@ -124,8 +129,9 @@ const Abm = () => {
 					const { data } = await request(`${backend.Reconecta}/Elements/${elementId}`, 'GET')
 					if (data[0]) {
 						setDataEdit(data[0])
+						const quantitySlice = data[0].type === 2 ? 4 : 2
 						setValue('type', data[0].type)
-						setValue('name', data[0].name.slice(2))
+						setValue('name', data[0].name.slice(quantitySlice))
 						setValue('description', data[0].description)
 						setValue('power', data[0].power)
 						setValue('serial', data[0].serial || '')
@@ -133,7 +139,7 @@ const Abm = () => {
 						setValue('lat_marker', data[0].lat)
 						setValue('id_map', data[0].id_map)
 						setElementSelected(elements.find((el) => el.id === data[0].type))
-						setAbrevSelected(data[0].name.slice(0, 2))
+						setAbrevSelected(data[0].name.slice(0, quantitySlice))
 						setTypeSelected(data[0].type)
 						if (data[0].type === 3) {
 							const clients = data[0].clients.map((client, index) => ({
@@ -214,7 +220,7 @@ const Abm = () => {
 								label='Matricula'
 								name='name'
 								{...register('name', { required: 'Nombre obligatorio' })}
-								InputLabelProps={{ shrink: elementId ? true : false }}
+								InputLabelProps={{ shrink: shouldShrink(watch('name') || dataEdit.name), }}
 							/>
 							{errors.name && <p className='text-red-500'>{errors.name.message}</p>}
 						</div>
@@ -225,7 +231,7 @@ const Abm = () => {
 								name='description'
 								onChange={handleChange}
 								{...register('description', { required: 'Campo obligatorio' })}
-								InputLabelProps={{ shrink: elementId ? true : false }}
+								InputLabelProps={{ shrink: shouldShrink(watch('description') || dataEdit.description), }}
 							/>
 							{errors.description && <p className='text-red-500'>{errors.description.message}</p>}
 						</div>
@@ -235,7 +241,7 @@ const Abm = () => {
 								label='Potencia instalada'
 								name='power'
 								{...register('power', { required: 'Campo obligatorio' })}
-								InputLabelProps={{ shrink: elementId ? true : false }}
+								InputLabelProps={{ shrink: shouldShrink(watch('power') || dataEdit.power), }}
 							/>
 							{errors.power && <p className='text-red-500'>{errors.power.message}</p>}
 						</div>
