@@ -24,10 +24,10 @@ function TableInterruption({ idRecloser }) {
 			const datareturn = [
 				{
 					resetButton: 'Duración acumulada',
-					abcLargas: data.data.Int_ABC_0,
-					abcCortas: data.data.Int_ABC_1,
-					srtLargas: data.data.Int_SRT_0,
-					srtCortas: data.data.Int_SRT_1,
+					abcLargas: `${data.data.Int_ABC_0} mins`,
+					abcCortas: `${data.data.Int_ABC_1} segs`,
+					srtLargas: `${data.data.Int_SRT_0} mins`,
+					srtCortas: `${data.data.Int_SRT_1} segs`,
 				},
 				{
 					resetButton: 'Cantidad',

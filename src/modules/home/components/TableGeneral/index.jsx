@@ -12,7 +12,7 @@ import { request } from '../../../../utils/js/request';
 import { backend } from '../../../../utils/routes/app.routes';
 import LoadingTable from '../../../../components/LoadingTable';
 import { Fab, TableFooter, TablePagination } from '@mui/material';
-import { FaCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaCircle } from 'react-icons/fa';
 import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -154,7 +154,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                             row.equipments.map((equipment, index) => (
                                 <StyledTableRow key={`${row.id}-${index}`}>
                                     {index === 0 && (
-                                        <StyledTableCell rowSpan={row.equipments.length}>
+                                        <StyledTableCell rowSpan={row.equipments.length} className='min-w-96'>
                                             <div className='w-full flex'>
                                                 <div className='w-11/12'>
                                                     {row.name} <br /> {row.description}
@@ -182,7 +182,11 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         </StyledTableCell>
                                     )}
                                     {filtersColumns[4] && (
-                                        <StyledTableCell>{equipment.influxData?.["d/c"] ? "Conectado" : "Desconectado"}  </StyledTableCell>
+                                        <StyledTableCell>{equipment.influxData?.["d/c"] && (
+                                            <span className='flex items-center gap-x-2'>
+                                                <FaCheckCircle size={20} className='text-green-700' /> Online
+                                            </span>
+                                        )}  </StyledTableCell>
                                     )}
                                     {index === 0 && filtersColumns[5] && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
