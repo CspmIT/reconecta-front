@@ -12,7 +12,7 @@ import { request } from '../../../../utils/js/request';
 import { backend } from '../../../../utils/routes/app.routes';
 import LoadingTable from '../../../../components/LoadingTable';
 import { Fab, TableFooter, TablePagination } from '@mui/material';
-import { FaCheckCircle, FaCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa';
 import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
@@ -176,17 +176,23 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                             {equipment.equipmentmodels.type === 1 && (
                                                 <span className='flex items-center gap-x-2'>
                                                     <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
-                                                    {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Sin señal"}
+                                                    {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Desconocido"}
                                                 </span>
                                             )}
                                         </StyledTableCell>
                                     )}
                                     {filtersColumns[4] && (
-                                        <StyledTableCell>{equipment.influxData?.["d/c"] && (
+                                        <StyledTableCell>
                                             <span className='flex items-center gap-x-2'>
-                                                <FaCheckCircle size={20} className='text-green-700' /> Online
+                                                {equipment.influxData?.["d/c"] ? (
+                                                    <>
+                                                        <FaCheckCircle size={20} className='text-green-700' /> Online
+                                                    </>
+                                                ) : (<>
+                                                    <FaTimes size={20} className='text-red-700' /> Sin señal
+                                                </>)}
                                             </span>
-                                        )}  </StyledTableCell>
+                                        </StyledTableCell>
                                     )}
                                     {index === 0 && filtersColumns[5] && (
                                         <StyledTableCell rowSpan={row.equipments.length}>
