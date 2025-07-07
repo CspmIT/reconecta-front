@@ -69,6 +69,7 @@ function Map() {
 			let mapFilters = currentFilters
 			if (nodes.data.length > 0) {
 				if (!mapFilters) {
+					const mapsSaved = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/UserChecksHome/4`, 'GET')
 					const maps = nodes.data.map((item) => item.id_map)
 
 					// Obtenemos IDs únicos
@@ -78,6 +79,12 @@ function Map() {
 					mapFilters = {}
 					idMaps.forEach((id) => {
 						mapFilters[id] = { status: [false, true, true, true, true, true] }
+						const existingFilters = mapsSaved.data.filter((filter) => filter.id_map === id)
+						if (existingFilters.length > 0) {
+							existingFilters.forEach((filter) => {
+								mapFilters[id].status[filter.check] = false
+							})
+						}
 					})
 					setFiltersMap(mapFilters)
 				}
@@ -152,6 +159,13 @@ function Map() {
 			...prev,
 			[mapId]: (prev[mapId] || 0) + 1
 		}))
+		const body = {
+			check: index,
+			status: newFilters[mapId].status[index] ? 1 : 0,
+			type: 4,
+			id_map: mapId
+		}
+		request(`${backend.Reconecta}/UserChecksHome`, 'POST', body)
 	}
 	useEffect(() => {
 		if (markersRecloser && dataMap && !changeZoom) {
