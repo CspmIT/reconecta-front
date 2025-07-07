@@ -29,7 +29,7 @@ export const ColumnTableInt = [
 			{
 				header: 'Largas',
 				accessorKey: 'abcLargas',
-				size: 300,
+				size: 270,
 				muiTableHeadCellProps: {
 					align: 'center',
 				},
@@ -37,7 +37,7 @@ export const ColumnTableInt = [
 			{
 				header: 'Cortas',
 				accessorKey: 'abcCortas',
-				size: 300,
+				size: 270,
 				muiTableHeadCellProps: {
 					align: 'center',
 				},
@@ -51,7 +51,7 @@ export const ColumnTableInt = [
 			{
 				header: 'Largas',
 				accessorKey: 'srtLargas',
-				size: 300,
+				size: 270,
 				muiTableHeadCellProps: {
 					align: 'center',
 				},
@@ -59,7 +59,7 @@ export const ColumnTableInt = [
 			{
 				header: 'Cortas',
 				accessorKey: 'srtCortas',
-				size: 300,
+				size: 270,
 				muiTableHeadCellProps: {
 					align: 'center',
 				},

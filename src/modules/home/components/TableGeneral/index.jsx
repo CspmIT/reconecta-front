@@ -45,7 +45,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
     const [elements, setElements] = useState([])
     const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
     const [page, setPage] = useState(0)
-    const [rowsPerPage, setRowsPerPage] = useState(5)
+    const [rowsPerPage, setRowsPerPage] = useState(25)
     const headers = ["Matrícula", "Equipo", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", ""]
     const borderClasses = {
         0: "border-l-green-600",
