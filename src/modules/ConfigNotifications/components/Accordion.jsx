@@ -15,6 +15,7 @@ import {
 	sendConfigMqtt,
 } from '../utils/js'
 import SwalLoader from '../../../components/SwalLoader/SwalLoader'
+import TablesEvents from './TablesEvents'
 
 const CustomAccordion = ({ title, dataTable, access }) => {
 	const [expanded, setExpanded] = useState(false)
@@ -77,8 +78,7 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 
 				// BUSCO TODO LOS RECONECTADORES CON EL ID DE VERSION QUE SE MODIFICO PARA MANDARLE LA ALERTA DE QUE SE ACTUALIZO LAS ALARMAS Y LOS EVENTOS.
 				const listRecloser = await request(
-					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getRecloserxVersion?id_version=${
-						tableData[0].id_version
+					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getRecloserxVersion?id_version=${tableData[0].id_version
 					}`,
 					'GET'
 				)
@@ -115,10 +115,10 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 				}
 				// FALTA EL GUARDADO DEL ARCHIVO EN EL SERVIDOR FTP
 				// para ver como queda el txt descomenta esta linea y pasale el formdata
-				// await downloadFromFormData(fileEvent)
-				// await downloadFromFormData(fileAlarm)
+				await downloadFromFormData(fileEvent)
+				await downloadFromFormData(fileAlarm)
 				const data = Object.values(newData).map((item) => item)
-				await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
+				// await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
 				Swal.close()
 				Swal.fire({
 					title: 'Recorda!',
@@ -149,6 +149,22 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 					<LoaderComponent image={false} />
 				) : (
 					<div className='p-5'>
+						<TablesEvents data={tableData} />
+						<div className='mt-5 w-full flex justify-center'>
+							<Button onClick={saveData} disabled={!access} variant='contained'>
+								Guardar
+							</Button>
+						</div>
+					</div>
+
+				)}
+			</AccordionDetails>
+		</Accordion>
+	)
+}
+
+export default CustomAccordion
+/* <div className='p-5'>
 						<TableCustom
 							data={tableData}
 							columns={ColumnsNot(handlePriority, handleCheck, access)}
@@ -173,11 +189,4 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 								Guardar
 							</Button>
 						</div>
-					</div>
-				)}
-			</AccordionDetails>
-		</Accordion>
-	)
-}
-
-export default CustomAccordion
+					</div> */

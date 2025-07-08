@@ -18,7 +18,6 @@ export const formatterConfig = async (data) => {
 			}
 		}
 	}
-	console.log(resultados)
 	return resultados
 }
 
