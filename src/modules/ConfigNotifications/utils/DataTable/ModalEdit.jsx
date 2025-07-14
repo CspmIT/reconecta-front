@@ -20,7 +20,7 @@ const ModalEdit = ({ data, setValueName }) => {
                 name: value,
             }
             await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', formData)
-            setValueName(value)
+            setValueName(data.id, value)
             setOpen(false)
             Swal.fire({
                 icon: 'success',

@@ -160,7 +160,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                                     {row.name} <br /> {row.description}
                                                 </div>
                                                 <div className='w-1/12'>
-                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
                                                         <FaPen />
                                                     </Fab>
                                                 </div>

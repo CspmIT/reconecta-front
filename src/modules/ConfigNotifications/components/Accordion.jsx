@@ -15,7 +15,7 @@ import {
 	sendConfigMqtt,
 } from '../utils/js'
 import SwalLoader from '../../../components/SwalLoader/SwalLoader'
-import TablesEvents from './TablesEvents'
+import TablesEvents from '../utils/DataTable/TablesEvents'
 
 const CustomAccordion = ({ title, dataTable, access }) => {
 	const [expanded, setExpanded] = useState(false)
@@ -149,7 +149,7 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 					<LoaderComponent image={false} />
 				) : (
 					<div className='p-5'>
-						<TablesEvents data={tableData} />
+						<TablesEvents initialData={tableData} />
 						<div className='mt-5 w-full flex justify-center'>
 							<Button onClick={saveData} disabled={!access} variant='contained'>
 								Guardar
