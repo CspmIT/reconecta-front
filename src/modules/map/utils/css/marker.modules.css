@@ -101,3 +101,17 @@
 .leaflet-tooltip-right:before {
 	border-color: #ffffff00 !important;
 }
+
+@keyframes blink {
+	0%,
+	100% {
+		background-color: #f1c40f;
+	}
+	50% {
+		background-color: #f0d35e;
+	}
+}
+
+.blink {
+	animation: blink 0.7s infinite;
+}

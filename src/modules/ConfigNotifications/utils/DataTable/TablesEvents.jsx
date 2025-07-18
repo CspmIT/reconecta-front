@@ -8,6 +8,9 @@ import envelopIcon from '../../../../assets/img/ConfigNotifications/envelop.png'
 import CustomSelect from './CustomSelect'
 import ModalEdit from './ModalEdit'
 import { Close, Info, Save } from '@mui/icons-material'
+import Swal from 'sweetalert2'
+import { request } from '../../../../utils/js/request'
+import { backend } from '../../../../utils/routes/app.routes'
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -36,10 +39,15 @@ const TablesEvents = ({ initialData }) => {
     const [data, setData] = useState(initialData || []);
     const [expanded, setExpanded] = useState({});
     const [open, setOpen] = useState(false);
-    const [indexFile, setIndexFile] = useState(null);
-
     const toggleExpand = (type) => {
         setExpanded((prev) => ({ ...prev, [type]: !prev[type] }));
+    };
+
+    const getAvailableOptions = (currentValue) => {
+        const used = data
+            .filter(item => item.index_file !== null && item.index_file !== '' && item.id_event_influx % 2 === 0)
+            .map(item => item.index_file)
+        return Array.from({ length: 144 }, (_, i) => i).filter(i => i === currentValue || !used.includes(i));
     };
 
     const groupedData = type_vars.reduce((acc, type) => {
@@ -74,7 +82,7 @@ const TablesEvents = ({ initialData }) => {
                 if (row.id_event_influx === id_event_influx) {
                     return {
                         ...row,
-                        index_file: checked ? 0 : null
+                        index_file: checked ? '' : null
                     };
                 }
                 return row;
@@ -82,23 +90,38 @@ const TablesEvents = ({ initialData }) => {
         );
     }, []);
 
-
-
-    useEffect(() => {
-        if (initialData[0]?.id_version !== 2) {
-            headers.shift()
-        } else {
-            let dataSorted = [...initialData].sort((a, b) => a.index_file - b.index_file)
-            let dataIndex = []
-            dataSorted.forEach(item => {
-                if (item.index_file !== null && item.id_event_influx % 2 === 0) {
-                    dataIndex[item.index_file] = [item.index_file, item.id_event_influx]
+    const saveIndexFiles = async () => {
+        Swal.fire({
+            title: "Guardar configuraciones",
+            icon: "question",
+            html: "¿Desea guardar las configuraciones cargadas?",
+            showCancelButton: true,
+            confirmButtonText: "Guardar",
+            cancelButtonText: "Cancelar"
+        }).then(async (response) => {
+            if (!response.isConfirmed) {
+                return
+            }
+            Swal.fire({
+                title: "Aguarde un momento",
+                html: "Guardando la configuración",
+                didOpen: () => {
+                    Swal.showLoading();
                 }
             })
-            setIndexFile(dataIndex)
-        }
-    }, [])
-
+            try {
+                const dataFile = data
+                    .filter(item => item.index_file !== null && item.index_file !== '' && item.id_event_influx % 2 === 0)
+                    .sort((a, b) => a.index_file - b.index_file)
+                    .map(item => [item.index_file, item.id_event_influx])
+                await request(`${backend.Reconecta}/ConfigNotify`, 'PATCH', dataFile)
+                Swal.close()
+            } catch (e) {
+                console.log(e)
+                Swal.close()
+            }
+        })
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -119,18 +142,15 @@ const TablesEvents = ({ initialData }) => {
                 <TableBody>
                     {type_vars.map((type, i) => (
                         <React.Fragment key={type}>
-                            <StyledTableRow
-                                onClick={() => toggleExpand(type)}
-                                style={{ cursor: 'pointer', backgroundColor: '#e0e0e0' }}
-                            >
+                            <StyledTableRow className='bg-[#e0e0e0]'>
                                 <StyledTableCell colSpan={7}>
                                     <div className='justify-between flex'>
-                                        <span><b>{type}</b> {expanded[type] ? '▲' : '▼'}</span>
-                                        {/* {i === 0 && initialData[0]?.id_version === 2 && (
-                                            <IconButton>
+                                        <span className='cursor-pointer' onClick={() => toggleExpand(type)}><b>{type}</b> {expanded[type] ? '▲' : '▼'}</span>
+                                        {i === 0 && initialData[0]?.id_version === 2 && (
+                                            <IconButton onClick={saveIndexFiles}>
                                                 <Save />
                                             </IconButton>
-                                        )} */}
+                                        )}
                                     </div>
                                 </StyledTableCell>
                             </StyledTableRow>
@@ -153,14 +173,16 @@ const TablesEvents = ({ initialData }) => {
                                                         handleChangeIndexFile(row.id_event_influx, e.target.value)
                                                     }
                                                 >
-                                                    <option value='' disabled></option>
-                                                    {Array.from({ length: 144 }, (_, i) => (
+                                                    <option value='' disabled>Seleccionar...</option>
+                                                    {getAvailableOptions(row.index_file).map(i => (
                                                         <option key={i} value={i}>{i}</option>
                                                     ))}
                                                 </select>
                                             </div>
                                         </StyledTableCell>
                                     )}
+                                    {row.id_version !== 2 && (<StyledTableCell />)}
+
                                     <StyledTableCell>{row.id_database}</StyledTableCell>
                                     <StyledTableCell>{row.name}
                                         {row.description && (
@@ -174,10 +196,10 @@ const TablesEvents = ({ initialData }) => {
                                         <CustomSelect value={row.priority} />
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <input type='checkbox' className='ml-3 w-5 h-5' />
+                                        <input type='checkbox' className='ml-3 w-5 h-5' defaultChecked={row.flash_screen} />
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <input type='checkbox' className='ml-3 w-5 h-5' />
+                                        <input type='checkbox' className='ml-3 w-5 h-5' defaultChecked={row.alarm} />
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}

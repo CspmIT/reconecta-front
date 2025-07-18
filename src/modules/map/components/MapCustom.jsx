@@ -44,7 +44,6 @@ function MapCustom({
 		}
 	}, [activeZoom]) // Escuchamos cambios en activeZoom
 	useEffect(() => {
-		console.log(center)
 		if (mapRef.current) {
 			mapRef.current.setView(center)
 		}

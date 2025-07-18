@@ -17,13 +17,6 @@ const PopupMarker = ({ abm, position, icon, popupData = [], layerControl, drawnI
             marker.on('click', () => {
                 setOpen(!open)
             })
-            /* const handleMouseClick = () => {
-                marker.openPopup()
-            }
-            marker.on('click', handleMouseClick)
-            return () => {
-                marker.off('click', handleMouseClick)
-            } */
         }
     }, [popupData, layerControl, drawnItems])
 
