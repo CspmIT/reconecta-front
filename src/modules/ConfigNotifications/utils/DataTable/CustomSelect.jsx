@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { FaExclamationTriangle, FaInfoCircle } from 'react-icons/fa';
 
-const CustomSelect = ({ value }) => {
+const CustomSelect = ({ value, handleNewConfig, idEvent }) => {
     const [selected, setSelected] = useState({
         value: 3,
         label: 'SIN PRIORIDAD',
@@ -50,6 +50,7 @@ const CustomSelect = ({ value }) => {
                             onClick={() => {
                                 setSelected(option);
                                 setOpen(false);
+                                handleNewConfig(1, option.value, idEvent)
                             }}
                             className="p-2 hover:bg-gray-100 cursor-pointer flex items-center gap-2"
                             title={option.label}

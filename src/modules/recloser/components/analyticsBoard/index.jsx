@@ -47,7 +47,10 @@ const AnalyticsBoard = ({ idRecloser }) => {
 						}}
 					/>
 				</LocalizationProvider>
-				<input type='checkbox' checked={checked} onChange={() => setChecked(prev => !prev)} />
+				<div className='flex flex-col items-center px-3'>
+					<b>Tiempo real</b>
+					<input className='text-center w-5 h-5' type='checkbox' checked={checked} onChange={() => setChecked(prev => !prev)} />
+				</div>
 				<div className='flex flex-row items-center'>
 					<button className='bg-blue-500 text-white rounded-lg px-4 py-2 ml-3' onClick={() => setSearch(!search)}>
 						Filtrar

@@ -105,13 +105,13 @@
 @keyframes blink {
 	0%,
 	100% {
-		background-color: #f1c40f;
+		background-color: #ec1212;
 	}
 	50% {
-		background-color: #f0d35e;
+		background-color: #f1c40f;
 	}
 }
 
 .blink {
-	animation: blink 0.7s infinite;
+	animation: blink 1.3s infinite;
 }

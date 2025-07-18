@@ -115,7 +115,7 @@ class markerCustom {
 		number = '',
 		lat,
 		lng,
-		status = 4,
+		status = 3,
 		info = {
 			name: 'nuevo',
 			data: [],

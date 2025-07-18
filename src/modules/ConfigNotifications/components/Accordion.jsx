@@ -1,27 +1,18 @@
 import { useEffect, useState } from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import TableCustom from '../../../components/TableCustom'
-import { ColumnsNot } from '../utils/DataTable/ColumnsNot'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../components/Loader'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import { Accordion, AccordionDetails, AccordionSummary, Button } from '@mui/material'
-import {
-	downloadFromFormData,
-	generateFileAlarm,
-	generateFileEvent,
-	generateSources,
-	sendConfigMqtt,
-} from '../utils/js'
 import SwalLoader from '../../../components/SwalLoader/SwalLoader'
 import TablesEvents from '../utils/DataTable/TablesEvents'
 
 const CustomAccordion = ({ title, dataTable, access }) => {
 	const [expanded, setExpanded] = useState(false)
 	const [tableData, setTableData] = useState([])
-	const [newData, setNewData] = useState({})
 	const [isLoading, setIsLoading] = useState(true)
+	const [newConfigs, setNewConfigs] = useState([])
 	const handleChange = () => {
 		setExpanded(!expanded)
 		if (expanded) {
@@ -33,21 +24,6 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 		}
 	}
 
-	const handlePriority = (row) => {
-		const dataTable = tableData.reduce((acc, value) => {
-			acc.push(value.id == row.id ? row : value)
-			return acc
-		}, [])
-		setTableData(dataTable)
-		let data = newData
-		data[row.id] = row
-		setNewData(data)
-	}
-	const handleCheck = (row) => {
-		let data = newData
-		data[row.id] = row
-		setNewData(data)
-	}
 	useEffect(() => {
 		if (tableData.length) {
 			setIsLoading(false)
@@ -55,13 +31,37 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 			setIsLoading(true)
 		}
 	}, [tableData])
-	const sendNotificationMQTT = async (dataInflux) => {
-		try {
-			await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/sendMqttMessagge`, 'POST', dataInflux)
-		} catch (error) {
-			throw new Error(error)
+
+	const handleNewConfigs = async (type, checked, id) => {
+		let field
+		switch (type) {
+			case 1:
+				field = { priority: checked, id }
+				break;
+			case 2:
+				field = { flash_screen: checked ? 1 : 0, id }
+				break;
+			case 3:
+				field = { alarm: checked ? 1 : 0, id }
+				break;
+			default:
+				break;
 		}
+
+		const chargedConfigs = [...newConfigs]
+		const index = chargedConfigs.findIndex(item => item.id === id)
+		if (index !== -1) {
+			chargedConfigs[index] = {
+				...chargedConfigs[index],
+				...field,
+			}
+		} else {
+			chargedConfigs.push(field)
+		}
+
+		setNewConfigs(chargedConfigs)
 	}
+
 	const saveData = async () => {
 		try {
 			const { value: result } = await Swal.fire({
@@ -75,55 +75,11 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 
 			if (result) {
 				SwalLoader()
-
-				// BUSCO TODO LOS RECONECTADORES CON EL ID DE VERSION QUE SE MODIFICO PARA MANDARLE LA ALERTA DE QUE SE ACTUALIZO LAS ALARMAS Y LOS EVENTOS.
-				const listRecloser = await request(
-					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getRecloserxVersion?id_version=${tableData[0].id_version
-					}`,
-					'GET'
-				)
-				const now = new Date()
-
-				const options = {
-					timeZone: 'America/Argentina/Buenos_Aires',
-					year: 'numeric',
-					month: '2-digit',
-					day: '2-digit',
-					hour: '2-digit',
-					minute: '2-digit',
-					second: '2-digit',
-				}
-
-				const formattedDate = new Intl.DateTimeFormat('en-US', options).format(now).replace(/[\s:,/]/g, '')
-
-				const nameFile = `_${listRecloser.data?.[0]?.version?.brand?.name}_${listRecloser.data?.[0]?.version?.name}_${formattedDate}.txt`
-				const fileEvent = await generateFileEvent(tableData, nameFile)
-				const fileAlarm = await generateFileAlarm(tableData, nameFile)
-
-				if (listRecloser.data) {
-					listRecloser.data.forEach((info) => {
-						const dataInflux = {
-							url: 'eventUpdate',
-							brand: info?.version?.brand?.name,
-							serial: info?.serial,
-							data: `Event_${nameFile}`,
-						}
-						// COMENTE EL GUARDADO EN MQTT PARA NO GENERAR BASURA PERO ESTA FUNCIONAL.
-						// FALTA GENERAR EL ENVIO POR ALARMAS PERO ES EL MISMO dataInflux SOLO QUE CAMBIANDO EL URL A alarmUpdate y en el nombre del archivo pasarlo a Alarm_
-						// sendNotificationMQTT(dataInflux)
-					})
-				}
-				// FALTA EL GUARDADO DEL ARCHIVO EN EL SERVIDOR FTP
-				// para ver como queda el txt descomenta esta linea y pasale el formdata
-				await downloadFromFormData(fileEvent)
-				await downloadFromFormData(fileAlarm)
-				const data = Object.values(newData).map((item) => item)
-				// await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, 'POST', data)
-				Swal.close()
+				await request(`${backend.Reconecta}/ConfigNotify`, 'PATCH', newConfigs)
 				Swal.fire({
-					title: 'Recorda!',
-					text: 'Esta comentado el codigo del guardado por precuación',
-					icon: 'warning',
+					title: 'Perfecto!',
+					text: 'Configuración guardada correctamente',
+					icon: 'success',
 				})
 			}
 		} catch (error) {
@@ -149,7 +105,7 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 					<LoaderComponent image={false} />
 				) : (
 					<div className='p-5'>
-						<TablesEvents initialData={tableData} />
+						<TablesEvents initialData={tableData} handleNewConfig={handleNewConfigs} />
 						<div className='mt-5 w-full flex justify-center'>
 							<Button onClick={saveData} disabled={!access} variant='contained'>
 								Guardar
@@ -164,29 +120,3 @@ const CustomAccordion = ({ title, dataTable, access }) => {
 }
 
 export default CustomAccordion
-/* <div className='p-5'>
-						<TableCustom
-							data={tableData}
-							columns={ColumnsNot(handlePriority, handleCheck, access)}
-							density='compact'
-							header={{
-								background: 'rgb(190 190 190)',
-								fontSize: '18px',
-								fontWeight: 'bold',
-							}}
-							toolbarClass={{ background: 'rgb(190 190 190)' }}
-							body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
-							footer={{ background: 'rgb(190 190 190)' }}
-							card={{
-								boxShadow: `1px 1px 8px 0px #00000046`,
-								borderRadius: '0.75rem',
-							}}
-							groupBy={'type_var'}
-							enableRowVirtualization
-						/>
-						<div className='mt-5 w-full flex justify-center'>
-							<Button onClick={saveData} disabled={!access} variant='contained'>
-								Guardar
-							</Button>
-						</div>
-					</div> */

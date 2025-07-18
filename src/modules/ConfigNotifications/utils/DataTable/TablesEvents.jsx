@@ -33,7 +33,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const TablesEvents = ({ initialData }) => {
+const TablesEvents = ({ initialData, handleNewConfig }) => {
     let headers = ["", "Database ID", "Evento", "Prioridad"];
     const type_vars = ["Log", "Output", "Event"];
     const [data, setData] = useState(initialData || []);
@@ -114,7 +114,7 @@ const TablesEvents = ({ initialData }) => {
                     .filter(item => item.index_file !== null && item.index_file !== '' && item.id_event_influx % 2 === 0)
                     .sort((a, b) => a.index_file - b.index_file)
                     .map(item => [item.index_file, item.id_event_influx])
-                await request(`${backend.Reconecta}/ConfigNotify`, 'PATCH', dataFile)
+                await request(`${backend.Reconecta}/ConfigNotifyIndex`, 'PATCH', dataFile)
                 Swal.close()
             } catch (e) {
                 console.log(e)
@@ -193,13 +193,13 @@ const TablesEvents = ({ initialData }) => {
                                         <ModalEdit data={row} setValueName={handleChangeName} />
                                     </StyledTableCell>
                                     <StyledTableCell className='overflow-visible'>
-                                        <CustomSelect value={row.priority} />
+                                        <CustomSelect value={row.priority} handleNewConfig={handleNewConfig} idEvent={row.id} />
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <input type='checkbox' className='ml-3 w-5 h-5' defaultChecked={row.flash_screen} />
+                                        <input type='checkbox' className='ml-3 w-5 h-5' defaultChecked={row.flash_screen} onChange={e => handleNewConfig(2, e.target.checked, row.id)} />
                                     </StyledTableCell>
                                     <StyledTableCell>
-                                        <input type='checkbox' className='ml-3 w-5 h-5' defaultChecked={row.alarm} />
+                                        <input type='checkbox' className='ml-3 w-5 h-5' defaultChecked={row.alarm} onChange={e => handleNewConfig(3, e.target.checked, row.id)} />
                                     </StyledTableCell>
                                 </StyledTableRow>
                             ))}
