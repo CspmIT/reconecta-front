@@ -155,6 +155,9 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters
 	}, [map, polylines, editor, filters])
 	useEffect(() => {
 		setCreatedMarkers(markers)
+	}, [markers])
+	useEffect(() => {
+		setCreatedMarkers(markers)
 	}, [])
 	return (
 		<>

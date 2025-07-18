@@ -102,16 +102,20 @@ function Map() {
 						const recloser = item.equipments.filter(
 							(equipItem) => equipItem.equipmentmodels.type == 1
 						)
-
+						let colorRecloser = 0
+						if (recloser.length > 0) {
+							colorRecloser = recloser[0]?.influxData?.['d/c']?.[0]?.value ?? 3;
+							colorRecloser = recloser[0]?.flashAlarm ? 4 : colorRecloser
+						}
 						// Create a new marker
 						const marker = new markerCustom(
 							item.id,
 							item.name,
 							item.lat,
 							item.lon,
-							3,
+							colorRecloser,
 							info,
-							item.alert || '',
+							true,
 							recloser,
 							item.equipments,
 						)

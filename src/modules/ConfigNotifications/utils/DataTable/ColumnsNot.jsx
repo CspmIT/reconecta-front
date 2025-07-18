@@ -3,6 +3,8 @@ import { Box, IconButton, MenuItem, Modal, Select, Typography } from '@mui/mater
 import { useState } from 'react'
 import { FaPen } from 'react-icons/fa'
 import ModalEdit from './ModalEdit'
+import flashIcon from '../../../../assets/img/ConfigNotifications/flash_icon.png'
+import envelopIcon from '../../../../assets/img/ConfigNotifications/envelop.png'
 
 export const ColumnsNot = (handlePriority, handleCheck, access) => [
 	{
@@ -132,9 +134,9 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 		},
 	},
 	{
-		header: 'Destello en Pantalla',
+		header: <img title='Destello en pantalla' src={flashIcon} alt='Flash Screen' style={{ width: '50px', height: '50px' }} />,
 		accessorKey: 'flash_screen',
-		size: 20,
+		size: 100,
 		muiTableBodyCellProps: {
 			align: 'center',
 		},
@@ -163,9 +165,9 @@ export const ColumnsNot = (handlePriority, handleCheck, access) => [
 		},
 	},
 	{
-		header: 'Notificación',
+		header: <img title='Notificaciones' src={envelopIcon} alt='Notificacion' style={{ width: '50px', height: '50px' }} />,
 		accessorKey: 'alarm',
-		size: 20,
+		size: 100,
 		muiTableBodyCellProps: {
 			align: 'center',
 		},

@@ -18,7 +18,6 @@ export const formatterConfig = async (data) => {
 			}
 		}
 	}
-	console.log(resultados)
 	return resultados
 }
 
@@ -36,6 +35,25 @@ export const generateFileEvent = async (data, nameFile) => {
 	} catch (error) {
 		throw error
 	}
+}
+
+export const generateTxt = async (data) => {
+	// Convertimos el array a un string plano
+	const contenido = JSON.stringify(data, null, 2)
+
+	// Creamos un Blob con el contenido
+	const blob = new Blob([contenido], { type: 'application/json' })
+
+	// Creamos un enlace para descargar el archivo
+	const enlace = document.createElement('a')
+	enlace.href = URL.createObjectURL(blob)
+	enlace.download = 'Lorenzo_se_la_come.json' // nombre del archivo
+	document.body.appendChild(enlace)
+	enlace.click()
+
+	// Limpiamos
+	document.body.removeChild(enlace)
+	URL.revokeObjectURL(enlace.href)
 }
 
 export const downloadFromFormData = async (formData) => {

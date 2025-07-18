@@ -8,6 +8,7 @@ import dayjs from 'dayjs'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const AnalyticsBoard = ({ idRecloser }) => {
+	const [checked, setChecked] = useState(true)
 	const [dateCurrent, setDateCurrent] = useState(dayjs())
 	const [dateStart, setDateStart] = useState(dayjs().subtract(2, 'hour'))
 	const [search, setSearch] = useState(false)
@@ -46,6 +47,10 @@ const AnalyticsBoard = ({ idRecloser }) => {
 						}}
 					/>
 				</LocalizationProvider>
+				<div className='flex flex-col items-center px-3'>
+					<b>Tiempo real</b>
+					<input className='text-center w-5 h-5' type='checkbox' checked={checked} onChange={() => setChecked(prev => !prev)} />
+				</div>
 				<div className='flex flex-row items-center'>
 					<button className='bg-blue-500 text-white rounded-lg px-4 py-2 ml-3' onClick={() => setSearch(!search)}>
 						Filtrar
@@ -53,10 +58,10 @@ const AnalyticsBoard = ({ idRecloser }) => {
 				</div>
 			</div>
 			<CardCustom className='mt-3 rounded-md p-2 border-t-8 h-96 border-blue-500 shadow-blue-500/55 shadow-[3px_3px_3px_2px]'>
-				<GrafTensionABC idRecloser={idRecloser} dateStart={dateStart} dateFinished={dateCurrent} search={search} />
+				<GrafTensionABC idRecloser={idRecloser} dateStart={dateStart} dateFinished={dateCurrent} search={search} realTime={checked} />
 			</CardCustom>
 			<CardCustom className='mt-8 rounded-md p-2 border-t-8 h-96 border-blue-500 shadow-blue-500/55 shadow-[3px_3px_3px_2px]'>
-				<GrafCorriente idRecloser={idRecloser} dateStart={dateStart} dateFinished={dateCurrent} search={search} />
+				<GrafCorriente idRecloser={idRecloser} dateStart={dateStart} dateFinished={dateCurrent} search={search} realTime={checked} />
 			</CardCustom>
 			<CardCustom className='flex flex-col items-center mt-8 rounded-md p-4 border-t-8  border-blue-500 shadow-blue-500/55 shadow-[3px_3px_3px_2px]'>
 				<h1 className='text-2xl mb-4'>Disparos de sobrecorriente</h1>

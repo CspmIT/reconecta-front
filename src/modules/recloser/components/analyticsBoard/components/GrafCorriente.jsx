@@ -4,37 +4,62 @@ import { backend } from '../../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../../../components/Loader'
 import RecloserLineChart from './linecharts'
-function GrafCorriente({ idRecloser, dateStart, dateFinished, search }) {
+function GrafCorriente({ idRecloser, dateStart, dateFinished, search, realTime }) {
 	const [dataGraf, setDataGraf] = useState(null)
-	const getTensionABC = async (id) => {
-		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`, 'POST', {
-			dateStart,
-			dateFinished,
-		})
-		if (!Object.keys(data).length) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-			return
-		}
-		setDataGraf(data)
-	}
-
 	useEffect(() => {
+		const getTensionABC = async (id) => {
+			if (realTime) {
+				dateFinished = dayjs()
+			}
+			const { data } = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`,
+				'POST',
+				{ dateStart, dateFinished }
+			)
+
+			if (!Object.keys(data).length) {
+				Swal.fire({
+					title: 'Atención!',
+					html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
+					icon: 'error',
+				})
+				return
+			}
+
+			setDataGraf(data)
+		}
+
 		if (idRecloser) {
 			getTensionABC(idRecloser)
+		}
+	}, [search, idRecloser, dateStart, dateFinished, realTime])
+
+	useEffect(() => {
+		const getTensionABC = async (id) => {
+			if (realTime) {
+				dateFinished = dayjs()
+			}
+			const { data } = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/corrientesGraf?id=${id}`,
+				'POST',
+				{ dateStart, dateFinished }
+			)
+
+			if (!Object.keys(data).length) {
+				return
+			}
+
+			setDataGraf(data)
+		}
+
+		if (idRecloser) {
 			const intervalId = setInterval(() => {
 				getTensionABC(idRecloser)
 			}, 15000)
+
 			return () => clearInterval(intervalId)
 		}
-	}, [idRecloser])
-
-	useEffect(() => {
-		getTensionABC(idRecloser)
-	}, [search])
+	}, [idRecloser, dateStart, dateFinished, realTime])
 
 	return (
 		<>
