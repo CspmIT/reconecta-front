@@ -4,6 +4,7 @@ import { backend } from '../../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import LoaderComponent from '../../../../../components/Loader'
 import RecloserLineChart from './linecharts'
+import dayjs from 'dayjs'
 function GrafCorriente({ idRecloser, dateStart, dateFinished, search, realTime }) {
 	const [dataGraf, setDataGraf] = useState(null)
 	useEffect(() => {

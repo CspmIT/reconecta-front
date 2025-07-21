@@ -39,7 +39,6 @@ function GrafTensionABC({ idRecloser, dateStart, dateFinished, search, realTime 
 			if (realTime) {
 				dateFinished = dayjs()
 			}
-			console.log(realTime, dateFinished)
 			const { data } = await request(
 				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`,
 				'POST',
