@@ -13,13 +13,13 @@ import LoaderComponent from '../../../components/Loader'
 function Alert() {
 	const [isLoading, setIsLoading] = useState(true)
 	const [rowCriticos, setRowCriticos] = useState({ alta: [], baja: [] })
-	const [bottonCheck, setBottonCheck] = useState(false)
+	const [bottonCheck, setBottonCheck] = useState([false, false])
 	const ChangeColorRow = (row) => {
 		return row.original.statusAlert === 1
 	}
-	const checkAlertCriticas = async (table) => {
+	const checkAlertCriticas = async (table, priority) => {
 		try {
-			const { changeRows, eventCheck } = await checkAlert(table, rowCriticos)
+			const { changeRows, eventCheck } = await checkAlert(table, rowCriticos, priority)
 			if (changeRows && eventCheck) {
 				await saveChecks(eventCheck)
 				setBottonCheck(false)
@@ -40,9 +40,9 @@ function Alert() {
 		setIsLoading(false)
 	}
 	useEffect(() => {
-		if (rowCriticos.alta.some((row) => row.statusAlert === 1)) {
-			setBottonCheck(true)
-		}
+		const altaCheck = rowCriticos.alta.some((row) => row.statusAlert === 1)
+		const bajaCheck = rowCriticos.baja.some((row) => row.statusAlert === 1)
+		setBottonCheck([altaCheck, bajaCheck])
 	}, [rowCriticos])
 	useEffect(() => {
 		getEvents()
@@ -63,7 +63,7 @@ function Alert() {
 									getPage={checkAlertCriticas}
 									data={rowCriticos.alta}
 									columns={columnsCriticos}
-									density='comfortable'
+									density='compact'
 									header={{
 										background: 'rgb(190 190 190)',
 										fontSize: '18px',
@@ -74,11 +74,12 @@ function Alert() {
 									footer={{ background: 'rgb(190 190 190)' }}
 									ChangeColorRow={ChangeColorRow}
 									pageSize={10}
-									checkAlert={bottonCheck}
+									checkAlert={bottonCheck[0]}
 									topToolbar
 									hide
 									sort
 									pagination
+									priority={1}
 								/>
 							</CardCustom>
 							<CardCustom className={' text-black  p-4 w-full'}>
@@ -86,9 +87,10 @@ function Alert() {
 									<FormLabel className='w-full text-center !text-2xl'>Otros Eventos</FormLabel>
 								</div>
 								<TableCustom
+									getPage={checkAlertCriticas}
 									data={rowCriticos.baja}
 									columns={columnsCriticos}
-									density='comfortable'
+									density='compact'
 									header={{
 										background: 'rgb(190 190 190)',
 										fontSize: '18px',
@@ -97,10 +99,14 @@ function Alert() {
 									toolbarClass={{ background: 'rgb(190 190 190)' }}
 									body={{ backgroundColor: 'rgba(209, 213, 219, 0.31)' }}
 									footer={{ background: 'rgb(190 190 190)' }}
+									ChangeColorRow={ChangeColorRow}
 									pageSize={10}
+									checkAlert={bottonCheck[1]}
 									topToolbar
+									hide
 									sort
 									pagination
+									priority={2}
 								/>
 							</CardCustom>
 						</>

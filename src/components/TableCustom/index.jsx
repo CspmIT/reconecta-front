@@ -129,7 +129,7 @@ const TableCustom = ({ data, columns, ...prop }) => {
 	const hideColumn = prop?.onColumnVisibilityChange ? { onColumnVisibilityChange: prop.onColumnVisibilityChange } : ''
 	const columnVisibility = prop?.columnVisibility ? { columnVisibility: prop.columnVisibility } : ''
 	const pags = () => {
-		prop.getPage(table)
+		prop.getPage(table, prop.priority)
 	}
 	const localization = {
 		hideAll: 'Ocultar todo',
