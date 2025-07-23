@@ -10,6 +10,9 @@ const SunburstGenerate = () => {
     const showGraphic = () => {
         setShow(true)
     }
+    const handleNewTree = () => {
+        setTree(prev => [...prev, { name: "", value: 100, children: [] }])
+    }
     return (
         <>
             <div className="p-4 flex justify-center">
@@ -23,11 +26,16 @@ const SunburstGenerate = () => {
                             setTree(updated);
                         }} />
                 ))}
+                <div>
+                    <Button variant="contained" color="primary" onClick={handleNewTree}>Nueva rama</Button>
+                </div>
             </div>
             <div className="w-full flex justify-center">
                 <Button variant="contained" color="primary" onClick={showGraphic}>Mostrar</Button>
             </div>
+            <div className="w-96 h-56">
             {show && <SunburstChart data={tree} />}
+            </div>
         </>
     )
 }
