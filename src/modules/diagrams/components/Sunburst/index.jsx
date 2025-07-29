@@ -1,40 +1,127 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import SunburstChildren from "./children"
-import { Button } from "@mui/material"
+import { Button, TextField } from "@mui/material"
 import SunburstChart from "../sunburstChart"
+import { request } from "../../../../utils/js/request"
+import { backend } from "../../../../utils/routes/app.routes"
+import Swal from "sweetalert2"
+import { useNavigate } from "react-router-dom"
 
 
 const SunburstGenerate = () => {
-    const [tree, setTree] = useState([{ name: "", value: 100, children: [] }])
-    const [show, setShow] = useState(false)
-    const showGraphic = () => {
-        setShow(true)
+    const navigate = useNavigate()
+    const [equipments, setEquipments] = useState([])
+    const [nameGraphic, setNameGraphic] = useState(null)
+    const [unitGraphic, setUnitGraphic] = useState(null)
+    /* const [numTree, setNumTree] = useState(0) */
+    const [tree, setTree] = useState([{ main: true, name: "", value: 100, children: [] }])
+    const [recalculate, setRecalculate] = useState(false)
+
+    /* const handleNewTree = () => {
+        const newNum = numTree + 1
+        setTree(prev => [...prev, { id: newNum, name: "", value: 100, children: [] }])
+        setNumTree(newNum)
     }
-    const handleNewTree = () => {
-        setTree(prev => [...prev, { name: "", value: 100, children: [] }])
+
+    const handleDelete = (id) => {
+        const newTrees = tree.filter(item => item.id !== id)
+        setTree(newTrees)
+    } */
+
+    const getEquipments = async () => {
+        const response = await request(`${backend.Reconecta}/Equipments`, 'GET')
+        const analyzers = response.data.filter(item => item.id_model === 8 || item.id_model === 9)
+        setEquipments(analyzers)
     }
+
+    const handleColor = (event, id) => {
+        const editTree = tree.map(item => {
+            if (item.id === id) {
+                item.itemStyle = { color: event.target.value }
+            }
+            return item
+        })
+        setTree(editTree)
+    }
+
+    const getMaxValue = () => {
+        const treeUpdated = { ...tree[0] }
+        const maxValue = treeUpdated.children.reduce((acc, item) => acc + parseFloat(item.value || 0), 0)
+        treeUpdated.value = parseFloat(maxValue).toFixed(2)
+        setRecalculate(false)
+        setTree([treeUpdated])
+    }
+
+    const saveGraphic = async () => {
+        if (nameGraphic === null) {
+            Swal.fire({
+                title: "Atención",
+                html: "Debe añadir un nombre al gráfico",
+                icon: "warning",
+            })
+            return
+        }
+        const body = {
+            name: nameGraphic,
+            type: 1,
+            unit: unitGraphic,
+            data: tree
+        }
+        try {
+            await request(`${backend.Reconecta}/Sunburst`, "POST", body)
+            Swal.fire({
+                title: "Perfecto",
+                html: "El gráfico se guardo correctamente",
+                icon: "success",
+            })
+            navigate("/Diagram")
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    useEffect(() => {
+        getEquipments()
+    }, [])
+
+    useEffect(() => {
+        if (!recalculate) return
+        getMaxValue()
+    }, [tree])
     return (
         <>
             <div className="p-4 flex justify-center">
                 {tree.map((node, index) => (
-                    <SunburstChildren
-                        key={index}
-                        node={node}
-                        onChange={(newNode) => {
-                            const updated = [...tree];
-                            updated[index] = newNode;
-                            setTree(updated);
-                        }} />
+                    <div key={index} className="flex flex-col items-center">
+                        <div>
+                            <TextField className="w-3/4" variant="outlined" label="Nombre del gráfico" value={nameGraphic} onChange={(e) => { setNameGraphic(e.target.value) }} />
+                            <TextField className="w-1/4" variant="outlined" label="Unidad" value={unitGraphic} onChange={(e) => { setUnitGraphic(e.target.value) }} />
+                        </div>
+                        <SunburstChildren
+                            equipments={equipments}
+                            node={node}
+                            handleColor={handleColor}
+                            onChange={(newNode) => {
+                                const updated = [...tree];
+                                updated[index] = newNode;
+                                setRecalculate(true)
+                                setTree(updated);
+                            }} />
+                        {/* {index !== 0 && (
+                            <Button variant="contained" color="error" className="w-1/2" onClick={() => handleDelete(node.id)}>Borrar rama</Button>
+                        )} */}
+                    </div>
                 ))}
-                <div>
+                {/* <div>
                     <Button variant="contained" color="primary" onClick={handleNewTree}>Nueva rama</Button>
-                </div>
+                </div> */}
             </div>
-            <div className="w-full flex justify-center">
-                <Button variant="contained" color="primary" onClick={showGraphic}>Mostrar</Button>
+            <div className="w-full h-[60vh] text-center py-5 min-h-96">
+                <b className="text-xl text-center p-5">Vista previa</b>
+                <SunburstChart data={tree} unit={unitGraphic} />
             </div>
-            <div className="w-96 h-56">
-            {show && <SunburstChart data={tree} />}
+            <div>
+                <Button onClick={saveGraphic} variant="contained" color="primary">Guardar gráfico</Button>
             </div>
         </>
     )

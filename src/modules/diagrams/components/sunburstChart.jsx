@@ -1,24 +1,24 @@
+import { color } from "echarts";
 import EChart from "../../../components/Charts";
 
-const SunburstChart = ({ data }) => {
-
+const SunburstChart = ({ data, unit = null }) => {
+    const unitFormated = unit !== null ? unit : ""
     const option = {
-        // visualMap: {
-        //     type: 'continuous',
-        //     min: 0,
-        //     max: 100,
-        //     inRange: {
-        //         color: ['#2F93C8', '#AEC48F', '#FFDB5C', '#F98862']
-        //     }
-        // },
         series: {
             type: 'sunburst',
             data: data,
             radius: [0, '90%'],
-            label: {
-                rotate: 'radial'
-            }
-        }
+        },
+        label: {
+            show: true,
+            formatter: (params) => `${params.data.name}\n${parseFloat(params.data.value).toFixed(2)} ${unitFormated}`,
+            color: '#000',
+            fontStyle: "bold",
+            textBorderColor: '#fff',
+            textBorderWidth: 3,
+            overflow: 'break',
+            width: 80,
+        },
     };
     return (
         <EChart config={option} />
