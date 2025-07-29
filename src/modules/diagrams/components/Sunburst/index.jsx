@@ -12,6 +12,7 @@ const SunburstGenerate = () => {
     const navigate = useNavigate()
     const [equipments, setEquipments] = useState([])
     const [nameGraphic, setNameGraphic] = useState(null)
+    const [unitGraphic, setUnitGraphic] = useState(null)
     /* const [numTree, setNumTree] = useState(0) */
     const [tree, setTree] = useState([{ main: true, name: "", value: 100, children: [] }])
     const [recalculate, setRecalculate] = useState(false)
@@ -52,7 +53,6 @@ const SunburstGenerate = () => {
     }
 
     const saveGraphic = async () => {
-        console.log(tree)
         if (nameGraphic === null) {
             Swal.fire({
                 title: "Atención",
@@ -64,10 +64,17 @@ const SunburstGenerate = () => {
         const body = {
             name: nameGraphic,
             type: 1,
+            unit: unitGraphic,
             data: tree
         }
         try {
-            const response = await request(`${backend.Reconecta}/Graphic`, "POST", body)
+            await request(`${backend.Reconecta}/Sunburst`, "POST", body)
+            Swal.fire({
+                title: "Perfecto",
+                html: "El gráfico se guardo correctamente",
+                icon: "success",
+            })
+            navigate("/Diagram")
         } catch (e) {
             console.log(e)
         }
@@ -86,7 +93,10 @@ const SunburstGenerate = () => {
             <div className="p-4 flex justify-center">
                 {tree.map((node, index) => (
                     <div key={index} className="flex flex-col items-center">
-                        <TextField variant="outlined" label="Nombre del gráfico" value={nameGraphic} onChange={(e) => { setNameGraphic(e.target.value) }} />
+                        <div>
+                            <TextField className="w-3/4" variant="outlined" label="Nombre del gráfico" value={nameGraphic} onChange={(e) => { setNameGraphic(e.target.value) }} />
+                            <TextField className="w-1/4" variant="outlined" label="Unidad" value={unitGraphic} onChange={(e) => { setUnitGraphic(e.target.value) }} />
+                        </div>
                         <SunburstChildren
                             equipments={equipments}
                             node={node}
@@ -108,7 +118,7 @@ const SunburstGenerate = () => {
             </div>
             <div className="w-full h-[60vh] text-center py-5 min-h-96">
                 <b className="text-xl text-center p-5">Vista previa</b>
-                <SunburstChart data={tree} />
+                <SunburstChart data={tree} unit={unitGraphic} />
             </div>
             <div>
                 <Button onClick={saveGraphic} variant="contained" color="primary">Guardar gráfico</Button>

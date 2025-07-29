@@ -1,21 +1,22 @@
 import { color } from "echarts";
 import EChart from "../../../components/Charts";
 
-const SunburstChart = ({ data }) => {
-
+const SunburstChart = ({ data, unit = null }) => {
+    const unitFormated = unit !== null ? unit : ""
     const option = {
-        silent: true,
         series: {
             type: 'sunburst',
             data: data,
             radius: [0, '90%'],
         },
         label: {
+            show: true,
+            formatter: (params) => `${params.data.name}\n${parseFloat(params.data.value).toFixed(2)} ${unitFormated}`,
             color: '#000',
             fontStyle: "bold",
             textBorderColor: '#fff',
-            textBorderWidth: 2,
-            overflow: 'break', // opciones: 'truncate', 'break', 'breakAll', 'none'
+            textBorderWidth: 3,
+            overflow: 'break',
             width: 80,
         },
     };
