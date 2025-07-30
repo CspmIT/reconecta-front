@@ -45,9 +45,30 @@ const SunburstGenerate = () => {
     }
 
     const getMaxValue = () => {
-        const treeUpdated = { ...tree[0] }
-        const maxValue = treeUpdated.children.reduce((acc, item) => acc + parseFloat(item.value || 0), 0)
-        treeUpdated.value = parseFloat(maxValue).toFixed(2)
+        // Función recursiva para recorrer el árbol
+        const calculateValues = (node) => {
+            // Si no tiene hijos, simplemente retorna el valor actual
+            if (!node.children || node.children.length === 0) {
+                return parseFloat(node.value || 0);
+            }
+
+            // Si el nodo no tiene topic, recalcula su valor con la suma de sus hijos
+            const sum = node.children.reduce((acc, child) => {
+                const updatedChildValue = calculateValues(child);
+                child.value = parseFloat(updatedChildValue).toFixed(2); // actualiza por si los hijos también cambian
+                return acc + parseFloat(updatedChildValue);
+            }, 0);
+
+            // Solo actualiza el valor si el topic es null o vacío
+            if (!node.topic && node.topic !== 0) {
+                node.value = parseFloat(sum).toFixed(2);
+            }
+
+            return parseFloat(node.value);
+        };
+
+        const treeUpdated = { ...tree[0] };
+        calculateValues(treeUpdated);
         setRecalculate(false)
         setTree([treeUpdated])
     }
