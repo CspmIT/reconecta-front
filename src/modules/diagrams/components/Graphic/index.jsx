@@ -46,7 +46,10 @@ const Graphic = ({ data }) => {
         <div className='md:w-1/2 w-full h-screen'>
             <h1 className='mt-5 font-bold text-2xl'>{data.name}</h1>
             {loading ? <LoaderComponent /> :
-                <SunburstChart data={graphicData} unit={data.unit} />
+                <>
+                    <h2 className='text-center'>Total: {`${graphicData[0].value} ${data.unit}`} </h2>
+                    <SunburstChart data={graphicData} unit={data.unit} />
+                </>
             }
         </div>
     )

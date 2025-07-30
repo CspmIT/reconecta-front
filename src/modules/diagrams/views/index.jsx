@@ -45,7 +45,7 @@ const Diagrams = () => {
 	}, [])
 	return (
 		<div className='w-full flex flex-wrap justify-center text-black dark:text-white relative'>
-			<div className='w-full shadow-md  overflow-hidden relative rounded-md bg-white dark:bg-[#303b41]'>
+			<div className='w-full shadow-md  overflow-hidden relative rounded-md bg-white dark:bg-[#303b41] pb-5'>
 				{hasAccess && (
 					<div className='w-full flex justify-end'>
 						<Button onClick={() => navigate("/addChart")} variant='contained' className='!m-5'>Nuevo gráfico</Button>

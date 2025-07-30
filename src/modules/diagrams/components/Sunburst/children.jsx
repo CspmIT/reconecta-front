@@ -11,17 +11,25 @@ const SunburstChildren = ({ node, onChange, onDelete, equipments }) => {
     };
 
     const handleTopic = async (e) => {
-        const id = Number(e.target.value)
-        const analyzer = equipments.find(equip => equip.id === id)
-        const body = {
-            brand: analyzer?.equipmentmodels?.name.toLowerCase(),
-            version: analyzer?.equipmentmodels?.brand.toLowerCase(),
-            serial: analyzer?.serial
+        try {
+            if (e.target.value === "") {
+                onChange({ ...node, topic: null })
+                return
+            }
+            const id = Number(e.target.value)
+            const analyzer = equipments.find(equip => equip.id === id)
+            const body = {
+                brand: analyzer?.equipmentmodels?.name.toLowerCase(),
+                version: analyzer?.equipmentmodels?.brand.toLowerCase(),
+                serial: analyzer?.serial
+            }
+            const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/AnalyzerMonths`, 'POST', body)
+            const lastKey = Math.max(...Object.keys(data));
+            const lastEntry = data[lastKey];
+            onChange({ ...node, topic: id, value: lastEntry.value })
+        } catch (e) {
+            console.log(e)
         }
-        const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/AnalyzerMonths`, 'POST', body)
-        const lastKey = Math.max(...Object.keys(data));
-        const lastEntry = data[lastKey];
-        onChange({ ...node, topic: id, value: lastEntry.value })
     }
 
     const handleChildChange = (childIndex, newChild) => {
