@@ -10,27 +10,12 @@ function CardDashboard() {
 
 	useEffect(() => {
 		const dataDashboard = async () => {
-			const [dataRecloser, dataAlarm] = await Promise.all([
+			const [dataRecloser, dataAlarm, dataAc] = await Promise.all([
 				request(`${backend.Reconecta}/getAllReclosers`, 'GET'),
 				request(`${backend.Reconecta}/recloserAlarm`, 'GET'),
+				request(`${backend.Reconecta}/getAcReclosers`, 'GET')
 			])
-			const recloserIds = dataRecloser.data.map((item) => item.id)
-
-			// Limitar el número de solicitudes simultáneas
-			const maxConcurrentRequests = 5
-			const recloserACStatuses = []
-			for (let i = 0; i < recloserIds.length; i += maxConcurrentRequests) {
-				const chunk = recloserIds.slice(i, i + maxConcurrentRequests)
-				const responses = await Promise.all(
-					chunk.map((id) => request(`${backend.Reconecta}/getAcRecloser?id=${id}`, 'GET'))
-				)
-				recloserACStatuses.push(...responses)
-			}
-
-			const recloserSN_AC = recloserACStatuses.reduce((acc, recloser) => {
-				if (recloser?.data === 0) acc++
-				return acc
-			}, 0)
+			const numberAc = dataAc.data.reduce((acc, r) => parseInt(r._value) === 0 ? acc + 1 : 0, 0)
 			const info = dataRecloser.data.reduce(
 				(acc, val) => {
 					if (val.status_recloser === 1) acc.recoOpen++
@@ -41,7 +26,7 @@ function CardDashboard() {
 					recoOpen: 0,
 					recoOffline: 0,
 					recoAlarm: Object.keys(dataAlarm.data).length,
-					recoAlimAC: recloserSN_AC,
+					recoAlimAC: numberAc,
 					recoCant: dataRecloser.data.length,
 				}
 			)
