@@ -30,7 +30,7 @@ export const enableControl = async (enabled) => {
 			confirmButtonText: 'Autentificar',
 			showLoaderOnConfirm: true,
 			preConfirm: (login) => {
-				if (parseInt(login) === parseInt(pass.data.password)) {
+				if (login == pass.data.password) {
 					Swal.fire('Perfecto!', 'Se habilito correctamente los controles', 'success')
 					response = true
 				} else {
