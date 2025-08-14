@@ -15,7 +15,7 @@ function CardDashboard() {
 				request(`${backend.Reconecta}/recloserAlarm`, 'GET'),
 				request(`${backend.Reconecta}/getAcReclosers`, 'GET')
 			])
-			const numberAc = dataAc.data.reduce((acc, r) => parseInt(r._value) === 0 ? acc + 1 : 0, 0)
+			const numberAc = (Array.isArray(dataAc?.data) && dataAc.data.length > 0) ? dataAc.data.reduce((acc, r) => parseInt(r._value) === 0 ? acc + 1 : 0, 0) : 0
 			const info = dataRecloser.data.reduce(
 				(acc, val) => {
 					if (val.status_recloser === 1) acc.recoOpen++
