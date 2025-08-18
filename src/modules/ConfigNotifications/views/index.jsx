@@ -4,41 +4,34 @@ import Accordion from '../components/Accordion'
 import { FaArrowRight } from 'react-icons/fa6'
 import { formatterConfig, getConfigNotify } from '../utils/js'
 import LoaderComponent from '../../../components/Loader'
-import { io } from 'socket.io-client'
-import { front } from '../../../utils/routes/app.routes'
 import { storage } from '../../../storage/storage'
+import { request } from '../../../utils/js/request'
+import { backend } from '../../../utils/routes/app.routes'
 
 function ConfigNotifications() {
 	const [devices, setDevices] = useState([])
 	const [hasAccess, setHasAccess] = useState(false)
 	const [loading, setLoading] = useState(true)
-	const user = storage.get('usuario').sub
 	const getConfig = async () => {
 		const config = await getConfigNotify()
 		const configFormatter = await formatterConfig(config)
 		setDevices(configFormatter)
 		setLoading(false)
 	}
+	const userProfile = async () => {
+		try {
+			const userId = storage.get('usuario').sub
+			const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getUser/${userId}`, 'GET')
+			setHasAccess(data.profile === 1)
+		} catch (e) {
+			console.error(e.errors)
+			setHasAccess(false)
+		}
+	}
 
 	useEffect(() => {
 		getConfig()
-		const socket = io(front.Reconecta, { path: '/api/socket.io' })
-		socket.on('connect', () => {
-			console.log('Conectado al servidor de sockets')
-		})
-
-		// Solicitar acceso al conectar
-		socket.emit('access-config', user, (response) => {
-			setHasAccess(response)
-			if (!response) {
-				socket.disconnect()
-			}
-		})
-
-		// Limpiar al desmontar el componente
-		return () => {
-			socket.disconnect()
-		}
+		userProfile()
 	}, [])
 
 	if (loading)

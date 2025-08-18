@@ -29,7 +29,6 @@ import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
 import { front } from '../../../utils/routes/app.routes'
 import styles from '../utils/css/styles.module.css'
-import { io } from 'socket.io-client'
 import Cookies from 'js-cookie'
 import Logo from '/src/assets/img/Logo/LogoText.png'
 function NavBarCustom({ setLoading }) {
@@ -59,16 +58,6 @@ function NavBarCustom({ setLoading }) {
 		return () => {
 			document.removeEventListener('mouseup', handleClickOutside)
 		}
-	}, [])
-	const [newEvent, setNewEvent] = useState(false)
-
-	useEffect(() => {
-		const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
-
-		socket.on('alert-active', (data) => {
-			setNewEvent(data.active)
-		})
-		return () => socket.disconnect()
 	}, [])
 
 	useEffect(() => {
@@ -254,9 +243,7 @@ function NavBarCustom({ setLoading }) {
 													padding: !isMobile ? '1.25rem' : '0.2rem',
 													py: 1.8,
 												}}
-												className={`!w-full ${
-													item.link === '/Alert' && newEvent ? styles.backgroundAlert : ''
-												}`}
+												className={`!w-full`}
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon

@@ -13,7 +13,6 @@ const Diagrams = () => {
 	const navigate = useNavigate()
 	const [graphics, setGraphics] = useState([])
 	const [hasAccess, setHasAccess] = useState(false)
-	const user = storage.get('usuario').sub
 
 	const getGraphics = async () => {
 		try {
@@ -25,23 +24,20 @@ const Diagrams = () => {
 		}
 	}
 
+	const userProfile = async () => {
+		try {
+			const userId = storage.get('usuario').sub
+			const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getUser/${userId}`, 'GET')
+			setHasAccess(data.profile === 1)
+		} catch (e) {
+			console.error(e.errors)
+			setHasAccess(false)
+		}
+	}
+
 	useEffect(() => {
 		getGraphics()
-		const socket = io(front.Reconecta, { path: '/api/socket.io' })
-		socket.on('connect', () => {
-			console.log('Conectado al servidor de sockets')
-		})
-
-		// Solicitar acceso al conectar
-		socket.emit('access-config', user, (response) => {
-			setHasAccess(response)
-			if (!response) {
-				socket.disconnect()
-			}
-		})
-		return () => {
-			socket.disconnect()
-		}
+		userProfile()
 	}, [])
 	return (
 		<div className='w-full flex flex-wrap justify-center text-black dark:text-white relative'>
