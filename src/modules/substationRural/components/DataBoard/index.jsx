@@ -18,7 +18,10 @@ const DataBoard = ({ info }) => {
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={`${info.name} - ${info.description}`} label='Sub Estación' />
 				</div>
 				<div className='m-2'>
-					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.serial || ''} label='Número de Medidor' />
+					<TextField InputProps={{ readOnly: true }} className='w-full' value={info.power || ''} label='Potencia del transformador' />
+				</div>
+				<div className='m-2'>
+					<TextField InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true }} className='w-full' value={feeds[info.feed]} label='Tipo de alimentación' />
 				</div>
 				<div className='m-2'>
 					<TextField select className='w-full' onChange={handleChange} label='Clientes'>
@@ -31,14 +34,11 @@ const DataBoard = ({ info }) => {
 					</TextField>
 				</div>
 				<div className='m-2'>
-					<TextField InputProps={{ readOnly: true }} className='w-full' value={clientSelected?.power || ''} label='Potencia del transformador' />
+					<TextField InputProps={{ readOnly: true }} className='w-full' value={clientSelected?.meter || ''} label='Número de Medidor' />
 				</div>
-				<div className='m-2'>
-					<TextField InputLabelProps={{ shrink: Boolean(clientSelected && feeds[clientSelected.feed]) }} InputProps={{ readOnly: true }} className='w-full' value={clientSelected ? feeds[clientSelected.feed] : ''} label='Tipo de alimentación' />
-				</div>
-				<div className='m-2'>
+				{/* <div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={clientSelected?.pat || ''} label='Medición PAT' />
-				</div>
+				</div> */}
 			</div>
 			<div className='w-full md:w-1/2 flex flex-row flex-wrap justify-center'>
 				<div className='w-full md:w-3/4 flex flex-row justify-center h-[50vh] items-center'>
