@@ -19,7 +19,7 @@ import Board from './modules/recloser/views'
 import AbmEquipament from './modules/AbmEquipament/views'
 import ConfigMenu from './modules/ConfigMenu/view'
 import Profile from './modules/profile/views'
-import Notifications from './modules/ConfigNotifications/views/index'
+import Definitions from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
@@ -30,6 +30,7 @@ import Equipment from './modules/Equipment/view'
 import AddConfigNotification from './modules/ConfigNotifications/views/add'
 import NotFound from './modules/NotFound'
 import AddChart from './modules/diagrams/views/addChart'
+import ConfigAlert from './modules/ConfigAlert/views'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -59,14 +60,15 @@ function App() {
 		{ path: '/AbmDevice/:name', element: <AbmDevice /> },
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
-		{ path: '/config/notifications', element: <Notifications /> },
-		{ path: '/config/addnotifications', element: <AddConfigNotification /> },
+		{ path: '/config/definitions', element: <Definitions /> },
+		{ path: '/config/addDefinitions', element: <AddConfigNotification /> },
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },
 		{ path: '/EditElement/:elementId', element: <Abm /> },
 		{ path: '/Equipment', element: <Equipment /> },
-		{ path: '/Equipment/:id', element: <Equipment /> }
+		{ path: '/Equipment/:id', element: <Equipment /> },
+		{ path: '/config/alert', element: <ConfigAlert /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

@@ -21,6 +21,7 @@ const Abm = () => {
 	const [typeSelected, setTypeSelected] = useState(null)
 	const [elementSelected, setElementSelected] = useState([])
 	const [abrevSelected, setAbrevSelected] = useState(null)
+	const [feedSelected, setFeedSelected] = useState(null)
 	const [dataEdit, setDataEdit] = useState([])
 	const {
 		register,
@@ -90,7 +91,7 @@ const Abm = () => {
 		const id = numberClients.length === 0 ? 1 : numberClients[numberClients.length - 1].id + 1
 		setNumberClients([
 			...numberClients,
-			{ id, name: '', feed: 1, power: '', pat: '' },
+			{ id, name: '', meter: '' },
 		])
 	}
 	const handleDeleteClient = (id) => {
@@ -132,9 +133,9 @@ const Abm = () => {
 						const quantitySlice = data[0].type === 2 ? 4 : 2
 						setValue('type', data[0].type)
 						setValue('name', data[0].name.slice(quantitySlice))
-						setValue('description', data[0].description)
+						setValue('description', data[0].description || null)
 						setValue('power', data[0].power)
-						setValue('serial', data[0].serial || '')
+						setValue('feed', data[0].feed || null)
 						setValue('lng_marker', data[0].lon)
 						setValue('lat_marker', data[0].lat)
 						setValue('id_map', data[0].id_map)
@@ -142,12 +143,11 @@ const Abm = () => {
 						setAbrevSelected(data[0].name.slice(0, quantitySlice))
 						setTypeSelected(data[0].type)
 						if (data[0].type === 3) {
+							setFeedSelected(data[0].feed)
 							const clients = data[0].clients.map((client, index) => ({
 								id: index + 1,
 								name: client.name,
-								feed: client.feed,
-								power: client.power,
-								pat: client.pat,
+								meter: client.meter,
 								bd_id: client.id
 							}))
 							setNumberClients(clients)
@@ -224,23 +224,25 @@ const Abm = () => {
 							/>
 							{errors.name && <p className='text-red-500'>{errors.name.message}</p>}
 						</div>
-						<div className='w-full md:w-1/3 '>
-							<TextField
-								className='w-full'
-								label='Descripción'
-								name='description'
-								onChange={handleChange}
-								{...register('description', { required: 'Campo obligatorio' })}
-								InputLabelProps={{ shrink: shouldShrink(watch('description') || dataEdit.description), }}
-							/>
-							{errors.description && <p className='text-red-500'>{errors.description.message}</p>}
-						</div>
+						{elementSelected?.id !== 3 && (
+							<div className='w-full md:w-1/3 '>
+								<TextField
+									className='w-full'
+									label='Descripción'
+									name='description'
+									onChange={handleChange}
+									{...register('description', { required: 'Campo obligatorio' })}
+									InputLabelProps={{ shrink: shouldShrink(watch('description') || dataEdit.description), }}
+								/>
+								{errors.description && <p className='text-red-500'>{errors.description.message}</p>}
+							</div>
+						)}
 						<div className='w-full md:w-1/3 '>
 							<TextField
 								className='w-full'
 								label='Potencia instalada'
 								name='power'
-								{...register('power', { required: 'Campo obligatorio' })}
+								{...register('power')}
 								InputLabelProps={{ shrink: shouldShrink(watch('power') || dataEdit.power), }}
 							/>
 							{errors.power && <p className='text-red-500'>{errors.power.message}</p>}
@@ -249,11 +251,19 @@ const Abm = () => {
 							<div className='w-full md:w-1/3 '>
 								<TextField
 									className='w-full'
-									label='Numero de Medidor'
-									name='serial'
-									{...register('serial', { required: 'Campo obligatorio' })}
-								/>
-								{errors.serial && <p className='text-red-500'>{errors.serial.message}</p>}
+									label='Tipo de alimentación'
+									name='feed'
+									select
+									{...register('feed', { required: 'El Campo es requerido' })}
+									onChange={(e) => {
+										setFeedSelected(e.target.value)
+									}}
+									value={feedSelected}
+								>
+									<MenuItem value={1}> Monofásica </MenuItem>
+									<MenuItem value={2}> Trifásica </MenuItem>
+								</TextField>
+								{errors.feed && <p className='text-red-500'>{errors.feed.message}</p>}
 							</div>
 						)}
 					</div>
