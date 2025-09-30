@@ -39,8 +39,8 @@ const SubstationRuralBoard = () => {
 								</div>
 							</div>
 							<DataBoard info={info[0]} />
-							<TableBoard />
-							<HistoryPat info={info[0]} />
+							{/* <TableBoard />
+							<HistoryPat info={info[0]} /> */}
 						</>)}
 				</div>
 			</div>

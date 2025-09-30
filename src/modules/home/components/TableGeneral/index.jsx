@@ -242,7 +242,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         {filtersColumns[3] && (
                                             <StyledTableCell >
                                                 <span className='flex items-center gap-x-2'>
-                                                    <FaCircle className={`${client.status ? "text-green-500" : "text-red-500"}`} />
+                                                    <FaCircle className={`${client.status ? "text-red-500" : "text-green-500"}`} />
                                                     {client.status ? "En servicio" : "Fuera de servicio"}
                                                 </span>
                                             </StyledTableCell>
