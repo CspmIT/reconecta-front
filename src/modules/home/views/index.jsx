@@ -13,7 +13,7 @@ const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
 	const isMobile = useMediaQuery('(max-width: 600px)')
 	const navigate = useNavigate()
-	const typeEquipment = (key) => {
+	const boardEquipment = (key) => {
 		let component
 		switch (key) {
 			case 0:
@@ -37,10 +37,11 @@ const Home = () => {
 		return component
 	}
 	const newTabBoard = (data) => {
-		const name = data.elementType === 3 ? `${data.elementName} - ${data.elementDescription}` :
+		const name = data.elementType === 3 ? `${data.elementName}` :
 			`${data.elementName} - ${data.observation ? data.observation : `${data.equipmentmodels.name} ${data.equipmentmodels.brand}`}`
+		const typeEquipment = data.equipmentmodels?.type || 0
 		const existingTabIndex = tabs.findIndex(
-			(tab) => tab.id === data.id && tab.typeEquipment === data.equipmentmodels.type
+			(tab) => tab.id === data.id && tab.typeEquipment === typeEquipment
 		)
 		if (existingTabIndex !== -1) {
 			setTabCurrent(existingTabIndex)
@@ -50,11 +51,11 @@ const Home = () => {
 				{
 					name,
 					id: data.id,
-					equipmentId: data.equipmentmodels.id,
-					typeEquipment: data.equipmentmodels.type,
+					equipmentId: data.equipmentmodels?.id,
+					typeEquipment,
 					clients: data.clients,
 					link: '/board',
-					component: typeEquipment(data.equipmentmodels.type),
+					component: boardEquipment(typeEquipment),
 				},
 			])
 			setTabCurrent(tabs.length)

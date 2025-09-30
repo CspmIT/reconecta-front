@@ -5,6 +5,7 @@ import { MainContext } from '../../../context/MainContext'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import LoaderComponent from '../../../components/Loader'
+import HistoryPat from '../components/HistoryPat'
 
 const SubstationRuralBoard = () => {
 	const { tabCurrent, tabs } = useContext(MainContext)
@@ -36,9 +37,11 @@ const SubstationRuralBoard = () => {
 								<div className='flex-grow flex justify-center'>
 									<h2 className='text-2xl'>Registro de eventos</h2>
 								</div>
-							</div> <DataBoard info={info[0]} />
+							</div>
+							<DataBoard info={info[0]} />
+							<TableBoard />
+							<HistoryPat info={info[0]} />
 						</>)}
-					{/* <TableBoard /> */}
 				</div>
 			</div>
 		</div>

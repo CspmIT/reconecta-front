@@ -46,7 +46,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
     const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(25)
-    const headers = ["Matrícula", "Equipo", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", ""]
+    const headers = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", ""]
     const borderClasses = {
         0: "border-l-green-600",
         1: "border-l-amber-600",
@@ -73,8 +73,8 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
         const elementEquipments = elementsxType.map((element) => {
             if (element.type === 3) {
                 element.equipments = [{
-                    id: element.clients.id,
-                    serial: element.serial,
+                    id: null,
+                    serial: null,
                     equipmentmodels: {
                         name: "",
                         brand: "",
@@ -123,6 +123,10 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
 
     useEffect(() => {
         getElements()
+        const interval = setInterval(() => {
+            getElements()
+        }, 10000)
+        return () => clearInterval(interval)
     }, [])
 
     useEffect(() => {
@@ -151,69 +155,127 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                     </TableHead>
                     <TableBody>
                         {elementsFiltered.map((row) =>
-                            row.equipments.map((equipment, index) => (
-                                <StyledTableRow key={`${row.id}-${index}`}>
-                                    {index === 0 && (
-                                        <StyledTableCell rowSpan={row.equipments.length} className='min-w-96'>
-                                            <div className='w-full flex'>
-                                                <div className='w-11/12'>
-                                                    {row.name} <br /> {row.description}
+                            row.type !== 3 ?
+                                row.equipments.map((equipment, index) => (
+                                    <StyledTableRow key={`${row.id}-${index}`}>
+                                        {index === 0 && (
+                                            <StyledTableCell rowSpan={row.equipments.length} className='min-w-96'>
+                                                <div className='w-full flex'>
+                                                    <div className='w-11/12'>
+                                                        {row.name} <br /> {row.description}
+                                                    </div>
+                                                    <div className='w-1/12'>
+                                                        <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                            <FaPen />
+                                                        </Fab>
+                                                    </div>
                                                 </div>
-                                                <div className='w-1/12'>
-                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
-                                                        <FaPen />
-                                                    </Fab>
-                                                </div>
-                                            </div>
-                                        </StyledTableCell>
-                                    )}
-                                    <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
-                                    {filtersColumns[2] && (
-                                        <StyledTableCell>{equipment.serial}</StyledTableCell>
-                                    )}
-                                    {filtersColumns[3] && (
-                                        <StyledTableCell >
-                                            {equipment.equipmentmodels.type === 1 && (
+                                            </StyledTableCell>
+                                        )}
+                                        <StyledTableCell className={`${borderClasses[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
+                                        {filtersColumns[2] && (
+                                            <StyledTableCell>{equipment.serial}</StyledTableCell>
+                                        )}
+                                        {filtersColumns[3] && (
+                                            <StyledTableCell >
+                                                {equipment.equipmentmodels.type === 1 && (
+                                                    <span className='flex items-center gap-x-2'>
+                                                        <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
+                                                        {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Desconocido"}
+                                                    </span>
+                                                )}
+                                            </StyledTableCell>
+                                        )}
+                                        {filtersColumns[4] && (
+                                            <StyledTableCell>
                                                 <span className='flex items-center gap-x-2'>
-                                                    <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
-                                                    {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Desconocido"}
+                                                    {equipment.influxData?.["d/c"] ? (
+                                                        <>
+                                                            <FaCheckCircle size={20} className='text-green-700' /> Online
+                                                        </>
+                                                    ) : (<>
+                                                        <FaTimes size={20} className='text-red-700' /> Sin señal
+                                                    </>)}
                                                 </span>
-                                            )}
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && filtersColumns[5] && (
+                                            <StyledTableCell rowSpan={row.equipments.length}>
+                                                {row.lat}
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && filtersColumns[6] && (
+                                            <StyledTableCell rowSpan={row.equipments.length}>
+                                                {row.lon}
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && filtersColumns[7] && (
+                                            <StyledTableCell rowSpan={row.equipments.length}>
+                                                {row.power}
+                                            </StyledTableCell>
+                                        )}
+                                        <StyledTableCell align='center'>
+                                            <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
                                         </StyledTableCell>
-                                    )}
-                                    {filtersColumns[4] && (
-                                        <StyledTableCell>
-                                            <span className='flex items-center gap-x-2'>
-                                                {equipment.influxData?.["d/c"] ? (
-                                                    <>
-                                                        <FaCheckCircle size={20} className='text-green-700' /> Online
-                                                    </>
-                                                ) : (<>
-                                                    <FaTimes size={20} className='text-red-700' /> Sin señal
-                                                </>)}
-                                            </span>
-                                        </StyledTableCell>
-                                    )}
-                                    {index === 0 && filtersColumns[5] && (
-                                        <StyledTableCell rowSpan={row.equipments.length}>
-                                            {row.lat}
-                                        </StyledTableCell>
-                                    )}
-                                    {index === 0 && filtersColumns[6] && (
-                                        <StyledTableCell rowSpan={row.equipments.length}>
-                                            {row.lon}
-                                        </StyledTableCell>
-                                    )}
-                                    {index === 0 && filtersColumns[7] && (
-                                        <StyledTableCell rowSpan={row.equipments.length}>
-                                            {row.power}
-                                        </StyledTableCell>
-                                    )}
-                                    <StyledTableCell align='center'>
-                                        <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
-                                    </StyledTableCell>
-                                </StyledTableRow>
-                            ))
+                                    </StyledTableRow>
+                                )) :
+                                row.clients.map((client, index) => (
+                                    <StyledTableRow key={`${row.id}-${index}`}>
+                                        {index === 0 && (
+                                            <StyledTableCell rowSpan={row.clients.length} className='min-w-96'>
+                                                <div className='w-full flex'>
+                                                    <div className='w-11/12'>
+                                                        {row.name}
+                                                    </div>
+                                                    <div className='w-1/12'>
+                                                        <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                            <FaPen />
+                                                        </Fab>
+                                                    </div>
+                                                </div>
+                                            </StyledTableCell>
+                                        )}
+                                        <StyledTableCell className={`${borderClasses[0]} border-l-8`}>{client.name}</StyledTableCell>
+                                        {filtersColumns[2] && (
+                                            <StyledTableCell>{client.meter}</StyledTableCell>
+                                        )}
+                                        {filtersColumns[3] && (
+                                            <StyledTableCell >
+                                                <span className='flex items-center gap-x-2'>
+                                                    <FaCircle className={`${client.status ? "text-green-500" : "text-red-500"}`} />
+                                                    {client.status ? "En servicio" : "Fuera de servicio"}
+                                                </span>
+                                            </StyledTableCell>
+                                        )}
+                                        {filtersColumns[4] && (
+                                            <StyledTableCell>
+                                                <span className='flex items-center gap-x-2'>
+                                                    -
+                                                </span>
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && filtersColumns[5] && (
+                                            <StyledTableCell rowSpan={row.clients.length}>
+                                                {row.lat}
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && filtersColumns[6] && (
+                                            <StyledTableCell rowSpan={row.clients.length}>
+                                                {row.lon}
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && filtersColumns[7] && (
+                                            <StyledTableCell rowSpan={row.clients.length}>
+                                                {row.power}
+                                            </StyledTableCell>
+                                        )}
+                                        {index === 0 && (
+                                            <StyledTableCell rowSpan={row.clients.length} align='center'>
+                                                <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected({}, row)} ><FaTableCellsLarge /> </Fab>
+                                            </StyledTableCell>
+                                        )}
+                                    </StyledTableRow>
+                                ))
                         )}
                     </TableBody>
                     <TableFooter>
