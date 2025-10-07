@@ -1,18 +1,70 @@
 import { Button, MenuItem, TextField } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { FaLocationDot } from 'react-icons/fa6'
-import MapSubstation from '../Map'
+import { useEffect, useRef, useState } from 'react'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
+import { getImage, saveImage } from '../../../../utils/js/minio'
+import { FaCloudUploadAlt, FaSave } from "react-icons/fa";
 
 const DataBoard = ({ info }) => {
+	const fileInputRef = useRef(null)
+	const [showSave, setShowSave] = useState(false)
 	const [clients, setClients] = useState(info.clients)
+	const [image, setImage] = useState(null)
+	const [fileSave, setFileSave] = useState(null)
 	const [clientSelected, setClientSelected] = useState([])
 	const [clientStatus, setClientStatus] = useState(false)
 	const [actualPat, setActualPat] = useState(null)
 	const [pat, setPat] = useState(null)
 	const feeds = ['No definida', 'Monofásica', 'Trifásica']
+
+	const handleButtonClick = () => {
+		fileInputRef.current.click() // dispara el input escondido
+	}
+
+	const handleButtonSave = async () => {
+		try {
+			const newNameFile = await saveImage(fileSave)
+			if (newNameFile) {
+				const body = {
+					id: info.id,
+					image: newNameFile
+				}
+				await request(`${backend.Reconecta}/ElementsImage`, "PATCH", body)
+				Swal.fire({
+					icon: 'success',
+					title: 'Imagen guardada correctamente',
+					toast: true,
+					position: 'top-end',
+					showConfirmButton: false,
+					timer: 1500,
+				})
+				setShowSave(false)
+			}
+		} catch (e) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Ocurrió un error al guardar la imagen, intente nuevamente con otra',
+				confirmButtonText: "Aceptar"
+			})
+			setShowSave(false)
+		}
+	}
+
+	const handleFileChange = (event) => {
+		const file = event.target.files[0]
+		if (file) {
+			const reader = new FileReader()
+			reader.onload = (e) => {
+				setImage(e.target.result)
+			}
+			reader.readAsDataURL(file)
+			setShowSave(true)
+			const imageSave = Array.from(event.target.files).shift()
+			setFileSave(imageSave)
+		}
+	}
+
 	const handleChange = (e) => {
 		const selectedClient = clients.find((client) => client.id === e.target.value)
 		setClientSelected(selectedClient)
@@ -42,7 +94,6 @@ const DataBoard = ({ info }) => {
 				showConfirmButton: false,
 				timer: 1500,
 			})
-
 
 		} catch (e) {
 			Swal.fire({
@@ -85,7 +136,12 @@ const DataBoard = ({ info }) => {
 	}
 
 	const getPat = async () => {
-		const { data } = await request(`${backend.Reconecta}/SubstationPat/${info.id}/1`, "GET")
+		const img = await getImage(info.image)
+		setImage(img)
+		const body = {
+			id: info.id
+		}
+		const { data } = await request(`${backend.Reconecta}/SubstationPatFilter`, "POST", body)
 		const actualValue = data.find(e => e.status)
 		if (actualValue?.value) {
 			setPat(actualValue.value)
@@ -96,7 +152,7 @@ const DataBoard = ({ info }) => {
 		getPat()
 	}, [])
 	return (
-		<div className='w-full flex flex-row flex-wrap'>
+		<div className='w-full flex flex-row flex-wrap pb-16'>
 			<div className='w-full md:w-1/2 flex flex-col justify-around'>
 				<div className='m-2'>
 					<TextField InputProps={{ readOnly: true }} className='w-full' value={`${info.name}`} label='Sub Estación' />
@@ -132,14 +188,24 @@ const DataBoard = ({ info }) => {
 				</div>
 			</div>
 			<div className='w-full md:w-1/2 flex flex-row flex-wrap justify-center'>
-				<div className='w-full md:w-3/4 flex flex-row justify-center h-[50vh] items-center'>
-					<MapSubstation element={info} />
-				</div>
-				<div className='w-full flex flex-row justify-center my-3'>
-					<Button variant='contained' color='info' target='_blank' href={`https://www.google.com.ar/maps/dir/@${info.lat},${info.lon},17z/${info.lat},${info.lon}/`}>
-						<FaLocationDot className='mr-2' />
-						Ubicación
-					</Button>
+				<div className='w-full md:w-3/4 flex flex-col justify-center h-[50vh] items-center gap-y-3'>
+					<div className='h-full'>
+						<img src={image} className='h-full object-contain' />
+					</div>
+					<div className='flex gap-x-3'>
+						<Button variant='contained' title='Cargar imagen' color='primary' onClick={handleButtonClick}><FaCloudUploadAlt /></Button>
+						{showSave && (
+							<Button variant='contained' title='Guardar imagen' color='success' onClick={handleButtonSave}><FaSave /></Button>
+						)}
+					</div>
+					<input
+						type="file"
+						accept="image/*"
+						ref={fileInputRef}
+						onChange={handleFileChange}
+						hidden
+					/>
+
 				</div>
 			</div>
 		</div>
