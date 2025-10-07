@@ -2,6 +2,7 @@ import { useState } from 'react'
 import EChart from '../../../../components/Charts'
 
 const HistoryPatChart = ({ values, title }) => {
+    console.log(values)
     const maxLabels = 24
     const interval = Math.ceil(values.time.length / maxLabels)
     const [autoScale, setAutoScale] = useState(false)
@@ -52,7 +53,7 @@ const HistoryPatChart = ({ values, title }) => {
         series: [
             {
                 name: 'Historial PAT',
-                data: values.R.values,
+                data: values.values,
                 type: 'line',
                 smooth: true
             }

@@ -6,6 +6,7 @@ import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import LoaderComponent from '../../../components/Loader'
 import HistoryPat from '../components/HistoryPat'
+import MapSubstation from '../components/Map'
 
 const SubstationRuralBoard = () => {
 	const { tabCurrent, tabs } = useContext(MainContext)
@@ -39,8 +40,11 @@ const SubstationRuralBoard = () => {
 								</div>
 							</div>
 							<DataBoard info={info[0]} />
-							{/* <TableBoard />
-							<HistoryPat info={info[0]} /> */}
+							{/* <TableBoard /> */}
+							<HistoryPat info={info[0]} />
+							<div className='h-96'>
+								<MapSubstation element={info[0]} />
+							</div>
 						</>)}
 				</div>
 			</div>
