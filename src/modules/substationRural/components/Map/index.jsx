@@ -3,6 +3,7 @@ import { LayersControl, MapContainer, Marker, Popup, TileLayer, useMap } from 'r
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-draw/dist/leaflet.draw.css'
 import 'leaflet-draw'
+import { Icon } from 'leaflet'
 
 const MapUpdate = ({ position }) => {
     const map = useMap()

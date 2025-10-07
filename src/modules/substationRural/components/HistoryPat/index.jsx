@@ -66,7 +66,10 @@ const HistoryPat = ({ info }) => {
                 </div>
             </div>
             <div className='h-96'>
-                {history.length !== 0 && <HistoryPatChart values={history} title={"Históricos de puesta a tierra (PAT)"} />}
+                {history.length !== 0 ? <HistoryPatChart values={history} title={"Históricos de puesta a tierra (PAT)"} /> :
+                    <div className='w-full h-full flex items-center justify-center'>
+                        <h2 className='text-2xl font-bold'>No se registran mediciones de PAT</h2>
+                    </div>}
             </div>
         </div>
     )
