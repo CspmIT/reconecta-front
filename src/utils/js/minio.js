@@ -32,6 +32,5 @@ export async function saveImage(image) {
 			'Content-Type': 'multipart/form-data',
 		},
 	})
-	console.log(response)
 	return response.data.fileName
 }
