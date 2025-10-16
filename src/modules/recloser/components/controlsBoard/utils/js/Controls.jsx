@@ -19,8 +19,9 @@ export const enableControl = async (enabled) => {
 			title: 'Ingrese su contraseña',
 			input: 'text',
 			inputAttributes: {
+				name: 'fake-pass',
 				autocapitalize: 'off',
-				autocomplete: 'off',
+				autocomplete: 'new-password',
 				placeholder: 'Ingrese su contraseña',
 				form: {
 					autocomplete: 'off',
@@ -40,6 +41,7 @@ export const enableControl = async (enabled) => {
 			didOpen: () => {
 				const inputField = Swal.getInput()
 				inputField.setAttribute('autocomplete', 'new-password')
+				inputField.setAttribute('name', 'fake-pass')
 			},
 		})
 		return response
