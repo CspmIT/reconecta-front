@@ -58,7 +58,7 @@ export const greenIcon = (nro) =>
 		</div>`,
 		// html: `<span class="marcador_ubicacion_map" style="background: green;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
-export const yellowIcon = (nro) =>
+export const yellowIcon = (nro, open) =>
 	new L.divIcon({
 		iconSize: [25, 41],
 		iconAnchor: [10, 20],
@@ -66,7 +66,9 @@ export const yellowIcon = (nro) =>
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-green',
 		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
-				<span class="marcador_ubicacion_map blink" style="background: yellow;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+				<span class="marcador_ubicacion_map ${
+					open ? 'greenblink' : 'blink'
+				}" style="background: yellow;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 				</span>
 				${nro ? `<p class="sing">${nro}</p>` : ''}
@@ -101,10 +103,13 @@ export const getIcon = (status, nro) => {
 			return grayIcon(nro)
 		case 4:
 			// Alerta
-			return yellowIcon(nro)
+			return yellowIcon(nro, false)
 		case 5:
 			// En Mantenimiento
 			return workIcon()
+		case 6:
+			// Alerta en abierto
+			return yellowIcon(nro, true)
 		default:
 			return blueIcon(nro) // valor predeterminado
 	}
