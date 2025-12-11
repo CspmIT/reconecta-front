@@ -38,7 +38,8 @@ const EventBoard = ({ idRecloser }) => {
 						event: item.event,
 						infoAdd: item.infoAdd,
 						statusAlert: 0,
-						custom: item.custom
+						custom: item.custom,
+						idFile: item.idFile
 					})
 				} else {
 					acc.critico.push({
@@ -47,7 +48,8 @@ const EventBoard = ({ idRecloser }) => {
 						event: item.event,
 						infoAdd: item.infoAdd,
 						statusAlert: 0,
-						custom: item.custom
+						custom: item.custom,
+						idFile: item.idFile
 					})
 				}
 				if (item.custom) {
@@ -57,7 +59,8 @@ const EventBoard = ({ idRecloser }) => {
 						event: item.event,
 						infoAdd: item.infoAdd,
 						statusAlert: 0,
-						custom: item.custom
+						custom: item.custom,
+						idFile: item.idFile
 					})
 				}
 				return acc

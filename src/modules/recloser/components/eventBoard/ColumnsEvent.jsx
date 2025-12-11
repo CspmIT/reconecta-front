@@ -9,6 +9,12 @@ export const ColumnsEvent = (handleChecked) => [
 		Cell: ({ cell }) => `${cell.getValue()}`,
 	},
 	{
+		header: 'ID',
+		accessorKey: 'idFile',
+		size: 20,
+		muiFilterTextFieldProps: { placeholder: 'ID' },
+	},
+	{
 		header: 'Evento',
 		accessorKey: 'event',
 		muiFilterTextFieldProps: { placeholder: 'Evento' },
