@@ -4,7 +4,7 @@ import {
     tableCellClasses, TableContainer, TableHead, TableRow, Typography
 } from '@mui/material'
 import flashIcon from '../../../../assets/img/ConfigNotifications/flash_icon.png'
-import envelopIcon from '../../../../assets/img/ConfigNotifications/envelop.png'
+import envelopIcon from '../../../../assets/img/ConfigNotifications/discord.png'
 import CustomSelect from './CustomSelect'
 import ModalEdit from './ModalEdit'
 import { Close, Info, Save } from '@mui/icons-material'

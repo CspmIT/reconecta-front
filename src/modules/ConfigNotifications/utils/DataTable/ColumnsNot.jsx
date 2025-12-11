@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { FaPen } from 'react-icons/fa'
 import ModalEdit from './ModalEdit'
 import flashIcon from '../../../../assets/img/ConfigNotifications/flash_icon.png'
-import envelopIcon from '../../../../assets/img/ConfigNotifications/envelop.png'
+import envelopIcon from '../../../../assets/img/ConfigNotifications/discord.png'
 
 export const ColumnsNot = (handlePriority, handleCheck, access) => [
 	{
