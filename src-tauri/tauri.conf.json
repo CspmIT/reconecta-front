@@ -1,73 +1,33 @@
 {
+	"identifier": "com.reconecta.desktop",
 	"build": {
 		"beforeDevCommand": "npm run dev",
 		"beforeBuildCommand": "npm run build",
-		"devPath": "http://localhost:1420",
-		"distDir": "../dist",
-		"withGlobalTauri": true
+		"devUrl": "http://localhost:1420",
+		"frontendDist": "../dist"
 	},
-	"package": {
-		"productName": "Reconecta",
-		"version": "1.0.0"
+	"bundle": {
+		"active": true,
+		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+		"targets": ["msi", "nsis"]
 	},
-	"tauri": {
-		"allowlist": {
-			"dialog": {
-				"all": true
-			},
-			"shell": {
-				"all": false,
-				"open": true
-			},
-			"http": {
-				"all": true
-			},
-			"fs": {
-				"copyFile": true,
-				"readDir": true,
-				"readFile": true,
-				"writeFile": true
-			},
-			"notification": {
-				"all": true
-			},
-			"app": {
-				"all": true,
-				"hide": true,
-				"show": true
-			}
-		},
+	"app": {
 		"windows": [
 			{
 				"title": "Reconecta",
 				"width": 1024,
-				"height": 768,
-				"minWidth": 1024,
-				"minHeight": 600,
-				"resizable": true,
-				"decorations": true
+				"height": 768
 			}
 		],
 		"security": {
-			"csp": "default-src blob: data: filesystem: ws: http: https: 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; object-src 'none';"
-		},
-		"bundle": {
-			"active": true,
-			"targets": ["deb", "updater", "msi", "app", "dmg"],
-			"identifier": "com.cooptech.reconecta",
-			"icon": [
-				"icons/32x32.png",
-				"icons/128x128.png",
-				"icons/128x128@2x.png",
-				"icons/icon.icns",
-				"icons/icon.ico"
+			"capabilities": [
+				{
+					"identifier": "store-access",
+					"windows": ["main"],
+					"platforms": ["linux", "macOS", "windows"],
+					"permissions": ["store:default"]
+				}
 			]
-		}
-	},
-	"plugins": {
-		"store": {
-			"version": "2",
-			"dir": ".storage"
 		}
 	}
 }

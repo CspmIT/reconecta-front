@@ -105,6 +105,8 @@ function Map() {
 						let colorRecloser = 0
 						if (recloser.length > 0) {
 							colorRecloser = recloser[0]?.influxData?.['d/c']?.[0]?.value ?? 3;
+							// Si viene en 0 le paso el valor 2 de abierto
+							colorRecloser = colorRecloser === 0 ? 2 : colorRecloser
 							// Veo si hay una alarma y dependiendo si esta abierto o no le cambio el parpadeo
 							colorRecloser = recloser[0]?.flashAlarm ? parseInt(colorRecloser) === 1 ? 4 : 6 : colorRecloser
 						}
