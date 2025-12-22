@@ -22,6 +22,7 @@
 		"@mui/x-data-grid": "^6.19.3",
 		"@mui/x-date-pickers": "^7.28.3",
 		"@tauri-apps/api": "^2.9.1",
+		"@tauri-apps/plugin-store": "^2.4.1",
 		"axios": "^1.7.4",
 		"dayjs": "^1.11.11",
 		"dayjs-plugin-utc": "^0.1.2",
@@ -53,8 +54,7 @@
 		"react-toastify": "^10.0.5",
 		"socket.io-client": "^4.8.1",
 		"sweetalert2": "^11.6.13",
-		"sweetalert2-react-content": "^5.0.7",
-		"tauri-plugin-store-api": "github:tauri-apps/tauri-plugin-store#v1"
+		"sweetalert2-react-content": "^5.0.7"
 	},
 	"devDependencies": {
 		"@tauri-apps/cli": "^2.9.6",
