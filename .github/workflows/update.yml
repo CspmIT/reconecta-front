@@ -41,6 +41,8 @@ jobs:
             - name: Build Tauri
               uses: tauri-apps/tauri-action@v0
               env:
+                  VITE_APP_NAME: ${{ secrets.VITE_APP_NAME }}
+                  VITE_ENTORNO: ${{ secrets.VITE_ENTORNO }}
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
                   TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
