@@ -30,5 +30,12 @@
 				}
 			]
 		}
+	},
+	"plugins": {
+		"updater": {
+			"active": true,
+			"endpoints": ["https://github.com/CspmIT/reconecta-front/releases/latest/download/latest.json"],
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDNGMTBEQ0I4QzBDNjZCQjQKUldTMGE4YkF1TndRUDBSeURDT1hwZVNNM1l6akFzVWZiVEduMWgvK3N0ZWhSRFVGbkE5TGY2ZlIK"
+		}
 	}
 }

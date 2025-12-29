@@ -31,6 +31,7 @@ import AddConfigNotification from './modules/ConfigNotifications/views/add'
 import NotFound from './modules/NotFound'
 import AddChart from './modules/diagrams/views/addChart'
 import ConfigAlert from './modules/ConfigAlert/views'
+import { check } from '@tauri-apps/plugin-updater'
 
 function App() {
 	const { darkMode } = useContext(MainContext)
@@ -86,6 +87,20 @@ function App() {
 	useEffect(() => {
 		setTheme(!darkMode ? lightTheme : darkTheme)
 	}, [darkMode])
+	useEffect(() => {
+		const runUpdater = async () => {
+			try {
+				const update = await check()
+
+				if (update?.available) {
+					await update.downloadAndInstall()
+				}
+			} catch (err) {
+				console.error('Updater error:', err)
+			}
+		}
+		runUpdater()
+	}, [])
 
 	return (
 		<BrowserRouter>

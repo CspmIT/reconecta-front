@@ -23,6 +23,7 @@
 		"@mui/x-date-pickers": "^7.28.3",
 		"@tauri-apps/api": "^2.9.1",
 		"@tauri-apps/plugin-store": "^2.4.1",
+		"@tauri-apps/plugin-updater": "^2.9.0",
 		"axios": "^1.7.4",
 		"dayjs": "^1.11.11",
 		"dayjs-plugin-utc": "^0.1.2",
