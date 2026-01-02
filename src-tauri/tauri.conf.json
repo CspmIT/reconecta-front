@@ -1,6 +1,6 @@
 {
 	"productName": "Reconecta",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"identifier": "com.reconecta.desktop",
 	"build": {
 		"beforeDevCommand": "npm run dev",

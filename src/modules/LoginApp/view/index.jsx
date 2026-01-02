@@ -126,7 +126,7 @@ function LoginApp() {
 					<LoaderComponent />
 				) : (
 					<>
-						<img className='w-5/12 max-md:w-8/12 m-0 p-0 mb-5' src={imgApp} alt='logo Cooptech' />
+						<img className='w-3/12 max-md:w-8/12 m-0 p-0 mb-5' src={imgApp} alt='logo Cooptech' />
 						<form
 							className='h-full max-md:w-11/12 w-3/5 flex flex-col gap-4'
 							onSubmit={handleSubmit(onSubmit)}
