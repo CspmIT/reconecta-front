@@ -39,7 +39,7 @@ jobs:
               run: npm install
 
             - name: Build Tauri
-              uses: tauri-apps/tauri-action@v0.5.25
+              uses: tauri-apps/tauri-action@v0.5.16
               env:
                   VITE_APP_NAME: ${{ secrets.VITE_APP_NAME }}
                   VITE_ENTORNO: ${{ secrets.VITE_ENTORNO }}
@@ -47,6 +47,7 @@ jobs:
                   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
                   TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
               with:
-                  tagName: v1.0.1
-                  releaseName: 'Reconecta v1.0.1'
+                  tagName: v__VERSION__
+                  releaseName: 'Reconecta v__VERSION__'
                   releaseBody: 'Actualización automática'
+                  prerelease: false
