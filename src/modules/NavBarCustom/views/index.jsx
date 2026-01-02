@@ -34,6 +34,7 @@ import Logo from '/src/assets/img/Logo/LogoText.png'
 import { FaSync } from 'react-icons/fa'
 import { isTauri } from '@tauri-apps/api/core'
 import { check } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -121,8 +122,31 @@ function NavBarCustom({ setLoading }) {
 
 	const checkUpdates = async () => {
 		const update = await check()
-		if (update?.available) {
-			await update.downloadAndInstall()
+		if (update) {
+			console.log(
+				`found update ${update.version} from ${update.date} with notes ${update.body}`
+			);
+			let downloaded = 0;
+			let contentLength = 0;
+			// alternatively we could also call update.download() and update.install() separately
+			await update.downloadAndInstall((event) => {
+				switch (event.event) {
+					case 'Started':
+						contentLength = event.data.contentLength;
+						console.log(`started downloading ${event.data.contentLength} bytes`);
+						break;
+					case 'Progress':
+						downloaded += event.data.chunkLength;
+						console.log(`downloaded ${downloaded} from ${contentLength}`);
+						break;
+					case 'Finished':
+						console.log('download finished');
+						break;
+				}
+			});
+
+			console.log('update installed');
+			await relaunch();
 		}
 	}
 
