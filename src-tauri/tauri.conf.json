@@ -11,7 +11,8 @@
 	"bundle": {
 		"active": true,
 		"targets": ["msi", "deb", "rpm", "appimage"],
-		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"]
+		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
+		"createUpdaterArtifacts": true
 	},
 	"app": {
 		"windows": [
@@ -37,7 +38,7 @@
 			"active": true,
 			"endpoints": ["https://github.com/CspmIT/reconecta-front/releases/latest/download/latest.json"],
 			"dialog": true,
-			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDBCNkIyNTZGOTM3OEYwRDAKUldUUThIaVRieVZyQ3ovbHl2VHgxUVZaMGFBeWc2M3hLajJHNkFuY3k2ald3bTZzUmgvbVgrangK"
+			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENFOUE0OEYyMDA5NDkyNEQKUldSTmtwUUE4a2lhenBraVNOd2cwOU1ZbkxWdVJTU0lEbUZiTkp0VTFRenhtdndVZ1VwUlQ4OG0K"
 		}
 	}
 }
