@@ -39,7 +39,7 @@ jobs:
               run: npm install
 
             - name: Build Tauri
-              uses: tauri-apps/tauri-action@v0
+              uses: tauri-apps/tauri-action@v0.5.25
               env:
                   VITE_APP_NAME: ${{ secrets.VITE_APP_NAME }}
                   VITE_ENTORNO: ${{ secrets.VITE_ENTORNO }}
