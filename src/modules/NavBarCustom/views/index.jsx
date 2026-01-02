@@ -31,6 +31,9 @@ import { front } from '../../../utils/routes/app.routes'
 import styles from '../utils/css/styles.module.css'
 import Cookies from 'js-cookie'
 import Logo from '/src/assets/img/Logo/LogoText.png'
+import { FaSync } from 'react-icons/fa'
+import { isTauri } from '@tauri-apps/api/core'
+import { check } from '@tauri-apps/plugin-updater'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -116,6 +119,13 @@ function NavBarCustom({ setLoading }) {
 		setLoading(true)
 	}
 
+	const checkUpdates = async () => {
+		const update = await check()
+		if (update?.available) {
+			await update.downloadAndInstall()
+		}
+	}
+
 	useEffect(() => {
 		if (storage.get('usuarioCooptech')) {
 			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
@@ -155,6 +165,11 @@ function NavBarCustom({ setLoading }) {
 							{nameCoop}
 						</p>
 						<BottonApps />
+						{isTauri() &&
+							<IconButton onClick={checkUpdates} title='Buscar actualizaciones' size='medium' className='shadow-none !rounded-full'>
+								<FaSync />
+							</IconButton>
+						}
 						<ButtonModeDark />
 						<DropdownImage />
 					</div>
