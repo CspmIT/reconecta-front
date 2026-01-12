@@ -27,15 +27,7 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-import { front } from '../../../utils/routes/app.routes'
-import styles from '../utils/css/styles.module.css'
-import Cookies from 'js-cookie'
 import Logo from '/src/assets/img/Logo/LogoText.png'
-import { FaSync } from 'react-icons/fa'
-import { isTauri } from '@tauri-apps/api/core'
-import { check } from '@tauri-apps/plugin-updater'
-import { relaunch } from '@tauri-apps/plugin-process'
-import Swal from 'sweetalert2'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -121,70 +113,6 @@ function NavBarCustom({ setLoading }) {
 		setLoading(true)
 	}
 
-	const checkUpdates = async () => {
-		const update = await check()
-
-		if (!update) return
-
-		let downloaded = 0
-		let contentLength = 0
-
-		// Modal inicial
-		Swal.fire({
-			title: 'Actualización disponible',
-			html: `
-			<p>Descargando actualización...</p>
-			<b id="progress-text">0%</b>
-		  `,
-			allowOutsideClick: false,
-			allowEscapeKey: false,
-			didOpen: () => {
-				Swal.showLoading()
-			}
-		})
-
-		await update.downloadAndInstall((event) => {
-			switch (event.event) {
-				case 'Started':
-					contentLength = event.data.contentLength
-					downloaded = 0
-					break
-
-				case 'Progress':
-					downloaded += event.data.chunkLength
-
-					if (contentLength > 0) {
-						const percent = Math.floor(
-							(downloaded / contentLength) * 100
-						)
-
-						const progressText = document.getElementById('progress-text')
-						if (progressText) {
-							progressText.innerText = `${percent}%`
-						}
-					}
-					break
-
-				case 'Finished':
-					Swal.update({
-						title: 'Instalando actualización',
-						html: 'La aplicación se reiniciará en unos segundos...'
-					})
-					break
-			}
-		})
-
-		await Swal.fire({
-			icon: 'success',
-			title: 'Actualización instalada',
-			text: 'La aplicación se reiniciará para aplicar los cambios',
-			timer: 2000,
-			showConfirmButton: false
-		})
-
-		await relaunch()
-	}
-
 	useEffect(() => {
 		if (storage.get('usuarioCooptech')) {
 			const cliente = Array.isArray(storage.get('usuarioCooptech')?.client)
@@ -198,7 +126,7 @@ function NavBarCustom({ setLoading }) {
 	return (
 		<>
 			<AppBarCustom className='!max-h-11 flex justify-center' position='fixed' open={open}>
-				<Toolbar className='!pl-[1.1rem]'>
+				<Toolbar className='!pl-[1.1rem] bg-gradient-to-r from-yellow-600 to-yellow-400 dark:from-yellow-600 dark:to-yellow-500'>
 					<IconButton
 						color='inherit'
 						aria-label='open drawer'
@@ -224,11 +152,6 @@ function NavBarCustom({ setLoading }) {
 							{nameCoop}
 						</p>
 						<BottonApps />
-						{isTauri() &&
-							<IconButton onClick={checkUpdates} title='Buscar actualizaciones' size='medium' className='shadow-none !rounded-full'>
-								<FaSync />
-							</IconButton>
-						}
 						<ButtonModeDark />
 						<DropdownImage />
 					</div>
