@@ -36,6 +36,7 @@ const DesktopDownloadModal = ({ open, onClose }) => {
         getDesktopDownloads()
             .then(setDownloads)
             .finally(() => setLoading(false))
+        console.log(downloads)
     }, [open])
 
     return (
@@ -44,7 +45,7 @@ const DesktopDownloadModal = ({ open, onClose }) => {
                 {/* Header */}
                 <Box display="flex" justifyContent="space-between">
                     <Typography variant="h6" fontWeight={600}>
-                        Descargar Reconecta {downloads.version}
+                        Descargar Reconecta {downloads?.version || ""}
                     </Typography>
                     <IconButton size="small" onClick={onClose}>
                         <MdClose />
