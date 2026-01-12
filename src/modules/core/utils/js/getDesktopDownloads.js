@@ -6,7 +6,6 @@ export const getDesktopDownloads = async () => {
 	}
 
 	const data = await res.json()
-	console.log(data)
 	const findAsset = (ext) => data.assets.find((asset) => asset.name.toLowerCase().endsWith(ext))
 
 	return {
