@@ -10,7 +10,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                platform: [windows-latest, ubuntu-latest]
+                platform: [windows-latest, ubuntu-latest, macos-latest]
 
         runs-on: ${{ matrix.platform }}
 
@@ -49,5 +49,5 @@ jobs:
               with:
                   tagName: v__VERSION__
                   releaseName: 'Reconecta v__VERSION__'
-                  releaseBody: 'Cambio menor en barra de navegación'
+                  releaseBody: 'Agregado .dmg para macOS'
                   prerelease: false
