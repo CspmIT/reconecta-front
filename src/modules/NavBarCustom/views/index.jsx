@@ -27,9 +27,6 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-import { front } from '../../../utils/routes/app.routes'
-import styles from '../utils/css/styles.module.css'
-import Cookies from 'js-cookie'
 import Logo from '/src/assets/img/Logo/LogoText.png'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
@@ -129,7 +126,7 @@ function NavBarCustom({ setLoading }) {
 	return (
 		<>
 			<AppBarCustom className='!max-h-11 flex justify-center' position='fixed' open={open}>
-				<Toolbar className='!pl-[1.1rem]'>
+				<Toolbar className='!pl-[1.1rem] bg-gradient-to-r from-yellow-600 to-yellow-400 dark:from-yellow-600 dark:to-yellow-500'>
 					<IconButton
 						color='inherit'
 						aria-label='open drawer'

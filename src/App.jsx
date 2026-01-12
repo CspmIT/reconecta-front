@@ -31,8 +31,13 @@ import AddConfigNotification from './modules/ConfigNotifications/views/add'
 import NotFound from './modules/NotFound'
 import AddChart from './modules/diagrams/views/addChart'
 import ConfigAlert from './modules/ConfigAlert/views'
+import { useUpdater } from './hooks/useUpdater'
+import { isTauri } from '@tauri-apps/api/core'
 
 function App() {
+	// Updater tauri
+	const { checkForUpdates } = useUpdater()
+
 	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
@@ -86,6 +91,12 @@ function App() {
 	useEffect(() => {
 		setTheme(!darkMode ? lightTheme : darkTheme)
 	}, [darkMode])
+
+	useEffect(() => {
+		if (isTauri()) {
+			checkForUpdates()
+		}
+	}, [])
 
 	return (
 		<BrowserRouter>
