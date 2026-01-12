@@ -1,6 +1,6 @@
 {
 	"productName": "Reconecta",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"identifier": "com.reconecta.desktop",
 	"build": {
 		"beforeDevCommand": "npm run dev",
@@ -28,7 +28,7 @@
 					"identifier": "store-access",
 					"windows": ["main"],
 					"platforms": ["linux", "macOS", "windows"],
-					"permissions": ["store:default", "process:default"]
+					"permissions": ["store:default", "process:default", "updater:default"]
 				}
 			]
 		}
