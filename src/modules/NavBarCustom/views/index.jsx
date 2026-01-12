@@ -28,6 +28,8 @@ import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
 import Logo from '/src/assets/img/Logo/LogoText.png'
+import { isTauri } from '@tauri-apps/api/core'
+import ButtonDownloads from '../../core/components/ButtonDownloads'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -144,13 +146,14 @@ function NavBarCustom({ setLoading }) {
 					</IconButton>
 
 					<img onClick={() => navigate('home')} className=' max-h-7 cursor-pointer' src={Logo} />
-					{/* <Typography variant='h6' noWrap component='div'>
-						Reconecta
-					</Typography> */}
+
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
 						<p className={`text-black text-base ml-3 select-none ${isMobile ? 'hidden' : ''}`}>
 							{nameCoop}
 						</p>
+						{!isTauri() && (
+							<ButtonDownloads />
+						)}
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
