@@ -35,6 +35,7 @@ import { FaSync } from 'react-icons/fa'
 import { isTauri } from '@tauri-apps/api/core'
 import { check } from '@tauri-apps/plugin-updater'
 import { relaunch } from '@tauri-apps/plugin-process'
+import Swal from 'sweetalert2'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -122,32 +123,66 @@ function NavBarCustom({ setLoading }) {
 
 	const checkUpdates = async () => {
 		const update = await check()
-		if (update) {
-			console.log(
-				`found update ${update.version} from ${update.date} with notes ${update.body}`
-			);
-			let downloaded = 0;
-			let contentLength = 0;
-			// alternatively we could also call update.download() and update.install() separately
-			await update.downloadAndInstall((event) => {
-				switch (event.event) {
-					case 'Started':
-						contentLength = event.data.contentLength;
-						console.log(`started downloading ${event.data.contentLength} bytes`);
-						break;
-					case 'Progress':
-						downloaded += event.data.chunkLength;
-						console.log(`downloaded ${downloaded} from ${contentLength}`);
-						break;
-					case 'Finished':
-						console.log('download finished');
-						break;
-				}
-			});
 
-			console.log('update installed');
-			await relaunch();
-		}
+		if (!update) return
+
+		let downloaded = 0
+		let contentLength = 0
+
+		// Modal inicial
+		Swal.fire({
+			title: 'Actualización disponible',
+			html: `
+			<p>Descargando actualización...</p>
+			<b id="progress-text">0%</b>
+		  `,
+			allowOutsideClick: false,
+			allowEscapeKey: false,
+			didOpen: () => {
+				Swal.showLoading()
+			}
+		})
+
+		await update.downloadAndInstall((event) => {
+			switch (event.event) {
+				case 'Started':
+					contentLength = event.data.contentLength
+					downloaded = 0
+					break
+
+				case 'Progress':
+					downloaded += event.data.chunkLength
+
+					if (contentLength > 0) {
+						const percent = Math.floor(
+							(downloaded / contentLength) * 100
+						)
+
+						const progressText = document.getElementById('progress-text')
+						if (progressText) {
+							progressText.innerText = `${percent}%`
+						}
+					}
+					break
+
+				case 'Finished':
+					Swal.update({
+						title: 'Instalando actualización',
+						html: 'La aplicación se reiniciará en unos segundos...'
+					})
+					break
+			}
+		})
+
+		await Swal.fire({
+			icon: 'success',
+			title: 'Actualización instalada',
+			text: 'La aplicación se reiniciará para aplicar los cambios',
+			timer: 2000,
+			showConfirmButton: false
+		})
+
+		await relaunch()
 	}
 
 	useEffect(() => {
