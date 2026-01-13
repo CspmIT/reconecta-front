@@ -49,5 +49,5 @@ jobs:
               with:
                   tagName: v__VERSION__
                   releaseName: 'Reconecta v__VERSION__'
-                  releaseBody: '0% de descarga bug fix'
+                  releaseBody: '0% de descarga bug fix con swal'
                   prerelease: false
