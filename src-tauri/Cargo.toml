@@ -1,7 +1,11 @@
 [package]
 name = "reconecta-desktop"
-version = "2.0.2"
+version = "2.0.3"
 edition = "2021"
+
+[lib]
+name = "reconecta_desktop"
+crate-type = ["cdylib", "rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2.4.0", features = [] }

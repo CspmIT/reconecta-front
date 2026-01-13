@@ -9,7 +9,7 @@ import {
     CircularProgress
 } from '@mui/material'
 import { MdClose } from 'react-icons/md'
-import { FaWindows, FaLinux, FaDownload } from 'react-icons/fa'
+import { FaWindows, FaLinux } from 'react-icons/fa'
 import { useEffect, useState } from 'react'
 import { getDesktopDownloads } from '../../utils/js/getDesktopDownloads'
 
@@ -36,7 +36,6 @@ const DesktopDownloadModal = ({ open, onClose }) => {
         getDesktopDownloads()
             .then(setDownloads)
             .finally(() => setLoading(false))
-        console.log(downloads)
     }, [open])
 
     return (
