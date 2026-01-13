@@ -24,7 +24,7 @@ export const useUpdater = () => {
 			let contentLength = 0
 			let downloadStarted = false
 
-			await showUpdateProgress()
+			showUpdateProgress()
 			const timeoutId = setTimeout(() => {
 				if (!downloadStarted) {
 					Swal.fire({
