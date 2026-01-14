@@ -74,7 +74,7 @@ jobs:
               with:
                   owner: CspmIT
                   repo: reconecta-front-releases
-                  tagName: v__VERSION__
-                  releaseName: 'Reconecta v__VERSION__'
+                  tagName: v${{ env.VERSION }}
+                  releaseName: 'Reconecta v${{ env.VERSION }}'
                   releaseBody: 'Prueba repo releases'
                   prerelease: false
