@@ -39,6 +39,7 @@ jobs:
               run: npm install
 
             - name: Get app version
+              shell: bash
               id: version
               run: |
                   VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
