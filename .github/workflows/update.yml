@@ -41,13 +41,15 @@ jobs:
             - name: Build Tauri
               uses: tauri-apps/tauri-action@v0.5.16
               env:
+                  GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
                   VITE_APP_NAME: ${{ secrets.VITE_APP_NAME }}
                   VITE_ENTORNO: ${{ secrets.VITE_ENTORNO }}
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
                   TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
               with:
+                  owner: CspmIT
+                  repo: reconecta-front-releases
                   tagName: v__VERSION__
                   releaseName: 'Reconecta v__VERSION__'
-                  releaseBody: '0% de descarga bug fix con swal'
+                  releaseBody: 'Prueba repo releases'
                   prerelease: false
