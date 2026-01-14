@@ -67,5 +67,7 @@ jobs:
                   --build-arg VITE_APP_NAME=${{ secrets.VITE_APP_NAME }} \
                   --build-arg SECRET=${{ secrets.SECRET }} \
                   --build-arg VITE_ENTORNO=${{ secrets.VITE_ENTORNO }} \
+                  --build-arg MINIO_ACCESS=${{ secrets.MINIO_ACCESS }} \
+                  --build-arg MINIO_SECRET=${{ secrets.MINIO_SECRET }} \
                   -t ${{ secrets.DOCKER_USERNAME }}/${REPO_NAME}:${{ needs.bump.outputs.new_tag }} .
                   docker push ${{ secrets.DOCKER_USERNAME }}/${REPO_NAME}:${{ needs.bump.outputs.new_tag }}

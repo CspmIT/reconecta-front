@@ -22,14 +22,24 @@ export const useUpdater = () => {
 
 			let downloaded = 0
 			let contentLength = 0
+			let downloadStarted = false
 
-			await showUpdateProgress()
-
+			showUpdateProgress()
+			const timeoutId = setTimeout(() => {
+				if (!downloadStarted) {
+					Swal.fire({
+						icon: 'error',
+						title: 'No se pudo descargar la actualización',
+						text: 'Intenta nuevamente o descárgala manualmente',
+					})
+				}
+			}, 20000)
 			await update.downloadAndInstall((event) => {
 				switch (event.event) {
 					case 'Started':
 						contentLength = event.data.contentLength
 						downloaded = 0
+						downloadStarted = true
 						break
 
 					case 'Progress':
@@ -41,6 +51,7 @@ export const useUpdater = () => {
 						break
 
 					case 'Finished':
+						clearTimeout(timeoutId)
 						showInstallMessage()
 						break
 				}
