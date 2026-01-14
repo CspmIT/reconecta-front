@@ -10,7 +10,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                platform: [windows-latest, ubuntu-latest, macos-latest]
+                platform: [windows-latest, ubuntu-latest]
 
         runs-on: ${{ matrix.platform }}
 
@@ -37,6 +37,22 @@ jobs:
 
             - name: Install frontend deps
               run: npm install
+
+            - name: Create tag in release repo
+              if: matrix.platform == 'ubuntu-latest'
+              run: |
+                  git clone https://${{ secrets.RELEASE_REPO_TOKEN }}@github.com/CspmIT/reconecta-front-releases.git
+                  cd reconecta-front-releases
+
+                  git config user.name "github-actions"
+                  git config user.email "github-actions@github.com"
+
+                  if git rev-parse "v__VERSION__" >/dev/null 2>&1; then
+                    echo "Tag v__VERSION__ already exists"
+                  else
+                    git tag v__VERSION__
+                    git push origin v__VERSION__
+                  fi
 
             - name: Build Tauri
               uses: tauri-apps/tauri-action@v0.5.16
