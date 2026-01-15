@@ -7,8 +7,8 @@ export async function getImage(fileName) {
 		url: urlImage,
 		withCredentials: true,
 		headers: {
-			accesskey: import.meta.env.MINIO_ACCESS || 'PGTEswxSMflcW5CE1PQh',
-			secretkey: import.meta.env.MINIO_SECRET || '06LZXTM5uJjoP2yuWgyYnlU8khTNiJIwhlvY6n5D',
+			accesskey: import.meta.env.VITE_MINIO_ACCESS,
+			secretkey: import.meta.env.VITE_MINIO_SECRET,
 			Accept: 'image/*',
 		},
 		responseType: 'blob',
@@ -27,8 +27,8 @@ export async function saveImage(image) {
 		url: urlImage,
 		data: formData,
 		headers: {
-			accesskey: import.meta.env.MINIO_ACCESS || 'PGTEswxSMflcW5CE1PQh',
-			secretkey: import.meta.env.MINIO_SECRET || '06LZXTM5uJjoP2yuWgyYnlU8khTNiJIwhlvY6n5D',
+			accesskey: import.meta.env.VITE_MINIO_ACCESS,
+			secretkey: import.meta.env.VITE_MINIO_SECRET,
 			'Content-Type': 'multipart/form-data',
 		},
 	})

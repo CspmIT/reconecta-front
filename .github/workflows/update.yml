@@ -10,7 +10,7 @@ jobs:
         strategy:
             fail-fast: false
             matrix:
-                platform: [windows-latest, ubuntu-latest]
+                platform: [windows-latest, ubuntu-latest, macos-latest]
 
         runs-on: ${{ matrix.platform }}
 
@@ -38,43 +38,18 @@ jobs:
             - name: Install frontend deps
               run: npm install
 
-            - name: Get app version
-              shell: bash
-              id: version
-              run: |
-                  VERSION=$(node -p "require('./src-tauri/tauri.conf.json').version")
-                  echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-            - name: Create tag in release repo
-              if: matrix.platform == 'ubuntu-latest'
-              run: |
-                  git clone https://${{ secrets.RELEASE_REPO_TOKEN }}@github.com/CspmIT/reconecta-front-releases.git
-                  cd reconecta-front-releases
-
-                  git config user.name "github-actions"
-                  git config user.email "github-actions@github.com"
-
-                  TAG="v${VERSION}"
-
-                  if git rev-parse "$TAG" >/dev/null 2>&1; then
-                    echo "Tag $TAG already exists"
-                  else
-                    git tag "$TAG"
-                    git push origin "$TAG"
-                  fi
-
             - name: Build Tauri
               uses: tauri-apps/tauri-action@v0.5.16
               env:
-                  GITHUB_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+                  VITE_MINIO_ACCESS: ${{ secrets.MINIO_ACCESS }}
+                  VITE_MINIO_SECRET: ${{ secrets.MINIO_SECRET }}
                   VITE_APP_NAME: ${{ secrets.VITE_APP_NAME }}
                   VITE_ENTORNO: ${{ secrets.VITE_ENTORNO }}
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
                   TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
               with:
-                  owner: CspmIT
-                  repo: reconecta-front-releases
-                  tagName: v${{ env.VERSION }}
-                  releaseName: 'Reconecta v${{ env.VERSION }}'
-                  releaseBody: 'Prueba repo releases'
+                  tagName: v__VERSION__
+                  releaseName: 'Reconecta v__VERSION__'
+                  releaseBody: 'Ventana maximizada de inicio'
                   prerelease: false
