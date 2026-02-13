@@ -23,7 +23,7 @@ import Definitions from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
-import Binnacle from './modules/Binnacle'
+import Binnacle from './modules/Binnacle/views'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
@@ -33,6 +33,7 @@ import AddChart from './modules/diagrams/views/addChart'
 import ConfigAlert from './modules/ConfigAlert/views'
 import { useUpdater } from './hooks/useUpdater'
 import { isTauri } from '@tauri-apps/api/core'
+import ConfigHardware from './modules/ConfigHardware/view'
 
 function App() {
 	// Updater tauri
@@ -74,6 +75,7 @@ function App() {
 		{ path: '/Equipment', element: <Equipment /> },
 		{ path: '/Equipment/:id', element: <Equipment /> },
 		{ path: '/config/alert', element: <ConfigAlert /> }
+		{ path: '/config/hardware', element: <ConfigHardware /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({
