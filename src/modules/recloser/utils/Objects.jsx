@@ -86,9 +86,9 @@ export const boardMetrology = [
 		id: 4,
 		name: 'Potencia',
 		children: [
-			{ name: 'Aparente (S)', field: 'W_0', unit: 'kW' },
+			{ name: 'Aparente (S)', field: 'W_0', unit: 'kVA' },
 			{ name: 'FP A', field: 'FP_f_0', unit: '' },
-			{ name: 'Activa (P)', field: 'W_1', unit: 'kVA' },
+			{ name: 'Activa (P)', field: 'W_1', unit: 'kW' },
 			{ name: 'FP B', field: 'FP_f_1', unit: '' },
 			{ name: 'Reactiva (Q)', field: 'W_2', unit: 'kVAr' },
 			{ name: 'FP C', field: 'FP_f_2', unit: '' },
@@ -99,8 +99,8 @@ export const boardMetrology = [
 		name: 'UPS',
 		children: [
 			{ name: 'Tensión de batería', field: 'bat_0', unit: 'V' },
-			{ name: 'Corriente de carga', field: 'bat_1', unit: 'V' },
-			{ name: 'Carga efectiva', field: 'bat_2', unit: 'V' },
+			{ name: 'Corriente de carga', field: 'bat_1', unit: 'A' },
+			{ name: 'Carga efectiva', field: 'bat_2', unit: '%' },
 		],
 	},
 	{

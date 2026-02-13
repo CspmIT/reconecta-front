@@ -50,7 +50,7 @@ const GraphicBoard = ({ analyzer }) => {
 					</Tabs>
 				)}
 			</div>
-			<div className='w-full'>{tab === 4 ? <Graphs /> : <TableBoard tab={tab} analyzer={analyzer} />}</div>
+			<div className='w-full'>{tab === 4 ? <Graphs analyzer={analyzer} /> : <TableBoard tab={tab} analyzer={analyzer} />}</div>
 		</div>
 	)
 }

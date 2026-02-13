@@ -32,23 +32,40 @@ const EventBoard = ({ idRecloser }) => {
 				item.dateAlert = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year} 
 				${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`
 				if (item.type_var == "Event") {
-					acc.all.push({
+					acc.basics.push({
+						id: item.eventId,
 						dateAlert: item.dateAlert,
 						event: item.event,
 						infoAdd: item.infoAdd,
 						statusAlert: 0,
+						custom: item.custom,
+						idFile: item.idFile
 					})
 				} else {
 					acc.critico.push({
+						id: item.eventId,
 						dateAlert: item.dateAlert,
 						event: item.event,
 						infoAdd: item.infoAdd,
 						statusAlert: 0,
+						custom: item.custom,
+						idFile: item.idFile
+					})
+				}
+				if (item.custom) {
+					acc.custom.push({
+						id: item.eventId,
+						dateAlert: item.dateAlert,
+						event: item.event,
+						infoAdd: item.infoAdd,
+						statusAlert: 0,
+						custom: item.custom,
+						idFile: item.idFile
 					})
 				}
 				return acc
 			},
-			{ critico: [], all: [] }
+			{ critico: [], basics: [], custom: [] }
 		)
 		setRowCriticos(rows)
 	}
@@ -63,6 +80,7 @@ const EventBoard = ({ idRecloser }) => {
 	const boardCards = [
 		{ id: 1, name: 'REGISTROS', icon: <FaTachometerAlt /> },
 		{ id: 2, name: 'AVANZADOS', icon: <BsFiles /> },
+		{ id: 3, name: 'PERSONALIZADOS', icon: <FaTachometerAlt /> },
 	]
 
 	const handleCard = (id) => {
@@ -70,6 +88,40 @@ const EventBoard = ({ idRecloser }) => {
 			setSelectedCardId(id)
 		}
 	}
+	const handleChecked = (rowData) => {
+		const newCustomValue = !rowData.custom
+
+		const updateArray = (arr) =>
+			arr.map((item) =>
+				item.id === rowData.id
+					? { ...item, custom: newCustomValue }
+					: item
+			)
+
+		const updatedCritico = updateArray(rowCriticos.critico)
+		const updatedBasics = updateArray(rowCriticos.basics)
+		const updatedCustom = [...updatedCritico, ...updatedBasics]
+			.filter(item => item.custom)
+			.sort((a, b) => {
+				const parseDate = (str) => {
+					const [datePart, timePart] = str.split(' ')
+					const [day, month, year] = datePart.split('/').map(Number)
+					const [hour, minute, second] = timePart.split(':').map(Number)
+					return new Date(year, month - 1, day, hour, minute, second)
+				}
+				return parseDate(b.dateAlert) - parseDate(a.dateAlert)
+			})
+		setRowCriticos({
+			critico: updatedCritico,
+			basics: updatedBasics,
+			custom: updatedCustom,
+		})
+		const postData = {
+			id: rowData.id,
+			customizable: newCustomValue
+		}
+		request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/ConfigNotify`, "POST", postData)
+	};
 	const classTabs =
 		'!border-solid !border-gray-200 !rounded-t-xl !text-base !text-black !font-bold dark:!text-zinc-200 dark:!border-gray-700'
 	return (
@@ -105,7 +157,7 @@ const EventBoard = ({ idRecloser }) => {
 								<div className='w-full'>
 									<TableCustom
 										data={rowCriticos.critico}
-										columns={ColumnsEvent()}
+										columns={ColumnsEvent(handleChecked)}
 										density='comfortable'
 										header={{
 											background: 'rgb(91 151 248);',
@@ -128,8 +180,32 @@ const EventBoard = ({ idRecloser }) => {
 							{selectedCardId === 2 && (
 								<div className='w-full'>
 									<TableCustom
-										data={rowCriticos.all}
-										columns={ColumnsEvent()}
+										data={rowCriticos.basics}
+										columns={ColumnsEvent(handleChecked)}
+										density='comfortable'
+										header={{
+											background: 'rgb(91 151 248);',
+											fontSize: '18px',
+											fontWeight: 'bold',
+										}}
+										toolbarClass={{ background: 'rgb(91 151 248)' }}
+										bodyContent={{ fontSize: '16px' }}
+										footer={{ background: 'rgb(223 233 249)' }}
+										// btnCustomToolbar={<BtnChangeTable fnClick={change} table={register} />}
+										pageSize={10}
+										topToolbar
+										hide
+										filter
+										sort
+										pagination
+									/>
+								</div>
+							)}
+							{selectedCardId === 3 && (
+								<div className='w-full'>
+									<TableCustom
+										data={rowCriticos.custom}
+										columns={ColumnsEvent(handleChecked)}
 										density='comfortable'
 										header={{
 											background: 'rgb(91 151 248);',

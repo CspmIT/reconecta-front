@@ -19,8 +19,9 @@ export const enableControl = async (enabled) => {
 			title: 'Ingrese su contraseña',
 			input: 'text',
 			inputAttributes: {
+				name: 'fake-pass',
 				autocapitalize: 'off',
-				autocomplete: 'off',
+				autocomplete: 'new-password',
 				placeholder: 'Ingrese su contraseña',
 				form: {
 					autocomplete: 'off',
@@ -30,7 +31,7 @@ export const enableControl = async (enabled) => {
 			confirmButtonText: 'Autentificar',
 			showLoaderOnConfirm: true,
 			preConfirm: (login) => {
-				if (login === pass.data.password) {
+				if (login == pass.data.password) {
 					Swal.fire('Perfecto!', 'Se habilito correctamente los controles', 'success')
 					response = true
 				} else {
@@ -40,6 +41,7 @@ export const enableControl = async (enabled) => {
 			didOpen: () => {
 				const inputField = Swal.getInput()
 				inputField.setAttribute('autocomplete', 'new-password')
+				inputField.setAttribute('name', 'fake-pass')
 			},
 		})
 		return response
@@ -57,19 +59,19 @@ export const sendAction = async (field, action, contador, info) => {
 		const dataSend = {
 			action: `${field.toUpperCase()}${field === 'grp' ? action : !action ? '_ON' : '_OFF'}`,
 			brand: info.recloser.brand,
-			serial: info.recloser.serial,
+			serial: info.recloser.number,
 			id_recloser: info.recloser.id,
 		}
-		// await request(`${backend.Reconecta}/sendMQTT`, 'POST', dataSend)
+		await request(`${backend.Reconecta}/sendMQTT`, 'POST', dataSend)
 
 		const dataControl = {
 			action: field === 'grp' ? action : !action ? 1 : 0,
 			field: field,
 			brand: info.recloser.brand,
-			serial: info.recloser.serial,
+			serial: info.recloser.number,
 		}
 		await request(`${backend.Reconecta}/controlAction`, 'POST', dataControl)
-		Swal.fire({ title: 'Perfecto!', text: 'Se guardo correctamente', icon: 'success' })
+		Swal.fire({ title: 'Perfecto!', text: 'La acción se ejecutó correctamente', icon: 'success' })
 		return field === 'grp' ? action : !action
 	} catch (error) {
 		console.log(error)

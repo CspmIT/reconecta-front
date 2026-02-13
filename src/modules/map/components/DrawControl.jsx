@@ -4,7 +4,7 @@ import { useMap } from 'react-leaflet'
 import PopupMarker from './PopupMarker'
 import markerCustom, { getIcon } from '../utils/js/markerClass'
 
-function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
+function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters }) {
 	const map = useMap()
 	const [createdMarkers, setCreatedMarkers] = useState(markers)
 	const drawnItemsRef = useRef(new L.FeatureGroup())
@@ -15,11 +15,23 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 		const drawnItems = drawnItemsRef.current
 		const markersList = markersListRef.current
 		const polylineList = polylineListRef.current
-
 		map.addLayer(drawnItems)
 		map.addLayer(markersList)
 
+		const clearPolylines = () => {
+			const drawnItems = drawnItemsRef.current
+			const polylineList = polylineListRef.current
+
+			drawnItems.eachLayer((layer) => {
+				if (layer instanceof L.Polyline) {
+					drawnItems.removeLayer(layer)
+				}
+			})
+			polylineList.length = 0
+		}
+
 		if (polylines?.length) {
+			polylineList.length = 0 // Limpiar la lista de polilíneas
 			polylines.forEach((poly) => {
 				const borderPolyline = L.polyline(poly.points, {
 					color: '#0000006e',
@@ -35,12 +47,15 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 				drawnItems.addLayer(polyline)
 				polylineList.push({ borderPolyline, polyline })
 			})
+		} else {
+			clearPolylines()
 		}
 
 		const drawControl = new L.Control.Draw({
-			edit: {
+			/* edit: {
 				featureGroup: drawnItems,
-			},
+			}, */
+			edit: false,
 			position: 'topright',
 			draw: {
 				polyline: false,
@@ -66,8 +81,12 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 					getLatLngMarker(lat, lng)
 				}
 				setCreatedMarkers([newMarker])
-				// Add the marker to the drawnItems group to enable editing
-				drawnItems.clearLayers()
+
+				drawnItems.eachLayer((existingLayer) => {
+					if (existingLayer instanceof L.Marker) {
+						drawnItems.removeLayer(existingLayer)
+					}
+				})
 				drawnItems.addLayer(layer)
 			} else {
 				drawnItems.addLayer(layer)
@@ -114,14 +133,17 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 		}
 
 		const handleDrawDelete = async () => {
+			drawnItems.eachLayer((layer) => {
+				if (layer instanceof L.Marker) {
+					drawnItems.removeLayer(layer)
+				}
+			})
 			setCreatedMarkers([])
-			drawnItems.clearLayers()
 			getLatLngMarker(null, null)
 		}
 		map.on(L.Draw.Event.CREATED, handleDrawCreated)
 		map.on('draw:edited', handleDrawEdited)
 		map.on('draw:deleted', handleDrawDelete)
-
 		return () => {
 			map.removeControl(drawControl)
 			map.removeLayer(drawnItems)
@@ -130,7 +152,10 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 			map.off('draw:edited', handleDrawEdited)
 			map.off('draw:deleted', handleDrawDelete)
 		}
-	}, [map, polylines, editor])
+	}, [map, polylines, editor, filters])
+	useEffect(() => {
+		setCreatedMarkers(markers)
+	}, [markers])
 	useEffect(() => {
 		setCreatedMarkers(markers)
 	}, [])
@@ -139,13 +164,11 @@ function DrawControl({ polylines, markers = [], editor, getLatLngMarker }) {
 			{createdMarkers.length > 0 &&
 				createdMarkers.map((marker, index) => (
 					<PopupMarker
+						abm={abm}
 						key={index}
-						id={marker.id}
 						position={[marker.lat, marker.lng]}
 						icon={marker.icon}
-						alert={marker.alert}
-						popupData={marker.info}
-						recloser={marker.recloser}
+						popupData={marker}
 						drawnItems={drawnItemsRef.current}
 						layerControl={markersListRef.current}
 					/>

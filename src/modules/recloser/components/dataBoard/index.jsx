@@ -52,6 +52,12 @@ const DataBoard = ({ recloser }) => {
 		navigate('/Equipment/' + info.recloser.id)
 	}
 	const refreshInflux = async () => {
+		const requestData = {
+			brand: info.recloser.brand,
+			serial: info.recloser.number,
+			action: "REFRESH"
+		}
+		const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/sendMQTT`, 'POST', requestData)
 		getDataRecloser(data.id)
 	}
 	const deleteRecloser = async (data) => {
@@ -130,7 +136,7 @@ const DataBoard = ({ recloser }) => {
 				<>
 					<div className='flex flex-row relative justify-between mb-8'>
 						<div className='flex-grow flex justify-center'>
-							<h2 className='text-2xl'>Reconectador</h2>
+							<h2 className='text-2xl'>{info.recloser.name}</h2>
 						</div>
 						<div className='absolute right-2 top-8 md:top-0'>
 							<Button

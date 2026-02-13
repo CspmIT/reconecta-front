@@ -8,8 +8,10 @@ import DrawControl from './DrawControl'
 import 'react-toastify/dist/ReactToastify.css'
 import '../utils/css/toastCustom.modules.css'
 import '../utils/css/AlertSwal.modules.css'
+import { map } from 'leaflet'
 
 function MapCustom({
+	abm = false,
 	center,
 	zoom,
 	activeMove = true,
@@ -18,9 +20,9 @@ function MapCustom({
 	polylines,
 	editor = false,
 	getLatLngMarker = false,
+	filters = {}
 }) {
 	const mapRef = useRef(null)
-
 	useEffect(() => {
 		if (mapRef.current) {
 			const map = mapRef.current // Accedemos al mapa
@@ -41,6 +43,11 @@ function MapCustom({
 			}
 		}
 	}, [activeZoom]) // Escuchamos cambios en activeZoom
+	useEffect(() => {
+		if (mapRef.current) {
+			mapRef.current.setView(center)
+		}
+	}, [center])
 	return (
 		<MapContainer
 			ref={mapRef}
@@ -54,6 +61,9 @@ function MapCustom({
 			maxZoom={activeZoom ? 18 : zoom}
 			minZoom={activeZoom ? zoom : zoom}
 			style={{ minHeight: '100%', width: '100%', borderRadius: '10px' }}
+			whenCreated={(mapInstance) => {
+				mapRef.current = mapInstance;
+			}}
 		>
 			<LayersControl position='topright'>
 				<LayersControl.BaseLayer checked name='Street'>
@@ -63,7 +73,9 @@ function MapCustom({
 					<TileLayer url='https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}' />
 				</LayersControl.BaseLayer>
 			</LayersControl>
-			<DrawControl polylines={polylines} markers={markers} editor={editor} getLatLngMarker={getLatLngMarker} />
+			{markers && (
+				<DrawControl abm={abm} polylines={polylines} markers={markers} editor={editor} getLatLngMarker={getLatLngMarker} filters={filters} />
+			)}
 		</MapContainer>
 	)
 }

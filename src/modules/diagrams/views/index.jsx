@@ -1,40 +1,57 @@
-import DiagramElectricity from '../components/DiagramElectricity'
-import GrafTensiones from '../components/GrafTensiones'
+import { useEffect, useState } from 'react'
+import SunburstChart from '../components/sunburstChart'
+import { request } from '../../../utils/js/request'
+import { backend, front } from '../../../utils/routes/app.routes'
+import { sunburstData } from '../utils/js/formatGraphics'
+import Graphic from '../components/Graphic'
+import { Button } from '@mui/material'
+import { io } from 'socket.io-client'
+import { storage } from '../../../storage/storage'
+import { useNavigate } from 'react-router-dom'
 
 const Diagrams = () => {
+	const navigate = useNavigate()
+	const [graphics, setGraphics] = useState([])
+	const [hasAccess, setHasAccess] = useState(false)
+
+	const getGraphics = async () => {
+		try {
+			const { data } = await request(`${backend.Reconecta}/Sunburst`, 'GET')
+			const dataFormated = sunburstData(data)
+			setGraphics(dataFormated)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	const userProfile = async () => {
+		try {
+			const userId = storage.get('usuario').sub
+			const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getUser/${userId}`, 'GET')
+			setHasAccess(data.profile === 1)
+		} catch (e) {
+			console.error(e.errors)
+			setHasAccess(false)
+		}
+	}
+
+	useEffect(() => {
+		getGraphics()
+		userProfile()
+	}, [])
 	return (
 		<div className='w-full flex flex-wrap justify-center text-black dark:text-white relative'>
-			<div className='w-full shadow-md  overflow-hidden !h-[90vh] relative rounded-md bg-[#CFC4BE] dark:bg-[#303b41] '>
-				<DiagramElectricity />
-			</div>
-			<div className='w-full flex flex-wrap'>
-				<div className='p-2 w-full'>
-					<div className='bg-white shadow-md dark:bg-gray-800 rounded-md h-full flex justify-center items-center p-2'>
-						<GrafTensiones
-							data={[
-								{ value: 10140, date: '2024-11-08T08:29:00.000Z' },
-								{ value: 10146, date: '2024-11-08T08:44:00.000Z' },
-								{ value: 9966, date: '2024-11-08T08:59:00.000Z' },
-								{ value: 9624, date: '2024-11-08T09:07:00.000Z' },
-								{ value: 9402, date: '2024-11-08T09:22:00.000Z' },
-								{ value: 8964, date: '2024-11-08T09:37:00.000Z' },
-								{ value: 9090, date: '2024-11-08T09:52:00.000Z' },
-								{ value: 9024, date: '2024-11-08T10:07:00.000Z' },
-								{ value: 9108, date: '2024-11-08T10:22:00.000Z' },
-								{ value: 8934, date: '2024-11-08T10:37:00.000Z' },
-								{ value: 9144, date: '2024-11-08T10:52:00.000Z' },
-								{ value: 9396, date: '2024-11-08T11:07:00.000Z' },
-							]}
-							title={'MVA Barra'}
-							key={1}
-						/>
+			<div className='w-full shadow-md  overflow-hidden relative rounded-md bg-white dark:bg-[#303b41] pb-5'>
+				{hasAccess && (
+					<div className='w-full flex justify-end'>
+						<Button onClick={() => navigate("/addChart")} variant='contained' className='!m-5'>Nuevo gráfico</Button>
 					</div>
+				)}
+				<div className='w-full flex justify-center flex-wrap'>
+					{graphics.length > 0 && graphics.map((item, index) =>
+						<Graphic key={index} data={item} />
+					)}
 				</div>
-				{/* <div className='p-2 md:w-1/2 w-full'>
-					<div className='bg-white shadow-md dark:bg-gray-800 rounded-md h-full flex justify-center items-center p-2'>
-						<GrafTensiones data={[3, 2, 3, 5, 10, 8, 9, 3, 5]} title={'Grafico 2'} key={2} />
-					</div>
-				</div> */}
 			</div>
 		</div>
 	)

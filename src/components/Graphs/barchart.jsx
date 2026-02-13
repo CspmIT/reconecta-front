@@ -47,7 +47,7 @@ function GrafBarra({ ...props }) {
 				data: props.seriesData.map((item) => {
 					return {
 						name: item.name,
-						y: item.value,
+						y: parseFloat(item.value),
 						drilldown: item.name,
 					}
 				}),

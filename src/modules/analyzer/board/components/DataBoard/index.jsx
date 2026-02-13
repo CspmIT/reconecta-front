@@ -8,10 +8,15 @@ import CardBoard from '../cardBoard'
 import HistoryBoard from '../historyBoard'
 import GraphicBoard from '../GraphicBoard'
 import MetrologyBoard from '../metrologyBoard'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone.js'
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const DataBoard = ({ analyzer }) => {
-	console.log(analyzer)
 	const [selectedCardId, setSelectedCardId] = useState(null)
+	const [timeData, setTimeData] = useState(null)
 	// const [info, setInfo] = useState([])
 	const navigate = useNavigate()
 	const handleCardSelect = (id) => {
@@ -20,6 +25,12 @@ const DataBoard = ({ analyzer }) => {
 	const { tabCurrent, tabs } = useContext(MainContext)
 
 	const [data] = useState(tabs[tabCurrent] || null)
+
+	const handleLastRegister = (time) => {
+		const t = dayjs.utc(time).tz('America/Argentina/Buenos_Aires');
+		const fecha = t.format('DD/MM/YYYY HH:mm');
+		setTimeData(fecha)
+	}
 	useEffect(() => {
 		if (!data) {
 			Swal.fire({
@@ -33,11 +44,17 @@ const DataBoard = ({ analyzer }) => {
 		}
 	}, [data])
 
+	useEffect(() => {
+		if (analyzer.id) {
+			handleCardSelect(1)
+		}
+	}, [analyzer])
+
 	return (
 		<div className='w-full  items-center rounded-xl p-3 bg-gray-200 dark:bg-gray-600'>
 			<div className='flex flex-row relative justify-between mb-8'>
 				<div className='flex-grow flex justify-center'>
-					<h2 className='text-2xl'>Analizador de red</h2>
+					<h2 className='text-2xl'>{data.name}</h2>
 				</div>
 				<div className='absolute right-2 top-8 md:top-0'>
 					<Button variant='contained' title='Recargar Datos'>
@@ -66,7 +83,8 @@ const DataBoard = ({ analyzer }) => {
 				<hr className='my-8' />
 			</div>
 			<div className='w-full text-center'>
-				<b>Último registro de datos: </b>
+				<b>Último registro de datos: </b><br />
+				<b className='text-lg'>{timeData}</b>
 			</div>
 			<div className=''>
 				<CardBoard onCardSelect={handleCardSelect} />
@@ -75,7 +93,7 @@ const DataBoard = ({ analyzer }) => {
 				<hr className='my-4 border-slate-400 dark:border-slate-200' />
 			</div>
 			<div className='w-full'>
-				{selectedCardId === 1 && <MetrologyBoard analyzer={analyzer} />}
+				{selectedCardId === 1 && <MetrologyBoard analyzer={analyzer} lastRegister={handleLastRegister} />}
 				{selectedCardId === 2 && <GraphicBoard analyzer={analyzer} />}
 				{selectedCardId === 3 && <HistoryBoard analyzer={analyzer} />}
 			</div>

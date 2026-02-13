@@ -138,7 +138,7 @@ const ControlsBoard = ({ info }) => {
 				<b className='text-xl mr-3'>Controles</b>
 			</div>
 			<div className='w-full mb-5 text-center relative'>
-				<Button size='large' variant='contained' type='button' onClick={authorizationControl}>
+				<Button color={enabled ? "success" : "primary"} size='large' variant='contained' type='button' onClick={authorizationControl}>
 					{enabled ? <LockOpen className='!text-xl' /> : <Lock className='!text-xl' />}
 				</Button>
 				<Button

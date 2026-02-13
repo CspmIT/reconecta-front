@@ -1,54 +1,72 @@
 import { useEffect, useState, useContext } from 'react'
 import { request } from '../../../../../utils/js/request'
-import GrafLinea from '../../../../../components/Graphs/linechart'
 import { backend } from '../../../../../utils/routes/app.routes'
 import LoaderComponent from '../../../../../components/Loader'
-function GrafTensionABC({ idRecloser }) {
+import RecloserLineChart from './linecharts'
+import dayjs from 'dayjs'
+function GrafTensionABC({ idRecloser, dateStart, dateFinished, search, realTime }) {
 	const [dataGraf, setDataGraf] = useState(null)
-	const getTensionABC = async (id) => {
-		const data = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`, 'GET')
-		if (!Object.keys(data).length) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-			return
+	useEffect(() => {
+		const getTensionABC = async (id) => {
+			if (realTime) {
+				dateFinished = dayjs()
+			}
+			const { data } = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`,
+				'POST',
+				{ dateStart, dateFinished }
+			)
+
+			if (!Object.keys(data).length) {
+				Swal.fire({
+					title: 'Atención!',
+					html: `Hubo un problema con la carga de los datos del reconectador.</br>Intente nuevamente...`,
+					icon: 'error',
+				})
+				return
+			}
+
+			setDataGraf(data)
 		}
 
-		const returnData = Object.keys(data.data).map((key, index) => {
-			return {
-				name: key,
-				data: data.data[key].map(([time, value]) => [new Date(time).getTime(), value]),
-			}
-		})
-		setDataGraf(returnData)
-	}
-
-	useEffect(() => {
 		if (idRecloser) {
 			getTensionABC(idRecloser)
+		}
+	}, [search, idRecloser, dateStart, dateFinished, realTime])
+
+	useEffect(() => {
+		const getTensionABC = async (id) => {
+			if (realTime) {
+				dateFinished = dayjs()
+			}
+			const { data } = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/tensionABC?id=${id}`,
+				'POST',
+				{ dateStart, dateFinished }
+			)
+
+			if (!Object.keys(data).length) {
+				return
+			}
+
+			setDataGraf(data)
+		}
+
+		if (idRecloser) {
 			const intervalId = setInterval(() => {
 				getTensionABC(idRecloser)
 			}, 15000)
+
 			return () => clearInterval(intervalId)
 		}
-	}, [idRecloser])
+	}, [idRecloser, dateStart, dateFinished, realTime])
 
 	return (
 		<>
 			{dataGraf ? (
-				<GrafLinea
+				<RecloserLineChart
 					title={'Tensión ABC'}
-					seriesData={dataGraf}
-					configxAxis={{ type: 'datetime' }}
-					labelxAxis={{ format: '{value:%Y-%m-%d %H:%M:%S}' }}
-					tooltip={{
-						tooltip: {
-							xDateFormat: '%Y-%m-%d %H:%M:%S',
-							shared: true,
-						},
-					}}
+					values={dataGraf}
 				/>
 			) : (
 				<LoaderComponent image={false} />

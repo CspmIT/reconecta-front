@@ -8,12 +8,18 @@ import { getFormatterGraf } from './utils/js/actions'
 import LoaderComponent from '../../../../../../components/Loader'
 import { MenuItem, TextField } from '@mui/material'
 import { dataGraficos } from './utils/dataGraf'
+import MeterLineChart from '../Charts/linecharts'
+import { DateTimePicker, LocalizationProvider, renderTimeViewClock } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import dayjs from 'dayjs'
 
 function Grafic({ info }) {
 	const navigate = useNavigate()
+	const [dateCurrent, setDateCurrent] = useState(dayjs())
+	const [dateStart, setDateStart] = useState(dayjs().subtract(12, 'hour'))
 	const [isLoading, setIsLoading] = useState(true)
 	const [dataGraf, setDataGraf] = useState([])
-	const getDataGraf = async (dateStart = null, dateFinished = null) => {
+	const getDataGraf = async () => {
 		try {
 			setIsLoading(true)
 			const dataGraf = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getInfoGraf`, 'POST', {
@@ -21,12 +27,13 @@ function Grafic({ info }) {
 				version: info.version,
 				brand: info.brand,
 				dateStart,
-				dateFinished,
+				dateFinished: dateCurrent
 			})
 			const data = dataGraf.data
 
 			const dataGrafico = await Promise.all(dataGraficos.map((grafico) => getFormatterGraf(data, grafico)))
 			setDataGraf(dataGrafico)
+
 		} catch (error) {
 			console.error(error)
 			Swal.fire({
@@ -60,14 +67,53 @@ function Grafic({ info }) {
 				disable: item.titleGraf.includes('Exportada')
 					? value !== 'Exportada'
 					: item.titleGraf.includes('Importada')
-					? value !== 'Importada'
-					: item.disable,
+						? value !== 'Importada'
+						: item.disable,
 			}))
 		)
 	}
 	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<>
+			<div className='w-full flex justify-center my-5'>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<DateTimePicker
+						className='bg-white dark:bg-slate-800'
+						ampm={false}
+						label="Fecha de inicio"
+						format='DD/MM/YYYY HH:mm'
+						viewRenderers={{
+							hours: renderTimeViewClock,
+							minutes: renderTimeViewClock,
+							seconds: renderTimeViewClock,
+						}}
+						value={dateStart}
+						onChange={(newValue) => {
+							setDateStart(newValue)
+						}}
+					/>
+					<DateTimePicker
+						className='bg-white dark:bg-slate-800'
+						label="Fecha de fin"
+						ampm={false}
+						format='DD/MM/YYYY HH:mm'
+						viewRenderers={{
+							hours: renderTimeViewClock,
+							minutes: renderTimeViewClock,
+							seconds: renderTimeViewClock,
+						}}
+						value={dateCurrent}
+						onChange={(newValue) => {
+							setDateCurrent(newValue)
+						}}
+					/>
+				</LocalizationProvider>
+				<div className='flex flex-row items-center'>
+					<button className='bg-blue-500 text-white rounded-lg px-4 py-2 ml-3' onClick={getDataGraf}>
+						Filtrar
+					</button>
+				</div>
+			</div>
 			{dataGraf.map((graf, index) => {
 				if (!graf.disable)
 					return (
@@ -84,19 +130,8 @@ function Grafic({ info }) {
 								</TextField>
 							) : null}
 
-							<div className={`w-full shadow-lg shadow-slate-300 p-4`}>
-								<GrafLinea
-									key={index}
-									title={graf.titleGraf}
-									seriesData={graf.graf}
-									axisX={graf.data.DatePeriod}
-									configyAxis={graf.config}
-									exporting={true}
-									colors={['#ff4c4c', '#6cff6c', '#6161ff', '#ffff62']}
-									configMarks={{
-										radius: 1,
-									}}
-								/>
+							<div className={`w-full h-96 shadow-lg shadow-slate-300 p-4`}>
+								<MeterLineChart title={graf.titleGraf} values={graf.data} />
 							</div>
 						</div>
 					)

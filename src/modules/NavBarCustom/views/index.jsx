@@ -27,11 +27,9 @@ import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
-import { front } from '../../../utils/routes/app.routes'
-import styles from '../utils/css/styles.module.css'
-import { io } from 'socket.io-client'
-import Cookies from 'js-cookie'
 import Logo from '/src/assets/img/Logo/LogoText.png'
+import { isTauri } from '@tauri-apps/api/core'
+import ButtonDownloads from '../../core/components/ButtonDownloads'
 function NavBarCustom({ setLoading }) {
 	const [open, setOpen] = useState(false)
 	const [nameCoop, setNameCoop] = useState('')
@@ -59,16 +57,6 @@ function NavBarCustom({ setLoading }) {
 		return () => {
 			document.removeEventListener('mouseup', handleClickOutside)
 		}
-	}, [])
-	const [newEvent, setNewEvent] = useState(false)
-
-	useEffect(() => {
-		const socket = io(front.Reconecta, { path: '/api/socket.io', query: { token: Cookies.get('token') } })
-
-		socket.on('alert-active', (data) => {
-			setNewEvent(data.active)
-		})
-		return () => socket.disconnect()
 	}, [])
 
 	useEffect(() => {
@@ -140,7 +128,7 @@ function NavBarCustom({ setLoading }) {
 	return (
 		<>
 			<AppBarCustom className='!max-h-11 flex justify-center' position='fixed' open={open}>
-				<Toolbar className='!pl-[1.1rem]'>
+				<Toolbar className='!pl-[1.1rem] bg-gradient-to-r from-yellow-600 to-yellow-400 dark:from-yellow-600 dark:to-yellow-500'>
 					<IconButton
 						color='inherit'
 						aria-label='open drawer'
@@ -158,13 +146,14 @@ function NavBarCustom({ setLoading }) {
 					</IconButton>
 
 					<img onClick={() => navigate('home')} className=' max-h-7 cursor-pointer' src={Logo} />
-					{/* <Typography variant='h6' noWrap component='div'>
-						Reconecta
-					</Typography> */}
+
 					<div className='absolute right-5 flex flex-row items-center gap-2'>
 						<p className={`text-black text-base ml-3 select-none ${isMobile ? 'hidden' : ''}`}>
 							{nameCoop}
 						</p>
+						{!isTauri() && (
+							<ButtonDownloads />
+						)}
 						<BottonApps />
 						<ButtonModeDark />
 						<DropdownImage />
@@ -254,9 +243,7 @@ function NavBarCustom({ setLoading }) {
 													padding: !isMobile ? '1.25rem' : '0.2rem',
 													py: 1.8,
 												}}
-												className={`!w-full ${
-													item.link === '/Alert' && newEvent ? styles.backgroundAlert : ''
-												}`}
+												className={`!w-full`}
 												onClick={() => activeButton(item.link)}
 											>
 												<ListItemIcon

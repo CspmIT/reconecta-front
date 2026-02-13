@@ -8,18 +8,24 @@ import AddMarkerMap from '../Components/Map/AddMarkerMap'
 import { FaPlusCircle } from 'react-icons/fa'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
+import SubstationClient from '../Components/SubstationClient'
 
 const Abm = () => {
 	const navigate = useNavigate()
+	const { elementId } = useParams()
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const [numberEquipments, setNumberEquipments] = useState([])
+	const [numberClients, setNumberClients] = useState([])
 	const [typeSelected, setTypeSelected] = useState(null)
 	const [elementSelected, setElementSelected] = useState([])
 	const [abrevSelected, setAbrevSelected] = useState(null)
+	const [feedSelected, setFeedSelected] = useState(null)
+	const [dataEdit, setDataEdit] = useState([])
 	const {
 		register,
+		watch,
 		setValue,
 		clearErrors,
 		formState: { errors },
@@ -30,6 +36,9 @@ const Abm = () => {
 		setTypeSelected(e.target.value)
 	}
 	const onSubmit = async (data) => {
+		if (elementId) {
+			data.id = elementId
+		}
 		data.name = `${abrevSelected}${data.name}`
 		data.lon = data.lng_marker
 		data.lat = data.lat_marker
@@ -38,13 +47,15 @@ const Abm = () => {
 		const requestData = {
 			element: data,
 			equipment: numberEquipments,
+			client: numberClients
 		}
 		try {
-			await request(`${backend.Reconecta}/Elements`, 'POST', requestData)
+			const method = elementId ? 'PATCH' : 'POST'
+			await request(`${backend.Reconecta}/Elements`, method, requestData)
 			navigate('/')
 			Swal.fire({
 				icon: 'success',
-				title: 'Elemento creado correctamente',
+				title: 'Se guardó correctamente',
 				toast: true,
 				position: 'top-end',
 				showConfirmButton: false,
@@ -75,6 +86,27 @@ const Abm = () => {
 		updatedEquipments[index][field] = value
 		setNumberEquipments(updatedEquipments)
 	}
+
+	const handleNewClient = () => {
+		const id = numberClients.length === 0 ? 1 : numberClients[numberClients.length - 1].id + 1
+		setNumberClients([
+			...numberClients,
+			{ id, name: '', meter: '' },
+		])
+	}
+	const handleDeleteClient = (id) => {
+		const updatedClients = numberClients.filter((client) => client.id !== id)
+		setNumberClients(updatedClients)
+	}
+	const handleChangeClient = (index, field, value) => {
+		const updatedClients = [...numberClients]
+		updatedClients[index][field] = value
+		setNumberClients(updatedClients)
+	}
+	const shouldShrink = (value) => {
+		return value !== undefined && value !== null && value !== '';
+	}
+
 	useEffect(() => {
 		if (selectMarkers?.lat) {
 			clearErrors('lng_marker')
@@ -91,6 +123,53 @@ const Abm = () => {
 			setAbrevSelected(elementSelected.abrev[0])
 		}
 	}, [elementSelected])
+	useEffect(() => {
+		if (elementId) {
+			const fetchElement = async () => {
+				try {
+					const { data } = await request(`${backend.Reconecta}/Elements/${elementId}`, 'GET')
+					if (data[0]) {
+						setDataEdit(data[0])
+						const quantitySlice = data[0].type === 2 ? 4 : 2
+						setValue('type', data[0].type)
+						setValue('name', data[0].name.slice(quantitySlice))
+						setValue('description', data[0].description || null)
+						setValue('power', data[0].power)
+						setValue('feed', data[0].feed || null)
+						setValue('lng_marker', data[0].lon)
+						setValue('lat_marker', data[0].lat)
+						setValue('id_map', data[0].id_map)
+						setElementSelected(elements.find((el) => el.id === data[0].type))
+						setAbrevSelected(data[0].name.slice(0, quantitySlice))
+						setTypeSelected(data[0].type)
+						if (data[0].type === 3) {
+							setFeedSelected(data[0].feed)
+							const clients = data[0].clients.map((client, index) => ({
+								id: index + 1,
+								name: client.name,
+								meter: client.meter,
+								bd_id: client.id
+							}))
+							setNumberClients(clients)
+						}
+						const equipments = data[0].equipments.map((equipment, index) => ({
+							id: index + 1,
+							id_model: equipment.id_model,
+							serial: equipment.serial,
+							observation: equipment.observation,
+							configuration: equipment.configuration || 1,
+							bd_id: equipment.id
+						}))
+						setNumberEquipments(equipments)
+						setSelectMarkers([{ lat: data[0].lat, lng: data[0].lon }])
+					}
+				} catch (error) {
+					console.error('Error fetching element:', error)
+				}
+			}
+			fetchElement()
+		}
+	}, [elementId])
 	return (
 		<div className={'w-full flex justify-center items-center rounded-md text-black'}>
 			<CardCustom className={'w-full rounded-md text-black flex justify-center flex-wrap gap-y-3'}>
@@ -111,6 +190,8 @@ const Abm = () => {
 								handleChange(e)
 								setValue('type', e.target.value)
 							}}
+							value={typeSelected}
+							InputLabelProps={{ shrink: elementId || typeSelected ? true : false }}
 						>
 							{elements.map((element) => (
 								<MenuItem key={element.id} value={element.id}>
@@ -126,6 +207,7 @@ const Abm = () => {
 								select
 								value={abrevSelected || ''}
 								onChange={(e) => setAbrevSelected(e.target.value)}
+								InputLabelProps={{ shrink: elementId || abrevSelected ? true : false }}
 							>
 								{elementSelected?.abrev?.map((abrev) => (
 									<MenuItem key={abrev} value={abrev}>
@@ -138,52 +220,100 @@ const Abm = () => {
 								label='Matricula'
 								name='name'
 								{...register('name', { required: 'Nombre obligatorio' })}
+								InputLabelProps={{ shrink: shouldShrink(watch('name') || dataEdit.name), }}
 							/>
 							{errors.name && <p className='text-red-500'>{errors.name.message}</p>}
 						</div>
-						<div className='w-full md:w-1/3 '>
-							<TextField
-								className='w-full'
-								label='Descripción'
-								name='description'
-								onChange={handleChange}
-								{...register('description', { required: 'Campo obligatorio' })}
-							/>
-							{errors.description && <p className='text-red-500'>{errors.description.message}</p>}
-						</div>
+						{elementSelected?.id !== 3 && (
+							<div className='w-full md:w-1/3 '>
+								<TextField
+									className='w-full'
+									label='Descripción'
+									name='description'
+									onChange={handleChange}
+									{...register('description', { required: 'Campo obligatorio' })}
+									InputLabelProps={{ shrink: shouldShrink(watch('description') || dataEdit.description), }}
+								/>
+								{errors.description && <p className='text-red-500'>{errors.description.message}</p>}
+							</div>
+						)}
 						<div className='w-full md:w-1/3 '>
 							<TextField
 								className='w-full'
 								label='Potencia instalada'
 								name='power'
-								{...register('power', { required: 'Campo obligatorio' })}
+								{...register('power')}
+								InputLabelProps={{ shrink: shouldShrink(watch('power') || dataEdit.power), }}
 							/>
 							{errors.power && <p className='text-red-500'>{errors.power.message}</p>}
 						</div>
+						{elementSelected?.id === 3 && (
+							<div className='w-full md:w-1/3 '>
+								<TextField
+									className='w-full'
+									label='Tipo de alimentación'
+									name='feed'
+									select
+									{...register('feed', { required: 'El Campo es requerido' })}
+									onChange={(e) => {
+										setFeedSelected(e.target.value)
+									}}
+									value={feedSelected}
+								>
+									<MenuItem value={1}> Monofásica </MenuItem>
+									<MenuItem value={2}> Trifásica </MenuItem>
+								</TextField>
+								{errors.feed && <p className='text-red-500'>{errors.feed.message}</p>}
+							</div>
+						)}
 					</div>
 					<AddMarkerMap
 						register={register}
 						errors={errors}
-						dataEdit={[]}
+						dataEdit={dataEdit}
 						setSelectMarkers={setSelectMarkers}
 					/>
-					<div className='w-full flex my-5 items-center'>
-						<p className='text-start text-xl my-3'>Equipos</p>
-						<button type='button' onClick={handleNewEquipment} className='text-green-500'>
-							<FaPlusCircle size={25} />
-						</button>
-					</div>
-					<div className='w-full'>
-						{numberEquipments.map((equipment, index) => (
-							<Equipment
-								key={equipment.id}
-								data={equipment}
-								onChange={(field, value) => handleChangeEquipment(index, field, value)}
-								type={typeSelected}
-								handleDeleteEquipment={handleDeleteEquipment}
-							/>
-						))}
-					</div>
+					{elementSelected?.id !== 3 ? (
+						<>
+							<div className='w-full flex my-5 items-center'>
+								<p className='text-start text-xl my-3'>Equipos</p>
+								<button type='button' onClick={handleNewEquipment} className='text-green-500'>
+									<FaPlusCircle size={25} />
+								</button>
+							</div>
+							<div className='w-full'>
+								{numberEquipments.map((equipment, index) => (
+									<Equipment
+										key={equipment.id}
+										data={equipment}
+										onChange={(field, value) => handleChangeEquipment(index, field, value)}
+										type={typeSelected}
+										handleDeleteEquipment={handleDeleteEquipment}
+									/>
+								))}
+							</div>
+						</>
+					) : (
+						<>
+							<div className='w-full flex my-5 items-center'>
+								<p className='text-start text-xl my-3'>Clientes asociados</p>
+								<button type='button' onClick={handleNewClient} className='text-green-500'>
+									<FaPlusCircle size={25} />
+								</button>
+							</div>
+							<div className='w-full'>
+								{numberClients.map((client, index) => (
+									<SubstationClient
+										key={client.id}
+										data={client}
+										onChange={(field, value) => handleChangeClient(index, field, value)}
+										type={typeSelected}
+										handleDeleteClient={handleDeleteClient}
+									/>
+								))}
+							</div>
+						</>
+					)}
 					<div className='w-full flex justify-center mt-5'>
 						<button type='submit' className='bg-green-600 hover:bg-green-500 text-white rounded-md p-2'>
 							Guardar todo

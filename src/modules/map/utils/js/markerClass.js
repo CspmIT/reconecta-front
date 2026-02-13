@@ -40,9 +40,7 @@ export const blueIcon = (nro) =>
 		<span class="marcador_ubicacion_map" style="background: blue;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 		</span>
-			<p class="sing">
-				${nro}
-			</p>
+		${nro ? `<p class="sing">${nro}</p>` : ''}
 		</div>`,
 	})
 export const greenIcon = (nro) =>
@@ -56,13 +54,11 @@ export const greenIcon = (nro) =>
 		<span class="marcador_ubicacion_map" style="background: green;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 			<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 		</span>
-			<p class="sing">
-				${nro}
-			</p>
+		${nro ? `<p class="sing">${nro}</p>` : ''}
 		</div>`,
 		// html: `<span class="marcador_ubicacion_map" style="background: green;" ><span class="interior_marcador_map" ><a class="icono_marcador_user_map" style="font-size: 14px;"><i class="fas fa-wrench" style="color: black; font-size: 14px; margin-left: 4px;">${nro}</i></a></span></span>`,
 	})
-export const yellowIcon = (nro) =>
+export const yellowIcon = (nro, open) =>
 	new L.divIcon({
 		iconSize: [25, 41],
 		iconAnchor: [10, 20],
@@ -70,12 +66,12 @@ export const yellowIcon = (nro) =>
 		shadowSize: [41, 41],
 		className: 'leaflet-marker-icon-green',
 		html: `<div style="min-width: 3rem;min-height: 3rem;display: block;position: relative; color:black;font-size:15px;">
-				<span class="marcador_ubicacion_map" style="background: yellow;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
+				<span class="marcador_ubicacion_map ${
+					open ? 'greenblink' : 'blink'
+				}" style="background: yellow;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 				</span>
-					<p class="sing">
-						${nro}
-					</p>
+				${nro ? `<p class="sing">${nro}</p>` : ''}
 				</div>`,
 	})
 export const grayIcon = (nro) =>
@@ -89,9 +85,7 @@ export const grayIcon = (nro) =>
 				<span class="marcador_ubicacion_map" style="background: gray;border: 1px solid #00000069;box-shadow: 3px 1px 3px #000000a1;" >
 					<a class="icono_marcador_user_map" style="font-size: 14px;"></a>
 				</span>
-					<p class="sing">
-						${nro}
-					</p>
+					${nro ? `<p class="sing">${nro}</p>` : ''}
 				</div>`,
 	})
 
@@ -109,12 +103,15 @@ export const getIcon = (status, nro) => {
 			return grayIcon(nro)
 		case 4:
 			// Alerta
-			return greenIcon(nro)
+			return yellowIcon(nro, false)
 		case 5:
 			// En Mantenimiento
 			return workIcon()
+		case 6:
+			// Alerta en abierto
+			return yellowIcon(nro, true)
 		default:
-			return redIcon(nro) // valor predeterminado
+			return blueIcon(nro) // valor predeterminado
 	}
 }
 class markerCustom {
@@ -129,7 +126,8 @@ class markerCustom {
 			data: [],
 		},
 		alert = false,
-		recloser = []
+		recloser = [],
+		equipments = []
 	) {
 		this.id = id || ''
 		this.lat = lat
@@ -139,10 +137,11 @@ class markerCustom {
 		this.number = number
 		this.icon = getIcon(status, number)
 		this.recloser = recloser
+		this.equipments = equipments
 	}
 	async fetchInfo() {
 		try {
-			if (this.recloser.length > 0) {
+			/* if (this.recloser.length > 0) {
 				// Reemplaza la URL con la API o endpoint que necesites
 				const response = await request(
 					`${backend[`${import.meta.env.VITE_APP_NAME}`]}/metrologiaIntantanea?id=${
@@ -173,7 +172,7 @@ class markerCustom {
 					: 3
 				this.icon = getIcon(status, this.number)
 				this.alert = recloser?.data?.alarm || false
-			}
+			} */
 		} catch (error) {
 			console.error('Error al obtener la información del marcador:', error)
 		}

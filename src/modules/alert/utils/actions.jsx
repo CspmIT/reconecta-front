@@ -2,14 +2,13 @@ import Swal from 'sweetalert2'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 
-export const checkAlert = async (table, rowCriticos) => {
+export const checkAlert = async (table, rowCriticos, priority) => {
 	try {
 		const eventCheck = []
 		const { value: result } = await Swal.fire({
 			title: 'Atención!',
-			html: `¿Está seguro de que desea limpiar ${
-				!table.getState().globalFilter ? 'todas las alertas' : 'las alertas filtradas'
-			}  ?`,
+			html: `¿Está seguro de que desea limpiar ${!table.getState().globalFilter ? 'todas las alertas' : 'las alertas filtradas'
+				}  ?`,
 			icon: 'warning',
 			showCancelButton: true,
 			allowOutsideClick: false,
@@ -19,7 +18,8 @@ export const checkAlert = async (table, rowCriticos) => {
 			cancelButtonText: 'No, cancelar',
 		})
 		if (result) {
-			const changeRows = await rowCriticos.alta.map((row, index) => {
+			const rows = priority === 1 ? rowCriticos.alta : rowCriticos.baja
+			const changeRows = await rows.map((row, index) => {
 				if (!table.getState().globalFilter || table?.getRowModel()?.rows?.some((item) => item.index == index)) {
 					if (row.statusAlert) {
 						if (!eventCheck.some((item) => item.id_device == row.id_device)) {

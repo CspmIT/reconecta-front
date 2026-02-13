@@ -1,4 +1,4 @@
-export const ColumnsEvent = () => [
+export const ColumnsEvent = (handleChecked) => [
 	{
 		accessorFn: (originalRow) => originalRow.dateAlert,
 		size: 200,
@@ -7,6 +7,12 @@ export const ColumnsEvent = () => [
 		accessorKey: 'dateAlert',
 		filterVariant: 'date-range',
 		Cell: ({ cell }) => `${cell.getValue()}`,
+	},
+	{
+		header: 'ID',
+		accessorKey: 'idFile',
+		size: 20,
+		muiFilterTextFieldProps: { placeholder: 'ID' },
 	},
 	{
 		header: 'Evento',
@@ -19,4 +25,13 @@ export const ColumnsEvent = () => [
 		muiFilterTextFieldProps: { placeholder: 'Info adic.' },
 		enableColumnFilter: false,
 	},
+	{
+		header: 'Personalizado',
+		accessorKey: 'custom',
+		size: 150,
+		muiFilterTextFieldProps: { placeholder: 'Personalizado' },
+		Cell: ({ cell, row }) => (
+			<input className="w-5 h-5" type="checkbox" checked={cell.getValue()} onClick={() => handleChecked(row.original)} />
+		),
+	}
 ]

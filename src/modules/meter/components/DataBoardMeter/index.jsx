@@ -91,7 +91,7 @@ function DataBoardMeter() {
 		<div className='w-full rounded-xl p-3 bg-gray-200 dark:bg-gray-600 '>
 			<div className='flex flex-row relative justify-between mb-8'>
 				<div className='flex-grow flex justify-center'>
-					<h2 className='text-2xl'>Medidor</h2>
+					<h2 className='text-2xl'>{info?.name || 'Medidor'}</h2>
 				</div>
 				<div className='absolute right-2 top-8 md:top-0'>
 					<Button onClick={() => getDataMeter(info.id)} variant='contained' title='Recargar Datos'>

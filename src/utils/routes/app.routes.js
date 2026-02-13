@@ -1,23 +1,8 @@
 export const front = {
-	Cooptech:
-		import.meta.env.VITE_ENTORNO == 'local'
-			? 'https://dev.cooptech.com.ar'
-			: import.meta.env.VITE_ENTORNO == 'desarrollo'
-			? 'https://dev.cooptech.com.ar'
-			: 'https://cooptech.com.ar',
+	Cooptech: import.meta.env.VITE_ENTORNO == 'local' ? 'https://dev.cooptech.com.ar' : 'https://cooptech.com.ar',
 	'Oficina Virtual': 'https://oficinainterna.cooptech.com.ar',
-	Reconecta:
-		import.meta.env.VITE_ENTORNO == 'local'
-			? 'http://localhost:4000'
-			: import.meta.env.VITE_ENTORNO == 'desarrollo'
-			? 'https://devreconecta.cooptech.com.ar'
-			: 'https://reconecta.cooptech.com.ar',
-	'Mas Agua':
-		import.meta.env.VITE_ENTORNO == 'local'
-			? 'http://localhost:8082'
-			: import.meta.env.VITE_ENTORNO == 'desarrollo'
-			? 'https://masagua.cooptech.com.ar'
-			: 'https://masagua.cooptech.com.ar',
+	Reconecta: import.meta.env.VITE_ENTORNO == 'local' ? 'http://localhost:4000' : 'https://reconecta.cooptech.com.ar',
+	'Mas Agua': import.meta.env.VITE_ENTORNO == 'local' ? 'http://localhost:8082' : 'https://masagua.cooptech.com.ar',
 	Centinela: 'http://localhost:8082',
 	Cloud: 'http://localhost:8082',
 	Provision: 'http://localhost:8082',

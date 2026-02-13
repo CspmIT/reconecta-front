@@ -4,7 +4,7 @@ import styles from './styles.module.css'
 import { request } from '../../../../../utils/js/request'
 import { backend } from '../../../../../utils/routes/app.routes'
 
-const MetrologyBoard = ({ analyzer }) => {
+const MetrologyBoard = ({ analyzer, lastRegister }) => {
 	const [info, setInfo] = useState([])
 	const [loading, setLoading] = useState(true)
 	const getData = async () => {
@@ -15,6 +15,7 @@ const MetrologyBoard = ({ analyzer }) => {
 				serial: analyzer?.serial,
 			}
 			const { data } = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Analyzer`, 'POST', body)
+			lastRegister(data.time)
 			setInfo(data)
 			setLoading(false)
 		} catch (error) {

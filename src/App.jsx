@@ -19,7 +19,7 @@ import Board from './modules/recloser/views'
 import AbmEquipament from './modules/AbmEquipament/views'
 import ConfigMenu from './modules/ConfigMenu/view'
 import Profile from './modules/profile/views'
-import Notifications from './modules/ConfigNotifications/views/index'
+import Definitions from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
@@ -27,22 +27,34 @@ import Binnacle from './modules/Binnacle/views'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
+import AddConfigNotification from './modules/ConfigNotifications/views/add'
+import NotFound from './modules/NotFound'
+import AddChart from './modules/diagrams/views/addChart'
+import ConfigAlert from './modules/ConfigAlert/views'
+import { useUpdater } from './hooks/useUpdater'
+import { isTauri } from '@tauri-apps/api/core'
 import ConfigHardware from './modules/ConfigHardware/view'
 
 function App() {
+	// Updater tauri
+	const { checkForUpdates } = useUpdater()
+
 	const { darkMode } = useContext(MainContext)
 	const loginRoutes = [
 		{ path: '/login', element: <LoginApp /> },
 		{ path: '/ListClients', element: <ListClients /> },
 		{ path: '/ListClients/:action', element: <ListClients /> },
 		{ path: '/LoginCooptech/:token', element: <LoginCooptech /> },
+		{ path: '/*', element: <NotFound /> }
 	]
 	const userRoutes = [
-		{ path: '/*', element: <Home /> },
+		{ path: '/', element: <Home /> },
+		{ path: '/home', element: <Home /> },
 		{ path: '/Dashboard', element: <DashBoard /> },
 		{ path: '/map', element: <Map /> },
 		{ path: '/Alert', element: <Alert /> },
 		{ path: '/Diagram', element: <Diagrams /> },
+		{ path: '/AddChart', element: <AddChart /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/config/security', element: <ConfigSecurity /> },
@@ -54,12 +66,15 @@ function App() {
 		{ path: '/AbmDevice/:name', element: <AbmDevice /> },
 		{ path: '/AbmDevice/:name/:id', element: <AbmDevice /> },
 		{ path: '/profile', element: <Profile /> },
-		{ path: '/config/notifications', element: <Notifications /> },
+		{ path: '/config/definitions', element: <Definitions /> },
+		{ path: '/config/addDefinitions', element: <AddConfigNotification /> },
 		{ path: '/bitacora', element: <Binnacle /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },
+		{ path: '/EditElement/:elementId', element: <Abm /> },
 		{ path: '/Equipment', element: <Equipment /> },
 		{ path: '/Equipment/:id', element: <Equipment /> },
+		{ path: '/config/alert', element: <ConfigAlert /> }
 		{ path: '/config/hardware', element: <ConfigHardware /> }
 	]
 	//Incorporo el theme de mui
@@ -78,6 +93,12 @@ function App() {
 	useEffect(() => {
 		setTheme(!darkMode ? lightTheme : darkTheme)
 	}, [darkMode])
+
+	useEffect(() => {
+		if (isTauri()) {
+			checkForUpdates()
+		}
+	}, [])
 
 	return (
 		<BrowserRouter>
