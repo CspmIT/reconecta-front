@@ -15,6 +15,7 @@ import styles from '../utils/style.module.css'
 import { backend } from '../../../utils/routes/app.routes'
 import { getData, removeData, saveData } from '../../../storage/cookies-store'
 import LoaderComponent from '../../../components/Loader'
+import { GoogleLogin } from '@react-oauth/google'
 function LoginApp() {
 	const {
 		register,
@@ -111,6 +112,9 @@ function LoginApp() {
 			setImgApp(img)
 		}
 	}
+	const loginGoogle = async (data) => {
+		console.log(data)
+	}
 	useEffect(() => {
 		validateUser()
 	}, [])
@@ -180,6 +184,7 @@ function LoginApp() {
 									{!recovery ? 'Iniciar Sesion' : 'Recuperar contraseña'}
 								</Button>
 							</div>
+							<GoogleLogin onSuccess={response => loginGoogle(response)} onError={() => console.log('Login Failed')} />
 							{!recovery ? (
 								<div className='flex flex-row justify-center items-center'>
 									<p className='m-0'>¿Se te olvido la contraseña?</p>

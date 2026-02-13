@@ -12,7 +12,6 @@ import Map from './modules/map/views'
 import Alert from './modules/alert/views'
 import Diagrams from './modules/diagrams/views'
 import TabDinamic from './modules/tabs/views'
-import Notification from './modules/Notification'
 import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/views'
@@ -59,7 +58,6 @@ function App() {
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/config/security', element: <ConfigSecurity /> },
 		{ path: '/config/menu', element: <ConfigMenu /> },
-		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/Abm/:name', element: <AbmEquipament /> },
 		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
@@ -74,7 +72,7 @@ function App() {
 		{ path: '/EditElement/:elementId', element: <Abm /> },
 		{ path: '/Equipment', element: <Equipment /> },
 		{ path: '/Equipment/:id', element: <Equipment /> },
-		{ path: '/config/alert', element: <ConfigAlert /> }
+		{ path: '/config/alert', element: <ConfigAlert /> },
 		{ path: '/config/hardware', element: <ConfigHardware /> }
 	]
 	//Incorporo el theme de mui
