@@ -46,7 +46,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
     const [allElements, setAllElements] = useState([]) // Para guardar todos los elementos y no perder el estado al filtrar
     const [page, setPage] = useState(0)
     const [rowsPerPage, setRowsPerPage] = useState(25)
-    const headers = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", ""]
+    const headers = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", "Alimentación", "Modo", ""]
     const borderClasses = {
         0: "border-l-green-600",
         1: "border-l-amber-600",
@@ -214,6 +214,24 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                                 {row.power}
                                             </StyledTableCell>
                                         )}
+                                        {filtersColumns[8] && (
+                                            <StyledTableCell >
+                                                {equipment.equipmentmodels.type === 1 && (
+                                                    <span className='flex items-center gap-x-2'>
+                                                        {equipment.influxData["ac"]?.[0]?.value === 1 ? "Red Electrica" : equipment.influxData["ac"]?.[0]?.value === 0 ? "Batería" : "Desconocido"}
+                                                    </span>
+                                                )}
+                                            </StyledTableCell>
+                                        )}
+                                        {filtersColumns[9] && (
+                                            <StyledTableCell >
+                                                {equipment.equipmentmodels.type === 1 && (
+                                                    <span className='flex items-center gap-x-2'>
+                                                        {equipment.influxData["local"]?.[0]?.value === 1 ? "Local" : equipment.influxData["local"]?.[0]?.value === 0 ? "Remoto" : "Desconocido"}
+                                                    </span>
+                                                )}
+                                            </StyledTableCell>
+                                        )}
                                         <StyledTableCell align='center'>
                                             <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
                                         </StyledTableCell>
@@ -267,6 +285,20 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         {index === 0 && filtersColumns[7] && (
                                             <StyledTableCell rowSpan={row.clients.length}>
                                                 {row.power}
+                                            </StyledTableCell>
+                                        )}
+                                        {filtersColumns[8] && (
+                                            <StyledTableCell>
+                                                <span className='flex items-center gap-x-2'>
+                                                    -
+                                                </span>
+                                            </StyledTableCell>
+                                        )}
+                                        {filtersColumns[9] && (
+                                            <StyledTableCell>
+                                                <span className='flex items-center gap-x-2'>
+                                                    -
+                                                </span>
                                             </StyledTableCell>
                                         )}
                                         {index === 0 && (
