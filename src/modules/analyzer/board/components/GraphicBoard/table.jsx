@@ -58,6 +58,8 @@ const TableBoard = ({ tab, analyzer }) => {
 				hide
 				sort
 				pagination
+				exportPdf
+				exportExcel
 			/>
 		</div>
 	)

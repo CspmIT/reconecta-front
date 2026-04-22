@@ -12,7 +12,6 @@ import Map from './modules/map/views'
 import Alert from './modules/alert/views'
 import Diagrams from './modules/diagrams/views'
 import TabDinamic from './modules/tabs/views'
-import Notification from './modules/Notification'
 import Home from './modules/home/views'
 import './App.css'
 import Board from './modules/recloser/views'
@@ -23,7 +22,7 @@ import Definitions from './modules/ConfigNotifications/views/index'
 import ConfigSecurity from './modules/configSecurity/views'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
-import Binnacle from './modules/Binnacle'
+import Binnacle from './modules/Binnacle/views'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
@@ -33,6 +32,7 @@ import AddChart from './modules/diagrams/views/addChart'
 import ConfigAlert from './modules/ConfigAlert/views'
 import { useUpdater } from './hooks/useUpdater'
 import { isTauri } from '@tauri-apps/api/core'
+import ConfigHardware from './modules/ConfigHardware/view'
 
 function App() {
 	// Updater tauri
@@ -58,7 +58,6 @@ function App() {
 		{ path: '/tabs', element: <TabDinamic /> },
 		{ path: '/config/security', element: <ConfigSecurity /> },
 		{ path: '/config/menu', element: <ConfigMenu /> },
-		{ path: '/notificaciones', element: <Notification /> },
 		{ path: '/board/:id', element: <Board /> },
 		{ path: '/Abm/:name', element: <AbmEquipament /> },
 		{ path: '/Abm/:name/:id', element: <AbmEquipament /> },
@@ -73,7 +72,8 @@ function App() {
 		{ path: '/EditElement/:elementId', element: <Abm /> },
 		{ path: '/Equipment', element: <Equipment /> },
 		{ path: '/Equipment/:id', element: <Equipment /> },
-		{ path: '/config/alert', element: <ConfigAlert /> }
+		{ path: '/config/alert', element: <ConfigAlert /> },
+		{ path: '/config/hardware', element: <ConfigHardware /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({
