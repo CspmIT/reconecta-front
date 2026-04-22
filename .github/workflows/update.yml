@@ -51,5 +51,5 @@ jobs:
               with:
                   tagName: v__VERSION__
                   releaseName: 'Reconecta v__VERSION__'
-                  releaseBody: 'Fix unidades de medida reconectadores'
+                  releaseBody: 'Campos añadidos en tabla general'
                   prerelease: false
