@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import BinnacleList from '../Components/List';
 import BinnacleAdd from '../Components/Add';
+import CardCustom from '../../../components/CardCustom';
+import { FormLabel } from '@mui/material';
 
 const Binnacle = () => {
   const [view, setView] = useState(0);
@@ -13,8 +15,12 @@ const Binnacle = () => {
 
   return (
     <>
-      {view === 0 && <BinnacleList changeView={handleViewChange} />}
-      {view === 1 && <BinnacleAdd changeView={setView} id={recordId} />}	
+      {/* {view === 0 && <BinnacleList changeView={handleViewChange} />}
+      {view === 1 && <BinnacleAdd changeView={setView} id={recordId} />}	 */}
+      <CardCustom className={' text-black flex flex-col p-4 w-full'}>
+        <FormLabel className='w-full text-center !text-3xl'>Bitácora</FormLabel>
+        <FormLabel className='w-full text-center !text-xl mt-3'>En Desarrollo...</FormLabel>
+      </CardCustom>
     </>
   );
 };
