@@ -10,7 +10,7 @@ import DropdownCheckbox from './dropdownCheckbox'
 function TabsHome({ newTab }) {
 	const [filters, setFilters] = useState([true, true, true, true, true, true]) // Por defecto dejo todos los checks seleccionados
 	const [filtersEquipments, setFiltersEquipments] = useState([true, true, true, true]) // Reconectadores, medidores, analizadores de red
-	const [filtersColumns, setFiltersColumns] = useState([true, true, true, true, true, true, true, true, true])
+	const [filtersColumns, setFiltersColumns] = useState([true, true, true, true, true, true, true, true, true, true, true, true])
 	const [showSelectChecks, setShowSelectChecks] = useState(false)
 	const [elementSelected, setElementSelected] = useState(null)
 	const [searchValue, setSearchValue] = useState('')
@@ -127,6 +127,8 @@ function TabsHome({ newTab }) {
 							{ value: 5, label: 'Latitud' },
 							{ value: 6, label: 'Longitud' },
 							{ value: 7, label: 'Potencia' },
+							{ value: 8, label: 'Alimentación' },
+							{ value: 9, label: 'Modo' },
 						]}
 						values={filtersColumns}
 						onToggle={handleCheckedColumns}
@@ -201,6 +203,14 @@ function TabsHome({ newTab }) {
 							<label className='flex items-center my-2'>
 								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[7]} onClick={() => handleCheckedColumns(7)} />
 								<b className='text-black dark:text-white'>Potencia</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[8]} onClick={() => handleCheckedColumns(8)} />
+								<b className='text-black dark:text-white'>Alimentación</b>
+							</label>
+							<label className='flex items-center my-2'>
+								<input type='checkbox' className='mr-2 !w-6 !h-6' checked={filtersColumns[9]} onClick={() => handleCheckedColumns(9)} />
+								<b className='text-black dark:text-white'>Modo</b>
 							</label>
 						</div>
 					)}
