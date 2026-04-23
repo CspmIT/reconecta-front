@@ -51,5 +51,5 @@ jobs:
               with:
                   tagName: v__VERSION__
                   releaseName: 'Reconecta v__VERSION__'
-                  releaseBody: 'Campos añadidos en tabla general'
+                  releaseBody: 'Optimizacion tabla general'
                   prerelease: false
