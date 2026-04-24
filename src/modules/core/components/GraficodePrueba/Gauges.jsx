@@ -1,12 +1,8 @@
 import React from 'react'
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import HighchartsMore from 'highcharts/highcharts-more'
-import SolidGauge from 'highcharts/modules/solid-gauge'
-
-// Inicializar HighchartsMore y SolidGauge
-HighchartsMore(Highcharts)
-SolidGauge(Highcharts)
+import 'highcharts/highcharts-more'
+import 'highcharts/modules/solid-gauge'
 
 const Gauges = () => {
     const options = {

@@ -1,6 +1,6 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import HighchartsMore from 'highcharts/highcharts-more'
+import "highcharts/highcharts-more";
 import TableCustom from '../../../../../../components/TableCustom'
 import { columns } from './utils/columnsTable'
 import Swal from 'sweetalert2'
@@ -11,7 +11,6 @@ import { backend } from '../../../../../../utils/routes/app.routes'
 import { formatterDateTableFasorial, getFasorial2 } from './utils/actions'
 import LoaderComponent from '../../../../../../components/Loader'
 
-HighchartsMore(Highcharts)
 function Fasorial({ info }) {
 	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
@@ -21,8 +20,7 @@ function Fasorial({ info }) {
 		try {
 			setIsLoading(true)
 			const meter = await request(
-				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getMetrologyVI?serial=${info.serial}&version=${
-					info.version
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getMetrologyVI?serial=${info.serial}&version=${info.version
 				}&brand=${info.brand}`,
 				'GET'
 			)
@@ -32,7 +30,6 @@ function Fasorial({ info }) {
 			setdataTable(formatterDateTableFasorial(meter.data))
 			setIsLoading(false)
 		} catch (error) {
-			console.error(error)
 			Swal.fire({
 				title: 'Atención!',
 				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,

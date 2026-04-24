@@ -1,7 +1,6 @@
 import Highcharts from 'highcharts'
 import HighchartsReact from 'highcharts-react-official'
-import HighchartsAccessibility from 'highcharts/modules/accessibility'
-HighchartsAccessibility(Highcharts)
+import 'highcharts/modules/accessibility'
 import { useContext, useEffect } from 'react'
 import { MainContext } from '../../../context/MainContext'
 function GrafTensiones({ data, title }) {

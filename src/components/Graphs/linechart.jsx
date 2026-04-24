@@ -2,11 +2,9 @@ import HighchartsReact from 'highcharts-react-official'
 import Highcharts from 'highcharts'
 import React, { useContext } from 'react'
 import { MainContext } from '../../context/MainContext'
-import Exporting from 'highcharts/modules/exporting'
-import OfflineExporting from 'highcharts/modules/offline-exporting'
+import 'highcharts/modules/exporting'
+import 'highcharts/modules/offline-exporting'
 
-Exporting(Highcharts)
-OfflineExporting(Highcharts)
 const GrafLinea = ({ ...props }) => {
 	const { darkMode } = useContext(MainContext)
 	let ticksGraf = new Array()
