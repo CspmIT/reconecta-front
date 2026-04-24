@@ -6,14 +6,14 @@ import ButtonAddElement from '../ButtonAddElement'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import DropdownCheckbox from './dropdownCheckbox'
-import OPTIONS from '../../utils/dataTables/tabHome'
+import { NODE_OPTIONS, EQUIPMENT_OPTIONS, COLUMN_OPTIONS, DEFAULT_FILTERS, DEFAULT_EQUIPMENT_FILTERS, DEFAULT_COLUMN_FILTERS } from '../../utils/dataTables/tabHome'
 import MobileCheckGroup from './MobileCheckGroup'
 
 
 function TabsHome({ newTab }) {
-	const [filters, setFilters] = useState(OPTIONS.DEFAULT_FILTERS)
-	const [filtersEquipments, setFiltersEquipments] = useState(OPTIONS.DEFAULT_EQUIPMENT_FILTERS)
-	const [filtersColumns, setFiltersColumns] = useState(OPTIONS.DEFAULT_COLUMN_FILTERS)
+	const [filters, setFilters] = useState(DEFAULT_FILTERS)
+	const [filtersEquipments, setFiltersEquipments] = useState(DEFAULT_EQUIPMENT_FILTERS)
+	const [filtersColumns, setFiltersColumns] = useState(DEFAULT_COLUMN_FILTERS)
 	const [showSelectChecks, setShowSelectChecks] = useState(false)
 	const [searchInput, setSearchInput] = useState('')
 	const [searchValue, setSearchValue] = useState('')
@@ -29,9 +29,9 @@ function TabsHome({ newTab }) {
 			try {
 				const { data } = await request(`${backend.Reconecta}/UserChecksHome`, 'GET')
 				if (cancelled || !data?.length) return
-				const nextFilters = [...OPTIONS.DEFAULT_FILTERS]
-				const nextEquipments = [...OPTIONS.DEFAULT_EQUIPMENT_FILTERS]
-				const nextColumns = [...OPTIONS.DEFAULT_COLUMN_FILTERS]
+				const nextFilters = [...DEFAULT_FILTERS]
+				const nextEquipments = [...DEFAULT_EQUIPMENT_FILTERS]
+				const nextColumns = [...DEFAULT_COLUMN_FILTERS]
 				data.forEach((item) => {
 					switch (item.type) {
 						case 1: nextFilters[item.check] = false; break
@@ -90,9 +90,9 @@ function TabsHome({ newTab }) {
 						label='Buscar registro'
 						variant='outlined'
 					/>
-					<DropdownCheckbox title="Nodos" options={OPTIONS.NODE_OPTIONS} values={filters} onToggle={handleChecked} />
-					<DropdownCheckbox title="Equipos" options={OPTIONS.EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
-					<DropdownCheckbox title="Columnas" options={OPTIONS.COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
+					<DropdownCheckbox title="Nodos" options={NODE_OPTIONS} values={filters} onToggle={handleChecked} />
+					<DropdownCheckbox title="Equipos" options={EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
+					<DropdownCheckbox title="Columnas" options={COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
 				</div>
 				<div className='flex w-3/12 sm:w-1/12 justify-end relative mb-3 gap-x-2'>
 					<Fab
@@ -104,9 +104,9 @@ function TabsHome({ newTab }) {
 					</Fab>
 					{showSelectChecks && (
 						<div className='bg-white dark:bg-zinc-500 p-5 border-2 w-80 border-gray-200 dark:border-gray-700 absolute top-12 right-0 z-10'>
-							<MobileCheckGroup title='Nodos' options={OPTIONS.NODE_OPTIONS} values={filters} onToggle={handleChecked} />
-							<MobileCheckGroup title='Equipos' options={OPTIONS.EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
-							<MobileCheckGroup title='Columnas' options={OPTIONS.COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
+							<MobileCheckGroup title='Nodos' options={NODE_OPTIONS} values={filters} onToggle={handleChecked} />
+							<MobileCheckGroup title='Equipos' options={EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
+							<MobileCheckGroup title='Columnas' options={COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
 						</div>
 					)}
 					<ButtonAddElement />

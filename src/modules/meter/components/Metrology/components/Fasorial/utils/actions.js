@@ -1,6 +1,7 @@
 import Highcharts from 'highcharts'
 
 export const getFasorial2 = async (data) => {
+	console.log(data)
 	const CT_0 = data.VI.CT_0.value
 	const CT_1 = data.VI.CT_1.value
 	const VT_0 = data.VI.VT_0.value
@@ -68,7 +69,7 @@ export const getFasorial2 = async (data) => {
 					num_control = number_graf[0]
 				}
 				if (
-					puntos[i].yData[1] == num_control &&
+					puntos[i].getColumn('y')[1] == num_control &&
 					(puntos[i].name == 'I1' ||
 						puntos[i].name == 'I2' ||
 						puntos[i].name == 'I3' ||
