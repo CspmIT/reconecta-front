@@ -1,6 +1,6 @@
 import { Fab, TextField } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
-import { Checklist } from '@mui/icons-material'
+import { Checklist, Search } from '@mui/icons-material'
 import TableGeneral from '../TableGeneral'
 import ButtonAddElement from '../ButtonAddElement'
 import { request } from '../../../../utils/js/request'
@@ -8,6 +8,7 @@ import { backend } from '../../../../utils/routes/app.routes'
 import DropdownCheckbox from './dropdownCheckbox'
 import { NODE_OPTIONS, EQUIPMENT_OPTIONS, COLUMN_OPTIONS, DEFAULT_FILTERS, DEFAULT_EQUIPMENT_FILTERS, DEFAULT_COLUMN_FILTERS } from '../../utils/dataTables/tabHome'
 import MobileCheckGroup from './MobileCheckGroup'
+import CardDashboard from '../CardDashboard/CardDashboard'
 
 
 function TabsHome({ newTab }) {
@@ -15,6 +16,7 @@ function TabsHome({ newTab }) {
 	const [filtersEquipments, setFiltersEquipments] = useState(DEFAULT_EQUIPMENT_FILTERS)
 	const [filtersColumns, setFiltersColumns] = useState(DEFAULT_COLUMN_FILTERS)
 	const [showSelectChecks, setShowSelectChecks] = useState(false)
+	const [showSearch, setShowSearch] = useState(false)
 	const [searchInput, setSearchInput] = useState('')
 	const [searchValue, setSearchValue] = useState('')
 
@@ -82,22 +84,33 @@ function TabsHome({ newTab }) {
 	return (
 		<div className={`w-full !rounded-xl flex flex-col items-start`}>
 			<div className='bg-white dark:bg-zinc-500 w-full h-full flex justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700 flex-wrap'>
-				<div className='w-9/12 sm:w-11/12 flex justify-start items-center sm:justify-between mb-3'>
+				<div className='w-4/6 sm:w-11/12 flex justify-start items-center sm:justify-between mb-3'>
 					<TextField
 						value={searchInput}
 						onChange={(e) => setSearchInput(e.target.value)}
-						className='w-5/6 md:w-1/2'
+						className='!hidden md:!inline-flex w-5/6 md:w-1/2'
 						label='Buscar registro'
 						variant='outlined'
 					/>
+
+					<div className='md:hidden w-full flex justify-center items-center gap-x-1'>
+						<CardDashboard />
+					</div>
 					<DropdownCheckbox title="Nodos" options={NODE_OPTIONS} values={filters} onToggle={handleChecked} />
 					<DropdownCheckbox title="Equipos" options={EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
 					<DropdownCheckbox title="Columnas" options={COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
 				</div>
-				<div className='flex w-3/12 sm:w-1/12 justify-end relative mb-3 gap-x-2'>
+				<div className='flex w-2/6 sm:w-1/12 justify-end relative mb-3 gap-x-2'>
 					<Fab
 						size='small'
-						className='md:!hidden !flex !justify-center !items-center ml-3'
+						className='md:!hidden !flex !justify-center !items-center'
+						onClick={() => setShowSearch((v) => !v)}
+					>
+						<Search />
+					</Fab>
+					<Fab
+						size='small'
+						className='md:!hidden !flex !justify-center !items-center'
 						onClick={() => setShowSelectChecks((v) => !v)}
 					>
 						<Checklist />
@@ -111,6 +124,15 @@ function TabsHome({ newTab }) {
 					)}
 					<ButtonAddElement />
 				</div>
+				{showSearch && (
+					<TextField
+						value={searchInput}
+						onChange={(e) => setSearchInput(e.target.value)}
+						className='md:!hidden w-full mb-3'
+						label='Buscar registro'
+						variant='outlined'
+					/>
+				)}
 				<TableGeneral
 					filters={filters}
 					filtersEquipments={filtersEquipments}
