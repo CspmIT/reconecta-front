@@ -1,4 +1,5 @@
 import { Typography, useMediaQuery } from '@mui/material'
+import { useEffect, useState } from 'react'
 
 const COLOR_CLASSES = {
 	yellow: 'text-yellow-400',
@@ -19,10 +20,26 @@ function CardsInfo({ title, infoData, colorTitle }) {
 	const colorClass = COLOR_CLASSES[colorTitle] ?? DEFAULT_COLOR
 	const colorClassMobile = COLOR_CLASSES_MOBILE[colorTitle] ?? DEFAULT_COLOR_MOBILE
 	const isMobile = useMediaQuery('(max-width: 600px)')
+	const [showTooltip, setShowTooltip] = useState(false)
+
+	useEffect(() => {
+		if (!showTooltip) return
+		const t = setTimeout(() => setShowTooltip(false), 3000)
+		return () => clearTimeout(t)
+	}, [showTooltip])
+
 	if (isMobile) {
 		return (
-			<div title={infoData} className={`flex justify-center items-center border ${colorClassMobile} py-2 px-3 rounded-md`}>
+			<div
+				className={`relative select-none flex justify-center items-center border ${colorClassMobile} py-2 px-3 rounded-md cursor-pointer`}
+				onClick={() => setShowTooltip((v) => !v)}
+			>
 				{infoData}
+				{showTooltip && (
+					<div className='absolute -top-9 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 shadow-md'>
+						{title}
+					</div>
+				)}
 			</div>
 		)
 	}

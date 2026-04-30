@@ -84,7 +84,7 @@ function TabsHome({ newTab }) {
 	return (
 		<div className={`w-full !rounded-xl flex flex-col items-start`}>
 			<div className='bg-white dark:bg-zinc-500 w-full h-full flex justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700 flex-wrap'>
-				<div className='w-4/6 sm:w-11/12 flex justify-start items-center sm:justify-between mb-3'>
+				<div className='flex-1 min-w-0 sm:flex-none sm:w-11/12 flex justify-start items-center sm:justify-between mb-3'>
 					<TextField
 						value={searchInput}
 						onChange={(e) => setSearchInput(e.target.value)}
@@ -93,14 +93,14 @@ function TabsHome({ newTab }) {
 						variant='outlined'
 					/>
 
-					<div className='md:hidden w-full flex justify-center items-center gap-x-1'>
+					<div className='md:hidden w-full flex flex-wrap justify-center items-center gap-1'>
 						<CardDashboard />
 					</div>
 					<DropdownCheckbox title="Nodos" options={NODE_OPTIONS} values={filters} onToggle={handleChecked} />
 					<DropdownCheckbox title="Equipos" options={EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
 					<DropdownCheckbox title="Columnas" options={COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
 				</div>
-				<div className='flex w-2/6 sm:w-1/12 justify-end relative mb-3 gap-x-2'>
+				<div className='flex shrink-0 sm:w-1/12 justify-end relative mb-3 gap-x-2'>
 					<Fab
 						size='small'
 						className='md:!hidden !flex !justify-center !items-center'
