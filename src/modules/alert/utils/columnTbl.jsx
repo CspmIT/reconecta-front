@@ -2,7 +2,6 @@ import { Close, Info } from '@mui/icons-material'
 import { Box, IconButton, Modal, Typography } from '@mui/material'
 import { useState } from 'react'
 
-const eventsList = ['Bloqueo', 'Apertura']
 export const columnsCriticos = [
 	{
 		accessorFn: (originalRow) => new Date(originalRow.dateAlert), //convert to date for sorting and filtering
@@ -21,10 +20,10 @@ export const columnsCriticos = [
 	},
 	{
 		header: 'Matricula',
-		accessorKey: 'nro_recloser',
+		accessorKey: 'name',
 		muiFilterTextFieldProps: { placeholder: 'Matricula' },
 		muiTableHeadCellProps: {
-			style: { minWidth: '5vw', maxWidth: '5vw', textWrap: 'wrap' },
+			style: { minWidth: '6vw', maxWidth: '6vw', textWrap: 'wrap' },
 		},
 		muiTableBodyCellProps: {
 			style: { minWidth: '1vw', maxWidth: '2vw', textWrap: 'wrap' },
@@ -32,10 +31,11 @@ export const columnsCriticos = [
 	},
 	{
 		header: 'Nombre',
-		accessorKey: 'name',
+		accessorKey: 'observation',
+		mobileJoinPrev: ' - ',
 		muiFilterTextFieldProps: { placeholder: 'Nombre' },
 		muiTableHeadCellProps: {
-			style: { minWidth: '6vw', maxWidth: '6vw', textWrap: 'wrap' },
+			style: { minWidth: '5vw', maxWidth: '5vw', textWrap: 'wrap' },
 		},
 		muiTableBodyCellProps: {
 			style: { minWidth: '1vw', maxWidth: '2vw', textWrap: 'wrap' },
@@ -45,6 +45,7 @@ export const columnsCriticos = [
 		header: 'Evento',
 		accessorKey: 'event',
 		muiFilterTextFieldProps: { placeholder: 'Evento' },
+		mobileLineClamp: 1,
 		Cell: ({ row }) => {
 			const [open, setOpen] = useState(false)
 
@@ -101,5 +102,6 @@ export const columnsCriticos = [
 		accessorKey: 'infoAdd',
 		muiFilterTextFieldProps: { placeholder: 'Info adic.' },
 		enableColumnFilter: false,
+		mobileHidden: true,
 	},
 ]
