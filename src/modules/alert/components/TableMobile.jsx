@@ -34,12 +34,12 @@ const ClampedCell = ({ children, lines }) => {
 					open
 						? { wordBreak: 'break-word' }
 						: {
-								display: '-webkit-box',
-								WebkitLineClamp: lines,
-								WebkitBoxOrient: 'vertical',
-								overflow: 'hidden',
-								wordBreak: 'break-word',
-						  }
+							display: '-webkit-box',
+							WebkitLineClamp: lines,
+							WebkitBoxOrient: 'vertical',
+							overflow: 'hidden',
+							wordBreak: 'break-word'
+						}
 				}
 			>
 				{children}
@@ -150,7 +150,7 @@ const TableMobile = ({ data = [], columns = [], ...prop }) => {
 						>
 							<CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
 								{baseGroups.map((group, gi) => (
-									<Box key={gi} sx={{ py: 0.5, wordBreak: 'break-word' }}>
+									<Box key={gi} sx={{ py: 0.5, wordBreak: 'break-word', fontSize: '14px' }}>
 										{group.map(({ col, sep }, ci) => {
 											const content = renderCell(col, row, index)
 											return (
