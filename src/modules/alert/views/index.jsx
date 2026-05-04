@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import CardCustom from '../../../components/CardCustom'
 import TableCustom from '../../../components/TableCustom'
+import TableMobile from '../components/TableMobile'
 import { columnsCriticos } from '../utils/columnTbl'
-import { FormLabel } from '@mui/material'
+import { FormLabel, useMediaQuery } from '@mui/material'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { request } from '../../../utils/js/request'
@@ -14,6 +15,8 @@ function Alert() {
 	const [isLoading, setIsLoading] = useState(true)
 	const [rowCriticos, setRowCriticos] = useState({ alta: [], baja: [] })
 	const [bottonCheck, setBottonCheck] = useState([false, false])
+	const isMobile = useMediaQuery('(max-width:480px)')
+	const Table = isMobile ? TableMobile : TableCustom
 	const ChangeColorRow = (row) => {
 		return row.original.statusAlert === 1
 	}
@@ -59,7 +62,7 @@ function Alert() {
 								<div className='relative flex justify-between items-center mb-4'>
 									<FormLabel className='w-full text-center !text-2xl'>Evento Criticos</FormLabel>
 								</div>
-								<TableCustom
+								<Table
 									getPage={checkAlertCriticas}
 									data={rowCriticos.alta}
 									columns={columnsCriticos}
@@ -86,7 +89,7 @@ function Alert() {
 								<div className='relative flex justify-between items-center mb-4'>
 									<FormLabel className='w-full text-center !text-2xl'>Otros Eventos</FormLabel>
 								</div>
-								<TableCustom
+								<Table
 									getPage={checkAlertCriticas}
 									data={rowCriticos.baja}
 									columns={columnsCriticos}
