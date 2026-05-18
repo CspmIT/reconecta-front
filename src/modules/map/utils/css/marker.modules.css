@@ -120,10 +120,22 @@
 		background-color: #f1c40f;
 	}
 }
+@keyframes grayblink {
+	0%,
+	100% {
+		background-color: #a7a7a7;
+	}
+	50% {
+		background-color: #f1c40f;
+	}
+}
 
 .blink {
 	animation: blink 1.3s infinite;
 }
 .greenblink {
 	animation: greenblink 1.3s infinite;
+}
+.grayblink {
+	animation: grayblink 1.3s infinite;
 }
