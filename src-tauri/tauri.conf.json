@@ -38,7 +38,7 @@
 	"plugins": {
 		"updater": {
 			"active": true,
-			"endpoints": ["https://github.com/CspmIT/reconecta-front/releases/latest/download/latest.json"],
+			"endpoints": ["https://storageov.cooptech.com.ar/releases/latest.json"],
 			"dialog": true,
 			"pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IENFOUE0OEYyMDA5NDkyNEQKUldSTmtwUUE4a2lhenBraVNOd2cwOU1ZbkxWdVJTU0lEbUZiTkp0VTFRenhtdndVZ1VwUlQ4OG0K"
 		}
