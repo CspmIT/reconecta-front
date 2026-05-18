@@ -11,10 +11,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { request } from '../../../../utils/js/request';
 import { backend } from '../../../../utils/routes/app.routes';
 import LoadingTable from '../../../../components/LoadingTable';
-import { Fab, TableFooter, TablePagination } from '@mui/material';
+import { Fab, TableFooter, TablePagination, useMediaQuery } from '@mui/material';
 import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa';
 import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import MobileList from './MobileList';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -54,6 +55,7 @@ const PLACEHOLDER_EQUIPMENT = [{
 
 export default function TableGeneral({ filters, filtersEquipments, filtersColumns, setElementSelected, searchValue }) {
     const navigate = useNavigate()
+    const isMobile = useMediaQuery('(max-width: 600px)')
     const [loading, setLoading] = useState(true)
     const [allElements, setAllElements] = useState([])
     const [page, setPage] = useState(0)
@@ -137,188 +139,210 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
         () => elements.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
         [elements, page, rowsPerPage]
     )
+    if (loading) return <LoadingTable />
+
+    if (isMobile) {
+        return (
+            <div className='w-full flex flex-col text-black dark:text-white'>
+                <MobileList
+                    elementsFiltered={elementsFiltered}
+                    filtersColumns={filtersColumns}
+                    handleSelected={handleSelected}
+                />
+                <TablePagination
+                    component='div'
+                    count={elements.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    labelRowsPerPage='Cantidad de nodos'
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                />
+            </div>
+        )
+    }
+
     return (
-        loading ? <LoadingTable /> :
-            <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                    <TableHead>
-                        <TableRow>
-                            {HEADERS.map((header, index) => (
-                                filtersColumns[index] && <StyledTableCell key={index}>{header}</StyledTableCell>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {elementsFiltered.map((row) =>
-                            row.type !== 3 ?
-                                row.equipments.map((equipment, index) => (
-                                    <StyledTableRow key={`${row.id}-${index}`}>
-                                        {index === 0 && (
-                                            <StyledTableCell rowSpan={row.equipments.length} className='min-w-96'>
-                                                <div className='w-full flex'>
-                                                    <div className='w-11/12'>
-                                                        {row.name} <br /> {row.description}
-                                                    </div>
-                                                    <div className='w-1/12'>
-                                                        <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
-                                                            <FaPen />
-                                                        </Fab>
-                                                    </div>
+        <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableHead>
+                    <TableRow>
+                        {HEADERS.map((header, index) => (
+                            filtersColumns[index] && <StyledTableCell key={index}>{header}</StyledTableCell>
+                        ))}
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {elementsFiltered.map((row) =>
+                        row.type !== 3 ?
+                            row.equipments.map((equipment, index) => (
+                                <StyledTableRow key={`${row.id}-${index}`}>
+                                    {index === 0 && (
+                                        <StyledTableCell rowSpan={row.equipments.length} className='min-w-96'>
+                                            <div className='w-full flex'>
+                                                <div className='w-11/12'>
+                                                    {row.name} <br /> {row.description}
                                                 </div>
-                                            </StyledTableCell>
-                                        )}
-                                        <StyledTableCell className={`${BORDER_CLASSES[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
-                                        {filtersColumns[2] && (
-                                            <StyledTableCell>{equipment.serial}</StyledTableCell>
-                                        )}
-                                        {filtersColumns[3] && (
-                                            <StyledTableCell >
-                                                {equipment.equipmentmodels.type === 1 && (
-                                                    <span className='flex items-center gap-x-2'>
-                                                        <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
-                                                        {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Desconocido"}
-                                                    </span>
-                                                )}
-                                            </StyledTableCell>
-                                        )}
-                                        {filtersColumns[4] && (
-                                            <StyledTableCell>
-                                                <span className='flex items-center gap-x-2'>
-                                                    {equipment.influxData?.["d/c"] ? (
-                                                        <>
-                                                            <FaCheckCircle size={20} className='text-green-700' /> Online
-                                                        </>
-                                                    ) : (<>
-                                                        <FaTimes size={20} className='text-red-700' /> Sin señal
-                                                    </>)}
-                                                </span>
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && filtersColumns[5] && (
-                                            <StyledTableCell rowSpan={row.equipments.length}>
-                                                {row.lat}
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && filtersColumns[6] && (
-                                            <StyledTableCell rowSpan={row.equipments.length}>
-                                                {row.lon}
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && filtersColumns[7] && (
-                                            <StyledTableCell rowSpan={row.equipments.length}>
-                                                {row.power}
-                                            </StyledTableCell>
-                                        )}
-                                        {filtersColumns[8] && (
-                                            <StyledTableCell >
-                                                {equipment.equipmentmodels.type === 1 && (
-                                                    <span className='flex items-center gap-x-2'>
-                                                        {equipment.influxData["ac"]?.[0]?.value === 1 ? "Red Electrica" : equipment.influxData["ac"]?.[0]?.value === 0 ? "Batería" : "Desconocido"}
-                                                    </span>
-                                                )}
-                                            </StyledTableCell>
-                                        )}
-                                        {filtersColumns[9] && (
-                                            <StyledTableCell >
-                                                {equipment.equipmentmodels.type === 1 && (
-                                                    <span className='flex items-center gap-x-2'>
-                                                        {equipment.influxData["local"]?.[0]?.value === 1 ? "Local" : equipment.influxData["local"]?.[0]?.value === 0 ? "Remoto" : "Desconocido"}
-                                                    </span>
-                                                )}
-                                            </StyledTableCell>
-                                        )}
-                                        <StyledTableCell align='center'>
-                                            <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
+                                                <div className='w-1/12'>
+                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                        <FaPen />
+                                                    </Fab>
+                                                </div>
+                                            </div>
                                         </StyledTableCell>
-                                    </StyledTableRow>
-                                )) :
-                                row.clients.map((client, index) => (
-                                    <StyledTableRow key={`${row.id}-${index}`}>
-                                        {index === 0 && (
-                                            <StyledTableCell rowSpan={row.clients.length} className='min-w-96'>
-                                                <div className='w-full flex'>
-                                                    <div className='w-11/12'>
-                                                        {row.name}
-                                                    </div>
-                                                    <div className='w-1/12'>
-                                                        <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
-                                                            <FaPen />
-                                                        </Fab>
-                                                    </div>
+                                    )}
+                                    <StyledTableCell className={`${BORDER_CLASSES[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
+                                    {filtersColumns[2] && (
+                                        <StyledTableCell>{equipment.serial}</StyledTableCell>
+                                    )}
+                                    {filtersColumns[3] && (
+                                        <StyledTableCell >
+                                            {equipment.equipmentmodels.type === 1 && (
+                                                <span className='flex items-center gap-x-2'>
+                                                    <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
+                                                    {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Desconocido"}
+                                                </span>
+                                            )}
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[4] && (
+                                        <StyledTableCell>
+                                            <span className='flex items-center gap-x-2'>
+                                                {equipment.influxData?.["d/c"] ? (
+                                                    <>
+                                                        <FaCheckCircle size={20} className='text-green-700' /> Online
+                                                    </>
+                                                ) : (<>
+                                                    <FaTimes size={20} className='text-red-700' /> Sin señal
+                                                </>)}
+                                            </span>
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[5] && (
+                                        <StyledTableCell rowSpan={row.equipments.length}>
+                                            {row.lat}
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[6] && (
+                                        <StyledTableCell rowSpan={row.equipments.length}>
+                                            {row.lon}
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[7] && (
+                                        <StyledTableCell rowSpan={row.equipments.length}>
+                                            {row.power}
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[8] && (
+                                        <StyledTableCell >
+                                            {equipment.equipmentmodels.type === 1 && (
+                                                <span className='flex items-center gap-x-2'>
+                                                    {equipment.influxData["ac"]?.[0]?.value === 1 ? "Red Electrica" : equipment.influxData["ac"]?.[0]?.value === 0 ? "Batería" : "Desconocido"}
+                                                </span>
+                                            )}
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[9] && (
+                                        <StyledTableCell >
+                                            {equipment.equipmentmodels.type === 1 && (
+                                                <span className='flex items-center gap-x-2'>
+                                                    {equipment.influxData["local"]?.[0]?.value === 1 ? "Local" : equipment.influxData["local"]?.[0]?.value === 0 ? "Remoto" : "Desconocido"}
+                                                </span>
+                                            )}
+                                        </StyledTableCell>
+                                    )}
+                                    <StyledTableCell align='center'>
+                                        <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
+                                    </StyledTableCell>
+                                </StyledTableRow>
+                            )) :
+                            row.clients.map((client, index) => (
+                                <StyledTableRow key={`${row.id}-${index}`}>
+                                    {index === 0 && (
+                                        <StyledTableCell rowSpan={row.clients.length} className='min-w-96'>
+                                            <div className='w-full flex'>
+                                                <div className='w-11/12'>
+                                                    {row.name}
                                                 </div>
-                                            </StyledTableCell>
-                                        )}
-                                        <StyledTableCell className={`${BORDER_CLASSES[0]} border-l-8`}>{client.name}</StyledTableCell>
-                                        {filtersColumns[2] && (
-                                            <StyledTableCell>{client.meter}</StyledTableCell>
-                                        )}
-                                        {filtersColumns[3] && (
-                                            <StyledTableCell >
-                                                <span className='flex items-center gap-x-2'>
-                                                    <FaCircle className={`${client.status ? "text-red-500" : "text-green-500"}`} />
-                                                    {client.status ? "En servicio" : "Fuera de servicio"}
-                                                </span>
-                                            </StyledTableCell>
-                                        )}
-                                        {filtersColumns[4] && (
-                                            <StyledTableCell>
-                                                <span className='flex items-center gap-x-2'>
-                                                    -
-                                                </span>
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && filtersColumns[5] && (
-                                            <StyledTableCell rowSpan={row.clients.length}>
-                                                {row.lat}
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && filtersColumns[6] && (
-                                            <StyledTableCell rowSpan={row.clients.length}>
-                                                {row.lon}
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && filtersColumns[7] && (
-                                            <StyledTableCell rowSpan={row.clients.length}>
-                                                {row.power}
-                                            </StyledTableCell>
-                                        )}
-                                        {filtersColumns[8] && (
-                                            <StyledTableCell>
-                                                <span className='flex items-center gap-x-2'>
-                                                    -
-                                                </span>
-                                            </StyledTableCell>
-                                        )}
-                                        {filtersColumns[9] && (
-                                            <StyledTableCell>
-                                                <span className='flex items-center gap-x-2'>
-                                                    -
-                                                </span>
-                                            </StyledTableCell>
-                                        )}
-                                        {index === 0 && (
-                                            <StyledTableCell rowSpan={row.clients.length} align='center'>
-                                                <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected({}, row)} ><FaTableCellsLarge /> </Fab>
-                                            </StyledTableCell>
-                                        )}
-                                    </StyledTableRow>
-                                ))
-                        )}
-                    </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TablePagination
-                                colSpan={HEADERS.length}
-                                count={elements.length}
-                                rowsPerPage={rowsPerPage}
-                                page={page}
-                                labelRowsPerPage="Cantidad de nodos"
-                                onPageChange={handleChangePage}
-                                onRowsPerPageChange={handleChangeRowsPerPage}
-                            />
-                        </TableRow>
-                    </TableFooter>
-                </Table>
-            </TableContainer>
+                                                <div className='w-1/12'>
+                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                        <FaPen />
+                                                    </Fab>
+                                                </div>
+                                            </div>
+                                        </StyledTableCell>
+                                    )}
+                                    <StyledTableCell className={`${BORDER_CLASSES[0]} border-l-8`}>{client.name}</StyledTableCell>
+                                    {filtersColumns[2] && (
+                                        <StyledTableCell>{client.meter}</StyledTableCell>
+                                    )}
+                                    {filtersColumns[3] && (
+                                        <StyledTableCell >
+                                            <span className='flex items-center gap-x-2'>
+                                                <FaCircle className={`${client.status ? "text-red-500" : "text-green-500"}`} />
+                                                {client.status ? "En servicio" : "Fuera de servicio"}
+                                            </span>
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[4] && (
+                                        <StyledTableCell>
+                                            <span className='flex items-center gap-x-2'>
+                                                -
+                                            </span>
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[5] && (
+                                        <StyledTableCell rowSpan={row.clients.length}>
+                                            {row.lat}
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[6] && (
+                                        <StyledTableCell rowSpan={row.clients.length}>
+                                            {row.lon}
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && filtersColumns[7] && (
+                                        <StyledTableCell rowSpan={row.clients.length}>
+                                            {row.power}
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[8] && (
+                                        <StyledTableCell>
+                                            <span className='flex items-center gap-x-2'>
+                                                -
+                                            </span>
+                                        </StyledTableCell>
+                                    )}
+                                    {filtersColumns[9] && (
+                                        <StyledTableCell>
+                                            <span className='flex items-center gap-x-2'>
+                                                -
+                                            </span>
+                                        </StyledTableCell>
+                                    )}
+                                    {index === 0 && (
+                                        <StyledTableCell rowSpan={row.clients.length} align='center'>
+                                            <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected({}, row)} ><FaTableCellsLarge /> </Fab>
+                                        </StyledTableCell>
+                                    )}
+                                </StyledTableRow>
+                            ))
+                    )}
+                </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TablePagination
+                            colSpan={HEADERS.length}
+                            count={elements.length}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            labelRowsPerPage="Cantidad de nodos"
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </TableRow>
+                </TableFooter>
+            </Table>
+        </TableContainer>
     )
 }

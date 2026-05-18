@@ -151,7 +151,7 @@ function NavBarCustom({ setLoading }) {
 						<p className={`text-black text-base ml-3 select-none ${isMobile ? 'hidden' : ''}`}>
 							{nameCoop}
 						</p>
-						{!isTauri() && (
+						{!isTauri() && !isMobile && (
 							<ButtonDownloads />
 						)}
 						<BottonApps />

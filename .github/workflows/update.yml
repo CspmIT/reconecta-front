@@ -51,5 +51,5 @@ jobs:
               with:
                   tagName: v__VERSION__
                   releaseName: 'Reconecta v__VERSION__'
-                  releaseBody: 'Bug fix tabla eventos reconectador'
+                  releaseBody: 'Bug fix mapa desconectados en alerta'
                   prerelease: false
