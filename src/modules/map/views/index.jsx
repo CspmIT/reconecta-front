@@ -108,7 +108,17 @@ function Map() {
 							// Si viene en 0 le paso el valor 2 de abierto
 							colorRecloser = colorRecloser === 0 ? 2 : colorRecloser
 							// Veo si hay una alarma y dependiendo si esta abierto o no le cambio el parpadeo
-							colorRecloser = recloser[0]?.flashAlarm ? parseInt(colorRecloser) === 1 ? 4 : 6 : colorRecloser
+							if (recloser[0]?.flashAlarm) {
+								if (parseInt(colorRecloser) === 1) {
+									colorRecloser = 4
+								} else {
+									if (parseInt(colorRecloser) === 3) {
+										colorRecloser = 7
+									} else {
+										colorRecloser = 6
+									}
+								}
+							}
 						}
 						// Create a new marker
 						const marker = new markerCustom(
