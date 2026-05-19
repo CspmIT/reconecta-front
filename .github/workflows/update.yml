@@ -174,7 +174,7 @@ jobs:
                   curl -fsS -X POST \
                     -H "accesskey: $ACCESS" \
                     -H "secretkey: $SECRET" \
-                    -H "Content-Type: application/json" \
+                    -H "Content-Type: application/octet-stream" \
                     --data-binary "@latest.json" \
                     "${STORAGEOV_URL}/minio/uploadRelease/v${VERSION}/latest.json"
 
@@ -182,6 +182,6 @@ jobs:
                   curl -fsS -X POST \
                     -H "accesskey: $ACCESS" \
                     -H "secretkey: $SECRET" \
-                    -H "Content-Type: application/json" \
+                    -H "Content-Type: application/octet-stream" \
                     --data-binary "@latest.json" \
                     "${STORAGEOV_URL}/minio/uploadRelease/latest.json"
