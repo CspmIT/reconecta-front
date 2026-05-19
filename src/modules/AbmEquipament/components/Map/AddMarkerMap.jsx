@@ -34,7 +34,6 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 		setMaps(data.data)
 	}
 	useEffect(() => {
-		console.log('lat', lat, 'lng', lng)
 		if (lng && lat) {
 			changeUbication(lng, lat)
 		}
@@ -109,9 +108,8 @@ function AddMarkerMap({ register, watch, errors, dataEdit, setSelectMarkers }) {
 				/>
 			</div>
 			<div
-				className={`!min-h-[inherit] h-[50vh] mt-3 w-full rounded-lg ${
-					errors.lat_marker || errors.lng_marker ? 'outline !outline-2 !outline-red-500' : ''
-				}`}
+				className={`!min-h-[inherit] h-[50vh] mt-3 w-full rounded-lg ${errors.lat_marker || errors.lng_marker ? 'outline !outline-2 !outline-red-500' : ''
+					}`}
 			>
 				<MapCustom
 					center={centerMap}
