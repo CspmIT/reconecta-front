@@ -18,8 +18,6 @@ jobs:
                       target: windows-x86_64
                     - platform: ubuntu-latest
                       target: linux-x86_64
-                    - platform: macos-latest
-                      target: darwin-aarch64
 
         runs-on: ${{ matrix.platform }}
 
@@ -151,16 +149,13 @@ jobs:
                     --arg win_url  "$BASE_URL/$(cat meta/windows-x86_64.filename)" \
                     --arg lnx_sig  "$(cat meta/linux-x86_64.sig)" \
                     --arg lnx_url  "$BASE_URL/$(cat meta/linux-x86_64.filename)" \
-                    --arg mac_sig  "$(cat meta/darwin-aarch64.sig)" \
-                    --arg mac_url  "$BASE_URL/$(cat meta/darwin-aarch64.filename)" \
                     '{
                       version: $version,
                       notes: $notes,
                       pub_date: $date,
                       platforms: {
                         "windows-x86_64": { signature: $win_sig, url: $win_url },
-                        "linux-x86_64":   { signature: $lnx_sig, url: $lnx_url },
-                        "darwin-aarch64": { signature: $mac_sig, url: $mac_url }
+                        "linux-x86_64":   { signature: $lnx_sig, url: $lnx_url }
                       }
                     }' > latest.json
 
