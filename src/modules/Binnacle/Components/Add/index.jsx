@@ -36,13 +36,13 @@ function BinnacleAdd({ changeView, id }) {
   //OBTENER EL REGISTRO DE LA TAREA PARA EDITARLO
   const getBinnacleData = async (id) => {
     try {
-      setIsLoadingRecord(true); 
+      setIsLoadingRecord(true);
       const { data } = await request(`${backend.Reconecta}/Binnacle/${id}`, 'GET');
       setRecordData(data);
     } catch (error) {
       console.error('Error al obtener los datos del registro:', error);
     } finally {
-      setIsLoadingRecord(false); 
+      setIsLoadingRecord(false);
     }
   };
 
@@ -57,10 +57,10 @@ function BinnacleAdd({ changeView, id }) {
   useEffect(() => {
     if (recordData && recordData.length > 0) {
       const record = recordData[0];
-  
+
       // Verifica si es un valor personalizado
       const isCustom = !record.id_element;
-  
+
       if (isCustom) {
         setIsCustomActivo(true);
         setNewActivo(record.name_element);
@@ -68,21 +68,21 @@ function BinnacleAdd({ changeView, id }) {
       } else {
         setIsCustomActivo(false);
         // Asumimos que el input es un select y necesita un objeto { id, label } o similar
-       setValue('activo', String(record.id_element));
+        setValue('activo', String(record.id_element));
       }
-  
+
       setValue('latitud', record.lat);
       setValue('longitud', record.lon);
       setValue('tarea', record.task);
-  
+
       const tipoTarea = type_task.find((task) => task.name === record.type_task);
       const estado = status.find((state) => state.name === record.status);
-  
+
       if (tipoTarea) setValue('tipoTarea', tipoTarea.id);
       if (estado) setValue('estado', estado.id);
     }
   }, [recordData, setValue, type_task, status]);
-  
+
 
 
   const onSubmit = async (data) => {
@@ -104,8 +104,8 @@ function BinnacleAdd({ changeView, id }) {
 
       const recordData = {
         id: id || 0,
-        id_element: isCustomActivo ? null : data.activo, 
-        name_element: isCustomActivo ? newActivo : null, 
+        id_element: isCustomActivo ? null : data.activo,
+        name_element: isCustomActivo ? newActivo : null,
         lat: data.latitud,
         lon: data.longitud,
         task: data.tarea,
@@ -185,7 +185,6 @@ function BinnacleAdd({ changeView, id }) {
             onChange={(e) => {
               const selectedValue = e.target.value;
               const selectedActivo = dataActivos.find(element => element.id === selectedValue);
-              console.log(selectedActivo, selectedValue)
               if (selectedValue === 'custom') {
                 setIsCustomActivo(true);
                 setNewActivo('');

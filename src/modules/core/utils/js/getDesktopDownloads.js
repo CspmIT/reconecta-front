@@ -1,17 +1,11 @@
 export const getDesktopDownloads = async () => {
-	const res = await fetch('https://api.github.com/repos/CspmIT/reconecta-front/releases/latest')
+	const res = await fetch('https://storageov.cooptech.com.ar/releases/downloads.json', {
+		cache: 'no-store',
+	})
 
 	if (!res.ok) {
 		throw new Error('No se pudo obtener el último release')
 	}
 
-	const data = await res.json()
-	const findAsset = (ext) => data.assets.find((asset) => asset.name.toLowerCase().endsWith(ext))
-
-	return {
-		version: data.tag_name,
-		windows: findAsset('.msi'),
-		appImage: findAsset('.appimage'),
-		deb: findAsset('.deb'),
-	}
+	return await res.json()
 }
