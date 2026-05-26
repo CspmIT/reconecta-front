@@ -22,6 +22,8 @@ const SubstationRuralBoard = () => {
 	const [info, setInfo] = useState([])
 	const [data] = useState(tabs[tabCurrent] || null)
 	const [selectedTab, setSelectedTab] = useState(1)
+	const [historyPatVersion, setHistoryPatVersion] = useState(0)
+	const refreshHistoryPat = () => setHistoryPatVersion(v => v + 1)
 	const loadData = async (data) => {
 		if (!data) {
 			Swal.fire({
@@ -48,12 +50,12 @@ const SubstationRuralBoard = () => {
 						<LoaderComponent />
 					) : (
 						<>
-							<div className='flex flex-row relative justify-between mb-8'>
+							<div className='flex flex-row relative justify-between mb-11'>
 								<div className='flex-grow flex justify-center'>
-									<h2 className='text-2xl'>Registro de eventos</h2>
+									<h2 className='text-2xl'>Subestación Rural</h2>
 								</div>
 							</div>
-							<DataBoard info={elemento} />
+							<DataBoard info={elemento} onPatSaved={refreshHistoryPat} />
 
 							<div className='mt-6'>
 								<Tabs
@@ -88,7 +90,7 @@ const SubstationRuralBoard = () => {
 											<MapSubstation element={elemento} />
 										</div>
 									)}
-									{selectedTab === 3 && <HistoryPat info={elemento} />}
+									{selectedTab === 3 && <HistoryPat key={historyPatVersion} info={elemento} />}
 								</div>
 							</div>
 						</>
