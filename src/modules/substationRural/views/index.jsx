@@ -12,9 +12,9 @@ import HistoryPat from '../components/HistoryPat'
 import MapSubstation from '../components/Map'
 
 const SECTION_TABS = [
-	{ id: 1, name: 'HISTORIAL PAT', icon: <FaHistory /> },
+	{ id: 1, name: 'MANTENIMIENTO', icon: <FaTools /> },
 	{ id: 2, name: 'MAPA', icon: <FaMapMarkedAlt /> },
-	{ id: 3, name: 'MANTENIMIENTO', icon: <FaTools /> },
+	{ id: 3, name: 'HISTORIAL PAT', icon: <FaHistory /> },
 ]
 
 const SubstationRuralBoard = () => {
@@ -77,18 +77,18 @@ const SubstationRuralBoard = () => {
 								</Tabs>
 
 								<div className='w-full bg-white dark:bg-zinc-500 rounded-b-md p-4'>
-									{selectedTab === 1 && <HistoryPat info={elemento} />}
+									{selectedTab === 1 && (
+										<MaintenanceBoard
+											idElement={elemento?.id || null}
+											elementoNombre={elemento?.name || ''}
+										/>
+									)}
 									{selectedTab === 2 && (
 										<div className='h-96'>
 											<MapSubstation element={elemento} />
 										</div>
 									)}
-									{selectedTab === 3 && (
-									<MaintenanceBoard
-										idElement={elemento?.id || null}
-										elementoNombre={elemento?.name || ''}
-									/>
-								)}
+									{selectedTab === 3 && <HistoryPat info={elemento} />}
 								</div>
 							</div>
 						</>

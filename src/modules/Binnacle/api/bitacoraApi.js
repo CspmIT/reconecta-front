@@ -45,7 +45,7 @@ const mapOrdenFromBackend = (b) => ({
 		horas: b.hours_task ?? 0,
 		minutos: b.minutes_task ?? 0,
 	},
-	personalIds: (b.users || []).map((u) => u.id),
+	personalIds: (b.personal || []).map((p) => p.id),
 	estado: BACKEND_TO_ESTADO[b.status_task] || 'curso',
 	fotoGeneral:
 		(b.pictures || []).find((p) => p.type === PICTURE_TYPE.PRINCIPAL)?.name_file || null,
@@ -79,7 +79,7 @@ const mapOrdenToBackend = (u) => {
 		hours_task: Number(u.duracion?.horas) || 0,
 		minutes_task: Number(u.duracion?.minutos) || 0,
 		description: u.descripcion,
-		users: u.personalIds || [],
+		personal: u.personalIds || [],
 		pictures,
 	}
 }
@@ -273,27 +273,17 @@ export const equiposApi = {
 			await delay(120)
 			return mockEquipos
 		}
-		const { data } = await request(`${backend.Reconecta}/Equipments`, 'GET')
-		// Mapeo al shape consumido por el módulo: { id, nombre, tipoLabel, ubicacion }.
-		// id = Equipment.id porque Binnacle persiste id_equipment (no id_element)
-		// cuando el mantenimiento es sobre un Equipment.
-		const items = (data || []).map((eq) => {
-			const modelo = eq.equipmentmodels
-			const elemento = eq.elements
-			const nombre = `${elemento?.name ?? ''} - ${eq.observation ?? ''}`.trim()
-			return {
-				id: eq.id,
-				id_element: eq.id_element ?? null,
-				nombre,
-				type: modelo?.type,
-				tipoLabel: EQUIPMENT_TYPE_LABEL[modelo?.type] ?? 'Equipo',
-				ubicacion: elemento?.description || eq.serial || '',
-				serial: eq.serial ?? null,
-			}
-		})
-		// El Autocomplete de MUI agrupa por adyacencia: necesita estar ordenado por
-		// tipoLabel para que cada tipo aparezca como un único grupo.
-		items.sort((a, b) => a.type - b.type || a.nombre.localeCompare(b.nombre))
+		// /Binnacle/Equipos devuelve un catálogo unificado (Equipments + subestaciones
+		// rurales que viven sólo como Element). Cada item trae `kind` para que el form
+		// sepa si el id corresponde a id_equipment o id_element.
+		const { data } = await request(`${backend.Reconecta}/Binnacle/Equipos`, 'GET')
+		const items = (data || []).map((it) => ({
+			...it,
+			tipoLabel: EQUIPMENT_TYPE_LABEL[it.type] ?? 'Equipo',
+		}))
+		// Ordeno por type (Subestación, Reconectador, Medidor, Analizador) y por nombre
+		// — el Autocomplete de MUI agrupa por adyacencia.
+		items.sort((a, b) => (a.type ?? 99) - (b.type ?? 99) || a.nombre.localeCompare(b.nombre))
 		return items
 	},
 }
@@ -304,14 +294,27 @@ export const personalApi = {
 			await delay(120)
 			return mockPersonal
 		}
-		const { data } = await request(`${backend.Reconecta}/listUsers`, 'GET')
-		// Adaptación al shape consumido por el módulo: { id, nombre, rol }
-		return (data || []).map((u) => ({
-			id: u.id,
-			nombre: `${u.first_name ?? ''} ${u.last_name ?? ''}`.trim(),
-			rol: u.profile ?? null,
-			email: u.email ?? null,
+		const { data } = await request(`${backend.Reconecta}/Personal`, 'GET')
+		return (data || []).map((p) => ({
+			id: p.id,
+			nombre: `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim(),
+			rol: p.rol ?? null,
 		}))
+	},
+
+	// Crea un nuevo Personal. Devuelve el item ya mapeado al shape consumido por el módulo.
+	async crear({ first_name, last_name, rol }) {
+		const { data: res } = await request(`${backend.Reconecta}/Personal`, 'POST', {
+			first_name,
+			last_name,
+			rol,
+		})
+		const p = res?.data ?? res
+		return {
+			id: p.id,
+			nombre: `${p.first_name ?? ''} ${p.last_name ?? ''}`.trim(),
+			rol: p.rol ?? null,
+		}
 	},
 }
 
@@ -326,12 +329,3 @@ export const vehiculosApi = {
 	},
 }
 
-function buildQS(params) {
-	const usp = new URLSearchParams()
-	Object.entries(params).forEach(([k, v]) => {
-		if (v === undefined || v === null || v === '' || v === 'all') return
-		usp.append(k, v)
-	})
-	const s = usp.toString()
-	return s ? `?${s}` : ''
-}

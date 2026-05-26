@@ -1,6 +1,11 @@
 import {
 	Autocomplete,
+	Button,
 	Chip,
+	Dialog,
+	DialogActions,
+	DialogContent,
+	DialogTitle,
 	FormLabel,
 	MenuItem,
 	TextField,
@@ -72,17 +77,82 @@ const AddOrden = () => {
 	const [fotoGeneral, setFotoGeneral] = useState(null)
 	const [fotosDetalle, setFotosDetalle] = useState([])
 
+	// Modal "+ Nuevo personal" disparado desde el Autocomplete de Personal.
+	const [nuevoPersonalOpen, setNuevoPersonalOpen] = useState(false)
+	const [nuevoPersonal, setNuevoPersonal] = useState({
+		first_name: '',
+		last_name: '',
+		rol: '',
+	})
+	const [creandoPersonal, setCreandoPersonal] = useState(false)
+
+	const abrirNuevoPersonal = () => {
+		setNuevoPersonal({ first_name: '', last_name: '', rol: '' })
+		setNuevoPersonalOpen(true)
+	}
+	const cerrarNuevoPersonal = () => {
+		setNuevoPersonalOpen(false)
+	}
+	const confirmarNuevoPersonal = async () => {
+		const first_name = nuevoPersonal.first_name.trim()
+		const last_name = nuevoPersonal.last_name.trim()
+		if (!first_name || !last_name) {
+			Swal.fire({
+				icon: 'warning',
+				title: 'Faltan datos',
+				text: 'Nombre y apellido son obligatorios.',
+				toast: true,
+				position: 'top-end',
+				showConfirmButton: false,
+				timer: 1800,
+			})
+			return
+		}
+		try {
+			setCreandoPersonal(true)
+			const creado = await personalApi.crear({
+				first_name,
+				last_name,
+				rol: nuevoPersonal.rol.trim() || null,
+			})
+			setPersonal((prev) => [...prev, creado])
+			const actuales = watch('personalIds') || []
+			setValue('personalIds', [...actuales, creado.id], { shouldValidate: true })
+			setNuevoPersonalOpen(false)
+		} catch (e) {
+			console.error('Error al crear personal', e)
+			Swal.fire({
+				icon: 'error',
+				title: 'No se pudo crear el personal',
+				toast: true,
+				position: 'top-end',
+				showConfirmButton: false,
+				timer: 1800,
+			})
+		} finally {
+			setCreandoPersonal(false)
+		}
+	}
+
 	const equipoSeleccionado = watch('equipoId')
 	const elementoIdActual = watch('elementoId')
 	const equipoNombreActual = watch('equipoNombre')
-	// El form trabaja en uno de dos modos según qué FK tiene la orden:
-	//  - modoElemento: bitácora atada a un Element/subestación (id_element)
-	//  - modoEquipo:   bitácora atada a un Equipment (id_equipment) → autocomplete
-	const modoElemento = Boolean(elementoIdActual)
-	const equipoData = useMemo(
-		() => equipos.find((e) => e.id === equipoSeleccionado),
-		[equipos, equipoSeleccionado],
-	)
+	// equiposApi devuelve catálogo unificado con `kind` ('equipment' | 'element').
+	// El item actualmente seleccionado se resuelve mirando ambos FK del form.
+	const itemSeleccionado = useMemo(() => {
+		if (equipoSeleccionado) {
+			return (
+				equipos.find((e) => e.kind === 'equipment' && e.id === equipoSeleccionado) ||
+				null
+			)
+		}
+		if (elementoIdActual) {
+			return (
+				equipos.find((e) => e.kind === 'element' && e.id === elementoIdActual) || null
+			)
+		}
+		return null
+	}, [equipos, equipoSeleccionado, elementoIdActual])
 
 	useEffect(() => {
 		const cargar = async () => {
@@ -139,9 +209,7 @@ const AddOrden = () => {
 			numeroOM: data.numeroOM,
 			equipoId: esModoElemento ? null : data.equipoId,
 			elementoId: esModoElemento ? data.elementoId : null,
-			equipoNombre: esModoElemento
-				? data.equipoNombre
-				: equipoData?.nombre ?? null,
+			equipoNombre: data.equipoNombre || null,
 			tipoTarea: data.tipoTarea,
 			descripcion: data.descripcion,
 			fechaRealizacion: data.fechaRealizacion,
@@ -248,7 +316,7 @@ const AddOrden = () => {
 					<section className='flex flex-col gap-3'>
 						<p className='text-lg font-medium'>Equipo y tarea</p>
 						<div className='flex flex-wrap gap-3'>
-							{modoElemento ? (
+							{elementoLocked ? (
 								<TextField
 									disabled
 									className='w-full md:w-1/2'
@@ -257,30 +325,41 @@ const AddOrden = () => {
 									helperText='Mantenimiento atado a una subestación (preseleccionado)'
 								/>
 							) : (
-								<Controller
-									name='equipoId'
-									control={control}
-									render={({ field }) => (
-										<Autocomplete
-											options={equipos}
-											value={equipos.find((e) => e.id === field.value) || null}
-											onChange={(_, v) => field.onChange(v?.id || '')}
-											getOptionLabel={(e) => `${e.nombre}`}
-											groupBy={(e) => e.tipoLabel}
-											isOptionEqualToValue={(o, v) => o.id === v.id}
-											disabled={equipoLocked}
-											className='w-full md:w-1/2'
-											renderInput={(params) => (
-												<TextField
-													{...params}
-													label='Equipo vinculado'
-													helperText={
-														equipoLocked
-															? 'Equipo preseleccionado desde su detalle'
-															: 'Opcional · dejar vacío si la tarea no está asociada a un equipo'
-													}
-												/>
-											)}
+								<Autocomplete
+									options={equipos}
+									value={itemSeleccionado}
+									onChange={(_, v) => {
+										if (!v) {
+											setValue('equipoId', '')
+											setValue('elementoId', '')
+											setValue('equipoNombre', '')
+											return
+										}
+										if (v.kind === 'element') {
+											setValue('equipoId', '')
+											setValue('elementoId', v.id)
+										} else {
+											setValue('equipoId', v.id)
+											setValue('elementoId', '')
+										}
+										setValue('equipoNombre', v.nombre)
+									}}
+									getOptionLabel={(e) => `${e.nombre}`}
+									groupBy={(e) => e.tipoLabel}
+									isOptionEqualToValue={(o, v) =>
+										o.kind === v.kind && o.id === v.id
+									}
+									disabled={equipoLocked}
+									className='w-full md:w-1/2'
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											label='Equipo vinculado'
+											helperText={
+												equipoLocked
+													? 'Equipo preseleccionado desde su detalle'
+													: 'Opcional · dejar vacío si la tarea no está asociada a un equipo'
+											}
 										/>
 									)}
 								/>
@@ -309,9 +388,9 @@ const AddOrden = () => {
 								InputLabelProps={{ shrink: true }}
 							/>
 						</div>
-						{equipoData && (
+						{itemSeleccionado && (
 							<p className='text-xs text-gray-500'>
-								<b>{equipoData.tipoLabel}</b> · {equipoData.ubicacion}
+								<b>{itemSeleccionado.tipoLabel}</b> · {itemSeleccionado.ubicacion}
 							</p>
 						)}
 					</section>
@@ -378,11 +457,30 @@ const AddOrden = () => {
 							render={({ field }) => (
 								<Autocomplete
 									multiple
-									options={personal}
+									options={[...personal, { id: '__nuevo__', nombre: '+ Nuevo personal', isCreate: true }]}
 									value={personal.filter((p) => field.value?.includes(p.id))}
-									onChange={(_, v) => field.onChange(v.map((p) => p.id))}
-									getOptionLabel={(p) => (p.nombre)}
+									onChange={(_, v) => {
+										if (v.some((p) => p.isCreate)) {
+											// El sentinel no se agrega a la selección — sólo abre el modal.
+											abrirNuevoPersonal()
+											field.onChange(v.filter((p) => !p.isCreate).map((p) => p.id))
+											return
+										}
+										field.onChange(v.map((p) => p.id))
+									}}
+									getOptionLabel={(p) => p.nombre}
 									isOptionEqualToValue={(o, v) => o.id === v.id}
+									renderOption={(props, option) => (
+										<li
+											{...props}
+											key={option.id}
+											className={`${props.className ?? ''} ${
+												option.isCreate ? 'text-blue-600 font-medium' : ''
+											}`}
+										>
+											{option.nombre}
+										</li>
+									)}
 									renderTags={(value, getTagProps) =>
 										value.map((option, index) => (
 											<Chip
@@ -450,6 +548,52 @@ const AddOrden = () => {
 					</div>
 				</form>
 			</CardCustom>
+
+			<Dialog
+				open={nuevoPersonalOpen}
+				onClose={cerrarNuevoPersonal}
+				maxWidth='xs'
+				fullWidth
+			>
+				<DialogTitle>Nuevo personal</DialogTitle>
+				<DialogContent className='!pt-2'>
+					<div className='flex flex-col gap-3 mt-2'>
+						<TextField
+							label='Nombre *'
+							value={nuevoPersonal.first_name}
+							onChange={(e) =>
+								setNuevoPersonal((p) => ({ ...p, first_name: e.target.value }))
+							}
+							autoFocus
+						/>
+						<TextField
+							label='Apellido *'
+							value={nuevoPersonal.last_name}
+							onChange={(e) =>
+								setNuevoPersonal((p) => ({ ...p, last_name: e.target.value }))
+							}
+						/>
+						<TextField
+							label='Rol'
+							placeholder='Opcional · ej. Técnico, Supervisor…'
+							value={nuevoPersonal.rol}
+							onChange={(e) => setNuevoPersonal((p) => ({ ...p, rol: e.target.value }))}
+						/>
+					</div>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={cerrarNuevoPersonal} disabled={creandoPersonal}>
+						Cancelar
+					</Button>
+					<Button
+						onClick={confirmarNuevoPersonal}
+						variant='contained'
+						disabled={creandoPersonal}
+					>
+						{creandoPersonal ? 'Guardando…' : 'Guardar'}
+					</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
 	)
 }

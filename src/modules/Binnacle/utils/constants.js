@@ -15,11 +15,15 @@ export const TIPOS_TAREA = [
 	{ value: 'instalacion', label: 'Instalación / Puesta en servicio' },
 	{ value: 'cambio', label: 'Cambio / Reemplazo de equipo' },
 	{ value: 'reparacion', label: 'Reparación' },
+	{ value: 'media_tension', label: 'Media Tensión' },
+	{ value: 'baja_tension', label: 'Baja Tensión' },
+	{ value: 'transformador', label: 'Transformador' },
+	{ value: 'medidor', label: 'Medidor' },
 	{ value: 'otro', label: 'Otro' },
 ]
 
 // Mapeos UI ↔ backend.
-// El backend guarda type_task como INTEGER (1..7) y status_task como string en español.
+// El backend guarda type_task como INTEGER (1..11) y status_task como string en español.
 export const TIPO_TAREA_TO_INT = {
 	preventivo: 1,
 	correctivo: 2,
@@ -27,7 +31,11 @@ export const TIPO_TAREA_TO_INT = {
 	instalacion: 4,
 	cambio: 5,
 	reparacion: 6,
-	otro: 7,
+	media_tension: 7,
+	baja_tension: 8,
+	transformador: 9,
+	medidor: 10,
+	otro: 11,
 }
 export const INT_TO_TIPO_TAREA = Object.fromEntries(
 	Object.entries(TIPO_TAREA_TO_INT).map(([k, v]) => [v, k]),
