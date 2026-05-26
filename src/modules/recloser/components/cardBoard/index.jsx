@@ -1,11 +1,12 @@
 import { Tab, Tabs } from '@mui/material'
 import React, { useEffect, useState } from 'react'
-import { FaChartArea, FaPowerOff, FaTachometerAlt } from 'react-icons/fa'
+import { FaChartArea, FaPowerOff, FaTachometerAlt, FaTools } from 'react-icons/fa'
 import { BsFiles } from 'react-icons/bs'
 import MetrologyBoard from '../metrologyBoard'
 import EventBoard from '../eventBoard'
 import AnalyticsBoard from '../analyticsBoard'
 import ManeuverBoard from '../maneuverBoard'
+import MaintenanceBoard from '../../../Binnacle/components/MaintenanceBoard'
 
 function CardBoard({ onCardSelect, info }) {
 	const [selectedCardId, setSelectedCardId] = useState(1)
@@ -14,6 +15,7 @@ function CardBoard({ onCardSelect, info }) {
 		{ id: 2, name: 'EVENTOS', icon: <BsFiles /> },
 		{ id: 3, name: 'ANALÍTICAS', icon: <FaChartArea /> },
 		{ id: 4, name: 'MANIOBRAS', icon: <FaPowerOff /> },
+		{ id: 5, name: 'MANTENIMIENTO', icon: <FaTools /> },
 	]
 
 	const handleCard = (id) => {
@@ -59,12 +61,13 @@ function CardBoard({ onCardSelect, info }) {
 				))}
 			</Tabs>
 			<div
-				className='w-full min-w-0 overflow-x-auto bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-center border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-800'
+				className='w-full min-w-0 overflow-x-auto bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-start border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-800'
 			>
 				{selectedCardId === 1 && <MetrologyBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 3 && <AnalyticsBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 4 && <ManeuverBoard idRecloser={info?.recloser?.id || null} />}
+				{selectedCardId === 5 && <MaintenanceBoard idEquipment={info?.recloser?.id || null} />}
 			</div>
 		</div>
 	)
