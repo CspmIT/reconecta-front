@@ -23,6 +23,7 @@ import ConfigSecurity from './modules/configSecurity/views'
 import LoginCooptech from './modules/LoginApp/view/LoginCooptech'
 import AbmDevice from './modules/AbmDevice/views'
 import Binnacle from './modules/Binnacle/views'
+import AddOrden from './modules/Binnacle/views/AddOrden'
 import AddMenu from './modules/ConfigMenu/components/AddMenu'
 import Abm from './modules/Abm/views'
 import Equipment from './modules/Equipment/view'
@@ -67,6 +68,8 @@ function App() {
 		{ path: '/config/definitions', element: <Definitions /> },
 		{ path: '/config/addDefinitions', element: <AddConfigNotification /> },
 		{ path: '/bitacora', element: <Binnacle /> },
+		{ path: '/Bitacora/AddOrden', element: <AddOrden /> },
+		{ path: '/Bitacora/EditOrden/:ordenId', element: <AddOrden /> },
 		{ path: '/AddMenu', element: <AddMenu /> },
 		{ path: '/AddElement', element: <Abm /> },
 		{ path: '/EditElement/:elementId', element: <Abm /> },
