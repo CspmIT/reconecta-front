@@ -38,6 +38,8 @@ function CustomPopUpRecloser({ content, open, handleClose }) {
 		return component
 	}
 
+	const isSubstation = content.type === 3
+
 	const handleClick = async (data) => {
 		try {
 			const name = data.elementType === 3 ? `${content.info.name} - ${content.info.number}` :
@@ -67,13 +69,44 @@ function CustomPopUpRecloser({ content, open, handleClose }) {
 			console.error(e)
 		}
 	}
+
+	const handleClickSubstation = () => {
+		try {
+			const existingTabIndex = tabs.findIndex(
+				(tab) => tab.id === content.id && tab.typeEquipment === 3
+			)
+			if (existingTabIndex !== -1) {
+				setTabCurrent(existingTabIndex)
+			} else {
+				setTabs((prevTabs) => [
+					...prevTabs,
+					{
+						name: content.info.name,
+						id: content.id,
+						typeEquipment: 3,
+						clients: content.clients,
+						link: '/board',
+						component: typeEquipment(0),
+					},
+				])
+				setTabCurrent(tabs.length)
+			}
+			navigate('/tabs')
+		} catch (e) {
+			console.error(e)
+		}
+	}
 	return (
 		<div className='rounded-lg p-0 min-w-36 border-2 border-gray-900 overflow-hidden'>
 			<div className='bg-slate-400 border-b-2 border-gray-900 p-1 row'>
 				<p className='namePopUp !m-0 text-md text-white font-semibold'>{content.info.name || content.number}</p>
 			</div>
 			<div className='bg-slate-800 text-white pl-1 row items-center'>
-				<p className='!m-0 font-bold !mr'>Equipos instalados: {content.equipments.length}</p>
+				<p className='!m-0 font-bold !mr'>
+					{isSubstation
+						? `Clientes: ${content.clients.length}`
+						: `Equipos instalados: ${content.equipments.length}`}
+				</p>
 			</div>
 			<Modal open={open} onClose={handleClose} className="flex items-center justify-center">
 				<div className="bg-slate-800 text-white p-6 rounded-xl w-full max-w-4xl shadow-xl">
@@ -82,34 +115,76 @@ function CustomPopUpRecloser({ content, open, handleClose }) {
 						<h5 className="text-center text-xl text-slate-300">{content.info.number}</h5>
 					</div>
 
-					<div className="grid grid-cols-12 gap-4 px-4 py-2 border-b border-slate-600 text-sm text-slate-400 font-semibold uppercase tracking-wider">
-						<div className="col-span-3">Nº equipo</div>
-						<div className="col-span-7">Nombre</div>
-						<div className="col-span-2 text-center">Estado</div>
-					</div>
-
-					{content.equipments.map((equipment, index) => (
-						<div
-							key={index}
-							className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-slate-700 transition-colors duration-200 rounded-lg hover:cursor-pointer"
-							title="Ver detalles"
-							onClick={() => handleClick(equipment)}
-						>
-							<div className="col-span-3 font-medium">Equipo {index + 1}</div>
-							<div className="col-span-7">{equipment.observation}</div>
-							<div className="col-span-2 flex justify-center items-center">
-								{equipment?.equipmentmodels?.type === 1 && (
-									<div className="flex items-center">
-										<FaCircle
-											className={`${recloserStyle[equipment.influxData['d/c']?.[0]?.value]?.color || "text-gray-500"
-												} text-lg mr-2`}
-										/>
-										{recloserStyle[equipment.influxData['d/c']?.[0]?.value]?.text || "Sin señal"}
-									</div>
-								)}
+					{isSubstation ? (
+						<>
+							<div className="grid grid-cols-12 gap-4 px-4 py-2 border-b border-slate-600 text-sm text-slate-400 font-semibold uppercase tracking-wider">
+								<div className="col-span-1">Nº</div>
+								<div className="col-span-5">Cliente</div>
+								<div className="col-span-3">Nº de medidor</div>
+								<div className="col-span-3 text-center">Estado</div>
 							</div>
-						</div>
-					))}
+
+							{content.clients.length === 0 ? (
+								<div className="px-4 py-6 text-center text-slate-400">Sin clientes asociados</div>
+							) : (
+								content.clients.map((client, index) => (
+									<div
+										key={index}
+										className="grid grid-cols-12 gap-4 px-4 py-3"
+									>
+										<div className="col-span-1 font-medium">{index + 1}</div>
+										<div className="col-span-5">{client.name}</div>
+										<div className="col-span-3">{client.meter}</div>
+										<div className="col-span-3 flex justify-center items-center">
+											<FaCircle className={`${client.status ? "text-red-500" : "text-green-500"} text-lg mr-2`} />
+											{client.status ? "En servicio" : "Fuera de servicio"}
+										</div>
+									</div>
+								))
+							)}
+
+							<div className="flex justify-center mt-6">
+								<button
+									type="button"
+									onClick={handleClickSubstation}
+									className="bg-blue-600 hover:bg-blue-700 transition-colors duration-200 text-white font-semibold px-6 py-2 rounded-lg shadow"
+								>
+									Ver Subestación
+								</button>
+							</div>
+						</>
+					) : (
+						<>
+							<div className="grid grid-cols-12 gap-4 px-4 py-2 border-b border-slate-600 text-sm text-slate-400 font-semibold uppercase tracking-wider">
+								<div className="col-span-3">Nº equipo</div>
+								<div className="col-span-7">Nombre</div>
+								<div className="col-span-2 text-center">Estado</div>
+							</div>
+
+							{content.equipments.map((equipment, index) => (
+								<div
+									key={index}
+									className="grid grid-cols-12 gap-4 px-4 py-3 hover:bg-slate-700 transition-colors duration-200 rounded-lg hover:cursor-pointer"
+									title="Ver detalles"
+									onClick={() => handleClick(equipment)}
+								>
+									<div className="col-span-3 font-medium">Equipo {index + 1}</div>
+									<div className="col-span-7">{equipment.observation}</div>
+									<div className="col-span-2 flex justify-center items-center">
+										{equipment?.equipmentmodels?.type === 1 && (
+											<div className="flex items-center">
+												<FaCircle
+													className={`${recloserStyle[equipment.influxData['d/c']?.[0]?.value]?.color || "text-gray-500"
+														} text-lg mr-2`}
+												/>
+												{recloserStyle[equipment.influxData['d/c']?.[0]?.value]?.text || "Sin señal"}
+											</div>
+										)}
+									</div>
+								</div>
+							))}
+						</>
+					)}
 				</div>
 			</Modal>
 		</div>

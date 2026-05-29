@@ -1,5 +1,5 @@
 import MapCustom from '../components/MapCustom'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { polylines } from '../utils/js/polilines'
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
@@ -15,8 +15,24 @@ function Map() {
 	const [activeMove, setActiveMove] = useState([])
 	const [changeZoom, setChangeZoom] = useState(false)
 	const [filtersMap, setFiltersMap] = useState(false)
-	const [mapVersions, setMapVersions] = useState({})
 	const filtersRef = useRef(filtersMap)
+	// Firma de los datos del último render. Si un poll trae lo mismo, no
+	// actualizamos el estado y evitamos reconstruir/parpadear los markers.
+	const markersSignatureRef = useRef(null)
+
+	// Markers visibles derivados del set completo + los checks activos.
+	// Cambiar un filtro recalcula esto sin tocar la red ni remontar el mapa.
+	const visibleMarkers = useMemo(() => {
+		if (!markersRecloser) return markersRecloser
+		const result = {}
+		for (const mapId of Object.keys(markersRecloser)) {
+			const status = filtersMap?.[mapId]?.status
+			result[mapId] = status
+				? markersRecloser[mapId].filter((marker) => status[marker.type])
+				: markersRecloser[mapId]
+		}
+		return result
+	}, [markersRecloser, filtersMap])
 	// Cargar datos iniciales de la base de datos
 	useEffect(() => {
 		const getCenter = async () => {
@@ -64,6 +80,22 @@ function Map() {
 	const getdisplay = async (currentFilters = filtersRef.current) => {
 		try {
 			const nodes = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/Elements`, 'GET')
+			// Firma de solo los campos que afectan al render (estado/posición/topología).
+			const signature = JSON.stringify(
+				(nodes.data || [])
+					.filter((it) => it && it.type !== 0)
+					.map((it) => [
+						it.id, it.type, it.lat, it.lon, it.name, it.description,
+						(it.equipments || []).map((e) => [
+							e.id,
+							e.equipmentmodels?.type,
+							e.observation,
+							e.influxData?.['d/c']?.[0]?.value ?? null,
+							e.flashAlarm ?? false,
+						]),
+						(it.clients || []).map((c) => [c.id, c.name, c.meter, c.status ? 1 : 0]),
+					])
+			)
 			// Group markers by id_map
 			const markersByMap = {}
 			let mapFilters = currentFilters
@@ -88,12 +120,16 @@ function Map() {
 					})
 					setFiltersMap(mapFilters)
 				}
+				// Si nada cambió desde el último poll, no reconstruimos los markers.
+				if (markersSignatureRef.current === signature) return
 				await Promise.all(
 					nodes.data.map(async (item, index) => {
 						const mapFilter = mapFilters?.[item.id_map]
-						if (!mapFilter || item.type === 0 || !mapFilter.status[item.type]) return null
+						// Traemos todos los nodos; el mostrar/ocultar por tipo se resuelve
+						// en `visibleMarkers` (useMemo), sin volver a pedir al backend.
+						if (!mapFilter || item.type === 0) return null
 
-						const info = item.equipments.length
+						const info = (item.equipments.length || item.type === 3)
 							? {
 								name: item.name,
 								number: item.description,
@@ -131,6 +167,8 @@ function Map() {
 							true,
 							recloser,
 							item.equipments,
+							item.type,
+							item.clients || [],
 						)
 
 						// Fetch additional information if needed
@@ -146,7 +184,10 @@ function Map() {
 					})
 				)
 			}
-			setMarkersRecloser(markersByMap)
+			if (markersSignatureRef.current !== signature) {
+				markersSignatureRef.current = signature
+				setMarkersRecloser(markersByMap)
+			}
 		} catch (error) {
 			console.error(error)
 		}
@@ -167,18 +208,19 @@ function Map() {
 		setChangeZoom(true)
 	}
 
-	const handleFilter = async (index, mapId) => {
-		const newFilters = { ...filtersMap }
-		newFilters[mapId].status[index] = !newFilters[mapId].status[index]
+	const handleFilter = (index, mapId) => {
+		// Solo alterna la visibilidad (estado local) y persiste la preferencia.
+		// No refetch ni remount: `visibleMarkers` recalcula qué se muestra.
+		const status = [...filtersMap[mapId].status]
+		status[index] = !status[index]
+		const newFilters = {
+			...filtersMap,
+			[mapId]: { ...filtersMap[mapId], status }
+		}
 		setFiltersMap(newFilters)
-		await getdisplay(newFilters)
-		setMapVersions(prev => ({
-			...prev,
-			[mapId]: (prev[mapId] || 0) + 1
-		}))
 		const body = {
 			check: index,
-			status: newFilters[mapId].status[index] ? 1 : 0,
+			status: status[index] ? 1 : 0,
 			type: 4,
 			id_map: mapId
 		}
@@ -221,12 +263,12 @@ function Map() {
 								</IconButton>
 								<FilterNodesButton filters={filtersMap?.[map.id].status} handleFilter={handleFilter} indexMap={map.id} />
 								<MapCustom
-									key={`${map.id}-${mapVersions[map.id] || 0}`}
+									key={map.id}
 									center={map.center}
 									activeZoom={zoomActive[index] || false}
 									activeMove={activeMove[index] || false}
 									zoom={map.zoom}
-									markers={markersRecloser[map.id]}
+									markers={visibleMarkers[map.id]}
 									polylines={polylines[map.id]}
 									filters={filtersMap}
 								/>
