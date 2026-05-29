@@ -128,7 +128,9 @@ class markerCustom {
 		},
 		alert = false,
 		recloser = [],
-		equipments = []
+		equipments = [],
+		type = null,
+		clients = []
 	) {
 		this.id = id || ''
 		this.lat = lat
@@ -139,6 +141,8 @@ class markerCustom {
 		this.icon = getIcon(status, number)
 		this.recloser = recloser
 		this.equipments = equipments
+		this.type = type
+		this.clients = clients
 	}
 	async fetchInfo() {
 		try {
