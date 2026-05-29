@@ -4,7 +4,7 @@ import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import { getImage, saveImage } from '../../../../utils/js/minio'
-import { FaCloudUploadAlt, FaSave } from "react-icons/fa";
+import { FaCloudUploadAlt, FaSave, FaRegImage } from "react-icons/fa";
 
 const DataBoard = ({ info, onPatSaved }) => {
 	const fileInputRef = useRef(null)
@@ -171,15 +171,22 @@ const DataBoard = ({ info, onPatSaved }) => {
 				<div className='m-2'>
 					<TextField InputLabelProps={{ shrink: true }} InputProps={{ readOnly: true }} className='w-full' value={feeds[info.feed]} label='Tipo de alimentación' />
 				</div>
-				<div className='m-2'>
+				<div className='m-2 gap-3 flex'>
 					<TextField select className='w-full' value={clientSelected?.id || ''} onChange={handleChange} label='Clientes'>
 						<MenuItem value=''>Seleccione un cliente</MenuItem>
 						{clients.map((client, index) => (
 							<MenuItem key={index} value={client.id}>
-								{`${client.name} - Medidor Nº ${client.meter}`}
+								{client.name}
 							</MenuItem>
 						))}
 					</TextField>
+					<TextField
+						InputProps={{ readOnly: true }}
+						InputLabelProps={{ shrink: true }}
+						className='w-full'
+						value={clientSelected?.meter ?? ''}
+						label='Nº de medidor'
+					/>
 				</div>
 				{clientSelected?.id && (
 					<div className='m-2 gap-3 flex'>
@@ -198,7 +205,14 @@ const DataBoard = ({ info, onPatSaved }) => {
 			<div className='w-full md:w-1/2 flex flex-row flex-wrap justify-center'>
 				<div className='w-full md:w-3/4 flex flex-col justify-center h-[50vh] items-center gap-y-3'>
 					<div className='h-full'>
-						<img src={image} className='h-full object-contain border-2 border-yellow-600' />
+						{image ? (
+							<img src={image} className='h-full object-contain border-2 border-yellow-600' />
+						) : (
+							<div className='h-full min-h-[200px] flex flex-col items-center justify-center gap-y-3 px-8 text-center text-gray-400 dark:text-gray-500'>
+								<FaRegImage size={56} className='opacity-60' />
+								<span className='text-sm font-medium'>No hay imagen cargada</span>
+							</div>
+						)}
 					</div>
 					<div className='flex gap-x-3'>
 						<Button variant='contained' title='Cargar imagen' color='primary' onClick={handleButtonClick}><FaCloudUploadAlt /></Button>

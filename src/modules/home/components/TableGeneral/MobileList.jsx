@@ -150,16 +150,22 @@ export default function MobileList({ elementsFiltered, filtersColumns, handleSel
                                         handleSelected={handleSelected}
                                     />
                                 ))
-                                : row.clients.map((client, idx) => (
-                                    <ClientCard
-                                        key={`${row.id}-${idx}`}
-                                        client={client}
-                                        row={row}
-                                        filtersColumns={filtersColumns}
-                                        handleSelected={handleSelected}
-                                        showButton={idx === 0}
-                                    />
-                                ))
+                                : row.clients.length
+                                    ? row.clients.map((client, idx) => (
+                                        <ClientCard
+                                            key={`${row.id}-${idx}`}
+                                            client={client}
+                                            row={row}
+                                            filtersColumns={filtersColumns}
+                                            handleSelected={handleSelected}
+                                            showButton={idx === 0}
+                                        />
+                                    ))
+                                    : (
+                                        <div className={`${BORDER_CLASSES[0]} border-l-8 p-3 border-b border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-300`}>
+                                            Sin clientes
+                                        </div>
+                                    )
                             }
                         </div>
                     </div>
