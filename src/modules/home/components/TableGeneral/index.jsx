@@ -52,6 +52,12 @@ const PLACEHOLDER_EQUIPMENT = [{
     equipmentmodels: { name: "", brand: "", type: 0 },
     influxData: { "d/c": true }
 }]
+const PLACEHOLDER_CLIENT = [{
+    name: "Sin clientes",
+    meter: null,
+    status: null,
+    placeholder: true
+}]
 
 export default function TableGeneral({ filters, filtersEquipments, filtersColumns, setElementSelected, searchValue }) {
     const navigate = useNavigate()
@@ -256,10 +262,10 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                     </StyledTableCell>
                                 </StyledTableRow>
                             )) :
-                            row.clients.map((client, index) => (
+                            (row.clients.length ? row.clients : PLACEHOLDER_CLIENT).map((client, index, clients) => (
                                 <StyledTableRow key={`${row.id}-${index}`}>
                                     {index === 0 && (
-                                        <StyledTableCell rowSpan={row.clients.length} className='min-w-96'>
+                                        <StyledTableCell rowSpan={clients.length} className='min-w-96'>
                                             <div className='w-full flex'>
                                                 <div className='w-11/12'>
                                                     {row.name}
@@ -278,10 +284,12 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                     )}
                                     {filtersColumns[3] && (
                                         <StyledTableCell >
-                                            <span className='flex items-center gap-x-2'>
-                                                <FaCircle className={`${client.status ? "text-red-500" : "text-green-500"}`} />
-                                                {client.status ? "En servicio" : "Fuera de servicio"}
-                                            </span>
+                                            {client.placeholder ? "-" : (
+                                                <span className='flex items-center gap-x-2'>
+                                                    <FaCircle className={`${client.status ? "text-red-500" : "text-green-500"}`} />
+                                                    {client.status ? "En servicio" : "Fuera de servicio"}
+                                                </span>
+                                            )}
                                         </StyledTableCell>
                                     )}
                                     {filtersColumns[4] && (
@@ -292,17 +300,17 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         </StyledTableCell>
                                     )}
                                     {index === 0 && filtersColumns[5] && (
-                                        <StyledTableCell rowSpan={row.clients.length}>
+                                        <StyledTableCell rowSpan={clients.length}>
                                             {row.lat}
                                         </StyledTableCell>
                                     )}
                                     {index === 0 && filtersColumns[6] && (
-                                        <StyledTableCell rowSpan={row.clients.length}>
+                                        <StyledTableCell rowSpan={clients.length}>
                                             {row.lon}
                                         </StyledTableCell>
                                     )}
                                     {index === 0 && filtersColumns[7] && (
-                                        <StyledTableCell rowSpan={row.clients.length}>
+                                        <StyledTableCell rowSpan={clients.length}>
                                             {row.power}
                                         </StyledTableCell>
                                     )}
@@ -321,7 +329,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         </StyledTableCell>
                                     )}
                                     {index === 0 && (
-                                        <StyledTableCell rowSpan={row.clients.length} align='center'>
+                                        <StyledTableCell rowSpan={clients.length} align='center'>
                                             <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected({}, row)} ><FaTableCellsLarge /> </Fab>
                                         </StyledTableCell>
                                     )}
