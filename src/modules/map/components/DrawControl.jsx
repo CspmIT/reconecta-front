@@ -152,7 +152,7 @@ function DrawControl({ abm, polylines, markers, editor, getLatLngMarker, filters
 			map.off('draw:edited', handleDrawEdited)
 			map.off('draw:deleted', handleDrawDelete)
 		}
-	}, [map, polylines, editor, filters])
+	}, [map, polylines, editor])
 	useEffect(() => {
 		setCreatedMarkers(markers)
 	}, [markers])
