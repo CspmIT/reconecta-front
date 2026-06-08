@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import CardCustom from '../../../components/CardCustom'
 import { MenuItem, TextField } from '@mui/material'
-import { elements } from '../utils/data'
+import { listElementTypes } from '../../ElementType/api/elementTypeApi'
 import Equipment from '../Components/Equipment'
 import { useForm } from 'react-hook-form'
 import AddMarkerMap from '../Components/Map/AddMarkerMap'
@@ -15,6 +15,7 @@ import SubstationClient from '../Components/SubstationClient'
 const Abm = () => {
 	const navigate = useNavigate()
 	const { elementId } = useParams()
+	const [elements, setElements] = useState([])
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const [numberEquipments, setNumberEquipments] = useState([])
 	const [numberClients, setNumberClients] = useState([])
@@ -91,7 +92,7 @@ const Abm = () => {
 		const id = numberClients.length === 0 ? 1 : numberClients[numberClients.length - 1].id + 1
 		setNumberClients([
 			...numberClients,
-			{ id, name: '', meter: '' },
+			{ id, name: '', meter: '', account: '' },
 		])
 	}
 	const handleDeleteClient = (id) => {
@@ -107,6 +108,17 @@ const Abm = () => {
 		return value !== undefined && value !== null && value !== '';
 	}
 
+	useEffect(() => {
+		const fetchElementTypes = async () => {
+			try {
+				const data = await listElementTypes()
+				setElements(data)
+			} catch (e) {
+				setElements([])
+			}
+		}
+		fetchElementTypes()
+	}, [])
 	useEffect(() => {
 		if (selectMarkers?.lat) {
 			clearErrors('lng_marker')
@@ -148,6 +160,7 @@ const Abm = () => {
 								id: index + 1,
 								name: client.name,
 								meter: client.meter,
+								account: client.account,
 								bd_id: client.id
 							}))
 							setNumberClients(clients)
@@ -170,6 +183,13 @@ const Abm = () => {
 			fetchElement()
 		}
 	}, [elementId])
+	// Los tipos se cargan de forma asíncrona; cuando están disponibles (y ya
+	// tenemos el elemento en edición) resolvemos el tipo seleccionado.
+	useEffect(() => {
+		if (dataEdit?.type && elements.length > 0) {
+			setElementSelected(elements.find((el) => el.id === dataEdit.type))
+		}
+	}, [elements, dataEdit])
 	return (
 		<div className={'w-full flex justify-center items-center rounded-md text-black'}>
 			<CardCustom className={'w-full rounded-md text-black flex justify-center flex-wrap gap-y-3'}>
