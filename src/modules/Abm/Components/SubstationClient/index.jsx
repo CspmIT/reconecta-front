@@ -1,8 +1,6 @@
-import { MenuItem, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { TextField } from '@mui/material'
+import React from 'react'
 import { FaMinusCircle } from 'react-icons/fa'
-import { request } from '../../../../utils/js/request'
-import { backend } from '../../../../utils/routes/app.routes'
 
 const SubstationClient = ({ data, onChange, handleDeleteClient }) => {
     const handleDelete = () => {
@@ -23,6 +21,13 @@ const SubstationClient = ({ data, onChange, handleDeleteClient }) => {
                 label='Medidor'
                 value={data.meter}
                 onChange={(e) => onChange('meter', e.target.value)}
+            />
+            <TextField
+                className='w-full md:w-1/4'
+                label='Cuenta'
+                type='number'
+                value={data.account ?? ''}
+                onChange={(e) => onChange('account', e.target.value)}
             />
             {!data.bd_id && (
                 <button type='button' onClick={handleDelete} className='text-red-500'>
