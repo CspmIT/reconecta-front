@@ -1,10 +1,10 @@
-import { Button, MenuItem, TextField } from '@mui/material'
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, MenuItem, TextField } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import Swal from 'sweetalert2'
 import { getImage, saveImage } from '../../../../utils/js/minio'
-import { FaCloudUploadAlt, FaSave, FaRegImage } from "react-icons/fa";
+import { FaCloudUploadAlt, FaSave, FaRegImage, FaPlus, FaTrash } from "react-icons/fa";
 
 const DataBoard = ({ info, onPatSaved }) => {
 	const fileInputRef = useRef(null)
@@ -16,6 +16,8 @@ const DataBoard = ({ info, onPatSaved }) => {
 	const [clientStatus, setClientStatus] = useState(false)
 	const [actualPat, setActualPat] = useState(null)
 	const [pat, setPat] = useState(null)
+	const [showAddClient, setShowAddClient] = useState(false)
+	const [newClient, setNewClient] = useState({ name: '', meter: '', account: '' })
 	const feeds = ['No definida', 'Monofásica', 'Trifásica']
 
 	const handleButtonClick = () => {
@@ -107,6 +109,79 @@ const DataBoard = ({ info, onPatSaved }) => {
 		}
 	}
 
+	const closeAddClient = () => {
+		setShowAddClient(false)
+		setNewClient({ name: '', meter: '', account: '' })
+	}
+
+	const addClient = async () => {
+		try {
+			const body = {
+				name: newClient.name,
+				meter: newClient.meter || null,
+				account: newClient.account || null,
+				id_element: info.id
+			}
+			const { data } = await request(`${backend.Reconecta}/SubstationClient`, "POST", body)
+			setClients((prevClients) => [...prevClients, data.data])
+			setNewClient({ name: '', meter: '', account: '' })
+			setShowAddClient(false)
+			Swal.fire({
+				icon: 'success',
+				title: 'Cliente agregado correctamente',
+				toast: true,
+				position: 'top-end',
+				showConfirmButton: false,
+				timer: 1500,
+			})
+		} catch (e) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Ocurrió un problema al agregar el cliente',
+				toast: true,
+				position: 'top-end',
+				showConfirmButton: false,
+				timer: 1500,
+			})
+		}
+	}
+
+	const deleteClient = async () => {
+		const result = await Swal.fire({
+			icon: 'warning',
+			title: '¿Eliminar cliente?',
+			text: `Se eliminará "${clientSelected.name}" de esta subestación`,
+			showCancelButton: true,
+			confirmButtonText: 'Eliminar',
+			cancelButtonText: 'Cancelar',
+			confirmButtonColor: '#d33',
+		})
+		if (!result.isConfirmed) return
+		try {
+			await request(`${backend.Reconecta}/SubstationClient`, "DELETE", { id: clientSelected.id })
+			setClients((prevClients) => prevClients.filter((c) => c.id !== clientSelected.id))
+			setClientSelected(null)
+			setClientStatus(false)
+			Swal.fire({
+				icon: 'success',
+				title: 'Cliente eliminado correctamente',
+				toast: true,
+				position: 'top-end',
+				showConfirmButton: false,
+				timer: 1500,
+			})
+		} catch (e) {
+			Swal.fire({
+				icon: 'error',
+				title: 'Ocurrió un problema al eliminar el cliente',
+				toast: true,
+				position: 'top-end',
+				showConfirmButton: false,
+				timer: 1500,
+			})
+		}
+	}
+
 	const savePat = async () => {
 		const body = {
 			value: pat,
@@ -187,6 +262,14 @@ const DataBoard = ({ info, onPatSaved }) => {
 						value={clientSelected?.meter ?? ''}
 						label='Nº de medidor'
 					/>
+					<TextField
+						InputProps={{ readOnly: true }}
+						InputLabelProps={{ shrink: true }}
+						className='w-full'
+						value={clientSelected?.account ?? ''}
+						label='Cuenta'
+					/>
+					<Button variant='contained' title='Agregar cliente' color='primary' className='!px-5' onClick={() => setShowAddClient(true)}><FaPlus /></Button>
 				</div>
 				{clientSelected?.id && (
 					<div className='m-2 gap-3 flex'>
@@ -195,6 +278,7 @@ const DataBoard = ({ info, onPatSaved }) => {
 							<MenuItem value={0}>Fuera de servicio</MenuItem>
 						</TextField>
 						<Button disabled={clientStatus == clientSelected.status} variant='contained' color='success' size='small' className='!px-5' onClick={saveStatusClient} >Guardar</Button>
+						<Button variant='contained' color='error' size='small' title='Eliminar cliente' className='!px-5' onClick={deleteClient}><FaTrash /></Button>
 					</div>
 				)}
 				<div className='m-2 gap-3 flex'>
@@ -230,6 +314,34 @@ const DataBoard = ({ info, onPatSaved }) => {
 
 				</div>
 			</div>
+			<Dialog open={showAddClient} onClose={closeAddClient} maxWidth='xs' fullWidth>
+				<DialogTitle>Agregar cliente</DialogTitle>
+				<DialogContent className='!pt-2'>
+					<div className='flex flex-col gap-3 mt-2'>
+						<TextField
+							label='Nombre del cliente *'
+							value={newClient.name}
+							onChange={(e) => setNewClient((prev) => ({ ...prev, name: e.target.value }))}
+							autoFocus
+						/>
+						<TextField
+							label='Nº de medidor'
+							value={newClient.meter}
+							onChange={(e) => setNewClient((prev) => ({ ...prev, meter: e.target.value }))}
+						/>
+						<TextField
+							label='Cuenta'
+							type='number'
+							value={newClient.account}
+							onChange={(e) => setNewClient((prev) => ({ ...prev, account: e.target.value }))}
+						/>
+					</div>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={closeAddClient}>Cancelar</Button>
+					<Button disabled={!newClient.name.trim()} variant='contained' color='success' onClick={addClient}>Agregar</Button>
+				</DialogActions>
+			</Dialog>
 		</div>
 	)
 }
