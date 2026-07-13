@@ -10,9 +10,11 @@ import { request } from '../../../../../../utils/js/request'
 import { backend } from '../../../../../../utils/routes/app.routes'
 import { formatterDateTableFasorial, getFasorial2 } from './utils/actions'
 import LoaderComponent from '../../../../../../components/Loader'
+import { useMeter } from '../../../../context/MeterContext'
 
 function Fasorial({ info }) {
 	const navigate = useNavigate()
+	const { vt, ct } = useMeter()
 	const [isLoading, setIsLoading] = useState(true)
 	const [optionsFasorial, setOptionsFasorial] = useState([])
 	const [dataTable, setdataTable] = useState([])
@@ -59,8 +61,8 @@ function Fasorial({ info }) {
 				<HighchartsReact highcharts={Highcharts} options={optionsFasorial} />
 			</div>
 			<p className='font-bold'>Relación de Transformación</p>
-			<p>Corriente: 2500 / 5</p>
-			<p>Tensión: 13200 / 110</p>
+			<p>Corriente: {ct.primary} / {ct.secondary}</p>
+			<p>Tensión: {vt.primary} / {vt.secondary}</p>
 			<div className='mt-3 '>
 				<TableCustom
 					data={dataTable}

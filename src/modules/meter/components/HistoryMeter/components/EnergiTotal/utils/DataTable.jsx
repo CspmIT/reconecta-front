@@ -1,89 +1,112 @@
-export const dataTableEnergiImpExp = (data) => [
-	{
-		description: 'Fase 1 Activa',
-		codImport: '1.1.21.8.0.255',
-		valueImport: `${data.IET_0.value} kWh`,
-		codExport: '1.1.22.8.0.255',
-		valueExport: `${data.IET_4.value} kWh`,
-	},
-	{
-		description: 'Fase 2 Activa',
-		codImport: '1.1.41.8.0.255',
-		valueImport: `${data.IET_1.value} kWh`,
-		codExport: '1.1.42.8.0.255',
-		valueExport: `${data.IET_5.value} kWh`,
-	},
-	{
-		description: 'Fase 3 Activa',
-		codImport: '1.1.61.8.0.255',
-		valueImport: `${data.IET_2.value} kWh`,
-		codExport: '1.1.62.8.0.255',
-		valueExport: `${data.IET_6.value} kWh`,
-	},
-	{
-		description: 'Acumulado Activa',
-		codImport: '1.1.1.8.0.255',
-		valueImport: `${data.IET_3.value} kWh`,
-		codExport: '1.1.2.8.0.255',
-		valueExport: `${data.IET_7.value} kWh`,
-	},
-	{
-		description: 'Fase 1 Aparente',
-		codImport: '1.1.29.8.0.255',
-		valueImport: `${data.IET_3_4.value} kVAh`,
-		codExport: '1.1.30.8.0.255',
-		valueExport: `${data.IET_3_8.value} kVAh`,
-	},
-	{
-		description: 'Fase 2 Aparente',
-		codImport: '1.1.49.8.0.255',
-		valueImport: `${data.IET_3_5.value} kVAh`,
-		codExport: '1.1.50.8.0.255',
-		valueExport: `${data.IET_3_9.value} kVAh`,
-	},
-	{
-		description: 'Fase 3 Aparente',
-		codImport: '1.1.69.8.0.255',
-		valueImport: `${data.IET_3_6.value} kVAh`,
-		codExport: '1.1.70.8.0.255',
-		valueExport: `${data.IET_3_10.value} kVAh`,
-	},
-	{
-		description: 'Acumulado Aparente',
-		codImport: '1.1.9.8.0.255',
-		valueImport: `${data.IET_3_7.value} kVAh`,
-		codExport: '1.1.10.8.0.255',
-		valueExport: `${data.IET_3_11.value} kVAh`,
-	},
-	{
-		description: 'Fase 1 Reactiva',
-		codImport: '1.1.23.8.0.255',
-		valueImport: `${data.IET_8.value} kVArh`,
-		codExport: '1.1.24.8.0.255',
-		valueExport: `${data.IET_2_0.value} kVArh`,
-	},
-	{
-		description: 'Fase 2 Reactiva',
-		codImport: '1.1.43.8.0.255',
-		valueImport: `${data.IET_9.value} kVArh`,
-		codExport: '1.1.44.8.0.255',
-		valueExport: `${data.IET_2_1.value} kVArh`,
-	},
-	{
-		description: 'Fase 3 Reactiva',
-		codImport: '1.1.63.8.0.255',
-		valueImport: `${data.IET_10.value} kVArh`,
-		codExport: '1.1.64.8.0.255',
-		valueExport: `${data.IET_2_2.value} kVArh`,
-	},
-	{
-		description: 'Acumulado Reactiva',
-		codImport: '1.1.3.8.0.255',
-		valueImport: `${data.IET_11.value} kVArh`,
-		codExport: '1.1.4.8.0.255',
-		valueExport: `${data.IET_2_3.value} kVArh`,
-	},
-]
+// Los valores llegan en kilo-unidad (kWh/kVAh/kVArh). El selector de submúltiplo
+// solo cambia el prefijo dividiendo por 1000 (k -> M -> G); "auto" elige el legible.
+const scaleEnergy = (value, base, unitMode) => {
+	const num = parseFloat(value)
+	if (isNaN(num)) return `${value ?? 'sin datos'}`
+	let steps
+	if (unitMode === 'auto') {
+		steps = 0
+		let tmp = Math.abs(num)
+		while (tmp >= 1000 && steps < 2) {
+			tmp /= 1000
+			steps++
+		}
+	} else {
+		steps = { k: 0, M: 1, G: 2 }[unitMode] ?? 0
+	}
+	const scaled = num / Math.pow(1000, steps)
+	return `${scaled.toLocaleString('es-AR', { maximumFractionDigits: 3 })} ${['k', 'M', 'G'][steps]}${base}`
+}
+
+export const dataTableEnergiImpExp = (data, unitMode = 'k') => {
+	const f = (item, base) => scaleEnergy(item?.value, base, unitMode)
+	return [
+		{
+			description: 'Fase 1 Activa',
+			codImport: '1.1.21.8.0.255',
+			valueImport: f(data.IET_0, 'Wh'),
+			codExport: '1.1.22.8.0.255',
+			valueExport: f(data.IET_4, 'Wh'),
+		},
+		{
+			description: 'Fase 2 Activa',
+			codImport: '1.1.41.8.0.255',
+			valueImport: f(data.IET_1, 'Wh'),
+			codExport: '1.1.42.8.0.255',
+			valueExport: f(data.IET_5, 'Wh'),
+		},
+		{
+			description: 'Fase 3 Activa',
+			codImport: '1.1.61.8.0.255',
+			valueImport: f(data.IET_2, 'Wh'),
+			codExport: '1.1.62.8.0.255',
+			valueExport: f(data.IET_6, 'Wh'),
+		},
+		{
+			description: 'Acumulado Activa',
+			codImport: '1.1.1.8.0.255',
+			valueImport: f(data.IET_3, 'Wh'),
+			codExport: '1.1.2.8.0.255',
+			valueExport: f(data.IET_7, 'Wh'),
+		},
+		{
+			description: 'Fase 1 Aparente',
+			codImport: '1.1.29.8.0.255',
+			valueImport: f(data.IET_3_4, 'VAh'),
+			codExport: '1.1.30.8.0.255',
+			valueExport: f(data.IET_3_8, 'VAh'),
+		},
+		{
+			description: 'Fase 2 Aparente',
+			codImport: '1.1.49.8.0.255',
+			valueImport: f(data.IET_3_5, 'VAh'),
+			codExport: '1.1.50.8.0.255',
+			valueExport: f(data.IET_3_9, 'VAh'),
+		},
+		{
+			description: 'Fase 3 Aparente',
+			codImport: '1.1.69.8.0.255',
+			valueImport: f(data.IET_3_6, 'VAh'),
+			codExport: '1.1.70.8.0.255',
+			valueExport: f(data.IET_3_10, 'VAh'),
+		},
+		{
+			description: 'Acumulado Aparente',
+			codImport: '1.1.9.8.0.255',
+			valueImport: f(data.IET_3_7, 'VAh'),
+			codExport: '1.1.10.8.0.255',
+			valueExport: f(data.IET_3_11, 'VAh'),
+		},
+		{
+			description: 'Fase 1 Reactiva',
+			codImport: '1.1.23.8.0.255',
+			valueImport: f(data.IET_8, 'VArh'),
+			codExport: '1.1.24.8.0.255',
+			valueExport: f(data.IET_2_0, 'VArh'),
+		},
+		{
+			description: 'Fase 2 Reactiva',
+			codImport: '1.1.43.8.0.255',
+			valueImport: f(data.IET_9, 'VArh'),
+			codExport: '1.1.44.8.0.255',
+			valueExport: f(data.IET_2_1, 'VArh'),
+		},
+		{
+			description: 'Fase 3 Reactiva',
+			codImport: '1.1.63.8.0.255',
+			valueImport: f(data.IET_10, 'VArh'),
+			codExport: '1.1.64.8.0.255',
+			valueExport: f(data.IET_2_2, 'VArh'),
+		},
+		{
+			description: 'Acumulado Reactiva',
+			codImport: '1.1.3.8.0.255',
+			valueImport: f(data.IET_11, 'VArh'),
+			codExport: '1.1.4.8.0.255',
+			valueExport: f(data.IET_2_3, 'VArh'),
+		},
+	]
+}
 
 export const ColumnsTableEnergiImpExp = [
 	{

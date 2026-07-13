@@ -11,7 +11,8 @@ import LoaderComponent from '../../../../../../components/Loader'
 import { getTableCurva } from './utils/js/actions'
 import { Button, TextField } from '@mui/material'
 import { useForm } from 'react-hook-form'
-function Curva({ info }) {
+import { enabledCanales } from '../../utils/curvaConfig'
+function Curva({ info, enabledKeys }) {
 	const navigate = useNavigate()
 	const [isLoading, setIsLoading] = useState(true)
 	const [dataTable, setdataTable] = useState([])
@@ -61,6 +62,17 @@ function Curva({ info }) {
 		formState: { errors },
 		handleSubmit,
 	} = useForm()
+	// Columnas visibles según las variables tildadas para este medidor
+	const visibleCanales = enabledKeys ? enabledCanales(enabledKeys) : null
+	const columns = visibleCanales
+		? ColumnsTable.filter(
+				(column) =>
+					column.accessorKey === 'datePeriod' ||
+					column.accessorKey === 'Event' ||
+					visibleCanales.has(column.accessorKey)
+		  )
+		: ColumnsTable
+
 	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<div className='w-full'>
@@ -79,7 +91,7 @@ function Curva({ info }) {
 				<TextField
 					error={errors.dateFinished ? true : false}
 					type='date'
-					label='Desde'
+					label='Hasta'
 					{...register('dateFinished', { required: 'El campo es requerido' })}
 					InputLabelProps={{
 						shrink: true,
@@ -95,7 +107,7 @@ function Curva({ info }) {
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<TableCustom
 					data={dataTable}
-					columns={ColumnsTable}
+					columns={columns}
 					density='compact'
 					header={{
 						background: 'rgb(190 190 190)',

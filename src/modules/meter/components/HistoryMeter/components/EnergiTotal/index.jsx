@@ -1,26 +1,28 @@
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { MenuItem, TextField } from '@mui/material'
 import TableCustom from '../../../../../../components/TableCustom'
 import {
 	ColumnsTableEnergiImpExp,
 	ColumnsTableReactivaxCuadrante,
+	dataTableEnergiImpExp,
 	dataTableReactivaxCuadrante,
 } from './utils/DataTable'
-import { dataTableEnergiImpExp } from './utils/DataTable'
 import LoaderComponent from '../../../../../../components/Loader'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Swal from 'sweetalert2'
 import { request } from '../../../../../../utils/js/request'
 import { backend } from '../../../../../../utils/routes/app.routes'
-import { BorderBottom } from '@mui/icons-material'
+
 function EnergiTotal({ info }) {
 	const [isLoading, setIsLoading] = useState(true)
-	const [dataImpExp, setDataImpExp] = useState({})
-	const [dataReactxCuadrante, setDataReactxCuadrante] = useState({})
-	const getInfoRestart = async (dateStart = null, dateFinished = null) => {
+	const [rawData, setRawData] = useState(null)
+	const [unitMode, setUnitMode] = useState('auto')
+
+	const getInfoEnergyTotal = async (dateStart = null, dateFinished = null) => {
 		try {
 			setIsLoading(true)
-			const dataRestart = await request(
+			const response = await request(
 				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getHistoryEnergyTotal`,
 				'POST',
 				{
@@ -31,9 +33,7 @@ function EnergiTotal({ info }) {
 					dateFinished,
 				}
 			)
-			const data = dataRestart.data
-			setDataImpExp(dataTableEnergiImpExp(data))
-			setDataReactxCuadrante(dataTableReactivaxCuadrante(data))
+			setRawData(response.data)
 		} catch (error) {
 			console.error(error)
 			Swal.fire({
@@ -41,30 +41,45 @@ function EnergiTotal({ info }) {
 				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
 				icon: 'error',
 			})
-			// navigate('/Home')
 		} finally {
 			setIsLoading(false)
 		}
 	}
+
 	useEffect(() => {
-		if (!info) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-			navigate('/Home')
-		} else {
-			getInfoRestart()
-		}
+		if (info) getInfoEnergyTotal()
 	}, [info])
+
+	const dataImpExp = useMemo(
+		() => (rawData ? dataTableEnergiImpExp(rawData, unitMode) : []),
+		[rawData, unitMode]
+	)
+	const dataReactxCuadrante = useMemo(
+		() => (rawData ? dataTableReactivaxCuadrante(rawData) : []),
+		[rawData]
+	)
+
 	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<>
 			<LocalizationProvider dateAdapter={AdapterDayjs}>
 				<div className='w-full max-lg:w-full flex flex-col gap-4'>
-					<div className='w-full'>
-						<p className='text-xl text-center font-bold w-full'>Energia Importada/Exportadas</p>
+					<div className='w-full flex items-center justify-between flex-wrap gap-2'>
+						<p className='text-xl text-center font-bold flex-1'>Energia Importada/Exportadas</p>
+						<TextField
+							select
+							size='small'
+							label='Submúltiplo'
+							value={unitMode}
+							onChange={(e) => setUnitMode(e.target.value)}
+							className='!w-32'
+							title='Submúltiplo de energía (aplica a la tabla de importada/exportada)'
+						>
+							<MenuItem value='auto'>Auto</MenuItem>
+							<MenuItem value='k'>kWh</MenuItem>
+							<MenuItem value='M'>MWh</MenuItem>
+							<MenuItem value='G'>GWh</MenuItem>
+						</TextField>
 					</div>
 					<TableCustom
 						data={dataImpExp}

@@ -12,8 +12,9 @@ import MeterLineChart from '../Charts/linecharts'
 import { DateTimePicker, LocalizationProvider, renderTimeViewClock } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import dayjs from 'dayjs'
+import { enabledGrafTitles } from '../../utils/curvaConfig'
 
-function Grafic({ info }) {
+function Grafic({ info, enabledKeys }) {
 	const navigate = useNavigate()
 	const [dateCurrent, setDateCurrent] = useState(dayjs())
 	const [dateStart, setDateStart] = useState(dayjs().subtract(12, 'hour'))
@@ -72,6 +73,9 @@ function Grafic({ info }) {
 			}))
 		)
 	}
+	// Gráficos visibles según las variables tildadas para este medidor
+	const allowedTitles = enabledKeys ? enabledGrafTitles(enabledKeys) : null
+
 	if (isLoading) return <LoaderComponent image={false} />
 	return (
 		<>
@@ -115,6 +119,7 @@ function Grafic({ info }) {
 				</div>
 			</div>
 			{dataGraf.map((graf, index) => {
+				if (allowedTitles && !allowedTitles.has(graf.titleGraf)) return null
 				if (!graf.disable)
 					return (
 						<div key={index} className='py-4 my-2 w-full flex flex-col items-center '>
