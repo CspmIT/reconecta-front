@@ -1,34 +1,41 @@
-import { Button } from '@mui/material'
 import { useContext, useEffect, useState } from 'react'
-import { FaEdit, FaRedo } from 'react-icons/fa'
-import Header from '../Header'
-import CardBoard from '../CardBoard'
+import { useNavigate } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import { MainContext } from '../../../../context/MainContext'
+import { backend } from '../../../../utils/routes/app.routes'
+import { request } from '../../../../utils/js/request'
+import LoaderComponent from '../../../../components/Loader'
+import { DataInsta } from '../../utils/actions'
+import { MeterProvider } from '../../context/MeterContext'
+import MainCard from '../MainCard'
+import TxBar from '../TxBar'
+import VerticalTabs from '../VerticalTabs'
 import Metrology from '../Metrology'
 import LoadCurve from '../LoadCurve'
 import QualityTension from '../QualityTension'
 import HistoryMeter from '../HistoryMeter'
-import { useNavigate } from 'react-router-dom'
-import { MainContext } from '../../../../context/MainContext'
-import Swal from 'sweetalert2'
-import { backend } from '../../../../utils/routes/app.routes'
-import { request } from '../../../../utils/js/request'
-import LoaderComponent from '../../../../components/Loader'
-import { DataInsta } from '../Metrology/components/Basic/utils/actions'
+import EventsMeter from '../EventsMeter'
 
 function DataBoardMeter() {
-	const [info, setInfo] = useState(null)
 	const navigate = useNavigate()
-	const [isLoading, setIsLoading] = useState(true)
 	const { tabCurrent, tabs, setInfoNav } = useContext(MainContext)
 	const [data] = useState(tabs[tabCurrent] || null)
-	const [validateMeter, setValidateMeter] = useState(false)
+	const [info, setInfo] = useState(null)
+	const [insta, setInsta] = useState(null)
+	const [energy, setEnergy] = useState(null)
+	const [power, setPower] = useState(null)
+	const [isLoading, setIsLoading] = useState(true)
+
 	const getDataMeter = async (id) => {
 		try {
-			const meter = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataMeter?id=${id}`, 'GET')
+			setIsLoading(true)
+			const meter = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataMeter?id=${id}`,
+				'GET'
+			)
 			setInfo(meter.data)
 			setIsLoading(false)
-
-			controlData(meter.data)
+			loadLiveData(meter.data)
 		} catch (error) {
 			console.error(error)
 			Swal.fire({
@@ -36,7 +43,41 @@ function DataBoardMeter() {
 				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
 				icon: 'error',
 			})
-			// navigate('/Home')
+		}
+	}
+
+	// Datos en vivo (VI + energía para KPIs). Si fallan, la vista sigue con "sin datos".
+	const loadLiveData = async (meterInfo) => {
+		try {
+			const insta = await DataInsta(meterInfo)
+			setInsta(insta)
+			if (!insta?.VI?.V_0) {
+				Swal.fire({
+					title: 'Atención!',
+					html: 'No se obtuvieron datos instantáneos del medidor.</br>Se muestra la última información disponible.',
+					icon: 'warning',
+				})
+			}
+		} catch (error) {
+			console.error(error)
+			setInsta(null)
+		}
+		const base = backend[`${import.meta.env.VITE_APP_NAME}`]
+		const query = `serial=${meterInfo.serial}&version=${meterInfo.version}&brand=${meterInfo.brand}`
+		try {
+			const energy = await request(`${base}/getMetrologyEnergy?${query}`, 'GET')
+			setEnergy(energy.data)
+		} catch (error) {
+			console.error(error)
+			setEnergy(null)
+		}
+		try {
+			// Trae ademas DeM_Ta_0..5 (demanda maxima por tarifa de /status/P_imp) para los KPIs
+			const power = await request(`${base}/getMetrologyPower?${query}`, 'GET')
+			setPower(power.data)
+		} catch (error) {
+			console.error(error)
+			setPower(null)
 		}
 	}
 
@@ -52,83 +93,44 @@ function DataBoardMeter() {
 			getDataMeter(data.id)
 		}
 	}, [data])
-	const controlData = async (data) => {
-		try {
-			const meter = await DataInsta(data)
-			if (meter?.VI?.V_0) {
-				setValidateMeter(true)
-				setSelectedCardId(1)
-			} else {
-				setSelectedCardId(0)
-				throw new Error('No se obtuvieron datos instantaneos, intente nuevamente')
-			}
-		} catch (error) {
-			console.error(error)
-			Swal.fire({
-				title: 'Atención!',
-				html: error.message,
-				icon: 'error',
-			})
-		}
-	}
 
 	const editMeter = () => {
 		setInfoNav([info])
 		navigate('/Equipment/' + info.id)
 	}
-	const [selectedCardId, setSelectedCardId] = useState(null)
-	const handleCardSelect = (id) => {
-		setSelectedCardId(id)
-		if (id == 0) {
-			Swal.fire({
-				title: 'Atención!',
-				html: 'La opción seleccionada no tiene datos. </br>Vuelve a recargar los datos...',
-				icon: 'error',
-			})
-		}
-	}
-	return (
-		<div className='w-full rounded-xl p-3 bg-gray-200 dark:bg-gray-600 '>
-			<div className='flex flex-row relative justify-between mb-8'>
-				<div className='flex-grow flex justify-center'>
-					<h2 className='text-2xl'>{info?.name || 'Medidor'}</h2>
-				</div>
-				<div className='absolute right-2 top-8 md:top-0'>
-					<Button onClick={() => getDataMeter(info.id)} variant='contained' title='Recargar Datos'>
-						<FaRedo />
-					</Button>
-					<Button
-						onClick={editMeter}
-						className='!ml-3'
-						color='warning'
-						title='Editar Reconectador'
-						variant='contained'
-					>
-						<FaEdit />
-					</Button>
-				</div>
+
+	if (isLoading || !info) {
+		return (
+			<div className='w-full p-5'>
+				<LoaderComponent image={false} />
 			</div>
-			{isLoading ? (
-				<div className='p-5'>
-					<LoaderComponent image={false} />
-				</div>
-			) : (
-				<>
-					<div className='mb-8'>
-						<Header info={info} />
-					</div>
-					<>
-						<CardBoard onCardSelect={handleCardSelect} verifyBasic={validateMeter} />
-						<div className='p-3'>
-							{selectedCardId === 1 ? <Metrology info={info} /> : null}
-							{selectedCardId === 2 ? <LoadCurve info={info} /> : null}
-							{selectedCardId === 3 ? <QualityTension info={info} /> : null}
-							{selectedCardId === 4 ? <HistoryMeter info={info} /> : null}
-						</div>
-					</>
-				</>
-			)}
-		</div>
+		)
+	}
+
+	const vi = insta?.VI ?? null
+	const panels = [
+		{ key: 'metr', label: 'METROLOGÍA', component: <Metrology info={info} insta={insta} /> },
+		{ key: 'curva', label: 'CURVA DE CARGA (LP)', component: <LoadCurve info={info} /> },
+		{ key: 'cal', label: 'CALIDAD DE TENSIÓN (VQD)', component: <QualityTension info={info} /> },
+		{ key: 'ener', label: 'ENERGÍA (EOB)', component: <HistoryMeter info={info} /> },
+		{ key: 'even', label: 'EVENTOS', component: <EventsMeter info={info} /> },
+	]
+
+	return (
+		<MeterProvider info={info} vi={vi}>
+			<div className='w-full flex flex-col gap-4'>
+				<MainCard
+					info={info}
+					vi={vi}
+					energy={energy}
+					power={power}
+					onRefresh={() => getDataMeter(info.id)}
+					onEdit={editMeter}
+				/>
+				<TxBar />
+				<VerticalTabs tabs={panels} />
+			</div>
+		</MeterProvider>
 	)
 }
 

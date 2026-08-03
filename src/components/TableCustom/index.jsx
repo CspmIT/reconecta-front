@@ -283,7 +283,9 @@ const TableCustom = ({ data, columns, ...prop }) => {
 				{prop.filter && <MRT_ToggleFiltersButton title='Filtrar' table={table} />}
 
 				{prop.hide && <MRT_ShowHideColumnsButton title='Mostras/Ocultar Columnas' table={table} />}
-				{prop.density && <MRT_ToggleDensePaddingButton title='Densidad' table={table} />}
+				{prop.density && prop.densityToggle !== false && (
+					<MRT_ToggleDensePaddingButton title='Densidad' table={table} />
+				)}
 
 				{/* descomentar si queremos hacer un fullScreen en la tabla */}
 				{/* <MRT_ToggleFullScreenButton table={table} /> */}
