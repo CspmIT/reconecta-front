@@ -84,19 +84,10 @@ function Metrology({ info, insta }) {
 		{ l: 'Total', value: vi.CFi_3?.value, obis: '1.1.13.7.0.255' },
 	].map((r) => ({ ...r, uni: '' }))
 
-	// Sin unidad fija: la escala de demanda difiere según configuración del medidor
-	// (W secundarios en gran consumidor, kW primarios en barra) y el firmware no
-	// publica units_schema de demanda (auditoría D3) — "no inventemos".
-	const unidadPendiente = 'Unidad según configuración del medidor — pendiente units_schema'
-	const demandaRows = [
-		{ l: 'Actual', value: vi.RDe_0?.value, uni: '', obis: '1.1.1.4.0.255', extra: unidadPendiente },
-		{ l: 'Último promedio', value: vi.RDe_1?.value, uni: '', obis: '1.1.1.5.0.255', extra: unidadPendiente },
-	]
-
 	const powerBlocks = [
 		{
 			sub: 'Activa',
-			unit: '',
+			unit: 'kW',
 			rows: comboRows(
 				power,
 				'IAcP',
@@ -107,7 +98,7 @@ function Metrology({ info, insta }) {
 		},
 		{
 			sub: 'Reactiva',
-			unit: '',
+			unit: 'kVAr',
 			rows: comboRows(
 				power,
 				'IReP',
@@ -118,7 +109,7 @@ function Metrology({ info, insta }) {
 		},
 		{
 			sub: 'Aparente',
-			unit: '',
+			unit: 'kVA',
 			rows: comboRows(
 				power,
 				'IApP',
@@ -132,7 +123,7 @@ function Metrology({ info, insta }) {
 	const energyBlocks = [
 		{
 			sub: 'Activa',
-			unit: '',
+			unit: 'kWh',
 			rows: comboRows(
 				energy,
 				'IAcE',
@@ -143,7 +134,7 @@ function Metrology({ info, insta }) {
 		},
 		{
 			sub: 'Reactiva',
-			unit: '',
+			unit: 'kVArh',
 			rows: comboRows(
 				energy,
 				'IReE',
@@ -154,7 +145,7 @@ function Metrology({ info, insta }) {
 		},
 		{
 			sub: 'Aparente',
-			unit: '',
+			unit: 'kVAh',
 			rows: comboRows(
 				energy,
 				'IApE',
@@ -179,21 +170,12 @@ function Metrology({ info, insta }) {
 				<MetricCard title='Tensión de fase' rows={tensionRows} />
 				<MetricCard title='Corrientes' rows={corrienteRows} />
 				<MetricCard title='Coseno φ' rows={cosenoRows} />
-				<MetricCard title='Registro de demanda' rows={demandaRows} full />
 				<div className='md:col-span-3 border-2 border-t-4 border-blue-600 rounded-xl px-4 py-4 bg-white dark:bg-zinc-700 shadow-sm'>
 					<h4 className='text-lg font-semibold text-center mb-3'>Diagrama fasorial</h4>
 					<Fasorial info={{ version: info.version, brand: info.brand, serial: info.serial }} />
 				</div>
-				<ComboCard
-					title='Potencia'
-					note='Valores tal cual publica el medidor — la unidad difiere según su configuración (pendiente units_schema de potencia)'
-					blocks={powerBlocks}
-				/>
-				<ComboCard
-					title='Energía'
-					note='Acumuladores de vida, tal cual publica el medidor — la unidad difiere según su configuración (Wh o kWh)'
-					blocks={energyBlocks}
-				/>
+				<ComboCard title='Potencia' blocks={powerBlocks} />
+				<ComboCard title='Energía' blocks={energyBlocks} />
 			</div>
 		</div>
 	)

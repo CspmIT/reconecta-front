@@ -1,5 +1,6 @@
 import { Button } from '@mui/material'
 import { FaEdit, FaRedo, FaInfoCircle } from 'react-icons/fa'
+import { isInvalidEnergy, SIN_INFO } from '../../utils/format'
 
 // Umbral (en secundario) para considerar una fase con tensión
 const UMIN = 10
@@ -71,6 +72,12 @@ const fmt = (value, decimals = 2) => {
 	return num.toLocaleString('es-AR', { maximumFractionDigits: decimals })
 }
 
+// La unidad solo acompaña a valores numéricos ("sin datos" va solo)
+const fmtU = (value, unit, decimals = 2) => {
+	const text = fmt(value, decimals)
+	return text === 'sin datos' ? text : `${text} ${unit}`
+}
+
 function MainCard({ info, vi, energy, power, onRefresh, onEdit }) {
 	const status = getEnergyStatus(vi)
 	const online = status.key !== 'unk'
@@ -84,7 +91,7 @@ function MainCard({ info, vi, energy, power, onRefresh, onEdit }) {
 	// (pares valor/fecha: Resto, Pico, Valle)
 	const dmax = (valueKey, dateKey, tarifa, obis) => ({
 		title: `Demanda máx. ${tarifa}`,
-		value: `${fmt(power?.[valueKey]?.value)} kW`,
+		value: fmtU(power?.[valueKey]?.value, 'kW'),
 		sub: power?.[dateKey]?.value ?? '',
 		obis,
 		tip: 'Máxima del período en curso (/status/P_imp)',
@@ -93,20 +100,20 @@ function MainCard({ info, vi, energy, power, onRefresh, onEdit }) {
 		showExp
 			? {
 					title: 'Energía exportada',
-					value: `${fmt(expE)} kWh`,
+					value: isInvalidEnergy(expE) ? SIN_INFO : fmtU(expE, 'kWh'),
 					obis: '1.1.2.8.0.255',
 					tip: 'Acumulador de vida del medidor, no es la energía del período',
 			  }
 			: {
 					title: 'Energía importada',
-					value: `${fmt(impE)} kWh`,
+					value: isInvalidEnergy(impE) ? SIN_INFO : fmtU(impE, 'kWh'),
 					obis: '1.1.1.8.0.255',
 					tip: 'Acumulador de vida del medidor, no es la energía del período',
 			  },
 		dmax('DeM_Ta_0', 'DeM_Ta_1', 'Resto', '0.0.98.133.61.255'),
 		dmax('DeM_Ta_2', 'DeM_Ta_3', 'Pico', '0.0.98.133.62.255'),
 		dmax('DeM_Ta_4', 'DeM_Ta_5', 'Valle', '0.0.98.133.63.255'),
-		{ title: 'Frecuencia', value: `${fmt(vi?.F?.value)} Hz`, obis: '1.1.14.7.0.255' },
+		{ title: 'Frecuencia', value: fmtU(vi?.F?.value, 'Hz'), obis: '1.1.14.7.0.255' },
 	]
 
 	const props = [
@@ -179,7 +186,7 @@ function MainCard({ info, vi, energy, power, onRefresh, onEdit }) {
 									className={`cursor-help ${batLow ? 'text-red-600 dark:text-red-400 font-semibold' : ''}`}
 									title={`OBIS 0.0.96.6.3.255${batLow ? ' · Tensión de batería baja (sana ~3,2 V)' : ''}`}
 								>
-									Batería: {fmt(vi?.Bat_0?.value, 2)} V
+									Batería: {fmtU(vi?.Bat_0?.value, 'V')}
 								</span>
 							</Indicator>
 						)

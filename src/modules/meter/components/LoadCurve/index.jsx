@@ -1,9 +1,7 @@
 import { useState } from 'react'
 import TabsMeter from '../tabsMeter'
-import CosenoFi from './components/CosenoFi'
-import Curva from './components/Curva'
+import CurvaTable from './components/CurvaTable'
 import Grafic from './components/Grafic'
-import VoltageCurrent from './components/VoltageCurrent'
 import Variables from './components/Variables'
 import { loadCurvaConfig, saveCurvaConfig } from './utils/curvaConfig'
 
@@ -18,26 +16,16 @@ function LoadCurve({ info }) {
 	const tabs = [
 		{
 			id: 1,
-			title: 'Curva 1',
-			component: <Curva info={info} enabledKeys={enabledKeys} />,
+			title: 'Tabla',
+			component: <CurvaTable info={info} enabledKeys={enabledKeys} />,
 		},
 		{
 			id: 2,
-			title: 'Tensiones y Corrientes',
-			component: <VoltageCurrent info={info} />,
-		},
-		{
-			id: 3,
-			title: 'Coseno Fi',
-			component: <CosenoFi info={info} />,
-		},
-		{
-			id: 4,
 			title: 'Gráficos',
 			component: <Grafic info={info} enabledKeys={enabledKeys} />,
 		},
 		{
-			id: 5,
+			id: 3,
 			title: 'Variables',
 			component: (
 				<Variables serial={info?.serial} enabled={enabledKeys} onChange={handleVariablesChange} />

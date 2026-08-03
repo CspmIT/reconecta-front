@@ -1,3 +1,5 @@
+import { isInvalidEnergy, SIN_INFO } from '../../../../utils/format'
+
 /*
  * Card combinada Importada/Exportada (Potencia y Energía).
  * blocks: [{ sub, unit, rows: [{ l, imp:{value,obis}, exp:{value,obis}, total }] }]
@@ -6,6 +8,12 @@ const fmtValue = (value, decimals = 2) => {
 	const num = parseFloat(value)
 	if (isNaN(num)) return 'sin datos'
 	return num.toLocaleString('es-AR', { maximumFractionDigits: decimals })
+}
+
+const cellText = (value, unit) => {
+	if (isInvalidEnergy(value)) return SIN_INFO
+	const text = fmtValue(value)
+	return text === 'sin datos' || !unit ? text : `${text} ${unit}`
 }
 
 function ComboCard({ title, note, blocks }) {
@@ -50,7 +58,7 @@ function ComboCard({ title, note, blocks }) {
 											}`}
 											title={cell.obis ? `OBIS ${cell.obis}` : undefined}
 										>
-											{fmtValue(cell.value)}{block.unit ? ` ${block.unit}` : ''}
+											{cellText(cell.value, block.unit)}
 										</span>
 									))}
 								</div>

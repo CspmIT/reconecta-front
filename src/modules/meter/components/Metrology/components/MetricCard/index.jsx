@@ -9,6 +9,12 @@ const fmtValue = (value) => {
 	return num.toLocaleString('es-AR', { maximumFractionDigits: 3 })
 }
 
+// La unidad solo acompaña a valores numéricos ("sin datos" va solo)
+const rowText = (row) => {
+	const text = fmtValue(row.value)
+	return isNaN(parseFloat(row.value)) || !row.uni ? text : `${text} ${row.uni}`
+}
+
 function MetricCard({ title, rows, full = false }) {
 	return (
 		<div
@@ -30,7 +36,7 @@ function MetricCard({ title, rows, full = false }) {
 								undefined
 							}
 						>
-							{fmtValue(row.value)} {row.uni}
+							{rowText(row)}
 						</span>
 					</div>
 				))}

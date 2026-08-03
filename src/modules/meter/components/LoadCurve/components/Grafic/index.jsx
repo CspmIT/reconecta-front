@@ -1,147 +1,165 @@
-import { useNavigate } from 'react-router-dom'
-import GrafLinea from '../../../../../../components/Graphs/linechart'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import dayjs from 'dayjs'
+import { Button, TextField } from '@mui/material'
+import { useForm } from 'react-hook-form'
+import MeterLineChart from '../Charts/linecharts'
+import LoaderComponent from '../../../../../../components/Loader'
 import { request } from '../../../../../../utils/js/request'
 import { backend } from '../../../../../../utils/routes/app.routes'
-import Swal from 'sweetalert2'
-import { getFormatterGraf } from './utils/js/actions'
-import LoaderComponent from '../../../../../../components/Loader'
-import { MenuItem, TextField } from '@mui/material'
-import { dataGraficos } from './utils/dataGraf'
-import MeterLineChart from '../Charts/linecharts'
-import { DateTimePicker, LocalizationProvider, renderTimeViewClock } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import dayjs from 'dayjs'
-import { enabledGrafTitles } from '../../utils/curvaConfig'
+import { useMeter } from '../../../../context/MeterContext'
+import { enabledVariables } from '../../utils/curvaConfig'
 
+/*
+ * Gráficas de la curva de carga (LP): un chart por grupo de variables (misma
+ * naturaleza juntas, como el mockup), con los datos del topic /status/curva
+ * (endpoint getCurva) y solo las variables tildadas en "Variables".
+ */
 function Grafic({ info, enabledKeys }) {
-	const navigate = useNavigate()
-	const [dateCurrent, setDateCurrent] = useState(dayjs())
-	const [dateStart, setDateStart] = useState(dayjs().subtract(12, 'hour'))
+	const { txOn, vtFactor } = useMeter()
+	const [data, setData] = useState(null)
 	const [isLoading, setIsLoading] = useState(true)
-	const [dataGraf, setDataGraf] = useState([])
-	const getDataGraf = async () => {
+	const [loadError, setLoadError] = useState(false)
+
+	const variables = useMemo(() => enabledVariables(enabledKeys), [enabledKeys])
+
+	const getData = async (dateStart = null, dateFinished = null) => {
 		try {
 			setIsLoading(true)
-			const dataGraf = await request(`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getInfoGraf`, 'POST', {
-				serial: info.serial,
-				version: info.version,
-				brand: info.brand,
-				dateStart,
-				dateFinished: dateCurrent
-			})
-			const data = dataGraf.data
-
-			const dataGrafico = await Promise.all(dataGraficos.map((grafico) => getFormatterGraf(data, grafico)))
-			setDataGraf(dataGrafico)
-
+			setLoadError(false)
+			const response = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getCurva`,
+				'POST',
+				{
+					serial: info.serial,
+					version: info.version,
+					brand: info.brand,
+					dateStart,
+					dateFinished,
+				}
+			)
+			setData(response.data ?? null)
 		} catch (error) {
 			console.error(error)
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del Medidor.</br>Intente nuevamente...`,
-				icon: 'error',
-			})
-			navigate('/Home')
+			setLoadError(true)
+			setData(null)
 		} finally {
 			setIsLoading(false)
 		}
 	}
 
 	useEffect(() => {
-		if (!info) {
-			Swal.fire({
-				title: 'Atención!',
-				html: `Hubo un problema con la carga de los datos del Medidor.<br>Intente nuevamente...`,
-				icon: 'error',
-			}).then(() => navigate('/Home'))
-			return
-		}
-		getDataGraf()
+		if (info) getData()
 	}, [info])
-	const [selectOptionGraf, setSelectOptionGraf] = useState('Importada')
-	const changeDisableGraf = (value) => {
-		setSelectOptionGraf(value)
-		setDataGraf((prevDataGraf) =>
-			prevDataGraf.map((item) => ({
-				...item,
-				disable: item.titleGraf.includes('Exportada')
-					? value !== 'Exportada'
-					: item.titleGraf.includes('Importada')
-						? value !== 'Importada'
-						: item.disable,
-			}))
+
+	// Un chart por grupo; series alineadas por _time (huecos = null, corta la línea).
+	// Las etiquetas del eje X usan el field "ts" del topico (fecha que reporta el
+	// medidor); si falta, se cae al _time de ingestion de Influx.
+	const charts = useMemo(() => {
+		if (!data) return []
+		const tsByTime = new Map(
+			(Array.isArray(data.ts) ? data.ts : []).map((item) => [item.time, item.value])
 		)
+		const recordLabel = (time) => tsByTime.get(time) ?? dayjs(time).format('DD/MM/YYYY HH:mm')
+		const groups = new Map()
+		variables.forEach((variable) => {
+			if (!groups.has(variable.group)) groups.set(variable.group, [])
+			groups.get(variable.group).push(variable)
+		})
+		const result = []
+		groups.forEach((groupVars, group) => {
+			const timesSet = new Set()
+			groupVars.forEach((variable) => {
+				;(Array.isArray(data[variable.key]) ? data[variable.key] : []).forEach((item) =>
+					timesSet.add(item.time)
+				)
+			})
+			const times = [...timesSet].sort()
+			if (!times.length) return
+			const values = { DatePeriod: times.map((time) => recordLabel(time)) }
+			groupVars.forEach((variable) => {
+				const serie = Array.isArray(data[variable.key]) ? data[variable.key] : []
+				const byTime = new Map(serie.map((item) => [item.time, item.value]))
+				values[variable.label] = times.map((time) => {
+					let value = byTime.get(time) ?? null
+					if (value !== null && txOn && variable.tx === 'vt') {
+						const num = parseFloat(value)
+						if (!isNaN(num)) value = +(num * vtFactor).toFixed(2)
+					}
+					return value
+				})
+			})
+			result.push({ title: group, values })
+		})
+		return result
+	}, [data, variables, txOn, vtFactor])
+
+	const filterCharts = (formData) => {
+		getData(formData.dateStart, formData.dateFinished)
 	}
-	// Gráficos visibles según las variables tildadas para este medidor
-	const allowedTitles = enabledKeys ? enabledGrafTitles(enabledKeys) : null
+
+	const {
+		register,
+		formState: { errors },
+		handleSubmit,
+	} = useForm()
 
 	if (isLoading) return <LoaderComponent image={false} />
-	return (
-		<>
-			<div className='w-full flex justify-center my-5'>
-				<LocalizationProvider dateAdapter={AdapterDayjs}>
-					<DateTimePicker
-						className='bg-white dark:bg-slate-800'
-						ampm={false}
-						label="Fecha de inicio"
-						format='DD/MM/YYYY HH:mm'
-						viewRenderers={{
-							hours: renderTimeViewClock,
-							minutes: renderTimeViewClock,
-							seconds: renderTimeViewClock,
-						}}
-						value={dateStart}
-						onChange={(newValue) => {
-							setDateStart(newValue)
-						}}
-					/>
-					<DateTimePicker
-						className='bg-white dark:bg-slate-800'
-						label="Fecha de fin"
-						ampm={false}
-						format='DD/MM/YYYY HH:mm'
-						viewRenderers={{
-							hours: renderTimeViewClock,
-							minutes: renderTimeViewClock,
-							seconds: renderTimeViewClock,
-						}}
-						value={dateCurrent}
-						onChange={(newValue) => {
-							setDateCurrent(newValue)
-						}}
-					/>
-				</LocalizationProvider>
-				<div className='flex flex-row items-center'>
-					<button className='bg-blue-500 text-white rounded-lg px-4 py-2 ml-3' onClick={getDataGraf}>
-						Filtrar
-					</button>
-				</div>
-			</div>
-			{dataGraf.map((graf, index) => {
-				if (allowedTitles && !allowedTitles.has(graf.titleGraf)) return null
-				if (!graf.disable)
-					return (
-						<div key={index} className='py-4 my-2 w-full flex flex-col items-center '>
-							{graf.select ? (
-								<TextField
-									select
-									value={selectOptionGraf}
-									className='w-1/2 !mb-4'
-									onChange={(e) => changeDisableGraf(e.target.value)}
-								>
-									<MenuItem value={'Importada'}>Importada</MenuItem>
-									<MenuItem value={'Exportada'}>Exportada</MenuItem>
-								</TextField>
-							) : null}
 
-							<div className={`w-full h-96 shadow-lg shadow-slate-300 p-4`}>
-								<MeterLineChart title={graf.titleGraf} values={graf.data} />
-							</div>
+	if (!variables.length) {
+		return (
+			<p className='w-full text-center italic text-gray-500 dark:text-zinc-300 py-8'>
+				No hay variables seleccionadas. Abrí <b>Variables</b> y tildá al menos una.
+			</p>
+		)
+	}
+
+	return (
+		<div className='w-full'>
+			<form className='flex justify-center w-full gap-4 my-4' onSubmit={handleSubmit(filterCharts)}>
+				<TextField
+					error={errors.dateStart ? true : false}
+					type='date'
+					label='Desde'
+					{...register('dateStart', { required: 'El campo es requerido' })}
+					InputLabelProps={{
+						shrink: true,
+					}}
+					className='w-1/4'
+					helperText={errors.dateStart && errors.dateStart.message}
+				/>
+				<TextField
+					error={errors.dateFinished ? true : false}
+					type='date'
+					label='Hasta'
+					{...register('dateFinished', { required: 'El campo es requerido' })}
+					InputLabelProps={{
+						shrink: true,
+					}}
+					className='w-1/4'
+					helperText={errors.dateFinished && errors.dateFinished.message}
+				/>
+				<Button type='submit' variant='contained' color='primary'>
+					Filtrar
+				</Button>
+			</form>
+			{loadError ? (
+				<p className='w-full text-center italic text-red-600 dark:text-red-400 py-6'>
+					No se pudieron cargar los registros de la curva. Intente nuevamente.
+				</p>
+			) : !charts.length ? (
+				<p className='w-full text-center italic text-gray-500 dark:text-zinc-300 py-6'>
+					No hay registros de curva en el rango elegido.
+				</p>
+			) : (
+				charts.map((chart) => (
+					<div key={chart.title} className='py-4 my-2 w-full flex flex-col items-center'>
+						<div className='w-full h-96 shadow-lg shadow-slate-300 dark:shadow-zinc-800 p-4'>
+							<MeterLineChart title={chart.title} values={chart.values} />
 						</div>
-					)
-			})}
-		</>
+					</div>
+				))
+			)}
+		</div>
 	)
 }
 
