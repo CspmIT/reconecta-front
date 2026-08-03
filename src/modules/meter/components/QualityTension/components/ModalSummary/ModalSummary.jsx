@@ -10,7 +10,7 @@ function ModalSummary({ open, handleClose, dataTableModal, ColumnsTableModal }) 
 			aria-labelledby='modal-modal-title'
 			aria-describedby='modal-modal-description'
 		>
-			<div className='w-full md:w-10/12 !absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 p-2'>
+			<div className='w-full md:w-fit md:min-w-[560px] md:max-w-[90vw] !absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 p-2'>
 				<div className='bg-white rounded-md shadow-md w-full'>
 					<div className='p-4 bg-[#243f8c] rounded-t-md relative'>
 						<h1 className='text-xl font-bold'>Resumen</h1>
@@ -27,7 +27,9 @@ function ModalSummary({ open, handleClose, dataTableModal, ColumnsTableModal }) 
 								background: 'rgb(190 190 190)',
 								fontSize: '18px',
 								fontWeight: 'bold',
+								paddingX: '24px',
 							}}
+							bodyContent={{ paddingX: '24px' }}
 							card={{
 								boxShadow: `1px 1px 8px 0px #00000046`,
 								borderRadius: '0.25rem',
