@@ -20,75 +20,76 @@ import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { FaFilePdf } from 'react-icons/fa'
 
-const csvConfig = mkConfig({
+const csvOptions = {
 	filename: 'Excel-export',
 	fieldSeparator: ',',
 	decimalSeparator: '.',
-	useKeysAsHeaders: true,
-})
+}
+
+// export-to-csv y jspdf-autotable sólo aceptan primitivos: los arrays/objetos
+// (ej. personalIds) hay que aplanarlos antes de generar el archivo.
+const toPlainValue = (value) => {
+	if (value === null || value === undefined) return ''
+	if (value instanceof Date) return `${value.toLocaleDateString()} ${value.toLocaleTimeString()}`
+	if (Array.isArray(value)) return value.map(toPlainValue).filter((v) => v !== '').join(' | ')
+	if (typeof value === 'object') return Object.values(value).map(toPlainValue).filter((v) => v !== '').join(' | ')
+	return value
+}
+
+// Aplana columnas agrupadas y descarta las que no tienen dato propio (ej. "Acciones"),
+// para que el archivo exportado tenga las mismas columnas que se ven en la tabla.
+const getExportableColumns = (cols, parentHeader = '') => {
+	const flattened = []
+	cols.forEach((column) => {
+		if (column.columns) {
+			flattened.push(...getExportableColumns(column.columns, column.header))
+		} else if (column.exportFn || column.accessorFn || column.accessorKey) {
+			flattened.push({
+				header: column.header ?? '',
+				parentHeader,
+				accessorKey: column.accessorKey,
+				accessorFn: column.accessorFn,
+				exportFn: column.exportFn,
+			})
+		}
+	})
+	return flattened
+}
+
+const getCellValue = (row, col) => {
+	// exportFn permite que una columna exporte el valor legible (nombres) en lugar del crudo (ids)
+	if (col.exportFn) return col.exportFn(row)
+	if (col.accessorFn) return col.accessorFn(row)
+	// MRT admite accessorKey anidado con notación de puntos
+	return String(col.accessorKey)
+		.split('.')
+		.reduce((acc, key) => (acc == null ? acc : acc[key]), row)
+}
 
 const TableCustom = ({ data, columns, ...prop }) => {
-	// // exportar en excel por linea
-	// const handleExportRows = (rows) => {
-	// 	const rowData = rows.map((row) => row.original)
-	// 	const csv = generateCsv(csvConfig)(rowData)
-	// 	download(csvConfig)(csv)
-	// }
 	// exportar en excel toda la info
 	const handleExportData = () => {
-		const getFlattenedHeadersAndKeys = (cols) => {
-			const flattened = []
-			cols.forEach((column) => {
-				if (column.columns) {
-					flattened.push(...getFlattenedHeadersAndKeys(column.columns))
-				} else {
-					flattened.push({ header: column.header, accessorKey: column.accessorKey })
-				}
-			})
-			return flattened
-		}
-
-		const flattenedColumns = getFlattenedHeadersAndKeys(columns)
-		const groupedHeaders = []
-		columns.forEach((column) => {
-			if (column.columns) {
-				const colSpan = column.columns.length
-				groupedHeaders.push({ header: column.header, colSpan })
-			} else {
-				groupedHeaders.push({ header: '', colSpan: 1 })
-			}
-		})
-		const groupedHeadersRow = groupedHeaders.flatMap((group) => Array(group.colSpan).fill(group.header))
-		const headers = flattenedColumns.map((col) => col.header)
-		const dataFormat = data.map((row) => {
-			return flattenedColumns.map((col) => {
-				const value = row[col.accessorKey]
-				return value instanceof Date
-					? `${value.toLocaleDateString()} ${value.toLocaleTimeString()}`
-					: value ?? ''
-			})
-		})
-		const dataWithHeaders = [groupedHeadersRow, headers, ...dataFormat]
-		const csv = generateCsv(csvConfig)(dataWithHeaders)
-		download(csvConfig)(csv)
+		const flattenedColumns = getExportableColumns(columns)
+		// columnHeaders garantiza el orden de las columnas y una única fila de encabezado
+		const columnHeaders = flattenedColumns.map((col, i) => ({
+			key: `c${i}`,
+			displayLabel: col.parentHeader ? `${col.parentHeader} - ${col.header}` : String(col.header),
+		}))
+		const rows = data.map((row) =>
+			Object.fromEntries(flattenedColumns.map((col, i) => [`c${i}`, toPlainValue(getCellValue(row, col))])),
+		)
+		const csvConfig = mkConfig({ ...csvOptions, columnHeaders })
+		download(csvConfig)(generateCsv(csvConfig)(rows))
 	}
 
 	// Exportado de pdf
 	const handleExportRowsPdf = (rows) => {
 		const doc = new jsPDF()
-		const tableData = rows
-			.map((row) => Object.values(row.original))
-			.map((row) => {
-				const linea = row.map((item) => {
-					if (item instanceof Date) {
-						item = `${item.toLocaleDateString()} ${item.toLocaleTimeString()}`
-					}
-					return item
-				})
-				return linea
-			})
-
-		const tableHeaders = columns.map((c) => c.header)
+		const flattenedColumns = getExportableColumns(columns)
+		const tableData = rows.map((row) =>
+			flattenedColumns.map((col) => String(toPlainValue(getCellValue(row.original, col)))),
+		)
+		const tableHeaders = flattenedColumns.map((col) => col.header)
 
 		autoTable(doc, {
 			head: [tableHeaders],
