@@ -33,6 +33,12 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		header: 'Equipo / Ubicación',
 		accessorKey: 'equipoId',
 		size: 220,
+		exportFn: (row) => {
+			const eq = equiposMap?.[row.equipoId]
+			if (eq) return `${eq.nombre}${eq.tipoLabel ? ` (${eq.tipoLabel})` : ''}`
+			if (row.elementoId) return `${row.equipoNombre || `Elemento ${row.elementoId}`} (Subestación)`
+			return 'Sin equipo'
+		},
 		Cell: ({ row }) => {
 			const eq = equiposMap?.[row.original.equipoId]
 			if (eq) {
@@ -67,6 +73,7 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		header: 'Tipo de tarea',
 		accessorKey: 'tipoTarea',
 		size: 160,
+		exportFn: (row) => labelTipo(row.tipoTarea),
 		Cell: ({ row }) => (
 			<Chip
 				size='small'
@@ -80,6 +87,7 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		header: 'Fecha',
 		accessorKey: 'fechaRealizacion',
 		size: 110,
+		exportFn: (row) => fmtDate(row.fechaRealizacion),
 		Cell: ({ cell }) => fmtDate(cell.getValue()),
 	},
 	{
@@ -87,6 +95,7 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		accessorKey: 'duracion',
 		size: 100,
 		enableSorting: false,
+		exportFn: (row) => fmtDuracion(row.duracion),
 		Cell: ({ cell }) => (
 			<span className='font-mono text-sm'>{fmtDuracion(cell.getValue())}</span>
 		),
@@ -96,6 +105,11 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		accessorKey: 'personalIds',
 		size: 200,
 		enableSorting: false,
+		exportFn: (row) =>
+			(row.personalIds || [])
+				.map((id) => personalMap?.[id]?.nombre)
+				.filter(Boolean)
+				.join(' | '),
 		Cell: ({ row }) => {
 			const lista = (row.original.personalIds || [])
 				.map((id) => personalMap?.[id]?.nombre)
@@ -117,6 +131,7 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		header: 'Estado',
 		accessorKey: 'estado',
 		size: 130,
+		exportFn: (row) => ESTADOS[row.estado]?.label ?? row.estado,
 		Cell: ({ cell }) => {
 			const est = ESTADOS[cell.getValue()] ?? { label: cell.getValue(), color: 'default' }
 			return <Chip size='small' label={est.label} color={est.color} />
