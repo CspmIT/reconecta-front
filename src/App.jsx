@@ -35,6 +35,7 @@ import { useUpdater } from './hooks/useUpdater'
 import { isTauri } from '@tauri-apps/api/core'
 import ConfigHardware from './modules/ConfigHardware/view'
 import ElementTypeAbm from './modules/ElementType/views'
+import Unifilar from './modules/unifilar/views'
 
 function App() {
 	// Updater tauri
@@ -55,6 +56,7 @@ function App() {
 		{ path: '/map', element: <Map /> },
 		{ path: '/Alert', element: <Alert /> },
 		{ path: '/Diagram', element: <Diagrams /> },
+		{ path: '/unifilar', element: <Unifilar /> },
 		{ path: '/AddChart', element: <AddChart /> },
 		// { path: '/visualizador', element: <ForgeViewer /> },
 		{ path: '/tabs', element: <TabDinamic /> },

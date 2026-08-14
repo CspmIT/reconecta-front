@@ -1,4 +1,4 @@
-import { FaBell, FaClipboardList, FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram, FaThList, FaUserLock } from 'react-icons/fa'
+import { FaBell, FaClipboardList, FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram, FaSitemap, FaThList, FaUserLock } from 'react-icons/fa'
 import { MdContentPaste } from 'react-icons/md'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
 import { GrConfigure } from "react-icons/gr";
@@ -6,6 +6,7 @@ import { GrConfigure } from "react-icons/gr";
 const ListIcon = () => [
 	{ title: 'Mapa', name: 'FaMapMarkedAlt', icon: <FaMapMarkedAlt className=' text-3xl' /> },
 	{ title: 'Diagrama', name: 'FaProjectDiagram', icon: <FaProjectDiagram className=' text-3xl' /> },
+	{ title: 'Unifilar', name: 'FaSitemap', icon: <FaSitemap className=' text-3xl' /> },
 	{ title: 'Bitacora', name: 'MdContentPaste', icon: <MdContentPaste className=' text-3xl' /> },
 	{ title: 'Configuración', name: 'FaCogs', icon: <FaCogs className=' text-3xl' /> },
 	{ title: 'Accesos', name: 'FaUserLock', icon: <FaUserLock className=' text-3xl' /> },
