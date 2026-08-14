@@ -34,12 +34,16 @@ export const ColumnsTableModal = [
 		header: 'Nombre',
 		accessorKey: 'name',
 		enableColumnFilter: false,
+		enableColumnActions: false,
+		size: 170,
 		enableSorting: false,
 	},
 	{
 		header: 'Global',
 		accessorKey: 'global',
 		enableColumnFilter: false,
+		enableColumnActions: false,
+		size: 170,
 		enableSorting: false,
 	},
 ]
