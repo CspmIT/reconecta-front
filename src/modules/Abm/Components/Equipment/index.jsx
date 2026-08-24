@@ -1,23 +1,32 @@
-import { MenuItem, TextField } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { MenuItem, Radio, TextField, Tooltip } from '@mui/material'
+import React from 'react'
 import { FaMinusCircle } from 'react-icons/fa'
-import { request } from '../../../../utils/js/request'
-import { backend } from '../../../../utils/routes/app.routes'
 
-const Equipment = ({ data, onChange, type, handleDeleteEquipment }) => {
+/**
+ * Una fila de equipo del elemento.
+ *
+ * `models` llega por prop y no se pide aca: la vista lo consulta una sola vez y
+ * lo reparte. Antes cada fila hacia su propio GET /ElementsModel, o sea siete
+ * pedidos iguales en un elemento con siete equipos, y ademas la vista necesita
+ * los modelos para saber cual de las filas es un reconectador.
+ *
+ * @param {boolean} showMain muestra el selector de principal (solo cuando el
+ *        elemento tiene mas de un reconectador: recien ahi hay algo que elegir)
+ */
+const Equipment = ({ data, onChange, type, handleDeleteEquipment, models = [], showMain = false, onMain }) => {
 	const handleDelete = () => {
 		handleDeleteEquipment(data.id)
 	}
-	const [models, setModels] = useState([])
-	const getModels = async () => {
-		const { data } = await request(`${backend.Reconecta}/ElementsModel`, 'GET')
-		setModels(data)
-	}
-	useEffect(() => {
-		getModels()
-	}, [])
+
 	return (
-		<div className='flex w-full gap-3 justify-start mb-3'>
+		<div className='flex w-full gap-3 justify-start mb-3 items-center'>
+			{showMain && (
+				<Tooltip title='Equipo que representa a este elemento en el mapa: de él salen el estado y las mediciones'>
+					<span className='flex items-center'>
+						<Radio checked={!!data.is_main} onChange={() => onMain(data.id)} size='small' />
+					</span>
+				</Tooltip>
+			)}
 			<TextField
 				select
 				className='w-full md:w-1/6'
