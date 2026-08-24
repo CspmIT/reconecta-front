@@ -45,6 +45,14 @@ body.dark .rc-map {
 	font-family: inherit;
 	color: var(--rc-txt);
 }
+/* En moviles y tablets la barra del navegador entra y sale: dvh mide el alto
+   que se ve de verdad, vh mide el mas grande. Con @supports, si el motor no lo
+   conoce (WebKitGTK viejo) se queda con el vh de arriba. */
+@supports (height: 1dvh) {
+	.rc-map {
+		height: calc(100dvh - 160px);
+	}
+}
 
 /* ---------- mapa ---------- */
 .rc-mapcard {
@@ -75,6 +83,14 @@ body.dark .rc-map {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
+	/*
+	 * Los 7 botones en columna miden 319px. Si la ventana queda baja (pantalla
+	 * partida, o el apilado en un telefono acostado) el overflow del card
+	 * cortaba los ultimos y quedaban inalcanzables: con wrap pasan a una
+	 * segunda columna en lugar de desaparecer.
+	 */
+	flex-wrap: wrap;
+	max-height: calc(100% - 24px);
 }
 .rc-tools-r {
 	position: absolute;
@@ -1193,4 +1209,89 @@ body.dark .rc-alarmbar.on {
 .rc-eqrow svg {
 	flex: 0 0 14px;
 	color: var(--rc-txt3);
+}
+
+/* ---------- responsive ---------- */
+/*
+ * El panel tiene ancho fijo, asi que al angostarse la ventana el unico que se
+ * come el recorte es el mapa. Medido sin breakpoints: a 1024px el mapa quedaba
+ * en 564px, a 834 en 374, a 768 en 308, a 430 en 34, y a 360 la pagina ya
+ * scrolleaba de costado. Dos escalones: primero se angosta el panel, y cuando
+ * ni eso alcanza se apila.
+ */
+@media (max-width: 1279px) {
+	.rc-panel {
+		width: 300px;
+		flex-basis: 300px;
+	}
+	/*
+	 * Con el panel mas angosto los cuatro chips de estado no entran en una
+	 * linea (medido: desbordaban 15px). Se los deja pasar a dos.
+	 *
+	 * El `flex-basis: auto` es imprescindible: con el `flex: 1` de siempre la
+	 * base es 0, el navegador cree que entran todos y recien despues los estira
+	 * hasta su min-content, asi que el wrap NUNCA se dispara y el texto se sale.
+	 */
+	.rc-chips {
+		flex-wrap: wrap;
+	}
+	.rc-chip {
+		flex: 1 1 auto;
+	}
+}
+
+/*
+ * En el escalon del panel angosto los cuatro chips caen 3 + 1 y el solitario se
+ * estira a todo el ancho. Con base del 50% quedan 2x2, que se lee mejor. Solo
+ * aca: mas abajo el panel pasa a ancho completo y los cuatro entran en una
+ * linea, donde 2x2 serian cuatro chips enormes.
+ */
+@media (min-width: 900px) and (max-width: 1279px) {
+	.rc-chip {
+		flex-basis: calc(50% - 3px);
+	}
+}
+
+/*
+ * Debajo de 900px no hay ancho para dos columnas: el mapa va arriba con alto
+ * propio, el panel abajo a lo ancho, y scrollea la pagina. Apilar arregla de
+ * rebote dos cosas que en un mapa de 300px quedaban recortadas: las lupas
+ * (268px fijos) y la barra del editor de tramos.
+ */
+@media (max-width: 899px) {
+	.rc-map {
+		flex-direction: column;
+		/* Lo alto lo da el contenido y scrollea la pagina, que es lo que se
+		   espera en un telefono. align-self evita que el flex del wrapper lo
+		   estire y deje un hueco abajo cuando el contenido es corto. */
+		height: auto;
+		align-self: flex-start;
+	}
+	.rc-mapcard {
+		flex: 0 0 auto;
+		/* 60vh deja ver mapa y lista al mismo tiempo. El minimo es para que la
+		   barra de herramientas (7 botones de 38px en columna, 319px) entre
+		   siempre: si no, los ultimos quedan cortados por el overflow del card. */
+		height: 60vh;
+		min-height: 360px;
+	}
+	.rc-panel {
+		width: 100%;
+		flex: 0 0 auto;
+	}
+	/* Plegar el panel en apilado es esconderlo, no encogerlo a cero de ancho */
+	.rc-panel.collapsed {
+		display: none;
+	}
+	.rc-rows {
+		/* Sin scroll interno: con la pagina scrolleando, dos scrolls anidados
+		   hacen que la lista se sienta trabada. */
+		overflow-y: visible;
+	}
+	/* Una sola linea no entra: el aviso y la barra del editor pasan a dos */
+	.rc-hint {
+		white-space: normal;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
 }
