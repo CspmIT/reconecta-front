@@ -176,9 +176,14 @@ function MapTools() {
 						)}
 					</svg>
 				</button>
+				{/*
+				 * Azul cuando la tabla ESTA visible, igual que el boton de guias:
+				 * en esta barra el azul significa "esto esta activo", no "esto es
+				 * lo que va a pasar si lo toco".
+				 */}
 				<button
 					type='button'
-					className={`rc-tool${panelCollapsed ? ' on' : ''}`}
+					className={`rc-tool${panelCollapsed ? '' : ' on'}`}
 					title={panelCollapsed ? 'Mostrar tabla' : 'Ocultar tabla'}
 					onClick={() => setPanelCollapsed(!panelCollapsed)}
 				>
