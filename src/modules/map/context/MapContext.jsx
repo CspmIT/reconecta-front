@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import { clampToCard } from '../utils/js/freeSpot'
-import { buildPayload, nextIdFrom, sanitizeLupas } from '../utils/js/prefs'
+import { buildPayload, nextIdFrom, normalizeView, sameView, sanitizeLupas, sanitizeView } from '../utils/js/prefs'
 import { snapToDevice, tooCloseToLast } from '../utils/js/snap'
 import { useOpenBoard } from '../../tabs/utils/openBoard'
 
@@ -89,8 +89,17 @@ export function MapProvider({ children }) {
 	const cardRef = useRef(null)
 	const saveTimer = useRef(null)
 	const prefsRef = useRef({ baseKey: 'street', showGuides: true, panelCollapsed: false, lupas: [] })
+	/*
+	 * Centro y zoom del mapa principal, lo ultimo que dejo el operador. Va en un
+	 * ref y no en el estado por lo mismo que la geometria de las lupas: un
+	 * arrastre dispararia un render por frame. OperationalMap lo lee al crear el
+	 * mapa y lo escribe en cada moveend/zoomend.
+	 */
+	const viewRef = useRef(null)
 	// Evita que la carga inicial de preferencias dispare un guardado
 	const prefsListas = useRef(false)
+	// Ver el cleanup de mas abajo: hay cleanups de hijos que agendan guardados
+	const montado = useRef(true)
 
 	// Editor de tramos
 	const [lineMode, setLineMode] = useState(false)
@@ -200,6 +209,10 @@ export function MapProvider({ children }) {
 	 *
 	 * `locked` NO se persiste a proposito: si la vista volviera bloqueada al
 	 * entrar, el mapa parece roto (no se puede mover) sin que se entienda por que.
+	 *
+	 * El centro y el zoom se guardan JUNTOS: restaurar solo el zoom dejaria al
+	 * operador mirando el encuadre por defecto con su acercamiento, o sea un
+	 * pedazo cualquiera del mapa.
 	 */
 	const restaurarPrefs = async () => {
 		try {
@@ -209,6 +222,7 @@ export function MapProvider({ children }) {
 			if (BASE_LAYERS[pref.baseKey]) setBaseKey(pref.baseKey)
 			if (typeof pref.showGuides === 'boolean') setShowGuides(pref.showGuides)
 			if (typeof pref.panelCollapsed === 'boolean') setPanelCollapsed(pref.panelCollapsed)
+			viewRef.current = sanitizeView(pref.view)
 			const validas = sanitizeLupas(pref.lupas)
 			if (validas.length) {
 				setLupas(validas)
@@ -402,10 +416,10 @@ export function MapProvider({ children }) {
 	 * ventana, y lo que hay que restaurar es lo que esta viendo ahora.
 	 */
 	const guardarPrefs = useCallback(() => {
-		if (!prefsListas.current) return
+		if (!prefsListas.current || !montado.current) return
 		clearTimeout(saveTimer.current)
 		saveTimer.current = setTimeout(() => {
-			const payload = buildPayload(prefsRef.current, lupaRegistry.current)
+			const payload = buildPayload(prefsRef.current, lupaRegistry.current, viewRef.current)
 			request(`${API()}/userPref/${PREF_MODULE}`, 'PUT', payload).catch((e) =>
 				console.error('No se pudieron guardar las preferencias del mapa:', e?.message || e)
 			)
@@ -428,13 +442,51 @@ export function MapProvider({ children }) {
 		guardarPrefs()
 	}, [baseKey, showGuides, panelCollapsed, lupas, guardarPrefs])
 
-	useEffect(() => () => clearTimeout(saveTimer.current), [])
+	/*
+	 * Al desmontar hay que cortar el guardado agendado, y ademas marcar el
+	 * contexto como muerto.
+	 *
+	 * Lo segundo no es paranoia: React 18 corre los cleanups de PADRE a HIJO, asi
+	 * que este limpia el timer y despues el cleanup de cada LupaWindow llama a
+	 * emitGuidesChange, que agenda uno nuevo que ya nadie cancela. Medido: al
+	 * salir del mapa quedaba una escritura al backend por desmontaje, disparada
+	 * 1,2s despues con las preferencias de un contexto que ya no existe.
+	 *
+	 * La bandera se PRENDE en el setup y no solo se apaga en el cleanup. Con
+	 * StrictMode el desmontaje simulado corre el cleanup y vuelve a montar el
+	 * mismo componente, que conserva sus refs: si el setup no la reactivara,
+	 * quedaria apagada para siempre y en desarrollo no se guardaria ninguna
+	 * preferencia. Medido: 0 escrituras en dev, todas correctas en el build.
+	 */
+	useEffect(() => {
+		montado.current = true
+		return () => {
+			montado.current = false
+			clearTimeout(saveTimer.current)
+		}
+	}, [])
 
 	// Suscripcion para redibujar las guias sin pasar por el estado de React
 	const onGuidesChange = useCallback((cb) => {
 		guidesTick.current.add(cb)
 		return () => guidesTick.current.delete(cb)
 	}, [])
+	/**
+	 * Centro y zoom que dejo el operador. Comparte el debounce del resto de las
+	 * preferencias, y no guarda si la vista no cambio: el propio setView de la
+	 * creacion del mapa dispara un moveend, y sin la comparacion cada arranque
+	 * escribiria al backend sin que nadie hubiera movido nada.
+	 */
+	const commitView = useCallback(
+		(center, zoom) => {
+			const nueva = normalizeView(center, zoom)
+			if (sameView(viewRef.current, nueva)) return
+			viewRef.current = nueva
+			guardarPrefs()
+		},
+		[guardarPrefs]
+	)
+
 	const emitGuidesChange = useCallback(() => {
 		guidesTick.current.forEach((cb) => cb())
 		// Mover o hacer zoom en una lupa no toca el estado de React: el guardado
@@ -744,6 +796,8 @@ export function MapProvider({ children }) {
 		lupaZ,
 		mainMapRef,
 		cardRef,
+		viewRef,
+		commitView,
 		showGuides,
 		setShowGuides,
 		armed,
