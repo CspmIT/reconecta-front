@@ -16,6 +16,33 @@ export const fmtV = (v) => {
 
 export const fmtI = (i) => (i === null || i === undefined || Number.isNaN(i) ? '—' : i.toFixed(1))
 
+/*
+ * Los equipos NO publican todos en la misma unidad y no hay con que
+ * normalizarlos (ver FAMILIES en services/MapLiveService.js):
+ *  - el reconectador publica la primaria real, 13200 -> 13,20 kV;
+ *  - el medidor publica el SECUNDARIO del transformador de medicion (~65 V);
+ *  - el analizador publica baja tension real (~227 V).
+ * Cada equipo viaja con su `unit` y se muestra tal como lo publica. Convertir
+ * el medidor con un factor inventado seria peor que no convertirlo.
+ */
+export const fmtVUnit = (v, unit) => {
+	if (v === null || v === undefined || Number.isNaN(v)) return '—'
+	return unit === 'kV' ? fmtV(v) : v.toFixed(1)
+}
+
+/*
+ * Cuando corresponde resaltar fuera de rango y sobrecarga.
+ *
+ * Solo el reconectador CERRADO. Dos motivos distintos:
+ *  - el medidor y el analizador no tienen nominal conocida (la del medidor
+ *    depende de una relacion de transformacion que los ITRON no publican, y la
+ *    del analizador de una tolerancia de BT que nadie definio);
+ *  - un reconectador ABIERTO esta en cero por definicion, asi que marcarlo como
+ *    fuera de rango pinta de naranja lo normal.
+ * En los dos casos, un umbral inventado entrena al operador a ignorar el color.
+ */
+export const seResalta = (unit, st) => unit === 'kV' && st === 'cerrado'
+
 /** Desvio de mas del 3% respecto de la nominal (13,2 kV en MT, 400 V en BT). */
 export const vFueraDeRango = (v) => {
 	if (v === null || v === undefined || Number.isNaN(v)) return false

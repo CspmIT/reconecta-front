@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useMapContext } from '../context/MapContext'
+import { KIND_LABEL } from '../utils/js/pins'
 
 /*
  * Un elemento puede tener varios equipos (una ET con 7 medidores, un
@@ -10,13 +11,6 @@ import { useMapContext } from '../context/MapContext'
  * completa el elemento a pantalla completa es `.rc-map`, y todo lo que quede
  * fuera de su subarbol no se ve.
  */
-
-const TIPO = {
-	1: 'Reconectador',
-	2: 'Medidor',
-	// "Analizador de red" completo empuja el nombre del equipo y lo hace cortar antes
-	3: 'Analizador',
-}
 
 function EquipmentPicker() {
 	const { equipChoice, setEquipChoice, elegirEquipo } = useMapContext()
@@ -49,8 +43,9 @@ function EquipmentPicker() {
 				<div className='rc-modal-list'>
 					{equipos.map((eq) => (
 						<button type='button' key={eq.id} className='rc-eqrow' onClick={() => elegirEquipo(eq)}>
-							<span className='rc-eqtype'>{TIPO[eq.equipmentmodels.type] || 'Equipo'}</span>
-							<span className='rc-eqname'>{eq.observation || `${eq.equipmentmodels.name} ${eq.equipmentmodels.brand}`}</span>
+							{/* Los equipos llegan con la forma de /map/live, no la de /Elements */}
+							<span className='rc-eqtype'>{KIND_LABEL[eq.kind] || 'Equipo'}</span>
+							<span className='rc-eqname'>{eq.description || `${eq.model} ${eq.version}`}</span>
 							<span className='rc-eqserial'>{eq.serial || '—'}</span>
 							<svg width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.2'>
 								<path d='m9 6 6 6-6 6' />

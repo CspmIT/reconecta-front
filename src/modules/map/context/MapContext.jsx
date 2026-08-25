@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
 import { clampToCard } from '../utils/js/freeSpot'
-import { buildPayload, nextIdFrom, sanitizeLupas } from '../utils/js/prefs'
+import { buildPayload, nextIdFrom, normalizeView, sameView, sanitizeLupas, sanitizeView } from '../utils/js/prefs'
 import { snapToDevice, tooCloseToLast } from '../utils/js/snap'
 import { useOpenBoard } from '../../tabs/utils/openBoard'
 
@@ -19,6 +19,21 @@ import { useOpenBoard } from '../../tabs/utils/openBoard'
  */
 
 const MapContext = createContext(null)
+
+/*
+ * `/map/live` aplana el modelo del equipo (`model`/`version`/`type`/`id_model`);
+ * `useOpenBoard` espera el `equipmentmodels` anidado de `/Elements`.
+ *
+ * Se traduce aca en lugar de cambiar el contrato de la pestana, que es el MISMO
+ * que arma el Home: si no coincidiera, abrir el mismo equipo desde el mapa y
+ * desde el Home crearia dos pestanas para lo mismo.
+ */
+const paraTablero = (eq) => ({
+	id: eq.id,
+	serial: eq.serial,
+	observation: eq.description,
+	equipmentmodels: { id: eq.id_model, name: eq.model, brand: eq.version, type: eq.type },
+})
 
 const API = () => backend[`${import.meta.env.VITE_APP_NAME}`]
 
@@ -89,8 +104,17 @@ export function MapProvider({ children }) {
 	const cardRef = useRef(null)
 	const saveTimer = useRef(null)
 	const prefsRef = useRef({ baseKey: 'street', showGuides: true, panelCollapsed: false, lupas: [] })
+	/*
+	 * Centro y zoom del mapa principal, lo ultimo que dejo el operador. Va en un
+	 * ref y no en el estado por lo mismo que la geometria de las lupas: un
+	 * arrastre dispararia un render por frame. OperationalMap lo lee al crear el
+	 * mapa y lo escribe en cada moveend/zoomend.
+	 */
+	const viewRef = useRef(null)
 	// Evita que la carga inicial de preferencias dispare un guardado
 	const prefsListas = useRef(false)
+	// Ver el cleanup de mas abajo: hay cleanups de hijos que agendan guardados
+	const montado = useRef(true)
 
 	// Editor de tramos
 	const [lineMode, setLineMode] = useState(false)
@@ -200,6 +224,10 @@ export function MapProvider({ children }) {
 	 *
 	 * `locked` NO se persiste a proposito: si la vista volviera bloqueada al
 	 * entrar, el mapa parece roto (no se puede mover) sin que se entienda por que.
+	 *
+	 * El centro y el zoom se guardan JUNTOS: restaurar solo el zoom dejaria al
+	 * operador mirando el encuadre por defecto con su acercamiento, o sea un
+	 * pedazo cualquiera del mapa.
 	 */
 	const restaurarPrefs = async () => {
 		try {
@@ -209,6 +237,7 @@ export function MapProvider({ children }) {
 			if (BASE_LAYERS[pref.baseKey]) setBaseKey(pref.baseKey)
 			if (typeof pref.showGuides === 'boolean') setShowGuides(pref.showGuides)
 			if (typeof pref.panelCollapsed === 'boolean') setPanelCollapsed(pref.panelCollapsed)
+			viewRef.current = sanitizeView(pref.view)
 			const validas = sanitizeLupas(pref.lupas)
 			if (validas.length) {
 				setLupas(validas)
@@ -316,8 +345,13 @@ export function MapProvider({ children }) {
 				return false
 			}
 			if (!q) return true
-			return (
-				(d.name || '').toLowerCase().includes(q) || (d.description || '').toLowerCase().includes(q)
+			if ((d.name || '').toLowerCase().includes(q) || (d.description || '').toLowerCase().includes(q)) return true
+			// Tambien por equipo: el operador suele tener a mano el serial o el
+			// nombre del alimentador, no el del elemento que lo contiene.
+			return (d.equipments || []).some((eq) =>
+				[eq.serial, eq.model, eq.version, eq.description].some((campo) =>
+					(campo || '').toLowerCase().includes(q)
+				)
 			)
 		})
 	}, [onMap, statusFilter, query])
@@ -402,10 +436,10 @@ export function MapProvider({ children }) {
 	 * ventana, y lo que hay que restaurar es lo que esta viendo ahora.
 	 */
 	const guardarPrefs = useCallback(() => {
-		if (!prefsListas.current) return
+		if (!prefsListas.current || !montado.current) return
 		clearTimeout(saveTimer.current)
 		saveTimer.current = setTimeout(() => {
-			const payload = buildPayload(prefsRef.current, lupaRegistry.current)
+			const payload = buildPayload(prefsRef.current, lupaRegistry.current, viewRef.current)
 			request(`${API()}/userPref/${PREF_MODULE}`, 'PUT', payload).catch((e) =>
 				console.error('No se pudieron guardar las preferencias del mapa:', e?.message || e)
 			)
@@ -428,13 +462,51 @@ export function MapProvider({ children }) {
 		guardarPrefs()
 	}, [baseKey, showGuides, panelCollapsed, lupas, guardarPrefs])
 
-	useEffect(() => () => clearTimeout(saveTimer.current), [])
+	/*
+	 * Al desmontar hay que cortar el guardado agendado, y ademas marcar el
+	 * contexto como muerto.
+	 *
+	 * Lo segundo no es paranoia: React 18 corre los cleanups de PADRE a HIJO, asi
+	 * que este limpia el timer y despues el cleanup de cada LupaWindow llama a
+	 * emitGuidesChange, que agenda uno nuevo que ya nadie cancela. Medido: al
+	 * salir del mapa quedaba una escritura al backend por desmontaje, disparada
+	 * 1,2s despues con las preferencias de un contexto que ya no existe.
+	 *
+	 * La bandera se PRENDE en el setup y no solo se apaga en el cleanup. Con
+	 * StrictMode el desmontaje simulado corre el cleanup y vuelve a montar el
+	 * mismo componente, que conserva sus refs: si el setup no la reactivara,
+	 * quedaria apagada para siempre y en desarrollo no se guardaria ninguna
+	 * preferencia. Medido: 0 escrituras en dev, todas correctas en el build.
+	 */
+	useEffect(() => {
+		montado.current = true
+		return () => {
+			montado.current = false
+			clearTimeout(saveTimer.current)
+		}
+	}, [])
 
 	// Suscripcion para redibujar las guias sin pasar por el estado de React
 	const onGuidesChange = useCallback((cb) => {
 		guidesTick.current.add(cb)
 		return () => guidesTick.current.delete(cb)
 	}, [])
+	/**
+	 * Centro y zoom que dejo el operador. Comparte el debounce del resto de las
+	 * preferencias, y no guarda si la vista no cambio: el propio setView de la
+	 * creacion del mapa dispara un moveend, y sin la comparacion cada arranque
+	 * escribiria al backend sin que nadie hubiera movido nada.
+	 */
+	const commitView = useCallback(
+		(center, zoom) => {
+			const nueva = normalizeView(center, zoom)
+			if (sameView(viewRef.current, nueva)) return
+			viewRef.current = nueva
+			guardarPrefs()
+		},
+		[guardarPrefs]
+	)
+
 	const emitGuidesChange = useCallback(() => {
 		guidesTick.current.forEach((cb) => cb())
 		// Mover o hacer zoom en una lupa no toca el estado de React: el guardado
@@ -618,14 +690,18 @@ export function MapProvider({ children }) {
 
 	/* ---------------- ir al tablero del equipo ---------------- */
 	/*
-	 * `/map/live` trae el elemento, no sus equipos: son datos de ABM que casi no
-	 * cambian, y meterlos en un poll de 15s seria pagarlos todo el tiempo para
-	 * usarlos en un clic. Se piden a `/Elements/:id` en el momento.
+	 * Los equipos ya vienen en `/map/live`, asi que abrir el tablero no pega al
+	 * backend: es inmediato. Antes se pedian a `/Elements/:id` en el momento del
+	 * clic, cuando el poll todavia no los traia.
 	 *
-	 * Un elemento puede tener varios equipos (medido en desarrollo: ET1 y CE01
-	 * tienen 7 cada uno, RE02 y SETA64 dos), asi que cuando hay mas de uno hay
-	 * que preguntar cual. Las subestaciones rurales (tipo 3) no tienen equipos:
-	 * abren su propio tablero.
+	 * Un elemento puede tener varios (medido en desarrollo: ET1 y CE01 tienen 7
+	 * cada uno, RE02 y SETA64 dos), asi que cuando hay mas de uno hay que
+	 * preguntar cual.
+	 *
+	 * La UNICA excepcion son las subestaciones rurales (tipo 3): no tienen
+	 * equipos, abren su propio tablero y este necesita la lista de clientes, que
+	 * no esta en `/map/live` a proposito — seria pagarla en cada poll de 15s
+	 * para usarla en un clic, y ademas es el unico tablero que la consume.
 	 */
 	const openBoard = useOpenBoard()
 	const [openingId, setOpeningId] = useState(null)
@@ -634,39 +710,36 @@ export function MapProvider({ children }) {
 	const abrirTablero = useCallback(
 		async (device) => {
 			if (!device) return
-			setOpeningId(device.id)
-			try {
-				const res = await request(`${API()}/Elements/${device.id}`, 'GET')
-				const element = (res.data || [])[0]
-				if (!element) {
-					showToast('No se encontro el elemento')
-					return
+
+			if (device.type === 3) {
+				setOpeningId(device.id)
+				try {
+					const res = await request(`${API()}/Elements/${device.id}`, 'GET')
+					const element = (res.data || [])[0]
+					if (!element) {
+						showToast('No se encontró el elemento')
+						return
+					}
+					openBoard({ id: element.id, elementName: element.name, elementType: 3, clients: element.clients })
+				} catch (e) {
+					showToast(e?.message || 'No se pudieron leer los clientes de la subestación')
+				} finally {
+					setOpeningId(null)
 				}
-				if (element.type === 3) {
-					openBoard({
-						id: element.id,
-						elementName: element.name,
-						elementType: 3,
-						clients: element.clients,
-					})
-					return
-				}
-				const equipos = (element.equipments || []).filter((eq) => eq.equipmentmodels)
-				if (!equipos.length) {
-					showToast(`${element.name} no tiene equipos asociados`)
-					return
-				}
-				const comun = { elementName: element.name, elementType: element.type, clients: element.clients }
-				if (equipos.length === 1) {
-					openBoard({ ...equipos[0], ...comun })
-					return
-				}
-				setEquipChoice({ element, equipos, comun })
-			} catch (e) {
-				showToast(e?.message || 'No se pudieron leer los equipos del elemento')
-			} finally {
-				setOpeningId(null)
+				return
 			}
+
+			const equipos = device.equipments || []
+			if (!equipos.length) {
+				showToast(`${device.name} no tiene equipos asociados`)
+				return
+			}
+			const comun = { elementName: device.name, elementType: device.type }
+			if (equipos.length === 1) {
+				openBoard({ ...paraTablero(equipos[0]), ...comun })
+				return
+			}
+			setEquipChoice({ element: device, equipos, comun })
 		},
 		[openBoard, showToast]
 	)
@@ -677,7 +750,7 @@ export function MapProvider({ children }) {
 		(equipo) => {
 			if (!equipChoice) return
 			setEquipChoice(null)
-			openBoard({ ...equipo, ...equipChoice.comun })
+			openBoard({ ...paraTablero(equipo), ...equipChoice.comun })
 		},
 		[equipChoice, openBoard]
 	)
@@ -744,6 +817,8 @@ export function MapProvider({ children }) {
 		lupaZ,
 		mainMapRef,
 		cardRef,
+		viewRef,
+		commitView,
 		showGuides,
 		setShowGuides,
 		armed,

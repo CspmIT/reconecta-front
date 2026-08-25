@@ -3,6 +3,7 @@ import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import { BASE_LAYERS, useMapContext } from '../context/MapContext'
 import { freeSpot } from '../utils/js/freeSpot'
+import { normalizeView } from '../utils/js/prefs'
 import { createNetworkOverlay, setNavEnabled, swapBaseLayer } from '../utils/js/networkOverlay'
 
 /*
@@ -34,6 +35,8 @@ function OperationalMap() {
 		clampLupas,
 		mainMapRef,
 		cardRef,
+		viewRef,
+		commitView,
 		lupaRegistry,
 		emitGuidesChange,
 		lineMode,
@@ -69,6 +72,12 @@ function OperationalMap() {
 	/* ---------------- crear el mapa una sola vez ---------------- */
 	useEffect(() => {
 		if (!config || mainMapRef.current) return
+		/*
+		 * La vista que dejo el operador gana sobre el encuadre por defecto del
+		 * mapa (MapLocations), que es global. Si no hay nada guardado se usa el
+		 * default, y ese es tambien el caso de un usuario nuevo.
+		 */
+		const guardada = viewRef.current
 		const map = L.map(containerRef.current, {
 			zoomControl: false,
 			attributionControl: false,
@@ -76,7 +85,7 @@ function OperationalMap() {
 			zoomDelta: 0.25,
 			wheelPxPerZoomLevel: 160,
 			preferCanvas: true,
-		}).setView(config.center, config.zoom)
+		}).setView(guardada?.center ?? config.center, guardada?.zoom ?? config.zoom)
 		L.control.zoom({ position: 'bottomright' }).addTo(map)
 
 		baseRef.current = swapBaseLayer(map, null, BASE_LAYERS[baseKey].url)
@@ -102,12 +111,23 @@ function OperationalMap() {
 			},
 		})
 		mainMapRef.current = map
+		/*
+		 * Se asienta la vista aplicada ANTES de escuchar los cambios. El
+		 * invalidateSize del ResizeObserver dispara moveend, y sin esto el primer
+		 * arranque de un usuario sin preferencias guardaria el encuadre por
+		 * defecto como si lo hubiera elegido el.
+		 */
+		viewRef.current = guardada ?? normalizeView(map.getCenter(), map.getZoom())
 
-		const onZoom = () => overlayRef.current?.syncTags()
-		map.on('zoomend', onZoom)
+		/*
+		 * commitView es estable (guardarPrefs no tiene dependencias), asi que se
+		 * puede capturar en este efecto que corre una sola vez.
+		 */
+		const onViewChange = () => commitView(map.getCenter(), map.getZoom())
+		map.on('moveend zoomend', onViewChange)
 
 		return () => {
-			map.off('zoomend', onZoom)
+			map.off('moveend zoomend', onViewChange)
 			overlayRef.current?.destroy()
 			map.remove()
 			mainMapRef.current = null

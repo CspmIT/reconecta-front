@@ -18,6 +18,30 @@ export const STATE_LABEL = {
 	cerrado: 'Cerrado',
 	abierto: 'Abierto',
 	sincom: 'Sin comunicación',
+	/*
+	 * Un medidor o un analizador no tiene polos: no esta cerrado ni abierto.
+	 * El backend le da solo dos estados honestos, `activo` cuando llega
+	 * medicion y `sincom` cuando no, en lugar de derivar "abierto" de una
+	 * tension en cero (ver resolvePresence en services/MapLiveService.js).
+	 */
+	activo: 'Midiendo',
+}
+
+/*
+ * Nombre de la familia del equipo, para la fila desplegada. `kind` lo resuelve
+ * el backend a partir de equipmentmodels.type.
+ */
+export const KIND_LABEL = {
+	recloser: 'Reconectador',
+	meter: 'Medidor',
+	analyzer: 'Analizador',
+}
+
+/** Plural con el que se resume un elemento sin reconectador ("7 medidores"). */
+export const KIND_PLURAL = {
+	recloser: 'reconectadores',
+	meter: 'medidores',
+	analyzer: 'analizadores',
 }
 
 export const shapeOf = (type) => SHAPE_BY_TYPE[type] || 'ci'
@@ -29,11 +53,15 @@ export const stateClass = (st) => (st ? `s-${st}` : 's-nodev')
  * Clases del punto. Se aplican sobre un marcador ya creado para no recrear el
  * divIcon en cada poll (eso era lo que hacia parpadear los markers).
  */
-export const pinClasses = (device, { mini = false, selected = false, hovered = false } = {}) =>
+/*
+ * `mini` (la etiqueta escondida) NO se arma aca: lo decide syncTags midiendo la
+ * pantalla, y patchPin reescribe className en cada refresco. Si se generara
+ * desde aca se pisarian entre si.
+ */
+export const pinClasses = (device, { selected = false, hovered = false } = {}) =>
 	[
 		'rc-pin',
 		`sh-${shapeOf(device.type)}`,
-		mini ? 'mini' : '',
 		selected ? 'sel' : '',
 		hovered ? 'hi' : '',
 		device.alarm ? 'alarm' : '',
