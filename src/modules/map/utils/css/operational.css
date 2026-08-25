@@ -198,6 +198,12 @@ body.dark .rc-map {
 .s-nodev {
 	background: var(--rc-celeste);
 }
+/* Un medidor o un analizador no esta cerrado ni abierto: solo mide o no mide.
+   Celeste como el elemento sin reconectador, para no meterlo en la escala
+   rojo/verde que los operadores leen como estado de un polo. */
+.s-activo {
+	background: var(--rc-celeste);
+}
 
 /* Formas por tipo de elemento */
 .rc-pin.sh-sq .rc-dot {
@@ -609,7 +615,8 @@ body.dark .rc-map {
 	background: rgba(140, 140, 133, 0.18);
 	color: #5c5c58;
 }
-.rc-st-nodev {
+.rc-st-nodev,
+.rc-st-activo {
 	background: rgba(0, 118, 178, 0.12);
 	color: #0076b2;
 }
@@ -625,7 +632,8 @@ body.dark .rc-st-sincom {
 	background: rgba(255, 255, 255, 0.1);
 	color: #a5a59e;
 }
-body.dark .rc-st-nodev {
+body.dark .rc-st-nodev,
+body.dark .rc-st-activo {
 	background: rgba(0, 118, 178, 0.22);
 	color: #7cc4e8;
 }
@@ -639,6 +647,114 @@ body.dark .rc-st-nodev {
 }
 body.dark .rc-alarm-chip {
 	color: #f7cf06;
+}
+
+/* ---- Chevron y equipos desplegados ---- */
+
+.rc-chev {
+	flex: 0 0 14px;
+	width: 14px;
+	height: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	padding: 0;
+	background: none;
+	color: var(--rc-txt3);
+	cursor: pointer;
+	border-radius: 4px;
+	transition: rotate 0.14s ease;
+}
+/* Reserva el lugar del chevron en las filas que no lo llevan, para que los
+   nombres de todas las filas queden alineados en la misma columna. */
+.rc-chev.ph {
+	cursor: default;
+}
+.rc-chev:hover {
+	background: var(--rc-line2);
+	color: var(--rc-txt);
+}
+.rc-row.open > .rc-row-h > .rc-chev {
+	rotate: 90deg;
+}
+
+/* Resumen de un elemento sin reconectador: reemplaza a las dos filas de
+   mediciones, que serian todas guiones. */
+.rc-row-sum {
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+}
+
+.rc-subs {
+	margin: 8px 0 2px 7px;
+	padding-left: 10px;
+	border-left: 1.5px solid var(--rc-line2);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.rc-sub {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+.rc-sub-h {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	/* Red de contencion: si los chips no entran, bajan de linea en vez de
+	   desbordar. Ojo que para que `wrap` llegue a actuar los hijos flexibles
+	   tienen que declarar `flex-basis: auto` — con el `flex: 1` habitual la
+	   base es 0 y nunca envuelve. */
+	flex-wrap: wrap;
+	row-gap: 3px;
+}
+.rc-sub-dot {
+	flex: 0 0 7px;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+}
+.rc-sub-tag {
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	/* Toma el sobrante para empujar el chip de estado a la derecha, y se recorta
+	   antes que desbordar. `flex-basis: auto` para no anular el wrap de arriba. */
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rc-sub-serial {
+	font-variant-numeric: tabular-nums;
+}
+/* Marca el equipo que representa al elemento en el mapa: es el unico cuyos
+   valores coinciden con la fila de arriba. */
+.rc-sub-main {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	padding: 1px 5px;
+	border-radius: 4px;
+	background: rgba(0, 118, 178, 0.12);
+	color: #0076b2;
+}
+body.dark .rc-sub-main {
+	background: rgba(0, 118, 178, 0.24);
+	color: #7cc4e8;
+}
+.rc-sub-loc {
+	font-size: 11px;
+	color: var(--rc-txt3);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.rc-sub .rc-state {
+	font-size: 10px;
+	padding: 1px 5px;
 }
 
 .rc-meas {

@@ -20,6 +20,21 @@ import { useOpenBoard } from '../../tabs/utils/openBoard'
 
 const MapContext = createContext(null)
 
+/*
+ * `/map/live` aplana el modelo del equipo (`model`/`version`/`type`/`id_model`);
+ * `useOpenBoard` espera el `equipmentmodels` anidado de `/Elements`.
+ *
+ * Se traduce aca en lugar de cambiar el contrato de la pestana, que es el MISMO
+ * que arma el Home: si no coincidiera, abrir el mismo equipo desde el mapa y
+ * desde el Home crearia dos pestanas para lo mismo.
+ */
+const paraTablero = (eq) => ({
+	id: eq.id,
+	serial: eq.serial,
+	observation: eq.description,
+	equipmentmodels: { id: eq.id_model, name: eq.model, brand: eq.version, type: eq.type },
+})
+
 const API = () => backend[`${import.meta.env.VITE_APP_NAME}`]
 
 const POLL_MS = 15000
@@ -330,8 +345,13 @@ export function MapProvider({ children }) {
 				return false
 			}
 			if (!q) return true
-			return (
-				(d.name || '').toLowerCase().includes(q) || (d.description || '').toLowerCase().includes(q)
+			if ((d.name || '').toLowerCase().includes(q) || (d.description || '').toLowerCase().includes(q)) return true
+			// Tambien por equipo: el operador suele tener a mano el serial o el
+			// nombre del alimentador, no el del elemento que lo contiene.
+			return (d.equipments || []).some((eq) =>
+				[eq.serial, eq.model, eq.version, eq.description].some((campo) =>
+					(campo || '').toLowerCase().includes(q)
+				)
 			)
 		})
 	}, [onMap, statusFilter, query])
@@ -670,14 +690,18 @@ export function MapProvider({ children }) {
 
 	/* ---------------- ir al tablero del equipo ---------------- */
 	/*
-	 * `/map/live` trae el elemento, no sus equipos: son datos de ABM que casi no
-	 * cambian, y meterlos en un poll de 15s seria pagarlos todo el tiempo para
-	 * usarlos en un clic. Se piden a `/Elements/:id` en el momento.
+	 * Los equipos ya vienen en `/map/live`, asi que abrir el tablero no pega al
+	 * backend: es inmediato. Antes se pedian a `/Elements/:id` en el momento del
+	 * clic, cuando el poll todavia no los traia.
 	 *
-	 * Un elemento puede tener varios equipos (medido en desarrollo: ET1 y CE01
-	 * tienen 7 cada uno, RE02 y SETA64 dos), asi que cuando hay mas de uno hay
-	 * que preguntar cual. Las subestaciones rurales (tipo 3) no tienen equipos:
-	 * abren su propio tablero.
+	 * Un elemento puede tener varios (medido en desarrollo: ET1 y CE01 tienen 7
+	 * cada uno, RE02 y SETA64 dos), asi que cuando hay mas de uno hay que
+	 * preguntar cual.
+	 *
+	 * La UNICA excepcion son las subestaciones rurales (tipo 3): no tienen
+	 * equipos, abren su propio tablero y este necesita la lista de clientes, que
+	 * no esta en `/map/live` a proposito — seria pagarla en cada poll de 15s
+	 * para usarla en un clic, y ademas es el unico tablero que la consume.
 	 */
 	const openBoard = useOpenBoard()
 	const [openingId, setOpeningId] = useState(null)
@@ -686,39 +710,36 @@ export function MapProvider({ children }) {
 	const abrirTablero = useCallback(
 		async (device) => {
 			if (!device) return
-			setOpeningId(device.id)
-			try {
-				const res = await request(`${API()}/Elements/${device.id}`, 'GET')
-				const element = (res.data || [])[0]
-				if (!element) {
-					showToast('No se encontro el elemento')
-					return
+
+			if (device.type === 3) {
+				setOpeningId(device.id)
+				try {
+					const res = await request(`${API()}/Elements/${device.id}`, 'GET')
+					const element = (res.data || [])[0]
+					if (!element) {
+						showToast('No se encontró el elemento')
+						return
+					}
+					openBoard({ id: element.id, elementName: element.name, elementType: 3, clients: element.clients })
+				} catch (e) {
+					showToast(e?.message || 'No se pudieron leer los clientes de la subestación')
+				} finally {
+					setOpeningId(null)
 				}
-				if (element.type === 3) {
-					openBoard({
-						id: element.id,
-						elementName: element.name,
-						elementType: 3,
-						clients: element.clients,
-					})
-					return
-				}
-				const equipos = (element.equipments || []).filter((eq) => eq.equipmentmodels)
-				if (!equipos.length) {
-					showToast(`${element.name} no tiene equipos asociados`)
-					return
-				}
-				const comun = { elementName: element.name, elementType: element.type, clients: element.clients }
-				if (equipos.length === 1) {
-					openBoard({ ...equipos[0], ...comun })
-					return
-				}
-				setEquipChoice({ element, equipos, comun })
-			} catch (e) {
-				showToast(e?.message || 'No se pudieron leer los equipos del elemento')
-			} finally {
-				setOpeningId(null)
+				return
 			}
+
+			const equipos = device.equipments || []
+			if (!equipos.length) {
+				showToast(`${device.name} no tiene equipos asociados`)
+				return
+			}
+			const comun = { elementName: device.name, elementType: device.type }
+			if (equipos.length === 1) {
+				openBoard({ ...paraTablero(equipos[0]), ...comun })
+				return
+			}
+			setEquipChoice({ element: device, equipos, comun })
 		},
 		[openBoard, showToast]
 	)
@@ -729,7 +750,7 @@ export function MapProvider({ children }) {
 		(equipo) => {
 			if (!equipChoice) return
 			setEquipChoice(null)
-			openBoard({ ...equipo, ...equipChoice.comun })
+			openBoard({ ...paraTablero(equipo), ...equipChoice.comun })
 		},
 		[equipChoice, openBoard]
 	)

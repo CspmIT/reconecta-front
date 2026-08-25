@@ -18,6 +18,30 @@ export const STATE_LABEL = {
 	cerrado: 'Cerrado',
 	abierto: 'Abierto',
 	sincom: 'Sin comunicación',
+	/*
+	 * Un medidor o un analizador no tiene polos: no esta cerrado ni abierto.
+	 * El backend le da solo dos estados honestos, `activo` cuando llega
+	 * medicion y `sincom` cuando no, en lugar de derivar "abierto" de una
+	 * tension en cero (ver resolvePresence en services/MapLiveService.js).
+	 */
+	activo: 'Midiendo',
+}
+
+/*
+ * Nombre de la familia del equipo, para la fila desplegada. `kind` lo resuelve
+ * el backend a partir de equipmentmodels.type.
+ */
+export const KIND_LABEL = {
+	recloser: 'Reconectador',
+	meter: 'Medidor',
+	analyzer: 'Analizador',
+}
+
+/** Plural con el que se resume un elemento sin reconectador ("7 medidores"). */
+export const KIND_PLURAL = {
+	recloser: 'reconectadores',
+	meter: 'medidores',
+	analyzer: 'analizadores',
 }
 
 export const shapeOf = (type) => SHAPE_BY_TYPE[type] || 'ci'
