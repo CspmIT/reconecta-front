@@ -119,9 +119,6 @@ function OperationalMap() {
 		 */
 		viewRef.current = guardada ?? normalizeView(map.getCenter(), map.getZoom())
 
-		const onZoom = () => overlayRef.current?.syncTags()
-		map.on('zoomend', onZoom)
-
 		/*
 		 * commitView es estable (guardarPrefs no tiene dependencias), asi que se
 		 * puede capturar en este efecto que corre una sola vez.
@@ -130,7 +127,6 @@ function OperationalMap() {
 		map.on('moveend zoomend', onViewChange)
 
 		return () => {
-			map.off('zoomend', onZoom)
 			map.off('moveend zoomend', onViewChange)
 			overlayRef.current?.destroy()
 			map.remove()

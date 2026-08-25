@@ -53,11 +53,15 @@ export const stateClass = (st) => (st ? `s-${st}` : 's-nodev')
  * Clases del punto. Se aplican sobre un marcador ya creado para no recrear el
  * divIcon en cada poll (eso era lo que hacia parpadear los markers).
  */
-export const pinClasses = (device, { mini = false, selected = false, hovered = false } = {}) =>
+/*
+ * `mini` (la etiqueta escondida) NO se arma aca: lo decide syncTags midiendo la
+ * pantalla, y patchPin reescribe className en cada refresco. Si se generara
+ * desde aca se pisarian entre si.
+ */
+export const pinClasses = (device, { selected = false, hovered = false } = {}) =>
 	[
 		'rc-pin',
 		`sh-${shapeOf(device.type)}`,
-		mini ? 'mini' : '',
 		selected ? 'sel' : '',
 		hovered ? 'hi' : '',
 		device.alarm ? 'alarm' : '',

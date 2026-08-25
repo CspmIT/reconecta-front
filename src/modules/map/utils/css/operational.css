@@ -184,6 +184,25 @@ body.dark .rc-map {
 .rc-pin.mini .rc-tag {
 	display: none;
 }
+/*
+ * Posiciones alternativas de la etiqueta. Se prueban en orden cuando la de por
+ * defecto (a la derecha) choca con otra ya visible: asi entran muchas mas que
+ * escondiendo la que pierde. Ver syncTags en networkOverlay.js.
+ */
+.rc-tag.iz {
+	left: auto;
+	right: 19px;
+}
+.rc-tag.ar {
+	left: 50%;
+	translate: -50% 0;
+	top: -21px;
+}
+.rc-tag.ab {
+	left: 50%;
+	translate: -50% 0;
+	top: 17px;
+}
 
 /* Estados. Cerrado = rojo, abierto = verde (convencion de los operadores) */
 .s-cerrado {
