@@ -18,6 +18,9 @@ const Abm = () => {
 	const [elements, setElements] = useState([])
 	const [selectMarkers, setSelectMarkers] = useState([])
 	const [numberEquipments, setNumberEquipments] = useState([])
+	// Los modelos se piden una sola vez y se reparten a las filas: hacen falta
+	// aca para saber cuales de los equipos son reconectadores
+	const [models, setModels] = useState([])
 	const [numberClients, setNumberClients] = useState([])
 	const [typeSelected, setTypeSelected] = useState(null)
 	const [elementSelected, setElementSelected] = useState([])
@@ -75,7 +78,7 @@ const Abm = () => {
 	}
 	const handleNewEquipment = () => {
 		const id = numberEquipments.length === 0 ? 1 : numberEquipments[numberEquipments.length - 1].id + 1
-		setNumberEquipments([...numberEquipments, { id, id_model: '', serial: '', observation: '', configuration: 1 }])
+		setNumberEquipments([...numberEquipments, { id, id_model: '', serial: '', observation: '', configuration: 1, is_main: false }])
 	}
 
 	const handleDeleteEquipment = (id) => {
@@ -86,6 +89,14 @@ const Abm = () => {
 		const updatedEquipments = [...numberEquipments]
 		updatedEquipments[index][field] = value
 		setNumberEquipments(updatedEquipments)
+	}
+	/*
+	 * Principal excluyente: marcar uno desmarca el resto. La base tambien lo
+	 * garantiza (indice unico por elemento), pero si el formulario mandara dos
+	 * el guardado fallaria con un error de base sin sentido para el usuario.
+	 */
+	const handleMainEquipment = (id) => {
+		setNumberEquipments((prev) => prev.map((equip) => ({ ...equip, is_main: equip.id === id })))
 	}
 
 	const handleNewClient = () => {
@@ -119,6 +130,27 @@ const Abm = () => {
 		}
 		fetchElementTypes()
 	}, [])
+	useEffect(() => {
+		const fetchModels = async () => {
+			try {
+				const { data } = await request(`${backend.Reconecta}/ElementsModel`, 'GET')
+				setModels(data || [])
+			} catch (e) {
+				console.error('No se pudieron cargar los modelos de equipo:', e?.message || e)
+				setModels([])
+			}
+		}
+		fetchModels()
+	}, [])
+
+	/*
+	 * El principal solo se ofrece cuando hay mas de un RECONECTADOR (type 1 del
+	 * modelo): son los que le dan estado y mediciones al marcador del mapa, y
+	 * con uno solo no hay nada que elegir. Con varios medidores, en cambio, el
+	 * selector no querria decir nada.
+	 */
+	const tipoDeModelo = (idModel) => models.find((m) => m.id === idModel)?.type
+	const variosReconectadores = numberEquipments.filter((equip) => tipoDeModelo(equip.id_model) === 1).length > 1
 	useEffect(() => {
 		if (selectMarkers?.lat) {
 			clearErrors('lng_marker')
@@ -171,6 +203,7 @@ const Abm = () => {
 							serial: equipment.serial,
 							observation: equipment.observation,
 							configuration: equipment.configuration || 1,
+							is_main: !!equipment.is_main,
 							bd_id: equipment.id
 						}))
 						setNumberEquipments(equipments)
@@ -309,6 +342,9 @@ const Abm = () => {
 										onChange={(field, value) => handleChangeEquipment(index, field, value)}
 										type={typeSelected}
 										handleDeleteEquipment={handleDeleteEquipment}
+										models={models}
+										showMain={variosReconectadores && tipoDeModelo(equipment.id_model) === 1}
+										onMain={handleMainEquipment}
 									/>
 								))}
 							</div>
