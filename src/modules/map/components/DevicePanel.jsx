@@ -378,7 +378,8 @@ function DevicePanel() {
 			<div className='rc-panel-foot'>
 				<div className={`rc-live${stale || error ? ' stale' : ''}`}>
 					<i />
-					{error ? 'Sin conexión con el servidor' : stale ? 'Datos desactualizados' : 'Datos en vivo · InfluxDB'}
+					{/* Sin nombrar la base: al operador no le dice nada de donde salen */}
+					{error ? 'Sin conexión con el servidor' : stale ? 'Datos desactualizados' : 'Datos en vivo'}
 				</div>
 				<span>{stamp ? new Date(stamp).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—'}</span>
 			</div>
