@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import { useMapContext } from '../context/MapContext'
 import { draftToVertices, snapToDevice, suggestName } from '../utils/js/snap'
-import { VERTEX_ANCHORED, VERTEX_FREE } from '../utils/js/networkOverlay'
+import { VERTEX_ANCHORED, VERTEX_FREE, lineColor } from '../utils/js/networkOverlay'
 
 /*
  * Editor de tramos. Solo maneja interaccion y borrador; el dibujo de los tramos
@@ -13,6 +13,18 @@ import { VERTEX_ANCHORED, VERTEX_FREE } from '../utils/js/networkOverlay'
  */
 
 const DRAFT_STYLE = { color: '#283080', weight: 3, opacity: 0.9 }
+
+/*
+ * Paleta del selector de color de tramos. Son colores que se distinguen entre
+ * si y de la base: sirven para separar alimentadores de un vistazo, que es para
+ * lo que se pide pintarlos. El selector nativo queda al final para cualquier
+ * otro.
+ */
+const PALETTE = ['#cf0927', '#e07b00', '#c9a800', '#2e7d32', '#0288d1', '#283080', '#7b1fa2', '#37474f']
+
+// El input nativo emite un evento por cada movimiento dentro de su paleta:
+// sin esto seria un PUT por frame de arrastre.
+const COLOR_DEBOUNCE_MS = 350
 
 function LineEditor() {
 	const {
@@ -31,12 +43,15 @@ function LineEditor() {
 		mainMapRef,
 		createLine,
 		renameLine,
+		setLineColor,
 		deleteLine,
 		savingLine,
 	} = useMapContext()
 
 	const draftLayerRef = useRef(null)
 	const [renaming, setRenaming] = useState(null)
+	const [picking, setPicking] = useState(false)
+	const colorTimer = useRef(null)
 	// draftRef y onMapRef vienen del contexto: los handlers de Leaflet se
 	// registran una vez y necesitan leer los valores frescos, no los del render
 	// en que se registraron.
@@ -141,6 +156,9 @@ function LineEditor() {
 				deleteLine(selectedLine)
 			} else if (e.key === 'Escape') {
 				if (draftRef.current.length) clearDraft()
+				// Esc cierra primero el selector de color, y recien despues suelta
+				// el tramo: si no, salir de la paleta perderia la seleccion
+				else if (picking) setPicking(false)
 				else if (selectedLine !== null) setSelectedLine(null)
 				else toggleLineMode(false)
 			}
@@ -148,11 +166,27 @@ function LineEditor() {
 		document.addEventListener('keydown', onKey)
 		return () => document.removeEventListener('keydown', onKey)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [lineMode, selectedLine, draft, undoDraftVertex, clearDraft, deleteLine, toggleLineMode])
+	}, [lineMode, selectedLine, picking, draft, undoDraftVertex, clearDraft, deleteLine, toggleLineMode])
+
+	// Cambiar de tramo (o soltarlo) cierra los sub-modos: si no, el panel de
+	// color quedaria abierto apuntando al tramo anterior
+	useEffect(() => {
+		setRenaming(null)
+		setPicking(false)
+	}, [selectedLine])
+
+	useEffect(() => () => clearTimeout(colorTimer.current), [])
 
 	if (!lineMode) return null
 
 	const elegido = lines.find((l) => l.id === selectedLine)
+	const colorActual = lineColor(elegido)
+	const pintar = (color, demorar) => {
+		clearTimeout(colorTimer.current)
+		if (demorar) colorTimer.current = setTimeout(() => setLineColor(elegido.id, color), COLOR_DEBOUNCE_MS)
+		else setLineColor(elegido.id, color)
+	}
+
 	const anclados = draft.filter((v) => v.id_element).length
 	const ultimo = draft[draft.length - 1]?.name
 
@@ -186,7 +220,39 @@ function LineEditor() {
 				</>
 			) : elegido ? (
 				<>
-					{renaming === null ? (
+					{picking ? (
+						<>
+							<b>{elegido.name}</b> · color
+							<span className='sep'>·</span>
+							<span className='rc-swatches'>
+								{PALETTE.map((c) => (
+									<button
+										key={c}
+										type='button'
+										title={c}
+										className={`rc-swatch${colorActual === c ? ' on' : ''}`}
+										style={{ background: c }}
+										onClick={() => pintar(c, false)}
+									/>
+								))}
+								{/* Cualquier otro color: el selector del sistema */}
+								<label className='rc-swatch custom' title='Otro color' style={{ background: colorActual }}>
+									<input type='color' value={colorActual} onChange={(e) => pintar(e.target.value, true)} />
+								</label>
+							</span>
+							<button
+								type='button'
+								className='rc-hbtn'
+								disabled={!elegido.color}
+								onClick={() => pintar(null, false)}
+							>
+								Por defecto
+							</button>
+							<button type='button' className='rc-hbtn' onClick={() => setPicking(false)}>
+								Listo
+							</button>
+						</>
+					) : renaming === null ? (
 						<>
 							<b>{elegido.name}</b> · {elegido.vertices.length} vértices
 							{elegido.anchors.filter(Boolean).length > 0 && (
@@ -195,6 +261,10 @@ function LineEditor() {
 							<span className='sep'>·</span>
 							<button type='button' className='rc-hbtn' onClick={() => setRenaming(elegido.name)}>
 								Renombrar
+							</button>
+							<button type='button' className='rc-hbtn' onClick={() => setPicking(true)}>
+								<span className='rc-swatch mini' style={{ background: colorActual }} />
+								Color
 							</button>
 							<button
 								type='button'
