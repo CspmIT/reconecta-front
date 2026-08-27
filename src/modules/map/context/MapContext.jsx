@@ -671,6 +671,26 @@ export function MapProvider({ children }) {
 		[reloadLines, showToast]
 	)
 
+	/*
+	 * Color del trazo. Se pinta primero y se guarda despues: elegir un color es
+	 * una decision visual, y esperar el viaje al backend para verlo obligaria a
+	 * probar a ciegas. Si el PUT falla se vuelve al anterior y se avisa.
+	 */
+	const setLineColor = useCallback(
+		async (id, color) => {
+			const previo = linesRef.current.find((l) => l.id === id)?.color ?? null
+			if (previo === color) return
+			setLines((prev) => prev.map((l) => (l.id === id ? { ...l, color } : l)))
+			try {
+				await request(`${API()}/map/lines/${id}`, 'PUT', { color })
+			} catch (e) {
+				setLines((prev) => prev.map((l) => (l.id === id ? { ...l, color: previo } : l)))
+				showToast(e?.message || 'No se pudo cambiar el color del tramo')
+			}
+		},
+		[showToast]
+	)
+
 	const deleteLine = useCallback(
 		async (id) => {
 			setSavingLine(true)
@@ -806,6 +826,7 @@ export function MapProvider({ children }) {
 		savingLine,
 		createLine,
 		renameLine,
+		setLineColor,
 		deleteLine,
 		// lupas
 		lupas,

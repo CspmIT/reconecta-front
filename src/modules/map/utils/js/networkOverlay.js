@@ -71,7 +71,15 @@ const sePisan = (a, b) =>
 
 export const LINE_STYLE = { color: '#CF0927', weight: 2.6, opacity: 0.85 }
 export const LINE_HALO = { color: '#0000006e', weight: 6, opacity: 0.5 }
-export const LINE_SELECTED = { color: '#283080', weight: 5, opacity: 1 }
+/*
+ * El tramo elegido se marca con un contorno y NO cambiandole el color: si lo
+ * pisara, elegir un color en el editor no se veria hasta deseleccionarlo, que
+ * es justo cuando hay que verlo.
+ */
+export const LINE_SELECTED = { color: '#283080', weight: 8, opacity: 0.9 }
+
+// Color de un tramo sin pintar: los que nunca pasaron por el selector
+export const lineColor = (line) => line?.color || LINE_STYLE.color
 
 // Vertice anclado a un elemento (relleno) vs libre (hueco)
 export const VERTEX_ANCHORED = { radius: 6, color: '#283080', fillColor: '#283080', fillOpacity: 1, weight: 2.5 }
@@ -250,7 +258,9 @@ export function createNetworkOverlay(map, { onSelect, onOpen, tooltips = true } 
 				L.polyline(line.points, LINE_HALO).addTo(linesLayer)
 			}
 
-			const estilo = elegido ? LINE_SELECTED : LINE_STYLE
+			if (elegido) L.polyline(line.points, LINE_SELECTED).addTo(linesLayer)
+			const estilo = { ...LINE_STYLE, color: lineColor(line) }
+			if (elegido) Object.assign(estilo, { weight: 3.4, opacity: 1 })
 			const pl = L.polyline(line.points, estilo).addTo(linesLayer)
 			if (tooltips) pl.bindTooltip(line.name, { sticky: true, direction: 'top' })
 
