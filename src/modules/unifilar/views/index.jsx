@@ -183,14 +183,14 @@ const Unifilar = () => {
 
 	if (editing && plan?.document) {
 		return (
-			<div className='relative flex flex-col h-[calc(100vh-4rem)] w-full p-4'>
+			<div className='relative flex flex-col h-[calc(100vh-5rem)] w-full p-4'>
 				<Editor plan={plan} onExit={handleExitEditor} />
 			</div>
 		)
 	}
 
 	return (
-		<div className='relative flex flex-col h-[calc(100vh-4rem)] w-full p-4 gap-3'>
+		<div className='relative flex flex-col h-[calc(100vh-5rem)] w-full p-4 gap-3'>
 			<div className='flex flex-row flex-wrap items-center gap-3'>
 				<h1 className='text-xl font-bold text-black dark:text-white'>Diagrama Unifilar</h1>
 				{plans.length > 0 && (

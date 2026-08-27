@@ -10,13 +10,17 @@ import { storage } from '../../../storage/storage'
 import { getData, removeData } from '../../../storage/cookies-store'
 import LoaderComponent from '../../../components/Loader'
 import { getPermissionDb } from '../../NavBarCustom/utils/js'
+import '../utils/css/shell.css'
 /*
  * Vistas que usan todo el alto de la ventana. En ellas el footer no se pega al
  * fondo ni reserva su lugar (pb-20): va en el flujo, abajo del pliegue, y los
- * 64px que ocupaba quedan para el contenido. El mapa es una pantalla de
- * monitoreo que muchos usuarios dejan abierta todo el dia en un monitor.
+ * 64px que ocupaba quedan para el contenido. Son las pantallas de monitoreo
+ * que los usuarios dejan abiertas todo el dia en un monitor: el mapa y el
+ * diagrama unifilar.
+ *
+ * Se compara en minusculas, asi que las rutas van en minusculas.
  */
-const RUTAS_ALTO_COMPLETO = ['/map']
+const RUTAS_ALTO_COMPLETO = ['/map', '/unifilar']
 
 const MainContent = () => {
 	const { user, setInfoNav } = useContext(MainContext)
@@ -59,8 +63,8 @@ const MainContent = () => {
 			 * que el footer que va en el flujo justo debajo quede fuera de lo que se
 			 * ve y la pagina no scrollee. Sin el recorte la pagina scrollearia esos
 			 * 64px y el mapa se meteria abajo del AppBar, que es fixed. La clase la
-			 * define operational.css, que la limita a >=900px: abajo de eso el mapa
-			 * se apila y recortar dejaria el panel inalcanzable.
+			 * define utils/css/shell.css, que la limita a >=900px: abajo de eso
+			 * estas vistas se apilan y recortar dejaria el panel inalcanzable.
 			 */}
 			<div
 				className={`pt-16 !min-h-screen absolute w-full bg-gray-200 dark:bg-gray-700 ${

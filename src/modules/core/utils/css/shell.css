@@ -1,0 +1,32 @@
+/*
+ * Shell de la app (modules/core/views) en las vistas de alto completo.
+ *
+ * Vivia en el css del mapa, que era la unica vista asi. Ahora tambien la usa
+ * unifilar, y depender del css de otro modulo para una clase del shell hacia
+ * que el layout de una vista dependiera de que otra estuviera cargada.
+ *
+ * `rc-shell-full` mide la ventana y recorta, asi el footer que va en el flujo
+ * justo debajo queda fuera de lo que se ve y la pagina no scrollea. Sin el
+ * recorte la pagina scrollearia esos 64px y el contenido se meteria abajo del
+ * AppBar, que es fixed.
+ *
+ * Solo desde 900px. Abajo de eso estas vistas apilan sus paneles (la tarjeta y
+ * el panel uno debajo del otro) y pasan el alto de la ventana: recortar ahi
+ * dejaria el panel inalcanzable, porque no habria scroll.
+ */
+@media (min-width: 900px) {
+	.rc-shell-full {
+		height: 100vh;
+		overflow: hidden;
+	}
+}
+/* En moviles y tablets la barra del navegador entra y sale: dvh mide el alto
+   que se ve de verdad, vh mide el mas grande. Con @supports, si el motor no lo
+   conoce (WebKitGTK viejo) se queda con el vh de arriba. */
+@supports (height: 1dvh) {
+	@media (min-width: 900px) {
+		.rc-shell-full {
+			height: 100dvh;
+		}
+	}
+}
