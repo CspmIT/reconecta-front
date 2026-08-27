@@ -43,7 +43,7 @@ const StatCard = ({ value, label }) => (
 	</div>
 )
 
-const SidePanel = ({ document, mapping, live = {}, selectedIds = [], onSaveMapping, events }) => {
+const SidePanel = ({ document, mapping, shapeTypes = {}, live = {}, selectedIds = [], onSaveMapping, events }) => {
 	const [devices, setDevices] = useState({ recloser: [], meter: [], node: [] })
 	const [form, setForm] = useState(null) // { kind, label, deviceType, deviceId }
 
@@ -58,6 +58,12 @@ const SidePanel = ({ document, mapping, live = {}, selectedIds = [], onSaveMappi
 
 	const selectedEntities = document.entities.filter((e) => selectedIds.includes(e.id))
 	const selected = selectedEntities[0] || null
+
+	// Símbolo detectado en la importación que contiene la selección, y el tipo
+	// que le corresponde por su forma: es lo que hace que tipificar 15 formas
+	// alcance para los 75 símbolos del plano.
+	const symbol = (document.symbols || []).find((s) => s.entities.some((id) => selectedIds.includes(id)))
+	const shapeKind = symbol ? shapeTypes[symbol.shape] : null
 	// Entrada de mapeo cuyo grupo contiene alguna entidad seleccionada
 	const mappingKey = Object.keys(mapping).find((key) => {
 		const members = mapping[key].entities?.length ? mapping[key].entities : [key]
@@ -72,8 +78,10 @@ const SidePanel = ({ document, mapping, live = {}, selectedIds = [], onSaveMappi
 		const textEntity = selectedEntities.find((e) => e.type === 'text')
 		setForm(
 			link || {
-				kind: '',
-				label: textEntity ? textEntity.lines.join(' ') : '',
+				// el tipo viene tipificado por forma, y el rótulo del texto que la
+				// importación encontró más cerca del símbolo
+				kind: shapeKind || '',
+				label: symbol?.label || (textEntity ? textEntity.lines.join(' ') : ''),
 				deviceType: '',
 				deviceId: '',
 			}
@@ -93,6 +101,7 @@ const SidePanel = ({ document, mapping, live = {}, selectedIds = [], onSaveMappi
 		setForm(null)
 	}
 
+	const typedSymbols = (document.symbols || []).filter((s) => shapeTypes[s.shape]).length
 	const mappedValues = Object.values(mapping)
 	const countKinds = (kinds) => mappedValues.filter((m) => kinds.includes(m.kind)).length
 	const liveValues = Object.values(live)
@@ -104,6 +113,7 @@ const SidePanel = ({ document, mapping, live = {}, selectedIds = [], onSaveMappi
 			<SectionTitle>Estado de la red</SectionTitle>
 			<div className='flex flex-wrap gap-2'>
 				<StatCard value={mappedValues.length} label='Equipos vinculados' />
+					<StatCard value={typedSymbols} label={`Símbolos tipificados de ${(document.symbols || []).length}`} />
 				<StatCard value={countStates(['open'])} label='Aparatos abiertos' />
 				<StatCard value={liveValues.filter((l) => l.alarm).length} label='Alarmas activas' />
 				<StatCard value={countStates(['offline'])} label='Fuera de línea' />
@@ -235,10 +245,21 @@ const SidePanel = ({ document, mapping, live = {}, selectedIds = [], onSaveMappi
 				</div>
 			) : (
 				<div className='flex flex-col gap-2'>
+					{shapeKind && (
+						<div className='flex items-center gap-2 flex-wrap'>
+							<Chip size='small' color='primary' variant='outlined' label={KINDS[shapeKind] || shapeKind} />
+							<span className='text-xs text-gray-500 dark:text-gray-400'>tipificado por forma</span>
+						</div>
+					)}
+					{symbol?.label && (
+						<p className='text-sm text-gray-700 dark:text-gray-300'>Rótulo cerca: {symbol.label}</p>
+					)}
 					<p className='text-sm text-gray-500 dark:text-gray-400'>
-						{selectedIds.length === 1
-							? `1 entidad seleccionada (${selected.type}), sin vincular.`
-							: `${selectedIds.length} entidades seleccionadas, sin vincular.`}{' '}
+						{symbol
+							? `Símbolo detectado (${symbol.entities.length} trazos), sin vincular.`
+							: selectedIds.length === 1
+								? `1 entidad seleccionada (${selected.type}), sin vincular.`
+								: `${selectedIds.length} entidades seleccionadas, sin vincular.`}{' '}
 						Shift+clic ajusta el grupo.
 					</p>
 					<Button size='small' variant='contained' startIcon={<MdLink />} onClick={startForm}>

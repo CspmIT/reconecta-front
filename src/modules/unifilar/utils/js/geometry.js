@@ -96,51 +96,68 @@ export const unionBBox = (entities) => {
 // entidad tocada. Los planos DWG vienen "sueltos" (un seccionador son varias
 // líneas/arcos independientes); esto los agrupa al seleccionar.
 //
-// Para que la selección no se propague por los cables a todo el plano se
-// aprovecha una convención de los esquemas eléctricos: los conductores son
-// líneas verticales/horizontales, mientras que los trazos de símbolo son
-// oblicuos, curvos o muy cortos. Las líneas axiales no expanden el cluster.
+// Se aprovecha una convención de los esquemas eléctricos: los conductores son
+// líneas verticales/horizontales, mientras que los trazos que le dan forma al
+// símbolo son oblicuos, curvos o cerrados. De ahí las dos pasadas:
+//
+//   1. cuerpo: se expande solo por trazos NO axiales. Al no atravesar nunca
+//      una línea axial, el cluster no puede saltar al símbolo vecino por el
+//      latiguillo que los une (era lo que seleccionaba 3 símbolos de un clic).
+//   2. latiguillos: se suman las líneas axiales que tocan el cuerpo y son
+//      cortas respecto de él, sin expandir nada. Un conductor que sale del
+//      símbolo es tan largo como el símbolo o más, así que queda afuera.
 export const clusterFromSeed = (entities, seedId, viewSize) => {
 	const seed = entities.find((e) => e.id === seedId)
 	if (!seed) return [seedId]
 	const tolerance = viewSize * 0.002
 	const maxSize = viewSize * 0.05
+	const maxSpan = viewSize * 0.04
+	const eps = viewSize * 0.0005
 	const size = (b) => Math.max(b[2] - b[0], b[3] - b[1])
+	const inflate = (b) => [b[0] - tolerance, b[1] - tolerance, b[2] + tolerance, b[3] + tolerance]
 
-	const isAxial = (e) => {
-		if (e.type !== 'line') return false
-		const eps = viewSize * 0.0005
-		return Math.abs(e.x1 - e.x2) < eps || Math.abs(e.y1 - e.y2) < eps
-	}
-	// Un trazo "de símbolo": chico, y si es línea axial tiene que ser muy corta
-	const isSymbolStroke = (e) => {
-		if (e.type === 'text' || e.type === 'symbol') return false
-		const s = size(entityBBox(e))
-		if (s > maxSize) return false
-		if (isAxial(e)) return s <= viewSize * 0.012
-		return true
-	}
+	const isAxial = (e) => e.type === 'line' && (Math.abs(e.x1 - e.x2) < eps || Math.abs(e.y1 - e.y2) < eps)
+	const isStroke = (e) => e.type !== 'text' && e.type !== 'symbol'
 
 	const seedBox = entityBBox(seed)
-	// Si se tocó un conductor u otra entidad grande, no expandir
-	if (size(seedBox) > maxSize || seed.type === 'text') return [seedId]
-	const candidates = entities.filter(isSymbolStroke)
+	// Un conductor, un rótulo o una entidad grande se selecciona sola
+	if (!isStroke(seed) || isAxial(seed) || size(seedBox) > maxSize) return [seedId]
+
+	// --- 1. cuerpo del símbolo ---
+	const bodies = entities.filter((e) => isStroke(e) && !isAxial(e) && size(entityBBox(e)) <= maxSize)
 	const selected = new Set([seedId])
+	let bbox = seedBox
 	const queue = [seedBox]
 	while (queue.length && selected.size < 30) {
-		const box = queue.pop()
-		const inflated = [box[0] - tolerance, box[1] - tolerance, box[2] + tolerance, box[3] + tolerance]
-		for (const candidate of candidates) {
+		const inflated = inflate(queue.pop())
+		for (const candidate of bodies) {
 			if (selected.has(candidate.id)) continue
-			const candidateBox = entityBBox(candidate)
-			if (bboxIntersects(inflated, candidateBox)) {
-				selected.add(candidate.id)
-				queue.push(candidateBox)
-			}
+			const box = entityBBox(candidate)
+			if (!bboxIntersects(inflated, box)) continue
+			const grown = [
+				Math.min(bbox[0], box[0]),
+				Math.min(bbox[1], box[1]),
+				Math.max(bbox[2], box[2]),
+				Math.max(bbox[3], box[3]),
+			]
+			// Tope de extensión: red de seguridad contra un cluster desbocado
+			if (size(grown) > maxSpan) continue
+			bbox = grown
+			selected.add(candidate.id)
+			queue.push(box)
 		}
 	}
 	// Cluster desbordado: mejor devolver solo lo tocado que un grupo absurdo
 	if (selected.size >= 30) return [seedId]
+
+	// --- 2. latiguillos del símbolo ---
+	const maxLead = size(bbox) * 0.5
+	const bodyBox = inflate(bbox)
+	for (const e of entities) {
+		if (selected.has(e.id) || !isStroke(e) || !isAxial(e)) continue
+		const box = entityBBox(e)
+		if (size(box) <= maxLead && bboxIntersects(bodyBox, box)) selected.add(e.id)
+	}
 	return [...selected]
 }
 

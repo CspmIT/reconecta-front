@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { STATES } from '../utils/js/states'
 import { Button, CircularProgress, MenuItem, Select, Tooltip } from '@mui/material'
-import { MdUploadFile, MdDelete, MdRefresh, MdEdit } from 'react-icons/md'
+import { MdUploadFile, MdDelete, MdRefresh, MdEdit, MdCategory } from 'react-icons/md'
 import { toast } from 'react-toastify'
 import { getPlans, getPlan, getPlanLive, uploadPlan, reprocessPlan, updatePlan, deletePlan } from '../utils/js/api'
 import PlanViewer from '../components/PlanViewer'
 import Editor from '../components/Editor'
 import Viewer from '../components/Viewer'
 import SidePanel from '../components/SidePanel'
+import ShapeCatalog from '../components/ShapeCatalog'
 
 const now = () => new Date().toLocaleTimeString('es-AR', { hour12: false })
 
@@ -19,6 +20,8 @@ const Unifilar = () => {
 	const [editing, setEditing] = useState(false)
 	const [selectedEntities, setSelectedEntities] = useState([])
 	const [mapping, setMapping] = useState({})
+	const [shapeTypes, setShapeTypes] = useState({})
+	const [catalogOpen, setCatalogOpen] = useState(false)
 	const [events, setEvents] = useState([])
 	const [live, setLive] = useState({})
 
@@ -42,6 +45,7 @@ const Unifilar = () => {
 			const data = await getPlan(id)
 			setPlan(data)
 			setMapping(data.data?.mapping || {})
+			setShapeTypes(data.data?.shapeTypes || {})
 			setSelectedEntities([])
 			logEvent(`Vista unifilar iniciada · ${data.name}`)
 		} catch (e) {
@@ -149,6 +153,21 @@ const Unifilar = () => {
 		}
 	}
 
+	// Tipificación de formas: un tipo por forma se propaga a todas sus copias.
+	const handleSaveShapeTypes = async (next) => {
+		try {
+			await updatePlan(plan.id, { shapeTypes: next })
+			setShapeTypes(next)
+			setCatalogOpen(false)
+			const symbols = plan.document?.symbols || []
+			const tipificados = symbols.filter((symbol) => next[symbol.shape]).length
+			logEvent(`Símbolos tipificados · ${tipificados} de ${symbols.length}`)
+			toast.success(`${tipificados} símbolos tipificados`)
+		} catch (e) {
+			toast.error(e.message || 'Error al guardar la tipificación')
+		}
+	}
+
 	const handleDelete = async () => {
 		if (!confirm(`¿Eliminar el plano "${plan.name}"?`)) return
 		try {
@@ -206,6 +225,11 @@ const Unifilar = () => {
 								</Button>
 							</span>
 						</Tooltip>
+						{plan.document?.shapes?.length > 0 && (
+							<Button variant='outlined' startIcon={<MdCategory />} onClick={() => setCatalogOpen(true)}>
+								Tipificar símbolos ({Object.keys(shapeTypes).length}/{plan.document.shapes.length})
+							</Button>
+						)}
 						<Button color='error' variant='outlined' startIcon={<MdDelete />} onClick={handleDelete}>
 							Eliminar
 						</Button>
@@ -237,6 +261,7 @@ const Unifilar = () => {
 						<SidePanel
 							document={plan.document}
 							mapping={mapping}
+							shapeTypes={shapeTypes}
 							live={live}
 							selectedIds={selectedEntities}
 							onSaveMapping={handleSaveMapping}
@@ -255,6 +280,16 @@ const Unifilar = () => {
 					</div>
 				)}
 			</div>
+
+			{plan?.document && (
+				<ShapeCatalog
+					open={catalogOpen}
+					document={plan.document}
+					shapeTypes={shapeTypes}
+					onSave={handleSaveShapeTypes}
+					onClose={() => setCatalogOpen(false)}
+				/>
+			)}
 		</div>
 	)
 }

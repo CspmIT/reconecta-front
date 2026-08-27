@@ -6,8 +6,10 @@ import { documentBBox, entityBBox, unionBBox, clusterFromSeed } from '../../util
 import { STATES } from '../../utils/js/states'
 
 // Visor de operación del unifilar. El clic expande la selección a todo el
-// símbolo (cluster por proximidad, o el grupo ya vinculado); Shift+clic
-// agrega/quita entidades individuales para ajustar el grupo a mano.
+// símbolo; Shift+clic agrega/quita entidades individuales para ajustar el
+// grupo a mano. La expansión busca, en este orden: el grupo ya vinculado a un
+// equipo, el símbolo detectado en la importación, y por último el cluster por
+// proximidad (para documentos viejos, importados antes de la detección).
 const Viewer = ({ document, mapping = {}, live = {}, selectedIds = [], onSelect }) => {
 	const entities = document.entities
 	const layers = document.layers || []
@@ -38,6 +40,15 @@ const Viewer = ({ document, mapping = {}, live = {}, selectedIds = [], onSelect 
 		return null
 	}
 
+	// Símbolo detectado en la importación al que pertenece una entidad
+	const symbolByEntity = useMemo(() => {
+		const map = new Map()
+		for (const symbol of document.symbols || []) {
+			for (const id of symbol.entities) map.set(id, symbol)
+		}
+		return map
+	}, [document.symbols])
+
 	const handleClick = (event) => {
 		const eid = event.target.closest?.('[data-eid]')?.getAttribute('data-eid')
 		if (!eid) {
@@ -50,7 +61,7 @@ const Viewer = ({ document, mapping = {}, live = {}, selectedIds = [], onSelect 
 			)
 			return
 		}
-		onSelect(groupOf(eid) || clusterFromSeed(entities, eid, viewSize))
+		onSelect(groupOf(eid) || symbolByEntity.get(eid)?.entities || clusterFromSeed(entities, eid, viewSize))
 	}
 
 	return (
