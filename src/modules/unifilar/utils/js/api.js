@@ -27,7 +27,8 @@ export const reprocessPlan = async (id) => {
 	return data
 }
 
-// Guarda las ediciones: documento (fuente de verdad) + SVG serializado
+// Guarda la red que armó el usuario: { model: { escala, nodos, elementos } }.
+// El DWG no se edita — es el calco y queda como vino.
 export const updatePlan = async (id, payload) => {
 	const { data } = await request(`${base()}/unifilarPlan/${id}`, 'PUT', payload)
 	return data
