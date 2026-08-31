@@ -16,6 +16,7 @@ import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa';
 import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import MobileList from './MobileList';
+import { powerCell, voltageCell, currentCell, powerDetail, voltageDetail, currentDetail, SIN_DATO } from '../../utils/measures';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -39,7 +40,15 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     },
 }));
 
-const HEADERS = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Potencia", "Alimentación", "Modo", ""]
+/*
+ * El indice de cada columna es el que se guarda por usuario en UserChecksHome
+ * (ver COLUMN_OPTIONS): las columnas nuevas van al final, antes de la de
+ * acciones, y no se reordena ninguna.
+ *
+ * "Pot. trafo" es la potencia nominal del transformador del nodo, la que se
+ * carga en el ABM; "Potencia" es la activa que esta midiendo el equipo.
+ */
+const HEADERS = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Pot. trafo", "Alimentación", "Modo", "Potencia", "Tensión", "Corriente", ""]
 const BORDER_CLASSES = {
     0: "border-l-green-600",
     1: "border-l-amber-600",
@@ -257,6 +266,16 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                             )}
                                         </StyledTableCell>
                                     )}
+                                    {/* Las tres fases en una celda; el title aclara el orden R/S/T */}
+                                    {filtersColumns[10] && (
+                                        <StyledTableCell align='right' className='whitespace-nowrap tabular-nums' title={powerDetail(equipment.measures)}>{powerCell(equipment.measures)}</StyledTableCell>
+                                    )}
+                                    {filtersColumns[11] && (
+                                        <StyledTableCell align='right' className='whitespace-nowrap tabular-nums' title={voltageDetail(equipment.measures)}>{voltageCell(equipment.measures)}</StyledTableCell>
+                                    )}
+                                    {filtersColumns[12] && (
+                                        <StyledTableCell align='right' className='whitespace-nowrap tabular-nums' title={currentDetail(equipment.measures)}>{currentCell(equipment.measures)}</StyledTableCell>
+                                    )}
                                     <StyledTableCell align='center'>
                                         <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
                                     </StyledTableCell>
@@ -328,6 +347,10 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                             </span>
                                         </StyledTableCell>
                                     )}
+                                    {/* El cliente de una subestacion rural no tiene equipo que mida */}
+                                    {[10, 11, 12].map((columna) => filtersColumns[columna] && (
+                                        <StyledTableCell key={columna} align='right'>{SIN_DATO}</StyledTableCell>
+                                    ))}
                                     {index === 0 && (
                                         <StyledTableCell rowSpan={clients.length} align='center'>
                                             <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected({}, row)} ><FaTableCellsLarge /> </Fab>
