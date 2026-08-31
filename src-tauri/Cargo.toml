@@ -1,6 +1,6 @@
 [package]
 name = "reconecta-desktop"
-version = "2.2.1"
+version = "2.2.5"
 edition = "2021"
 
 [build-dependencies]

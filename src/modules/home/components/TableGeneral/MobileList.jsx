@@ -2,6 +2,7 @@ import { Fab } from '@mui/material'
 import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa'
 import { FaPen, FaTableCellsLarge } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
+import { powerCell, voltageCell, currentCell, powerDetail, voltageDetail, currentDetail } from '../../utils/measures'
 
 const BORDER_CLASSES = {
     0: 'border-l-green-600',
@@ -73,6 +74,16 @@ function EquipmentCard({ equipment, row, filtersColumns, handleSelected }) {
                         {local === 1 ? 'Local' : local === 0 ? 'Remoto' : 'Desconocido'}
                     </Field>
                 )}
+                {/* R · S · T en una linea, con la unidad una sola vez */}
+                {filtersColumns[10] && (
+                    <Field label='Potencia'><span title={powerDetail(equipment.measures)}>{powerCell(equipment.measures)}</span></Field>
+                )}
+                {filtersColumns[11] && (
+                    <Field label='Tensión'><span title={voltageDetail(equipment.measures)}>{voltageCell(equipment.measures)}</span></Field>
+                )}
+                {filtersColumns[12] && (
+                    <Field label='Corriente'><span title={currentDetail(equipment.measures)}>{currentCell(equipment.measures)}</span></Field>
+                )}
             </div>
         </div>
     )
@@ -130,7 +141,7 @@ export default function MobileList({ elementsFiltered, filtersColumns, handleSel
                                     <div className='flex flex-wrap gap-x-3 mt-1 text-xs'>
                                         {filtersColumns[5] && <span><strong>Lat:</strong> {row.lat}</span>}
                                         {filtersColumns[6] && <span><strong>Lon:</strong> {row.lon}</span>}
-                                        {filtersColumns[7] && <span><strong>Pot:</strong> {row.power}</span>}
+                                        {filtersColumns[7] && <span><strong>Pot. trafo:</strong> {row.power}</span>}
                                     </div>
                                 )}
                             </div>
