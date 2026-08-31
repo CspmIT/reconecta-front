@@ -1,0 +1,1528 @@
+/*
+ * Mapa operativo. Paleta tomada del mockup del rediseno, pero la semantica de
+ * color de estado es la de la casa: cerrado = rojo, abierto = verde.
+ */
+.rc-map {
+	--rc-rojo: #cf0927;
+	--rc-verde: #00933b;
+	--rc-gris: #9a9a93;
+	--rc-azul: #283080;
+	--rc-celeste: #0076b2;
+	--rc-amarillo: #f7cf06;
+	--rc-naranja: #da5224;
+	--rc-surf: #ffffff;
+	--rc-surf2: #f6f6f3;
+	--rc-line: rgba(26, 26, 26, 0.12);
+	--rc-line2: rgba(26, 26, 26, 0.22);
+	--rc-txt: #1a1a1a;
+	--rc-txt2: #5c5c58;
+	--rc-txt3: #8b8b85;
+}
+body.dark .rc-map {
+	--rc-surf: #191b1f;
+	--rc-surf2: #212429;
+	--rc-line: rgba(255, 255, 255, 0.1);
+	--rc-line2: rgba(255, 255, 255, 0.2);
+	--rc-txt: #ededea;
+	--rc-txt2: #a5a59e;
+	--rc-txt3: #75756e;
+}
+
+.rc-map {
+	/*
+	 * Medidas del chrome de la app, para que el alto del mapa se lea como una
+	 * cuenta y no como un numero magico. El shell (modules/core/views) reserva
+	 * arriba mas espacio del que ocupa su barra: 64px de pt-16 para un AppBar
+	 * que mide 44. El margen negativo recupera esa diferencia sin tocar el
+	 * shell, que es comun a todas las vistas.
+	 *
+	 * El footer NO entra en la cuenta: /map esta en RUTAS_ALTO_COMPLETO, asi que
+	 * el shell no reserva su lugar y lo manda al flujo, abajo del pliegue. El
+	 * mapa llega hasta el borde inferior de la ventana.
+	 */
+	--rc-appbar: 44px; /* AppBarCustom: !max-h-11 */
+	--rc-shell-top: 80px; /* pt-16 del contenedor + pt-4 del wrapper */
+	/* Aire contra el AppBar y contra el borde de abajo. A cero el mapa gana
+	   16px mas, pero la tarjeta con sus esquinas redondeadas queda soldada. */
+	--rc-aire: 8px;
+
+	display: flex;
+	gap: 12px;
+	/* Es flex item del wrapper de MainContent, que es display:flex sin alto
+	   definido. Sin flex/width colapsa a ancho de contenido y el mapa
+	   desaparece; y un height:100% aca anularia el stretch vertical del padre. */
+	flex: 1;
+	width: 100%;
+	min-width: 0;
+	margin-top: calc(var(--rc-appbar) + var(--rc-aire) - var(--rc-shell-top));
+	margin-bottom: var(--rc-aire);
+	/* Alto DEFINIDO: del borde inferior del AppBar al borde de la ventana.
+	   Tiene que ser height y no min-height por dos razones: que la pagina no
+	   scrollee mas que los 64px del footer, y que el panel tenga una altura
+	   concreta contra la que recortar su scroll. */
+	height: calc(100vh - var(--rc-appbar) - var(--rc-aire) * 2);
+	font-family: inherit;
+	color: var(--rc-txt);
+}
+/* En moviles y tablets la barra del navegador entra y sale: dvh mide el alto
+   que se ve de verdad, vh mide el mas grande. Con @supports, si el motor no lo
+   conoce (WebKitGTK viejo) se queda con el vh de arriba. */
+@supports (height: 1dvh) {
+	.rc-map {
+		height: calc(100dvh - var(--rc-appbar) - var(--rc-aire) * 2);
+	}
+}
+
+/*
+ * Contenedor del shell (modules/core/views) en las vistas de alto completo:
+ * mide la ventana y recorta, asi el footer que va en el flujo justo debajo no
+ * hace scrollear la pagina.
+ *
+ * Solo desde 900px. Abajo de eso el mapa se apila (la tarjeta y el panel uno
+ * debajo del otro, ver el @media de abajo) y pasa el alto de la ventana:
+ * recortar ahi dejaria el panel inalcanzable, porque no habria scroll.
+ */
+@media (min-width: 900px) {
+	.rc-shell-full {
+		height: 100vh;
+		overflow: hidden;
+	}
+}
+@supports (height: 1dvh) {
+	@media (min-width: 900px) {
+		.rc-shell-full {
+			height: 100dvh;
+		}
+	}
+}
+
+/* ---------- mapa ---------- */
+.rc-mapcard {
+	flex: 1;
+	min-width: 0;
+	position: relative;
+	background: var(--rc-surf);
+	border: 0.5px solid var(--rc-line);
+	border-radius: 12px;
+	overflow: hidden;
+}
+.rc-canvas {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+}
+.rc-canvas .leaflet-container {
+	background: var(--rc-surf2);
+	font-family: inherit;
+}
+
+/* ---------- herramientas ---------- */
+.rc-tools {
+	position: absolute;
+	top: 12px;
+	left: 12px;
+	z-index: 600;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	/*
+	 * Los 7 botones en columna miden 319px. Si la ventana queda baja (pantalla
+	 * partida, o el apilado en un telefono acostado) el overflow del card
+	 * cortaba los ultimos y quedaban inalcanzables: con wrap pasan a una
+	 * segunda columna en lugar de desaparecer.
+	 */
+	flex-wrap: wrap;
+	max-height: calc(100% - 24px);
+}
+.rc-tools-r {
+	position: absolute;
+	top: 12px;
+	right: 12px;
+	z-index: 600;
+	display: flex;
+	gap: 8px;
+}
+.rc-tool {
+	width: 38px;
+	height: 38px;
+	/* styles.css declara un `button { padding: 0.6em 1.2em }` global: sin este
+	   reset el contenido se descentra y el boton se pasa de 38px. No quitar. */
+	padding: 0;
+	border-radius: 10px;
+	border: 0.5px solid var(--rc-line2);
+	background: var(--rc-surf);
+	color: var(--rc-txt2);
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.rc-tool:hover:not(:disabled) {
+	color: var(--rc-txt);
+	border-color: var(--rc-txt3);
+}
+.rc-tool.on {
+	background: var(--rc-azul);
+	border-color: var(--rc-azul);
+	color: #fff;
+}
+.rc-tool:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.rc-sep {
+	height: 1px;
+	background: var(--rc-line2);
+	margin: 2px 4px;
+}
+
+.rc-toast {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 14px;
+	z-index: 600;
+	background: rgba(26, 26, 26, 0.88);
+	color: #fff;
+	font-size: 13px;
+	padding: 8px 14px;
+	border-radius: 20px;
+	display: none;
+}
+.rc-toast.show {
+	display: block;
+}
+
+/* ---------- marcadores ---------- */
+.rc-pin {
+	position: relative;
+	display: flex;
+	align-items: center;
+	transform: translate(-7px, -7px);
+}
+.rc-dot {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	border: 2px solid #fff;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35);
+	flex: 0 0 14px;
+	transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.rc-tag {
+	position: absolute;
+	left: 19px;
+	top: -4px;
+	background: var(--rc-surf);
+	color: var(--rc-txt);
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 1;
+	padding: 4px 6px;
+	border-radius: 4px;
+	border: 0.5px solid var(--rc-line2);
+	white-space: nowrap;
+}
+.rc-pin.mini .rc-tag {
+	display: none;
+}
+/*
+ * Posiciones alternativas de la etiqueta. Se prueban en orden cuando la de por
+ * defecto (a la derecha) choca con otra ya visible: asi entran muchas mas que
+ * escondiendo la que pierde. Ver syncTags en networkOverlay.js.
+ */
+.rc-tag.iz {
+	left: auto;
+	right: 19px;
+}
+.rc-tag.ar {
+	left: 50%;
+	translate: -50% 0;
+	top: -21px;
+}
+.rc-tag.ab {
+	left: 50%;
+	translate: -50% 0;
+	top: 17px;
+}
+
+/* Estados. Cerrado = rojo, abierto = verde (convencion de los operadores) */
+.s-cerrado {
+	background: var(--rc-rojo);
+}
+.s-abierto {
+	background: var(--rc-verde);
+}
+.s-sincom {
+	background: var(--rc-gris);
+}
+.s-nodev {
+	background: var(--rc-celeste);
+}
+/* Un medidor o un analizador no esta cerrado ni abierto: solo mide o no mide.
+   Celeste como el elemento sin reconectador, para no meterlo en la escala
+   rojo/verde que los operadores leen como estado de un polo. */
+.s-activo {
+	background: var(--rc-celeste);
+}
+
+/* Formas por tipo de elemento */
+.rc-pin.sh-sq .rc-dot {
+	border-radius: 3px;
+	width: 15px;
+	height: 15px;
+	flex-basis: 15px;
+}
+.rc-pin.sh-di .rc-dot {
+	border-radius: 2px;
+	rotate: 45deg;
+	width: 13px;
+	height: 13px;
+	flex-basis: 13px;
+}
+.rc-pin.sh-tr .rc-dot {
+	border: 0;
+	border-radius: 0;
+	width: 16px;
+	height: 14px;
+	flex-basis: 16px;
+	clip-path: polygon(50% 0, 100% 100%, 0 100%);
+	filter: drop-shadow(0 0 1.2px rgba(0, 0, 0, 0.55));
+}
+
+.rc-pin.hi .rc-dot {
+	transform: scale(1.45);
+	box-shadow: 0 0 0 4px rgba(0, 118, 178, 0.35);
+}
+.rc-pin.sel .rc-dot {
+	transform: scale(1.4);
+	box-shadow: 0 0 0 3px var(--rc-celeste), 0 0 0 6px rgba(0, 118, 178, 0.25);
+}
+.rc-pin.sel .rc-tag {
+	border-color: var(--rc-celeste);
+	color: var(--rc-celeste);
+	font-weight: 700;
+}
+
+/*
+ * Alarma: dos senales sobre el mismo marcador, al mismo ritmo de 1,3s para que
+ * pulsen juntas en lugar de batir entre si.
+ *  - el punto titila entre su color de estado y amarillo (comportamiento
+ *    historico: ver .blink/.greenblink/.grayblink en marker.modules.css)
+ *  - un anillo amarillo alrededor, que mantiene legible el estado en el momento
+ *    en que el punto pasa por amarillo
+ * Los keyframes estan escritos por estado a proposito, sin var() adentro: en
+ * WebKitGTK (Tauri en Linux) las custom properties dentro de @keyframes son
+ * terreno menos firme que en Chrome.
+ */
+.rc-pin.alarm::before {
+	content: '';
+	position: absolute;
+	left: -8px;
+	top: -8px;
+	width: 30px;
+	height: 30px;
+	border-radius: 50%;
+	border: 2.5px solid var(--rc-amarillo);
+	pointer-events: none;
+	animation: rc-alarm 1.3s ease-in-out infinite;
+}
+@keyframes rc-alarm {
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(0.86);
+	}
+	50% {
+		opacity: 0.25;
+		transform: scale(1.06);
+	}
+}
+
+/* Solo hay tres combinaciones posibles: alarm viene de eventos del
+   reconectador, asi que un elemento sin equipo (s-nodev) nunca alarma. */
+.rc-pin.alarm .rc-dot.s-cerrado {
+	animation: rc-blink-cerrado 1.3s infinite;
+}
+.rc-pin.alarm .rc-dot.s-abierto {
+	animation: rc-blink-abierto 1.3s infinite;
+}
+.rc-pin.alarm .rc-dot.s-sincom {
+	animation: rc-blink-sincom 1.3s infinite;
+}
+@keyframes rc-blink-cerrado {
+	0%,
+	100% {
+		background-color: #cf0927;
+	}
+	50% {
+		background-color: #f7cf06;
+	}
+}
+@keyframes rc-blink-abierto {
+	0%,
+	100% {
+		background-color: #00933b;
+	}
+	50% {
+		background-color: #f7cf06;
+	}
+}
+@keyframes rc-blink-sincom {
+	0%,
+	100% {
+		background-color: #9a9a93;
+	}
+	50% {
+		background-color: #f7cf06;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rc-pin.alarm::before {
+		animation: none;
+		opacity: 0.9;
+	}
+	.rc-pin.alarm .rc-dot {
+		/* sin movimiento queda el color de estado, que es el dato importante */
+		animation: none;
+	}
+}
+
+/* ---------- panel ---------- */
+.rc-panel {
+	width: 352px;
+	flex: 0 0 352px;
+	background: var(--rc-surf);
+	border: 0.5px solid var(--rc-line);
+	border-radius: 12px;
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	min-width: 0;
+	transition: flex-basis 0.2s ease, opacity 0.16s ease;
+}
+.rc-panel.collapsed {
+	flex-basis: 0;
+	width: 0;
+	opacity: 0;
+	border-width: 0;
+	overflow: hidden;
+	pointer-events: none;
+}
+.rc-panel-top {
+	padding: 12px 14px 10px;
+	border-bottom: 0.5px solid var(--rc-line);
+	flex: 0 0 auto;
+}
+.rc-panel-title {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-bottom: 9px;
+}
+.rc-panel-title h2 {
+	font-size: 15px;
+	font-weight: 600;
+	margin: 0;
+}
+.rc-panel-title span {
+	font-size: 12px;
+	color: var(--rc-txt3);
+	font-variant-numeric: tabular-nums;
+}
+.rc-search {
+	width: 100%;
+	height: 32px;
+	border-radius: 8px;
+	border: 0.5px solid var(--rc-line2);
+	background: var(--rc-surf2);
+	color: var(--rc-txt);
+	padding: 0 10px;
+	font-size: 13px;
+	outline: none;
+}
+.rc-search:focus {
+	border-color: var(--rc-celeste);
+	box-shadow: 0 0 0 3px rgba(0, 118, 178, 0.14);
+}
+.rc-chips {
+	display: flex;
+	gap: 6px;
+	margin-top: 9px;
+}
+.rc-chip {
+	flex: 1;
+	height: 28px;
+	/* idem .rc-tool: neutraliza el padding global de button */
+	padding: 0 6px;
+	border-radius: 7px;
+	border: 0.5px solid var(--rc-line2);
+	background: transparent;
+	color: var(--rc-txt2);
+	font-size: 12px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 5px;
+	font-weight: 500;
+}
+.rc-chip:hover {
+	border-color: var(--rc-txt3);
+	color: var(--rc-txt);
+}
+.rc-chip.on {
+	background: var(--rc-azul);
+	border-color: var(--rc-azul);
+	color: #fff;
+}
+.rc-chip i {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	display: inline-block;
+}
+
+.rc-typebtn {
+	width: 100%;
+	height: 30px;
+	margin-top: 6px;
+	border-radius: 7px;
+	border: 0.5px solid var(--rc-line2);
+	background: transparent;
+	color: var(--rc-txt2);
+	font-size: 12.5px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 0 9px;
+	font-weight: 500;
+}
+.rc-typebtn:hover {
+	border-color: var(--rc-txt3);
+	color: var(--rc-txt);
+}
+.rc-typebtn.filtered {
+	border-color: var(--rc-celeste);
+	color: var(--rc-celeste);
+}
+.rc-typebtn .grow {
+	flex: 1;
+	text-align: left;
+}
+
+.rc-pop {
+	position: fixed;
+	z-index: 2000;
+	background: var(--rc-surf);
+	border: 0.5px solid var(--rc-line2);
+	border-radius: 10px;
+	padding: 5px;
+	min-width: 246px;
+	box-shadow: 0 8px 26px rgba(0, 0, 0, 0.2);
+	color: var(--rc-txt);
+}
+.rc-pop-h {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 5px 8px 7px;
+	border-bottom: 0.5px solid var(--rc-line);
+	margin-bottom: 4px;
+}
+.rc-pop-h b {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	color: var(--rc-txt3);
+	text-transform: uppercase;
+}
+.rc-pop-h button {
+	border: 0;
+	background: transparent;
+	font-size: 12px;
+	color: var(--rc-celeste);
+	cursor: pointer;
+	padding: 2px 4px;
+	border-radius: 4px;
+	font-weight: 500;
+}
+.rc-opt {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 7px 8px;
+	border-radius: 7px;
+	cursor: pointer;
+	user-select: none;
+}
+.rc-opt:hover {
+	background: var(--rc-surf2);
+}
+.rc-opt .box {
+	width: 17px;
+	height: 17px;
+	flex: 0 0 17px;
+	border-radius: 4px;
+	border: 1.5px solid var(--rc-line2);
+	display: grid;
+	place-items: center;
+	color: transparent;
+}
+.rc-opt.on .box {
+	background: var(--rc-celeste);
+	border-color: var(--rc-celeste);
+	color: #fff;
+}
+.rc-opt .lbl {
+	flex: 1;
+	font-size: 13.5px;
+}
+.rc-opt .n {
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+	font-variant-numeric: tabular-nums;
+}
+
+.rc-rows {
+	flex: 1;
+	/* min-height:0 es imprescindible: por defecto un flex item vale min-content
+	   y nunca se encoge, asi que el overflow-y no llega a activarse nunca. */
+	min-height: 0;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	padding: 4px 0 10px;
+}
+.rc-rows::-webkit-scrollbar {
+	width: 9px;
+}
+.rc-rows::-webkit-scrollbar-thumb {
+	background: var(--rc-line2);
+	border-radius: 9px;
+	border: 2px solid var(--rc-surf);
+}
+.rc-row {
+	padding: 9px 14px;
+	border-bottom: 0.5px solid var(--rc-line);
+	cursor: pointer;
+	border-left: 3px solid transparent;
+}
+.rc-row:hover {
+	background: var(--rc-surf2);
+	border-left-color: var(--rc-celeste);
+}
+.rc-row.sel {
+	background: rgba(0, 118, 178, 0.07);
+	border-left-color: var(--rc-celeste);
+}
+.rc-row-h {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	margin-bottom: 7px;
+}
+.rc-shape {
+	flex: 0 0 10px;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+}
+.rc-shape.sh-sq {
+	border-radius: 2px;
+}
+.rc-shape.sh-di {
+	border-radius: 1px;
+	rotate: 45deg;
+	width: 9px;
+	height: 9px;
+	flex-basis: 9px;
+}
+.rc-shape.sh-tr {
+	border-radius: 0;
+	clip-path: polygon(50% 0, 100% 100%, 0 100%);
+	width: 11px;
+	height: 10px;
+	flex-basis: 11px;
+}
+.rc-row-tag {
+	font-weight: 600;
+	font-size: 13.5px;
+}
+.rc-row-loc {
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rc-state {
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 7px;
+	border-radius: 5px;
+}
+.rc-st-cerrado {
+	background: rgba(207, 9, 39, 0.13);
+	color: #a4152a;
+}
+.rc-st-abierto {
+	background: rgba(0, 147, 59, 0.14);
+	color: #0a6b31;
+}
+.rc-st-sincom {
+	background: rgba(140, 140, 133, 0.18);
+	color: #5c5c58;
+}
+.rc-st-nodev,
+.rc-st-activo {
+	background: rgba(0, 118, 178, 0.12);
+	color: #0076b2;
+}
+body.dark .rc-st-cerrado {
+	background: rgba(207, 9, 39, 0.24);
+	color: #ff8e9c;
+}
+body.dark .rc-st-abierto {
+	background: rgba(0, 147, 59, 0.22);
+	color: #6fd394;
+}
+body.dark .rc-st-sincom {
+	background: rgba(255, 255, 255, 0.1);
+	color: #a5a59e;
+}
+body.dark .rc-st-nodev,
+body.dark .rc-st-activo {
+	background: rgba(0, 118, 178, 0.22);
+	color: #7cc4e8;
+}
+.rc-alarm-chip {
+	font-size: 10.5px;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 5px;
+	background: rgba(247, 207, 6, 0.22);
+	color: #8a7000;
+}
+body.dark .rc-alarm-chip {
+	color: #f7cf06;
+}
+
+/* ---- Chevron y equipos desplegados ---- */
+
+.rc-chev {
+	flex: 0 0 14px;
+	width: 14px;
+	height: 14px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 0;
+	padding: 0;
+	background: none;
+	color: var(--rc-txt3);
+	cursor: pointer;
+	border-radius: 4px;
+	transition: rotate 0.14s ease;
+}
+/* Reserva el lugar del chevron en las filas que no lo llevan, para que los
+   nombres de todas las filas queden alineados en la misma columna. */
+.rc-chev.ph {
+	cursor: default;
+}
+.rc-chev:hover {
+	background: var(--rc-line2);
+	color: var(--rc-txt);
+}
+.rc-row.open > .rc-row-h > .rc-chev {
+	rotate: 90deg;
+}
+
+/* Resumen de un elemento sin reconectador: reemplaza a las dos filas de
+   mediciones, que serian todas guiones. */
+.rc-row-sum {
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+}
+
+.rc-subs {
+	margin: 8px 0 2px 7px;
+	padding-left: 10px;
+	border-left: 1.5px solid var(--rc-line2);
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+.rc-sub {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+}
+.rc-sub-h {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	/* Red de contencion: si los chips no entran, bajan de linea en vez de
+	   desbordar. Ojo que para que `wrap` llegue a actuar los hijos flexibles
+	   tienen que declarar `flex-basis: auto` — con el `flex: 1` habitual la
+	   base es 0 y nunca envuelve. */
+	flex-wrap: wrap;
+	row-gap: 3px;
+}
+.rc-sub-dot {
+	flex: 0 0 7px;
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+}
+.rc-sub-tag {
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+	/* Toma el sobrante para empujar el chip de estado a la derecha, y se recorta
+	   antes que desbordar. `flex-basis: auto` para no anular el wrap de arriba. */
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rc-sub-serial {
+	font-variant-numeric: tabular-nums;
+}
+/* Marca el equipo que representa al elemento en el mapa: es el unico cuyos
+   valores coinciden con la fila de arriba. */
+.rc-sub-main {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	padding: 1px 5px;
+	border-radius: 4px;
+	background: rgba(0, 118, 178, 0.12);
+	color: #0076b2;
+}
+body.dark .rc-sub-main {
+	background: rgba(0, 118, 178, 0.24);
+	color: #7cc4e8;
+}
+.rc-sub-loc {
+	font-size: 11px;
+	color: var(--rc-txt3);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.rc-sub .rc-state {
+	font-size: 10px;
+	padding: 1px 5px;
+}
+
+.rc-meas {
+	display: grid;
+	grid-template-columns: 18px repeat(3, 1fr);
+	gap: 2px 6px;
+	align-items: center;
+}
+.rc-meas b {
+	font-size: 10.5px;
+	color: var(--rc-txt3);
+	font-weight: 600;
+}
+.rc-meas span {
+	font-size: 12.5px;
+	font-variant-numeric: tabular-nums;
+	text-align: right;
+	color: var(--rc-txt2);
+}
+.rc-meas .off {
+	color: var(--rc-txt3);
+}
+.rc-meas .warn {
+	color: var(--rc-naranja);
+	font-weight: 600;
+}
+
+.rc-panel-foot {
+	flex: 0 0 auto;
+	border-top: 0.5px solid var(--rc-line);
+	padding: 8px 14px;
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+.rc-live {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+.rc-live i {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--rc-verde);
+	display: inline-block;
+	animation: rc-pulse 2s infinite;
+}
+.rc-live.stale i {
+	background: var(--rc-naranja);
+	animation: none;
+}
+@keyframes rc-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.25;
+	}
+}
+@media (prefers-reduced-motion: reduce) {
+	.rc-live i {
+		animation: none;
+	}
+}
+.rc-empty {
+	padding: 28px 16px;
+	text-align: center;
+	color: var(--rc-txt3);
+	font-size: 13px;
+}
+
+/* ---------- lupas ---------- */
+.rc-tool.armed {
+	background: var(--rc-amarillo);
+	border-color: var(--rc-amarillo);
+	color: #1a1a1a;
+}
+
+/* Recuadro que se dibuja con el mouse para crear una lupa */
+.rc-lupa-sel {
+	position: absolute;
+	z-index: 520;
+	border: 1.5px dashed var(--rc-azul);
+	background: rgba(40, 48, 128, 0.1);
+	pointer-events: none;
+	border-radius: 4px;
+}
+
+/* Guias: recuadro de la zona ampliada + lineas a la ventana */
+.rc-guides {
+	position: absolute;
+	inset: 0;
+	z-index: 450;
+	pointer-events: none;
+}
+
+.rc-lupa {
+	position: absolute;
+	z-index: 500;
+	background: var(--rc-surf);
+	border: 0.5px solid var(--rc-line2);
+	border-radius: 10px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
+}
+.rc-lupa.drag {
+	box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+}
+.rc-lupa.locked {
+	border-color: var(--rc-azul);
+}
+
+.rc-lupa-head {
+	height: 30px;
+	flex: 0 0 30px;
+	background: var(--rc-surf2);
+	border-bottom: 0.5px solid var(--rc-line);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 0 6px 0 9px;
+	cursor: grab;
+	user-select: none;
+}
+.rc-lupa.drag .rc-lupa-head {
+	cursor: grabbing;
+}
+.rc-lupa.locked .rc-lupa-head {
+	cursor: default;
+}
+.rc-lupa-name {
+	font-size: 12px;
+	font-weight: 600;
+	flex: 1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rc-lupa-lock {
+	display: flex;
+	align-items: center;
+	color: var(--rc-txt3);
+}
+.rc-lupa-zoom {
+	font-size: 11px;
+	color: var(--rc-txt3);
+	font-variant-numeric: tabular-nums;
+}
+.rc-lupa-btn {
+	width: 20px;
+	height: 20px;
+	border: 0;
+	/* neutraliza el padding global de button (ver .rc-tool) */
+	padding: 0;
+	background: transparent;
+	border-radius: 4px;
+	color: var(--rc-txt2);
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+	font-size: 14px;
+	line-height: 1;
+}
+.rc-lupa-btn:hover:not(:disabled) {
+	background: var(--rc-line);
+	color: var(--rc-txt);
+}
+.rc-lupa-btn:disabled {
+	opacity: 0.28;
+	cursor: not-allowed;
+}
+
+.rc-lupa-body {
+	flex: 1;
+	position: relative;
+	min-height: 0;
+}
+.rc-lupa-map {
+	position: absolute;
+	inset: 0;
+}
+
+.rc-lupa-grip {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 16px;
+	height: 16px;
+	cursor: nwse-resize;
+	z-index: 800;
+}
+.rc-lupa-grip::after {
+	content: '';
+	position: absolute;
+	right: 3px;
+	bottom: 3px;
+	width: 8px;
+	height: 8px;
+	border-right: 2px solid var(--rc-txt3);
+	border-bottom: 2px solid var(--rc-txt3);
+}
+
+/* Chip con la cantidad de lupas abiertas */
+.rc-lupachip {
+	background: var(--rc-surf);
+	border: 0.5px solid var(--rc-line2);
+	border-radius: 10px;
+	padding: 7px 11px;
+	font-size: 12.5px;
+	color: var(--rc-txt2);
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+.rc-lupachip b {
+	color: var(--rc-txt);
+	font-weight: 600;
+}
+
+/* Pista del modo dibujo */
+.rc-hint {
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: 14px;
+	z-index: 600;
+	background: rgba(26, 26, 26, 0.88);
+	color: #fff;
+	font-size: 13px;
+	padding: 8px 14px;
+	border-radius: 20px;
+	display: none;
+	align-items: center;
+	gap: 8px;
+	/* una sola linea: partida en dos se lee peor que recortada */
+	white-space: nowrap;
+	max-width: calc(100% - 28px);
+}
+.rc-hint.show {
+	display: flex;
+}
+.rc-hint b {
+	font-weight: 600;
+}
+.rc-hint .sep {
+	opacity: 0.4;
+}
+
+/* ---------- editor de tramos ---------- */
+.rc-hbtn {
+	border: 0;
+	/* neutraliza el padding global de button (ver .rc-tool) */
+	padding: 4px 10px;
+	background: rgba(255, 255, 255, 0.18);
+	color: #fff;
+	font-size: 12.5px;
+	font-weight: 500;
+	border-radius: 6px;
+	cursor: pointer;
+}
+.rc-hbtn:hover:not(:disabled) {
+	background: rgba(255, 255, 255, 0.32);
+}
+.rc-hbtn:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+}
+.rc-hbtn.danger {
+	background: rgba(207, 9, 39, 0.85);
+}
+.rc-hbtn.danger:hover:not(:disabled) {
+	background: var(--rc-rojo);
+}
+.rc-hinput {
+	height: 24px;
+	padding: 0 8px;
+	border-radius: 6px;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	background: rgba(255, 255, 255, 0.12);
+	color: #fff;
+	font-size: 12.5px;
+	font-family: inherit;
+	outline: none;
+	min-width: 160px;
+}
+.rc-hinput:focus {
+	border-color: #fff;
+}
+
+/* ---------- barra de alarma del panel ---------- */
+.rc-alarmbar {
+	width: 100%;
+	height: 30px;
+	margin-top: 6px;
+	/* neutraliza el padding global de button (ver .rc-tool) */
+	padding: 0 9px;
+	border-radius: 7px;
+	border: 1px solid var(--rc-amarillo);
+	background: rgba(247, 207, 6, 0.14);
+	color: #7a6400;
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+body.dark .rc-alarmbar {
+	color: var(--rc-amarillo);
+	background: rgba(247, 207, 6, 0.12);
+}
+.rc-alarmbar .grow {
+	flex: 1;
+	text-align: left;
+}
+.rc-alarmbar:hover {
+	background: rgba(247, 207, 6, 0.26);
+}
+.rc-alarmbar.on {
+	background: var(--rc-amarillo);
+	border-color: var(--rc-amarillo);
+	color: #1a1a1a;
+}
+body.dark .rc-alarmbar.on {
+	color: #1a1a1a;
+}
+.rc-badge {
+	font-size: 11px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	padding: 2px 6px;
+	border-radius: 20px;
+	background: var(--rc-amarillo);
+	color: #1a1a1a;
+}
+.rc-alarmbar.on .rc-badge {
+	background: rgba(0, 0, 0, 0.22);
+}
+.rc-alarmhidden {
+	font-style: normal;
+	font-weight: 500;
+	font-size: 11px;
+	opacity: 0.75;
+	margin-left: 6px;
+}
+
+/* ---------- pantalla completa ---------- */
+/*
+ * La API nativa aplica sola position/inset/width/height con !important, asi
+ * que el `height` calculado de .rc-map no molesta. Solo queda la
+ * cosmetica: el fondo (el elemento a pantalla completa no hereda el del body)
+ * y un margen para que las tarjetas redondeadas no toquen el borde del monitor.
+ */
+.rc-map:fullscreen {
+	padding: 12px;
+	background: var(--rc-surf2);
+}
+/* WebKit viejo (WebKitGTK de Tauri segun version) usa el selector con prefijo */
+.rc-map:-webkit-full-screen {
+	padding: 12px;
+	background: var(--rc-surf2);
+}
+
+/* ---------- ir al tablero del equipo ---------- */
+/* Barra del equipo seleccionado, al pie de .rc-panel-top (o sea justo arriba
+   de la lista y fuera de su scroll, asi no se va de pantalla al scrollear). */
+.rc-selbar {
+	margin-top: 8px;
+	padding: 8px;
+	border-radius: 10px;
+	border: 0.5px solid rgba(0, 118, 178, 0.35);
+	background: rgba(0, 118, 178, 0.07);
+}
+.rc-selbar-h {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	margin-bottom: 7px;
+}
+.rc-selbar-h b {
+	font-size: 13px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+.rc-selbar-loc {
+	flex: 1;
+	min-width: 0;
+	font-size: 11px;
+	color: var(--rc-txt3);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rc-selbar-x {
+	flex: 0 0 18px;
+	width: 18px;
+	height: 18px;
+	/* styles.css declara un `button { padding: 0.6em 1.2em }` global */
+	padding: 0;
+	border: 0;
+	border-radius: 5px;
+	background: transparent;
+	color: var(--rc-txt3);
+	font-size: 15px;
+	line-height: 1;
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+}
+.rc-selbar-x:hover {
+	background: var(--rc-surf);
+	color: var(--rc-txt);
+}
+.rc-selbar-go {
+	width: 100%;
+	padding: 8px 10px;
+	border: 0;
+	border-radius: 8px;
+	background: var(--rc-celeste);
+	color: #fff;
+	font-family: inherit;
+	font-size: 12.5px;
+	font-weight: 600;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 7px;
+}
+.rc-selbar-go:hover {
+	background: #00628f;
+}
+.rc-selbar-go.loading {
+	cursor: progress;
+	opacity: 0.75;
+}
+.rc-selbar-go.loading svg {
+	animation: rc-openspin 0.9s linear infinite;
+}
+@keyframes rc-openspin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+/* ---------- elegir equipo ---------- */
+/* Va dentro de .rc-map (ver EquipmentPicker): con position fixed queda centrado
+   contra el viewport, que en pantalla completa es el propio .rc-map. */
+.rc-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 2100;
+	background: rgba(0, 0, 0, 0.42);
+	display: grid;
+	place-items: center;
+	padding: 20px;
+}
+.rc-modal-card {
+	width: min(460px, 100%);
+	max-height: min(70vh, 520px);
+	display: flex;
+	flex-direction: column;
+	background: var(--rc-surf);
+	border: 0.5px solid var(--rc-line2);
+	border-radius: 12px;
+	box-shadow: 0 18px 50px rgba(0, 0, 0, 0.3);
+	overflow: hidden;
+}
+.rc-modal-h {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 12px 14px;
+	border-bottom: 0.5px solid var(--rc-line);
+}
+.rc-modal-h div {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.rc-modal-h b {
+	font-size: 14.5px;
+	font-weight: 600;
+}
+.rc-modal-h span {
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+}
+.rc-modal-x {
+	flex: 0 0 26px;
+	width: 26px;
+	height: 26px;
+	padding: 0;
+	border: 0;
+	border-radius: 7px;
+	background: transparent;
+	color: var(--rc-txt2);
+	font-size: 19px;
+	line-height: 1;
+	cursor: pointer;
+	display: grid;
+	place-items: center;
+}
+.rc-modal-x:hover {
+	background: var(--rc-surf2);
+	color: var(--rc-txt);
+}
+.rc-modal-list {
+	flex: 1;
+	/* Igual que .rc-rows: sin min-height:0 el overflow no se activa */
+	min-height: 0;
+	overflow-y: auto;
+	padding: 6px;
+}
+.rc-eqrow {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	padding: 9px 10px;
+	border: 0;
+	border-radius: 9px;
+	background: transparent;
+	color: var(--rc-txt);
+	font-family: inherit;
+	font-size: 13px;
+	text-align: left;
+	cursor: pointer;
+}
+.rc-eqrow:hover {
+	background: var(--rc-surf2);
+}
+.rc-eqtype {
+	flex: 0 0 auto;
+	font-size: 10.5px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--rc-celeste);
+	background: rgba(0, 118, 178, 0.1);
+	border-radius: 5px;
+	padding: 3px 6px;
+}
+.rc-eqname {
+	flex: 1;
+	min-width: 0;
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.rc-eqserial {
+	flex: 0 0 auto;
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+	font-variant-numeric: tabular-nums;
+}
+.rc-eqrow svg {
+	flex: 0 0 14px;
+	color: var(--rc-txt3);
+}
+
+/* ---------- responsive ---------- */
+/*
+ * El panel tiene ancho fijo, asi que al angostarse la ventana el unico que se
+ * come el recorte es el mapa. Medido sin breakpoints: a 1024px el mapa quedaba
+ * en 564px, a 834 en 374, a 768 en 308, a 430 en 34, y a 360 la pagina ya
+ * scrolleaba de costado. Dos escalones: primero se angosta el panel, y cuando
+ * ni eso alcanza se apila.
+ */
+@media (max-width: 1279px) {
+	.rc-panel {
+		width: 300px;
+		flex-basis: 300px;
+	}
+	/*
+	 * Con el panel mas angosto los cuatro chips de estado no entran en una
+	 * linea (medido: desbordaban 15px). Se los deja pasar a dos.
+	 *
+	 * El `flex-basis: auto` es imprescindible: con el `flex: 1` de siempre la
+	 * base es 0, el navegador cree que entran todos y recien despues los estira
+	 * hasta su min-content, asi que el wrap NUNCA se dispara y el texto se sale.
+	 */
+	.rc-chips {
+		flex-wrap: wrap;
+	}
+	.rc-chip {
+		flex: 1 1 auto;
+	}
+}
+
+/*
+ * En el escalon del panel angosto los cuatro chips caen 3 + 1 y el solitario se
+ * estira a todo el ancho. Con base del 50% quedan 2x2, que se lee mejor. Solo
+ * aca: mas abajo el panel pasa a ancho completo y los cuatro entran en una
+ * linea, donde 2x2 serian cuatro chips enormes.
+ */
+@media (min-width: 900px) and (max-width: 1279px) {
+	.rc-chip {
+		flex-basis: calc(50% - 3px);
+	}
+}
+
+/*
+ * Debajo de 900px no hay ancho para dos columnas: el mapa va arriba con alto
+ * propio, el panel abajo a lo ancho, y scrollea la pagina. Apilar arregla de
+ * rebote dos cosas que en un mapa de 300px quedaban recortadas: las lupas
+ * (268px fijos) y la barra del editor de tramos.
+ */
+@media (max-width: 899px) {
+	.rc-map {
+		flex-direction: column;
+		/* Lo alto lo da el contenido y scrollea la pagina, que es lo que se
+		   espera en un telefono. align-self evita que el flex del wrapper lo
+		   estire y deje un hueco abajo cuando el contenido es corto. */
+		height: auto;
+		align-self: flex-start;
+	}
+	.rc-mapcard {
+		flex: 0 0 auto;
+		/* 60vh deja ver mapa y lista al mismo tiempo. El minimo es para que la
+		   barra de herramientas (7 botones de 38px en columna, 319px) entre
+		   siempre: si no, los ultimos quedan cortados por el overflow del card. */
+		height: 60vh;
+		min-height: 360px;
+	}
+	.rc-panel {
+		width: 100%;
+		flex: 0 0 auto;
+	}
+	/* Plegar el panel en apilado es esconderlo, no encogerlo a cero de ancho */
+	.rc-panel.collapsed {
+		display: none;
+	}
+	.rc-rows {
+		/* Sin scroll interno: con la pagina scrolleando, dos scrolls anidados
+		   hacen que la lista se sienta trabada. */
+		overflow-y: visible;
+	}
+	/* Una sola linea no entra: el aviso y la barra del editor pasan a dos */
+	.rc-hint {
+		white-space: normal;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+}
+
+/* ---------- selector de color del tramo ---------- */
+.rc-swatches {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+}
+.rc-swatch {
+	/* neutraliza el padding global de button (ver .rc-tool) */
+	padding: 0;
+	width: 18px;
+	height: 18px;
+	border-radius: 5px;
+	border: 1.5px solid rgba(255, 255, 255, 0.45);
+	cursor: pointer;
+	flex: none;
+	display: block;
+}
+.rc-swatch:hover {
+	border-color: #fff;
+}
+.rc-swatch.on {
+	/* el anillo va por fuera: un borde mas grueso comeria el color de la muestra */
+	border-color: #fff;
+	box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+/* La muestra del boton "Color", que solo informa el color actual */
+.rc-swatch.mini {
+	width: 11px;
+	height: 11px;
+	border-radius: 3px;
+	border-width: 1px;
+	margin-right: 5px;
+	display: inline-block;
+	vertical-align: -1px;
+	cursor: inherit;
+}
+/* El input nativo se esconde: se dispara desde la muestra, que asi queda del
+   mismo tamano que el resto de la paleta */
+.rc-swatch.custom {
+	position: relative;
+	overflow: hidden;
+	border-style: dashed;
+}
+.rc-swatch.custom input {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	width: 100%;
+	height: 100%;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
+}

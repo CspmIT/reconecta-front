@@ -3,7 +3,6 @@ import { CheckCircleSharp, Circle, ErrorSharp } from '@mui/icons-material'
 import { BiWindowOpen } from 'react-icons/bi'
 
 import { storage } from '../../../storage/storage'
-import { newTabBoard } from '../../tabs/utils/actions'
 const TypeRecloser = {
 	1: 'Reconectador',
 	2: 'Medidor',
