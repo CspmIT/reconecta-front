@@ -1,4 +1,4 @@
-import { Fab, TextField } from '@mui/material'
+import { Fab, TextField, useMediaQuery } from '@mui/material'
 import { useCallback, useEffect, useState } from 'react'
 import { Checklist, Search } from '@mui/icons-material'
 import TableGeneral from '../TableGeneral'
@@ -12,6 +12,9 @@ import CardDashboard from '../CardDashboard/CardDashboard'
 
 
 function TabsHome({ newTab }) {
+	// El mismo corte que usa la vista del Home para decidir quien dibuja las
+	// tarjetas, y el mismo que usa CardsInfo para elegir su formato
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const [filters, setFilters] = useState(DEFAULT_FILTERS)
 	const [filtersEquipments, setFiltersEquipments] = useState(DEFAULT_EQUIPMENT_FILTERS)
 	const [filtersColumns, setFiltersColumns] = useState(DEFAULT_COLUMN_FILTERS)
@@ -93,9 +96,17 @@ function TabsHome({ newTab }) {
 						variant='outlined'
 					/>
 
-					<div className='md:hidden w-full flex flex-wrap justify-center items-center gap-1'>
-						<CardDashboard />
-					</div>
+					{/*
+					  * En mobile las tarjetas van aca, en la barra de filtros; en
+					  * escritorio las dibuja la vista del Home. Es una condicion de JS y
+					  * no un `md:hidden`, que solo las ocultaba: el componente seguia
+					  * montado y pedia los datos por duplicado cada 10 segundos.
+					  */}
+					{isMobile && (
+						<div className='w-full flex flex-wrap justify-center items-center gap-1'>
+							<CardDashboard />
+						</div>
+					)}
 					<DropdownCheckbox title="Nodos" options={NODE_OPTIONS} values={filters} onToggle={handleChecked} />
 					<DropdownCheckbox title="Equipos" options={EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
 					<DropdownCheckbox title="Columnas" options={COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />

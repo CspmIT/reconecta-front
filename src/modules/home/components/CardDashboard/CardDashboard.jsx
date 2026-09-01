@@ -5,58 +5,53 @@ import { cardDashboardClass } from './utils/listCard'
 import CardsInfo from './components/CardsInfo'
 import LoaderComponent from '../../../../components/Loader'
 
+/*
+ * Las tarjetas salen de UN solo pedido a /dashboard, que devuelve los cinco
+ * contadores ya calculados. Antes eran tres pedidos —/getAllReclosers,
+ * /recloserAlarm y /getAcReclosers— y los dos primeros consultaban Influx una
+ * vez por equipo, cada 10 segundos (ver DashboardService en el backend).
+ *
+ * El componente se monta UNA sola vez: en escritorio lo dibuja la vista del
+ * Home y en mobile la barra de TabHome, las dos con el mismo corte de 600px.
+ * Antes la version mobile se escondia con `md:hidden`, que es CSS y no
+ * desmonta: en escritorio no se veia pero igual pedia todo por duplicado.
+ */
 function CardDashboard() {
 	const [cards, setCards] = useState(null)
 
 	useEffect(() => {
-		const dataDashboard = async () => {
-			const [dataRecloser, dataAlarm, dataAc] = await Promise.all([
-				request(`${backend.Reconecta}/getAllReclosers`, 'GET'),
-				request(`${backend.Reconecta}/recloserAlarm`, 'GET'),
-				request(`${backend.Reconecta}/getAcReclosers`, 'GET')
-			])
-			const numberAc = (Array.isArray(dataAc?.data) && dataAc.data.length > 0) ? dataAc.data.reduce((acc, r) => parseInt(r._value) === 0 ? acc + 1 : 0, 0) : 0
-			const info = dataRecloser.data.reduce(
-				(acc, val) => {
-					if (val.status_recloser === 1) acc.recoOpen++
-					if (val.status_recloser === 3) acc.recoOffline++
-					return acc
-				},
-				{
-					recoOpen: 0,
-					recoOffline: 0,
-					recoAlarm: Object.keys(dataAlarm.data).length,
-					recoAlimAC: numberAc,
-					recoCant: dataRecloser.data.length,
-				}
-			)
-
-			const cards = await cardDashboardClass(info)
-			setCards(cards)
+		let cancelled = false
+		const getDashboard = async () => {
+			try {
+				const { data } = await request(`${backend.Reconecta}/dashboard`, 'GET')
+				if (cancelled) return
+				setCards(cardDashboardClass(data))
+			} catch (e) {
+				// Se conservan los ultimos valores buenos: un pedido que falla no
+				// tiene que dejar el panel en el loader para siempre
+				console.log(e)
+			}
 		}
-		dataDashboard()
-		const intervalId = setInterval(() => {
-			dataDashboard()
-		}, 10000)
+		getDashboard()
+		const intervalId = setInterval(getDashboard, 10000)
 
-		return () => clearInterval(intervalId)
+		return () => {
+			cancelled = true
+			clearInterval(intervalId)
+		}
 	}, [])
 
-	return (
-		<>
-			{!cards ? (
-				<div className='w-full flex justify-center items-center'>
-					<LoaderComponent image={false} />
-				</div>
-			) : (
-				cards.map((item, index) => {
-					return (
-						<CardsInfo key={index} title={item.title} infoData={item.info} colorTitle={item.colorTitle} />
-					)
-				})
-			)}
-		</>
-	)
+	if (!cards) {
+		return (
+			<div className='w-full flex justify-center items-center'>
+				<LoaderComponent image={false} />
+			</div>
+		)
+	}
+
+	return cards.map((item) => (
+		<CardsInfo key={item.title} title={item.title} infoData={item.info} colorTitle={item.colorTitle} />
+	))
 }
 
 export default CardDashboard
