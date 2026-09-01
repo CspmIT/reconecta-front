@@ -16,7 +16,8 @@ import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa';
 import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import MobileList from './MobileList';
-import { powerCell, voltageCell, currentCell, powerDetail, voltageDetail, currentDetail, SIN_DATO } from '../../utils/measures';
+import { powerDetail, voltageDetail, currentDetail, SIN_DATO } from '../../utils/measures';
+import PhaseValues from './PhaseValues';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -49,6 +50,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
  * carga en el ABM; "Potencia" es la activa que esta midiendo el equipo.
  */
 const HEADERS = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Pot. trafo", "Alimentación", "Modo", "Potencia", "Tensión", "Corriente", ""]
+/*
+ * La matricula tenia un ancho minimo de 24rem que se comia el espacio de las
+ * demas columnas. Ahora va acotada y la descripcion larga envuelve, o sea que el
+ * nodo crece hacia abajo y no a lo ancho. `align-top` deja el nombre arriba,
+ * alineado con el primer equipo de la lista, que es lo que se lee.
+ */
+const CELDA_MATRICULA = '!w-56 !max-w-56 !align-top'
 const BORDER_CLASSES = {
     0: "border-l-green-600",
     1: "border-l-amber-600",
@@ -193,16 +201,14 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                             row.equipments.map((equipment, index) => (
                                 <StyledTableRow key={`${row.id}-${index}`}>
                                     {index === 0 && (
-                                        <StyledTableCell rowSpan={row.equipments.length} className='min-w-96'>
-                                            <div className='w-full flex'>
-                                                <div className='w-11/12'>
+                                        <StyledTableCell rowSpan={row.equipments.length} className={CELDA_MATRICULA}>
+                                            <div className='flex items-start gap-x-2'>
+                                                <div className='flex-1 min-w-0 break-words'>
                                                     {row.name} <br /> {row.description}
                                                 </div>
-                                                <div className='w-1/12'>
-                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
-                                                        <FaPen />
-                                                    </Fab>
-                                                </div>
+                                                <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0 !shrink-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                    <FaPen />
+                                                </Fab>
                                             </div>
                                         </StyledTableCell>
                                     )}
@@ -266,15 +272,21 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                             )}
                                         </StyledTableCell>
                                     )}
-                                    {/* Las tres fases en una celda; el title aclara el orden R/S/T */}
+                                    {/* Las tres fases apiladas, en letra chica para no estirar la fila */}
                                     {filtersColumns[10] && (
-                                        <StyledTableCell align='right' className='whitespace-nowrap tabular-nums' title={powerDetail(equipment.measures)}>{powerCell(equipment.measures)}</StyledTableCell>
+                                        <StyledTableCell className='!py-2'>
+                                            <PhaseValues measures={equipment.measures} magnitude='power' title={powerDetail(equipment.measures)} />
+                                        </StyledTableCell>
                                     )}
                                     {filtersColumns[11] && (
-                                        <StyledTableCell align='right' className='whitespace-nowrap tabular-nums' title={voltageDetail(equipment.measures)}>{voltageCell(equipment.measures)}</StyledTableCell>
+                                        <StyledTableCell className='!py-2'>
+                                            <PhaseValues measures={equipment.measures} magnitude='voltage' title={voltageDetail(equipment.measures)} />
+                                        </StyledTableCell>
                                     )}
                                     {filtersColumns[12] && (
-                                        <StyledTableCell align='right' className='whitespace-nowrap tabular-nums' title={currentDetail(equipment.measures)}>{currentCell(equipment.measures)}</StyledTableCell>
+                                        <StyledTableCell className='!py-2'>
+                                            <PhaseValues measures={equipment.measures} magnitude='current' title={currentDetail(equipment.measures)} />
+                                        </StyledTableCell>
                                     )}
                                     <StyledTableCell align='center'>
                                         <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
@@ -284,16 +296,14 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                             (row.clients.length ? row.clients : PLACEHOLDER_CLIENT).map((client, index, clients) => (
                                 <StyledTableRow key={`${row.id}-${index}`}>
                                     {index === 0 && (
-                                        <StyledTableCell rowSpan={clients.length} className='min-w-96'>
-                                            <div className='w-full flex'>
-                                                <div className='w-11/12'>
+                                        <StyledTableCell rowSpan={clients.length} className={CELDA_MATRICULA}>
+                                            <div className='flex items-start gap-x-2'>
+                                                <div className='flex-1 min-w-0 break-words'>
                                                     {row.name}
                                                 </div>
-                                                <div className='w-1/12'>
-                                                    <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0' onClick={() => navigate(`/editElement/${row.id}`)} >
-                                                        <FaPen />
-                                                    </Fab>
-                                                </div>
+                                                <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0 !shrink-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                    <FaPen />
+                                                </Fab>
                                             </div>
                                         </StyledTableCell>
                                     )}
