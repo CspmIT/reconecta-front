@@ -33,6 +33,15 @@ const MetrologyBoard = ({ idRecloser }) => {
 			return () => clearInterval(intervalId)
 		}
 	}, [idRecloser])
+	/*
+	 * Etiqueta de la medicion. Los campos de tension de linea traen `asPhase`
+	 * porque hay equipos que mandan ahi la tension de FASE: si el equipo no
+	 * publica el campo de fase, la etiqueta de linea (AB/BC/CA) estaria mintiendo
+	 * y va A, B o C. Ver el comentario en boardMetrology.
+	 */
+	const nombre = (child) =>
+		child.asPhase && !dataMetrology?.[child.asPhase.ifMissing] ? child.asPhase.name : child.name
+
 	return (
 		<div className='w-full grid grid-cols-3 max-lg:flex max-lg:flex-col gap-6 justify-center'>
 			{dataMetrology ? (
@@ -75,7 +84,7 @@ const MetrologyBoard = ({ idRecloser }) => {
 											className={`my-2 flex flex-row justify-center text-sm md:text-base w-full`}
 										>
 											<p>
-												{child.name}: <b>{value}</b>
+												{nombre(child)}: <b>{value}</b>
 											</p>
 										</div>
 									)
