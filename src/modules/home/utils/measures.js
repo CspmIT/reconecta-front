@@ -11,14 +11,18 @@
  * Cuando se aplico una relacion de transformacion viene en `measures.tx` y se
  * aclara en el title de la celda.
  *
- * Aca se muestran las tres fases en una celda, con la unidad una sola vez y la
- * escala con la que se lee mas facil: 13000 V se muestra como 12,9 kV y 6642 W
- * como 6,6 kW. La escala y los decimales se eligen por celda, con la fase mas
- * grande, para que las tres queden comparables de un vistazo.
+ * Aca se elige la escala con la que se lee mas facil: 13000 V se muestra como
+ * 12,9 kV y 6642 W como 6,6 kW. La escala y los decimales se deciden por celda,
+ * con la fase mas grande, para que las tres queden comparables de un vistazo.
+ *
+ * Hay dos presentaciones: `*Rows` apila las fases con su etiqueta (tabla de
+ * escritorio) y `*Cell` las pone en una linea (tarjetas del celular).
  */
 export const SIN_DATO = '—'
 
-const PHASES = ['R', 'S', 'T']
+// Mismas etiquetas que el tablero del medidor, para no llamar a la misma fase
+// de dos maneras distintas segun la pantalla
+const PHASES = ['L1', 'L2', 'L3']
 
 const fmt = (value, decimals) => value.toLocaleString('es-AR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
 
@@ -98,6 +102,34 @@ const detalle = (measures, values, escala, unidadPublicada, total) => {
 	return fases.join(' · ')
 }
 
+/**
+ * Las fases como filas, para la tabla de escritorio, que las apila: cada una
+ * con su etiqueta y su valor ya formateado. Devuelve una sola fila sin etiqueta
+ * cuando no hay dato, y una fila `Total` cuando el equipo publica la potencia
+ * entera y no abierta por fase.
+ */
+const filas = (values, escala, unidadPublicada, total) => {
+	const validos = conDato(values)
+	if (!validos.length) {
+		if (!esValor(total)) return [{ label: null, text: SIN_DATO }]
+		const { factor, unit } = escala(Math.abs(total), unidadPublicada)
+		return [{ label: 'Total', text: `${fmt(total / factor, decimalesPor([total / factor]))} ${unit}` }]
+	}
+	const max = Math.max(...validos.map(Math.abs))
+	const { factor, unit } = escala(max, unidadPublicada)
+	const decimals = decimalesPor(values.filter(esValor).map((v) => v / factor))
+	return values.map((v, index) => ({
+		label: PHASES[index],
+		text: esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO,
+	}))
+}
+
+export const powerRows = (measures) => filas(measures?.p, escalaPotencia, measures?.units?.p, measures?.total)
+export const voltageRows = (measures) => filas(measures?.v, escalaTension)
+export const currentRows = (measures) => filas(measures?.i, escalaCorriente)
+
+// Version en una linea (`12,9 · 12,8 · 12,9 kV`), para las tarjetas del celular:
+// ahi la fila ya es vertical y apilar las fases las haria larguisimas
 export const voltageCell = (measures) => celda(measures?.v, escalaTension)
 export const currentCell = (measures) => celda(measures?.i, escalaCorriente)
 export const powerCell = (measures) => celda(measures?.p, escalaPotencia, measures?.units?.p, measures?.total)
