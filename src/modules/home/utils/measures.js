@@ -1,34 +1,53 @@
 /*
- * Formato de las mediciones que trae /Elements en `equipment.measures`
- * (potencia, tension y corriente POR FASE, mas la potencia total del equipo).
+ * Formato de las mediciones que trae /Elements en `equipment.measures`.
+ *
+ * La tension y la corriente vienen POR FASE (L1/L2/L3) y la potencia como las
+ * TRES POTENCIAS del equipo — aparente, activa y reactiva —, que son las que
+ * muestra su tablero: el reconectador no publica potencia por fase.
+ *
+ * La tension es la COMPUESTA (de linea): el backend la publica ya resuelta, y
+ * `measures.vDerived` dice si la tomo del equipo o la derivo de la fase.
  *
  * Los valores llegan en las unidades de cada equipo, que no son homogeneas: el
- * reconectador manda la primaria real (13000 V) y la activa en kW, el medidor
- * manda el primario ya convertido por su relacion CT/VT (igual que su tablero) y
- * el analizador baja tension real (~228 V) con la activa en W. Ver FAMILIES en
- * services/LiveMeasureService.js.
- *
- * Cuando se aplico una relacion de transformacion viene en `measures.tx` y se
- * aclara en el title de la celda.
+ * reconectador manda la primaria real (13200 V) y las potencias en kVA/kW/kVAr,
+ * el medidor manda el primario ya convertido por su relacion CT/VT (igual que su
+ * tablero) y el analizador baja tension real (~228 V) con las potencias en
+ * VA/W/VAr. Ver FAMILIES en services/LiveMeasureService.js.
  *
  * Aca se elige la escala con la que se lee mas facil: 13000 V se muestra como
- * 12,9 kV y 6642 W como 6,6 kW. La escala y los decimales se deciden por celda,
- * con la fase mas grande, para que las tres queden comparables de un vistazo.
+ * 12,9 kV y 6642 W como 6,6 kW. Cuando se aplico una relacion de transformacion
+ * viene en `measures.tx` y se aclara en el title de la celda.
  *
- * Hay dos presentaciones: `*Rows` apila las fases con su etiqueta (tabla de
- * escritorio) y `*Cell` las pone en una linea (tarjetas del celular).
+ * Hay dos presentaciones: `*Rows` apila los tres valores con su etiqueta (tabla
+ * de escritorio) y `*Cell` los pone en una linea (tarjetas del celular).
  */
 export const SIN_DATO = '—'
 
-// Mismas etiquetas que el tablero del medidor, para no llamar a la misma fase
-// de dos maneras distintas segun la pantalla
 const PHASES = ['L1', 'L2', 'L3']
+
+// Las tres potencias del equipo, en el orden del tablero
+const POWERS = [
+	{ key: 's', label: 'S', name: 'Aparente' },
+	{ key: 'p', label: 'P', name: 'Activa' },
+	{ key: 'q', label: 'Q', name: 'Reactiva' },
+]
 
 const fmt = (value, decimals) => value.toLocaleString('es-AR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
 
 const esValor = (v) => v !== null && v !== undefined && !isNaN(v)
 
 const conDato = (values) => (values || []).filter(esValor)
+
+/**
+ * Decimales, decididos con el valor mas grande ya escalado para que los tres
+ * queden con el mismo formato. Los equipos que publican valores enteros (el NOJA
+ * manda amperes redondos) no se llenan de ",0".
+ */
+const decimalesPor = (escalados) => {
+	if (escalados.every((v) => Number.isInteger(v))) return 0
+	const max = Math.max(...escalados.map(Math.abs))
+	return max < 10 ? 2 : max < 100 ? 1 : 0
+}
 
 // factor: por cuanto se divide para llegar a la unidad que se muestra
 const escalaTension = (max) =>
@@ -37,42 +56,63 @@ const escalaTension = (max) =>
 
 const escalaCorriente = () => ({ factor: 1, unit: 'A' })
 
+// Las unidades chicas (VA/W/VAr) escalan a k cuando el valor lo justifica; el
+// reconectador ya publica en kVA/kW/kVAr y se deja como esta
 const escalaPotencia = (max, unit) =>
-	unit === 'W' && max >= 1000 ? { factor: 1000, unit: 'kW' } : { factor: 1, unit: unit || 'W' }
+	!String(unit).startsWith('k') && max >= 1000 ? { factor: 1000, unit: `k${unit}` } : { factor: 1, unit: unit || 'W' }
+
+/* ------------------------------------------------------------------ fases */
 
 /**
- * Decimales de la celda, decididos con la fase mas grande ya escalada para que
- * las tres queden con el mismo formato. Los equipos que publican valores
- * enteros (el NOJA manda amperes redondos) no se llenan de ",0".
+ * Las tres fases como filas, para la tabla de escritorio, que las apila: cada
+ * una con su etiqueta y su valor ya formateado. Una fase sin dato queda como
+ * raya para que las otras no se corran de lugar; sin ninguna, una sola fila con
+ * la raya.
  */
-const decimalesPor = (escalados) => {
-	if (escalados.every((v) => Number.isInteger(v))) return 0
-	const max = Math.max(...escalados.map(Math.abs))
-	return max < 10 ? 2 : max < 100 ? 1 : 0
-}
-
-/**
- * Las tres fases en una celda: `12,9 · 12,8 · 12,9 kV`. Una fase sin dato queda
- * como raya para que las otras no se corran de lugar; sin ninguna, la celda
- * entera es una raya.
- */
-const celda = (values, escala, unidadPublicada, total) => {
+const filasFases = (values, escala) => {
 	const validos = conDato(values)
-	if (!validos.length) {
-		// Sin fases pero con total: el equipo publica la potencia entera y no
-		// abierta (el reconectador que no reporta el factor de potencia). Se
-		// muestra igual, aclarando que es el total y no una fase
-		if (!esValor(total)) return SIN_DATO
-		const { factor, unit } = escala(Math.abs(total), unidadPublicada)
-		return `${fmt(total / factor, decimalesPor([total / factor]))} ${unit} (total)`
-	}
-	const max = Math.max(...validos.map(Math.abs))
-	const { factor, unit } = escala(max, unidadPublicada)
-	const escalados = values.filter(esValor).map((v) => v / factor)
-	const decimals = decimalesPor(escalados)
-	const fases = values.map((v) => (esValor(v) ? fmt(v / factor, decimals) : SIN_DATO))
-	return `${fases.join(' · ')} ${unit}`
+	if (!validos.length) return [{ label: null, text: SIN_DATO }]
+	const { factor, unit } = escala(Math.max(...validos.map(Math.abs)))
+	const decimals = decimalesPor(validos.map((v) => v / factor))
+	return values.map((v, index) => ({
+		label: PHASES[index],
+		text: esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO,
+	}))
 }
+
+/**
+ * Las tres fases en una linea: `12,9 · 12,8 · 12,9 kV`, con la unidad una sola
+ * vez.
+ */
+const lineaFases = (values, escala) => {
+	const validos = conDato(values)
+	if (!validos.length) return SIN_DATO
+	const { factor, unit } = escala(Math.max(...validos.map(Math.abs)))
+	const decimals = decimalesPor(validos.map((v) => v / factor))
+	return `${values.map((v) => (esValor(v) ? fmt(v / factor, decimals) : SIN_DATO)).join(' · ')} ${unit}`
+}
+
+/* --------------------------------------------------------------- potencia */
+
+/**
+ * Una potencia con su unidad. Cada una lleva la suya (kVA/kW/kVAr), asi que no
+ * comparten escala ni decimales como si hacen las fases.
+ */
+const unaPotencia = (value, unidadPublicada) => {
+	if (!esValor(value)) return SIN_DATO
+	const { factor, unit } = escalaPotencia(Math.abs(value), unidadPublicada)
+	const escalado = value / factor
+	return `${fmt(escalado, decimalesPor([escalado]))} ${unit}`
+}
+
+const filasPotencia = (measures) => {
+	const power = measures?.power
+	const units = measures?.units
+	if (!POWERS.some(({ key }) => esValor(power?.[key]))) return [{ label: null, text: SIN_DATO }]
+	return POWERS.map(({ key, label }) => ({ label, text: unaPotencia(power?.[key], units?.[key]) }))
+}
+
+/* ---------------------------------------------------------------- titles */
 
 /**
  * Relacion de transformacion aplicada, para aclarar en el title por que un
@@ -81,61 +121,54 @@ const celda = (values, escala, unidadPublicada, total) => {
  */
 const notaTx = (measures) => (measures?.tx ? `Convertido: ${measures.tx}` : null)
 
-/**
- * Detalle con el nombre de cada fase para el title de la celda, que es lo que
- * aclara el orden R/S/T de los tres numeros.
- */
-const detalle = (measures, values, escala, unidadPublicada, total) => {
+const detalleFases = (measures, values, escala, nota) => {
 	const tx = notaTx(measures)
 	const validos = conDato(values)
-	if (!validos.length) {
-		if (!esValor(total)) return tx ?? undefined
-		return ['El equipo no publica esta medición por fase; el valor es el total', tx].filter(Boolean).join(' · ')
-	}
-	const max = Math.max(...validos.map(Math.abs), Math.abs(total ?? 0))
-	const { factor, unit } = escala(max, unidadPublicada)
-	const decimals = decimalesPor([...validos, ...(esValor(total) ? [total] : [])].map((v) => v / factor))
-	const uno = (v) => (esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO)
-	const fases = PHASES.map((fase, index) => `${fase} ${uno(values[index])}`)
-	if (esValor(total)) fases.push(`Total ${uno(total)}`)
-	if (tx) fases.push(tx)
-	return fases.join(' · ')
+	if (!validos.length) return tx ?? undefined
+	const { factor, unit } = escala(Math.max(...validos.map(Math.abs)))
+	const decimals = decimalesPor(validos.map((v) => v / factor))
+	const partes = PHASES.map((fase, index) => {
+		const v = values[index]
+		return `${fase} ${esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO}`
+	})
+	if (nota) partes.push(nota)
+	if (tx) partes.push(tx)
+	return partes.join(' · ')
 }
 
-/**
- * Las fases como filas, para la tabla de escritorio, que las apila: cada una
- * con su etiqueta y su valor ya formateado. Devuelve una sola fila sin etiqueta
- * cuando no hay dato, y una fila `Total` cuando el equipo publica la potencia
- * entera y no abierta por fase.
+/* ----------------------------------------------------------------- api */
+
+export const voltageRows = (measures) => filasFases(measures?.v, escalaTension)
+export const currentRows = (measures) => filasFases(measures?.i, escalaCorriente)
+export const powerRows = (measures) => filasPotencia(measures)
+
+// Version en una linea, para las tarjetas del celular: ahi la fila ya es
+// vertical y apilar los tres valores las haria larguisimas
+export const voltageCell = (measures) => lineaFases(measures?.v, escalaTension)
+export const currentCell = (measures) => lineaFases(measures?.i, escalaCorriente)
+export const powerCell = (measures) => {
+	const filas = filasPotencia(measures)
+	if (filas.length === 1) return filas[0].text
+	return filas.map(({ label, text }) => `${label} ${text}`).join(' · ')
+}
+
+/*
+ * Se aclara que es compuesta y si vino derivada: sin decirlo parece que un
+ * modelo mide distinto que otro, que es justo lo que se venia viendo.
  */
-const filas = (values, escala, unidadPublicada, total) => {
-	const validos = conDato(values)
-	if (!validos.length) {
-		if (!esValor(total)) return [{ label: null, text: SIN_DATO }]
-		const { factor, unit } = escala(Math.abs(total), unidadPublicada)
-		return [{ label: 'Total', text: `${fmt(total / factor, decimalesPor([total / factor]))} ${unit}` }]
-	}
-	const max = Math.max(...validos.map(Math.abs))
-	const { factor, unit } = escala(max, unidadPublicada)
-	const decimals = decimalesPor(values.filter(esValor).map((v) => v / factor))
-	return values.map((v, index) => ({
-		label: PHASES[index],
-		text: esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO,
-	}))
+export const voltageDetail = (measures) =>
+	detalleFases(
+		measures,
+		measures?.v,
+		escalaTension,
+		measures?.vDerived ? 'Tensión compuesta, derivada de la fase (×√3)' : 'Tensión compuesta, publicada por el equipo'
+	)
+export const currentDetail = (measures) => detalleFases(measures, measures?.i, escalaCorriente)
+// Los nombres completos, que en la celda no entran
+export const powerDetail = (measures) => {
+	const tx = notaTx(measures)
+	if (!POWERS.some(({ key }) => esValor(measures?.power?.[key]))) return tx ?? undefined
+	const partes = POWERS.map(({ key, name }) => `${name} ${unaPotencia(measures?.power?.[key], measures?.units?.[key])}`)
+	if (tx) partes.push(tx)
+	return partes.join(' · ')
 }
-
-export const powerRows = (measures) => filas(measures?.p, escalaPotencia, measures?.units?.p, measures?.total)
-export const voltageRows = (measures) => filas(measures?.v, escalaTension)
-export const currentRows = (measures) => filas(measures?.i, escalaCorriente)
-
-// Version en una linea (`12,9 · 12,8 · 12,9 kV`), para las tarjetas del celular:
-// ahi la fila ya es vertical y apilar las fases las haria larguisimas
-export const voltageCell = (measures) => celda(measures?.v, escalaTension)
-export const currentCell = (measures) => celda(measures?.i, escalaCorriente)
-export const powerCell = (measures) => celda(measures?.p, escalaPotencia, measures?.units?.p, measures?.total)
-
-export const voltageDetail = (measures) => detalle(measures, measures?.v, escalaTension)
-export const currentDetail = (measures) => detalle(measures, measures?.i, escalaCorriente)
-// El total de la potencia va en el title: en el reconectador es el unico valor
-// que publica el equipo, las fases son derivadas
-export const powerDetail = (measures) => detalle(measures, measures?.p, escalaPotencia, measures?.units?.p, measures?.total)
