@@ -43,16 +43,24 @@ export const boardMetrology = [
 			{ name: 'N', field: 'I_n', unit: 'A' },
 		],
 	},
+	/*
+	 * Las tensiones de linea (AB/BC/CA y RS/ST/TR) llevan `asPhase`: cuando el
+	 * equipo NO publica la tension de fase, lo que manda en el campo de linea es
+	 * la de FASE aunque el campo se llame de linea, y entonces la etiqueta es A,
+	 * B y C. Es el caso del COOPER, verificado contra la aparente que publica el
+	 * propio equipo: 3 * V_L_ABC * I da el W_0 publicado (89 kVA contra 89) y
+	 * raiz(3) * V_L_ABC * I daria 51. El NOJA publica las dos y no se toca.
+	 */
 	{
 		id: 2,
 		name: 'Tensión ABC',
 		children: [
 			{ name: 'A', field: 'V_f_ABC_0', unit: 'V' },
-			{ name: 'AB', field: 'V_L_ABC_0', unit: 'V' },
+			{ name: 'AB', field: 'V_L_ABC_0', unit: 'V', asPhase: { name: 'A', ifMissing: 'V_f_ABC_0' } },
 			{ name: 'B', field: 'V_f_ABC_1', unit: 'V' },
-			{ name: 'BC', field: 'V_L_ABC_1', unit: 'V' },
+			{ name: 'BC', field: 'V_L_ABC_1', unit: 'V', asPhase: { name: 'B', ifMissing: 'V_f_ABC_1' } },
 			{ name: 'C', field: 'V_f_ABC_2', unit: 'V' },
-			{ name: 'CA', field: 'V_L_ABC_2', unit: 'V' },
+			{ name: 'CA', field: 'V_L_ABC_2', unit: 'V', asPhase: { name: 'C', ifMissing: 'V_f_ABC_2' } },
 		],
 	},
 	{
@@ -60,11 +68,11 @@ export const boardMetrology = [
 		name: 'Tensión RST',
 		children: [
 			{ name: 'R', field: 'V_f_SRT_0', unit: 'V' },
-			{ name: 'RS', field: 'V_L_SRT_0', unit: 'V' },
+			{ name: 'RS', field: 'V_L_SRT_0', unit: 'V', asPhase: { name: 'R', ifMissing: 'V_f_SRT_0' } },
 			{ name: 'S', field: 'V_f_SRT_1', unit: 'V' },
-			{ name: 'ST', field: 'V_L_SRT_1', unit: 'V' },
+			{ name: 'ST', field: 'V_L_SRT_1', unit: 'V', asPhase: { name: 'S', ifMissing: 'V_f_SRT_1' } },
 			{ name: 'T', field: 'V_f_SRT_2', unit: 'V' },
-			{ name: 'TR', field: 'V_L_SRT_2', unit: 'V' },
+			{ name: 'TR', field: 'V_L_SRT_2', unit: 'V', asPhase: { name: 'T', ifMissing: 'V_f_SRT_2' } },
 		],
 	},
 	{
