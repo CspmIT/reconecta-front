@@ -155,11 +155,13 @@ export const horizontalBars = ({ labels, values, color, darkMode, formatter, lab
  * @param {Object} params - xLabels, yLabels, data ([[x, y, valor]]) y darkMode.
  * @returns {Object} Config de ECharts.
  */
-export const heatmap = ({ xLabels, yLabels, data, darkMode, max }) => ({
+export const heatmap = ({ xLabels, yLabels, data, darkMode, max, formatter }) => ({
 	grid: { left: 8, right: 8, top: 16, bottom: 48, containLabel: true },
 	tooltip: {
 		...tooltipStyle(darkMode),
-		formatter: (p) => `${yLabels[p.value[1]]} ${xLabels[p.value[0]]} h<br/><b>${p.value[2]}</b> requests`,
+		formatter:
+			formatter ||
+			((p) => `${yLabels[p.value[1]]} ${xLabels[p.value[0]]} h<br/><b>${p.value[2]}</b> pedidos`),
 	},
 	xAxis: { type: 'category', data: xLabels, splitArea: { show: false }, ...axisBase(darkMode) },
 	yAxis: { type: 'category', data: yLabels, splitArea: { show: false }, ...axisBase(darkMode) },

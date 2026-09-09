@@ -175,15 +175,33 @@ export const pillClass = (active) =>
 			: 'border-slate-200 bg-white text-slate-500 hover:border-primary hover:text-slate-700 dark:border-gray-600 dark:bg-zinc-800 dark:text-gray-300'
 	}`
 
+const selectClass =
+	'rounded-full border border-slate-200 bg-white px-3 py-1 text-sm text-slate-600 outline-none focus:border-primary dark:border-gray-600 dark:bg-zinc-800 dark:text-slate-200'
+
 /**
- * Filtro de rango del dashboard. Sin selector de cooperativa: cada instalación
- * de Reconecta ve su propia base, el tenant ya viene resuelto en el token.
+ * Filtro del dashboard: cooperativa y rango.
+ *
+ * El selector de cooperativa sólo aparece para quien puede cambiarla (lo decide
+ * el backend, no el front). En móvil el select va en su propia fila.
  */
-export const DashboardFilters = ({ days, onChange }) => (
-	<div className='flex items-center gap-2 max-md:w-full max-md:justify-center'>
+export const DashboardFilters = ({ days, onChangeDays, schema, onChangeSchema, organizations = [] }) => (
+	<div className='flex items-center gap-2 max-md:w-full max-md:flex-wrap max-md:justify-center'>
+		{organizations.length > 1 && (
+			<select
+				className={`${selectClass} max-md:w-full`}
+				value={schema}
+				onChange={(event) => onChangeSchema(event.target.value)}
+			>
+				{organizations.map((org) => (
+					<option key={org.value} value={org.value}>
+						{org.label}
+					</option>
+				))}
+			</select>
+		)}
 		<span className='text-xs text-slate-400 dark:text-gray-400 max-md:hidden'>Rango</span>
 		{[7, 30, 90].map((value) => (
-			<button key={value} type='button' className={pillClass(days === value)} onClick={() => onChange(value)}>
+			<button key={value} type='button' className={pillClass(days === value)} onClick={() => onChangeDays(value)}>
 				{value} días
 			</button>
 		))}

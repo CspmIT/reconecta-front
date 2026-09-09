@@ -28,7 +28,13 @@ const detailCell = (details) => {
 	)
 }
 
-export const columnsMovements = () => [
+/**
+ * Columnas de la tabla de movimientos.
+ *
+ * @param {boolean} isGlobal - En la vista global se agrega la cooperativa.
+ * @param {Function} orgName - Traduce el schema al nombre visible.
+ */
+export const columnsMovements = (isGlobal = false, orgName = (value) => value) => [
 	{
 		accessorKey: 'createdAt',
 		header: 'Fecha',
@@ -49,6 +55,16 @@ export const columnsMovements = () => [
 		size: 150,
 		Cell: ({ cell }) => ACTION_LABELS[cell.getValue()] || cell.getValue(),
 	},
+	...(isGlobal
+		? [
+				{
+					accessorKey: 'schema',
+					header: 'Cooperativa',
+					size: 160,
+					Cell: ({ cell }) => orgName(cell.getValue()),
+				},
+			]
+		: []),
 	{
 		accessorKey: 'details',
 		header: 'Detalle',

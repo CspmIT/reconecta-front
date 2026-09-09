@@ -38,7 +38,7 @@ const userLabel = (row) => {
 	return <span className='italic text-slate-400'>Sistema</span>
 }
 
-const ErrorsDetail = ({ errors, days }) => {
+const ErrorsDetail = ({ errors, days, isGlobal = false, orgName = (value) => value }) => {
 	const [tab, setTab] = useState('grouped')
 	const grouped = errors?.grouped || []
 	const latest = errors?.latest || []
@@ -84,6 +84,7 @@ const ErrorsDetail = ({ errors, days }) => {
 									<th className={thClass}>Módulo</th>
 									<th className={thClass}>Mensaje</th>
 									<th className={`${thClass} text-right`}>Usuarios</th>
+									{isGlobal && <th className={thClass}>Cooperativas</th>}
 									<th className={thClass}>Última vez</th>
 								</tr>
 							</thead>
@@ -102,6 +103,9 @@ const ErrorsDetail = ({ errors, days }) => {
 										<td className={tdClass}>{row.module}</td>
 										<td className={`${tdClass} max-w-md`}>{row.error_message || '—'}</td>
 										<td className={`${tdClass} text-right tabular-nums`}>{formatInt(row.users)}</td>
+										{isGlobal && (
+											<td className={tdClass}>{(row.schemas || []).map(orgName).join(', ')}</td>
+										)}
 										<td className={`${tdClass} whitespace-nowrap`}>{dateTime(row.last_seen)}</td>
 									</tr>
 								))}
@@ -117,6 +121,7 @@ const ErrorsDetail = ({ errors, days }) => {
 									<th className={thClass}>Módulo</th>
 									<th className={thClass}>Mensaje</th>
 									<th className={thClass}>Usuario</th>
+									{isGlobal && <th className={thClass}>Cooperativa</th>}
 								</tr>
 							</thead>
 							<tbody>
@@ -135,6 +140,7 @@ const ErrorsDetail = ({ errors, days }) => {
 										<td className={tdClass}>{row.module}</td>
 										<td className={`${tdClass} max-w-md`}>{row.error_message || '—'}</td>
 										<td className={tdClass}>{userLabel(row)}</td>
+										{isGlobal && <td className={tdClass}>{orgName(row.schema)}</td>}
 									</tr>
 								))}
 							</tbody>

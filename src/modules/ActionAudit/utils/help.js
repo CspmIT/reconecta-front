@@ -37,6 +37,11 @@ export const HELP = {
 	errorsByModule: 'En qué parte del sistema se concentran los errores del período.',
 	errorsDetail:
 		'El detalle de lo que falló. "Agrupados" junta los errores repetidos y muestra cuántas veces pasó cada uno; "Últimos" muestra los más recientes en orden.',
+	requestsByOrg:
+		'Cuántos pedidos genera cada cooperativa en el período. Sirve para ver el peso relativo de cada una sobre el mismo servidor.',
+	sessionsByOrg: 'Cuántas veces se inició sesión en cada cooperativa. Es la medida más cercana a "cuánta gente la usa".',
+	adoption:
+		'Qué módulos usa cada cooperativa. Las filas casi vacías señalan cooperativas que todavía no adoptaron esa parte del sistema, no necesariamente un problema técnico.',
 	movements:
 		'Registro de acciones de las personas: inicios de sesión y órdenes enviadas a los equipos. Queda asentado quién hizo qué y cuándo.',
 }

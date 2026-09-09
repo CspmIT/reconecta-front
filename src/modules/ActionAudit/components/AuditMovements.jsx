@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import CardCustom from '../../../components/CardCustom'
 import LoaderComponent from '../../../components/Loader'
 import TableCustom from '../../../components/TableCustom'
-import { auditApi } from '../api/auditApi'
+import { ALL_SCHEMAS, auditApi } from '../api/auditApi'
 import { columnsMovements } from '../utils/columnsAudit'
 import { HelpIcon, pillClass } from '../utils/dashboardShared'
 import { HELP } from '../utils/help'
@@ -13,7 +13,7 @@ const inputClass =
 
 const EMPTY = { from: '', to: '', search: '' }
 
-const AuditMovements = () => {
+const AuditMovements = ({ schema, setSchema, organizations = [], orgNames = new Map() }) => {
 	const [filters, setFilters] = useState(EMPTY)
 	// Los filtros aplicados van aparte de los que se están tipeando: la consulta
 	// se dispara con el botón, no en cada tecla.
@@ -26,7 +26,7 @@ const AuditMovements = () => {
 		let active = true
 		setLoading(true)
 		auditApi
-			.getMovements({ ...applied, limit: 500 })
+			.getMovements({ ...applied, schema, limit: 500 })
 			.then((data) => {
 				if (active) {
 					setRows(data.rows || [])
@@ -38,7 +38,7 @@ const AuditMovements = () => {
 		return () => {
 			active = false
 		}
-	}, [applied])
+	}, [applied, schema])
 
 	const onChange = (key) => (event) => setFilters((prev) => ({ ...prev, [key]: event.target.value }))
 
@@ -50,6 +50,15 @@ const AuditMovements = () => {
 			</div>
 
 			<div className='flex flex-wrap items-center gap-2'>
+				{organizations.length > 1 && (
+					<select className={inputClass} value={schema} onChange={(event) => setSchema(event.target.value)}>
+						{organizations.map((org) => (
+							<option key={org.value} value={org.value}>
+								{org.label}
+							</option>
+						))}
+					</select>
+				)}
 				<label className='flex items-center gap-1 text-xs text-slate-400 dark:text-gray-400'>
 					Desde
 					<input type='date' className={inputClass} value={filters.from} onChange={onChange('from')} />
@@ -85,7 +94,12 @@ const AuditMovements = () => {
 			) : error ? (
 				<p className='py-6 text-center text-xs text-slate-400 dark:text-gray-400'>{error}</p>
 			) : (
-				<TableCustom data={rows} columns={columnsMovements()} pagination pageSize={10} />
+				<TableCustom
+					data={rows}
+					columns={columnsMovements(schema === ALL_SCHEMAS, (value) => orgNames.get(value) || value)}
+					pagination
+					pageSize={10}
+				/>
 			)}
 		</CardCustom>
 	)

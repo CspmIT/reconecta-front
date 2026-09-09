@@ -27,12 +27,14 @@ import ErrorsDetail from './ErrorsDetail'
 // siga leyéndose como "un solo tono por gráfico".
 const MODULE_COLORS = ['#368bed', '#5ba3f2', '#7fb9f6', '#a3cffa', '#c7e2fd', '#94a3b8']
 
+const orgLabel = (names, value) => names.get(value) || value
+
 const userName = (row) => {
 	const name = `${row.user?.first_name || ''} ${row.user?.last_name || ''}`.trim()
 	return name || row.user?.email || 'Sistema'
 }
 
-const AuditDashboard = () => {
+const AuditDashboard = ({ schema, setSchema, organizations = [], orgNames = new Map() }) => {
 	const { darkMode } = useContext(MainContext)
 	const [days, setDays] = useState(7)
 	const [data, setData] = useState(null)
@@ -47,7 +49,7 @@ const AuditDashboard = () => {
 		let active = true
 		setLoading(true)
 		auditApi
-			.getDashboard(days)
+			.getDashboard(days, schema)
 			.then((response) => {
 				if (active) {
 					setData(response)
@@ -59,7 +61,7 @@ const AuditDashboard = () => {
 		return () => {
 			active = false
 		}
-	}, [days])
+	}, [days, schema])
 
 	const charts = useMemo(() => {
 		if (!data) return null
@@ -91,7 +93,46 @@ const AuditDashboard = () => {
 				itemStyle: { color: STATUS_META[r.bucket].color },
 			}))
 
+		// Cortes por cooperativa: sólo vienen en la vista global.
+		const org = data.by_organization
+		const orgCharts = org
+			? {
+					requestsByOrg: horizontalBars({
+						labels: org.requests.map((r) => orgLabel(orgNames, r.schema)),
+						values: org.requests.map((r) => Number(r.total)),
+						color: COLOR.count,
+						darkMode,
+						labelWidth: 150,
+					}),
+					sessionsByOrg: horizontalBars({
+						labels: org.sessions.map((r) => orgLabel(orgNames, r.schema)),
+						values: org.sessions.map((r) => Number(r.total)),
+						color: COLOR.activity,
+						darkMode,
+						labelWidth: 150,
+					}),
+					adoption: (() => {
+						// Matriz cooperativa x módulo: qué usa cada una.
+						const orgs = [...new Set(org.adoption.map((r) => r.schema))]
+						const mods = (rankings.modules || []).map((m) => m.module)
+						const cells = org.adoption
+							.filter((r) => mods.includes(r.module))
+							.map((r) => [mods.indexOf(r.module), orgs.indexOf(r.schema), Number(r.total)])
+						const yLabels = orgs.map((value) => orgLabel(orgNames, value))
+						return heatmap({
+							xLabels: mods,
+							yLabels,
+							data: cells,
+							max: cells.reduce((m, c) => Math.max(m, c[2]), 0),
+							darkMode,
+							formatter: (p) => `${yLabels[p.value[1]]}<br/>${mods[p.value[0]]}: <b>${p.value[2]}</b> pedidos`,
+						})
+					})(),
+				}
+			: {}
+
 		return {
+			...orgCharts,
 			requestsByDay: verticalBars({
 				labels: requests.labels,
 				values: requests.values,
@@ -202,7 +243,7 @@ const AuditDashboard = () => {
 				darkMode,
 			}),
 		}
-	}, [data, days, darkMode])
+	}, [data, days, darkMode, orgNames])
 
 	if (loading && !data) return <LoaderComponent image={false} />
 
@@ -218,13 +259,26 @@ const AuditDashboard = () => {
 
 	const { kpis, rankings, errors } = data
 	const period = `(últimos ${days} días)`
+	const isGlobal = data.scope === 'all'
 	const noData = !kpis.requests_month
 
 	return (
 		<div className='flex flex-col gap-3'>
 			<div className='flex justify-end max-md:justify-center'>
-				<DashboardFilters days={days} onChange={setDays} />
+				<DashboardFilters
+					days={days}
+					onChangeDays={setDays}
+					schema={schema}
+					onChangeSchema={setSchema}
+					organizations={organizations}
+				/>
 			</div>
+
+			{data.skipped?.length > 0 && (
+				<p className='text-xs text-slate-400 dark:text-gray-400'>
+					Sin datos de: {data.skipped.map((value) => orgLabel(orgNames, value)).join(', ')}
+				</p>
+			)}
 
 			{noData && (
 				<CardCustom className='rounded-xl p-4 text-sm text-slate-500 dark:text-gray-300'>
@@ -260,6 +314,37 @@ const AuditDashboard = () => {
 					<EChart config={charts.humanActivity} />
 				</ChartCard>
 			</div>
+
+			{isGlobal && (
+				<>
+					<div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
+						<ChartCard
+							title='Uso por cooperativa'
+							subtitle={`Pedidos ${period}`}
+							help={HELP.requestsByOrg}
+							className={`h-72${det}`}
+						>
+							<EChart config={charts.requestsByOrg} />
+						</ChartCard>
+						<ChartCard
+							title='Sesiones por cooperativa'
+							subtitle={`Inicios de sesión ${period}`}
+							help={HELP.sessionsByOrg}
+							className={`h-72${det}`}
+						>
+							<EChart config={charts.sessionsByOrg} />
+						</ChartCard>
+					</div>
+					<ChartCard
+						title='Adopción: qué usa cada cooperativa'
+						subtitle={`Pedidos por módulo ${period}`}
+						help={HELP.adoption}
+						className={`h-96${det}`}
+					>
+						<EChart config={charts.adoption} />
+					</ChartCard>
+				</>
+			)}
 
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-3'>
 				<ChartCard
@@ -400,7 +485,7 @@ const AuditDashboard = () => {
 			</button>
 
 			<div className={det}>
-				<ErrorsDetail errors={errors} days={days} />
+				<ErrorsDetail errors={errors} days={days} isGlobal={isGlobal} orgName={(value) => orgLabel(orgNames, value)} />
 			</div>
 		</div>
 	)

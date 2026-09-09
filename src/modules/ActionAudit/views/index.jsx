@@ -1,6 +1,7 @@
 import { Tab, Tabs } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { ALL_SCHEMAS, auditApi } from '../api/auditApi'
 import AuditDashboard from '../components/AuditDashboard'
 import AuditMovements from '../components/AuditMovements'
 
@@ -22,6 +23,31 @@ const tabsSx = {
 
 const ActionAudit = () => {
 	const [tab, setTab] = useState(0)
+	// La cooperativa elegida es del módulo entero: se mantiene al cambiar de
+	// pestaña. Quién puede cambiarla lo decide el backend, no el front.
+	const [schema, setSchema] = useState('')
+	const [organizations, setOrganizations] = useState([])
+	const [orgNames, setOrgNames] = useState(new Map())
+
+	useEffect(() => {
+		let active = true
+		auditApi.getOrganizations().then(async (info) => {
+			if (!active || !info.superadmin) return
+			// El nombre visible de cada cooperativa lo tiene Cooptech.
+			const names = await auditApi.getOrganizationNames()
+			if (!active) return
+			setOrgNames(names)
+			setOrganizations([
+				{ value: ALL_SCHEMAS, label: 'Todas las cooperativas' },
+				...info.schemas.map((value) => ({ value, label: names.get(value) || value })),
+			])
+		})
+		return () => {
+			active = false
+		}
+	}, [])
+
+	const filterProps = { schema, setSchema, organizations, orgNames }
 
 	// w-full porque el layout (core/views) envuelve el Outlet en un flex: sin eso
 	// la vista se encoge al ancho de su contenido. min-w-0 deja que las tablas
@@ -35,7 +61,7 @@ const ActionAudit = () => {
 				<Tab label='Movimientos' />
 			</Tabs>
 
-			{tab === 0 ? <AuditDashboard /> : <AuditMovements />}
+			{tab === 0 ? <AuditDashboard {...filterProps} /> : <AuditMovements {...filterProps} />}
 		</div>
 	)
 }
