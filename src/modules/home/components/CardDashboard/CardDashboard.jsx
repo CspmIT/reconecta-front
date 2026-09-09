@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useMediaQuery } from '@mui/material'
 import { request } from '../../../../utils/js/request'
 import { backend } from '../../../../utils/routes/app.routes'
 import { PREF_MODULE, buildCards, resolveCardPrefs } from './utils/listCard'
@@ -25,6 +26,9 @@ import LoaderComponent from '../../../../components/Loader'
  * desmonta: en escritorio no se veia pero igual pedia todo por duplicado.
  */
 function CardDashboard() {
+	// El mismo corte que usan la vista del Home y TabHome para decidir quien
+	// dibuja las tarjetas
+	const isMobile = useMediaQuery('(max-width: 600px)')
 	const [counters, setCounters] = useState(null)
 	const [prefs, setPrefs] = useState(null)
 	// El intervalo sigue corriendo aunque falle un pedido; el ref evita pisar el
@@ -86,11 +90,16 @@ function CardDashboard() {
 		)
 	}
 
-	// La configuracion va PRIMERO y en su propia fila: si fuera un item mas de la
-	// grilla se correria de lugar cada vez que se prende o apaga una tarjeta
+	/*
+	 * La configuracion va PRIMERO y en su propia fila: si fuera un item mas de la
+	 * grilla se correria de lugar cada vez que se prende o apaga una tarjeta.
+	 *
+	 * `compact` no cambia el boton, solo como se abre el panel: en el telefono va
+	 * como hoja inferior porque colgado del boton se salia de la pantalla.
+	 */
 	return (
 		<>
-			<CardsConfig order={prefs.order} hidden={prefs.hidden} onChange={handlePrefsChange} />
+			<CardsConfig order={prefs.order} hidden={prefs.hidden} onChange={handlePrefsChange} compact={isMobile} />
 			{buildCards(counters, prefs.order, prefs.hidden).map((card) => (
 				<CardsInfo key={card.key} title={card.title} infoData={card.info} colorTitle={card.colorTitle} />
 			))}

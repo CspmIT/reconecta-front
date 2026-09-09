@@ -55,7 +55,7 @@ function FilaCard({ id, title, checked, onToggle }) {
  * El estado vive arriba (CardDashboard) porque es el que persiste la
  * preferencia; aca solo se abre y se cierra el panel.
  */
-function CardsConfig({ order, hidden, onChange }) {
+function CardsConfig({ order, hidden, onChange, compact = false }) {
 	const [open, setOpen] = useState(false)
 	const sensors = useSensors(
 		useSensor(PointerSensor),
@@ -96,36 +96,65 @@ function CardsConfig({ order, hidden, onChange }) {
 	 * `!z-0`, pero no todos). Queda por debajo del 1201 de la barra de navegacion,
 	 * que tiene que seguir ganando.
 	 */
+	const contenido = (
+		<>
+			<p className='text-xs text-gray-500 dark:text-gray-400 px-1 pb-1'>
+				Arrastrá para ordenar, destildá para ocultar
+			</p>
+			<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+				<SortableContext items={order} strategy={verticalListSortingStrategy}>
+					{order.map((key) => (
+						<FilaCard
+							key={key}
+							id={key}
+							title={titulos.get(key)}
+							checked={!ocultas.has(key)}
+							onToggle={() => handleToggle(key)}
+						/>
+					))}
+				</SortableContext>
+			</DndContext>
+		</>
+	)
+
+	/*
+	 * Fila propia tambien en el telefono. Probado al lado de los chips y con solo
+	 * el icono ocupa MAS, no menos: se come el ancho de un chip y empuja al ultimo
+	 * a una segunda fila, 186px contra los 170px de la fila aparte.
+	 */
 	return (
-		<div className='relative w-full flex justify-end z-[1060]'>
+		<div className='relative w-full flex justify-end items-center z-[1060]'>
 			<button
 				onClick={() => setOpen((v) => !v)}
+				aria-label='Personalizar tarjetas'
 				className='flex items-center gap-1 px-2 py-1 rounded-md border border-gray-300 dark:border-zinc-600 bg-white dark:bg-gray-800 text-xs font-semibold text-gray-600 dark:text-gray-300 shadow-sm'
 			>
 				<Tune style={{ fontSize: '1rem' }} />
 				Personalizar tarjetas
 			</button>
 
-			{open && (
-				<div className='absolute z-50 top-full right-0 mt-1 w-72 max-h-80 overflow-y-auto rounded-xl border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 shadow-lg p-2'>
-					<p className='text-xs text-gray-500 dark:text-gray-400 px-1 pb-1'>
-						Arrastrá para ordenar, destildá para ocultar
-					</p>
-					<DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-						<SortableContext items={order} strategy={verticalListSortingStrategy}>
-							{order.map((key) => (
-								<FilaCard
-									key={key}
-									id={key}
-									title={titulos.get(key)}
-									checked={!ocultas.has(key)}
-									onToggle={() => handleToggle(key)}
-								/>
-							))}
-						</SortableContext>
-					</DndContext>
-				</div>
-			)}
+			{open &&
+				(compact ? (
+					/*
+					 * En el telefono va como hoja inferior y no como desplegable.
+					 * Anclado al boton se salia de la pantalla por la izquierda: el
+					 * boton vive en una columna angosta de la barra de filtros, asi que
+					 * un panel de 288px colgado de su borde derecho arrancaba en x=-52 y
+					 * sus ultimas filas quedaban fuera del viewport, sin poder tocarlas.
+					 * Anclado al viewport eso no puede pasar, y el fondo da una forma
+					 * obvia de cerrarlo con el pulgar.
+					 */
+					<>
+						<div className='fixed inset-0 bg-black/30' onClick={() => setOpen(false)} />
+						<div className='fixed left-0 right-0 bottom-0 max-h-[70vh] overflow-y-auto rounded-t-2xl border-t border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 shadow-lg p-3'>
+							{contenido}
+						</div>
+					</>
+				) : (
+					<div className='absolute z-50 top-full right-0 mt-1 w-72 max-h-80 overflow-y-auto rounded-xl border border-gray-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 shadow-lg p-2'>
+						{contenido}
+					</div>
+				))}
 		</div>
 	)
 }
