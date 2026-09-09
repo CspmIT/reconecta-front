@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import HeaderBoard from '../headerBoard'
 import { Button } from '@mui/material'
-import { FaCog, FaCogs, FaEdit, FaRedo, FaTrash } from 'react-icons/fa'
+import { FaEdit, FaRedo } from 'react-icons/fa'
 import ControlsBoard from '../controlsBoard'
 import CardBoard from '../cardBoard'
 import { MainContext } from '../../../../context/MainContext'
