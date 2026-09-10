@@ -10,6 +10,7 @@ import { storage } from '../../../storage/storage'
 import { getData, removeData } from '../../../storage/cookies-store'
 import LoaderComponent from '../../../components/Loader'
 import { getPermissionDb } from '../../NavBarCustom/utils/js'
+import { initDevicePush } from '../../notifications/utils/sync'
 /*
  * Vistas que usan todo el alto de la ventana. En ellas el footer no se pega al
  * fondo ni reserva su lugar (pb-20): va en el flujo, abajo del pliegue, y los
@@ -49,6 +50,11 @@ const MainContent = () => {
 	useEffect(() => {
 		validationUser()
 	}, [location])
+	// Registra el service worker y resincroniza la suscripcion push de este
+	// dispositivo. Va aca y no en main.jsx porque necesita la sesion iniciada.
+	useEffect(() => {
+		initDevicePush()
+	}, [])
 	// useEffect(() => {
 	// 	getPermisson()
 	// }, [])

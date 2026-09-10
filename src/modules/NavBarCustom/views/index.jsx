@@ -22,11 +22,11 @@ import DrawerCustom from '../components/DrawerCustom'
 import DrawerHeaderCustom from '../components/DrawerHeaderCustom'
 import SubMenuCustom from '../components/SubMenuCustom'
 import { MainContext } from '../../../context/MainContext'
-import BottonApps from '../../LoginApp/components/BottonApps/BottonApps'
 import { storage } from '../../../storage/storage'
 import { getPermissionDb } from '../utils/js'
 import { PiTabsFill } from 'react-icons/pi'
 import ListIcon from '../../../components/ListIcon'
+import ButtonInstallApp from '../../core/components/ButtonInstallApp'
 import Logo from '/src/assets/img/Logo/LogoText.png'
 import { isTauri } from '@tauri-apps/api/core'
 import ButtonDownloads from '../../core/components/ButtonDownloads'
@@ -154,7 +154,9 @@ function NavBarCustom({ setLoading }) {
 						{!isTauri() && !isMobile && (
 							<ButtonDownloads />
 						)}
-						<BottonApps />
+						{/* Contraparte movil de ButtonDownloads: instala la PWA. El propio
+						    componente se oculta si ya esta instalada. */}
+						{!isTauri() && isMobile && <ButtonInstallApp />}
 						<ButtonModeDark />
 						<DropdownImage />
 					</div>

@@ -4,6 +4,13 @@
 		<meta charset="UTF-8" />
 		<link rel="icon" type="image/png+xml" href="src/assets/img/Logo/Logo.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<!-- PWA: sin el manifest el celular solo crea un acceso directo y no puede
+		     recibir notificaciones push (en iOS ademas hay que instalarla). -->
+		<link rel="manifest" href="/manifest.webmanifest" />
+		<meta name="theme-color" content="#edbf36" />
+		<link rel="apple-touch-icon" href="/icons/icon-192.png" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-title" content="Reconecta" />
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.1/dist/leaflet.css" />
 		<!-- <link rel="stylesheet" href="https://developer.api.autodesk.com/modelderivative/v2/viewers/7.*/style.css" /> -->
 
