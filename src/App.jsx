@@ -36,6 +36,7 @@ import { isTauri } from '@tauri-apps/api/core'
 import ConfigHardware from './modules/ConfigHardware/view'
 import ElementTypeAbm from './modules/ElementType/views'
 import ActionAudit from './modules/ActionAudit/views'
+import Notifications from './modules/notifications/views'
 
 function App() {
 	// Updater tauri
@@ -80,7 +81,8 @@ function App() {
 		{ path: '/config/alert', element: <ConfigAlert /> },
 		{ path: '/config/hardware', element: <ConfigHardware /> },
 		{ path: '/config/elementTypes', element: <ElementTypeAbm /> },
-		{ path: '/config/audit', element: <ActionAudit /> }
+		{ path: '/config/audit', element: <ActionAudit /> },
+		{ path: '/config/notifications', element: <Notifications /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

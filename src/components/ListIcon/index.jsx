@@ -1,5 +1,5 @@
 import { FaBell, FaClipboardList, FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram, FaThList, FaUserLock } from 'react-icons/fa'
-import { MdContentPaste, MdHistory } from 'react-icons/md'
+import { MdContentPaste, MdHistory, MdNotificationsActive } from 'react-icons/md'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
 import { GrConfigure } from "react-icons/gr";
 
@@ -15,7 +15,12 @@ const ListIcon = () => [
 	{ title: 'Pagina', name: 'FaFile', icon: <FaFile className=' text-3xl' /> },
 	{ title: 'Hardware', name: 'GrConfigure', icon: <GrConfigure className=' text-3xl' /> },
 	{ title: 'Infraestructuras', name: 'FaClipboardList', icon: <FaClipboardList className=' text-3xl' /> },
-	{ title: 'Auditoría', name: 'MdHistory', icon: <MdHistory className=' text-3xl' /> }
+	{ title: 'Auditoría', name: 'MdHistory', icon: <MdHistory className=' text-3xl' /> },
+	{
+		title: 'Mis notificaciones',
+		name: 'MdNotificationsActive',
+		icon: <MdNotificationsActive className=' text-3xl' />
+	}
 ]
 
 export default ListIcon
