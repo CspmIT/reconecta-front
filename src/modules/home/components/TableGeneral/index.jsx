@@ -18,6 +18,8 @@ import { useNavigate } from 'react-router-dom';
 import MobileList from './MobileList';
 import { powerDetail, voltageDetail, currentDetail, SIN_DATO } from '../../utils/measures';
 import PhaseValues from './PhaseValues';
+import { useDashboardFilter } from '../../context/DashboardFilterContext';
+import { cardByKey } from '../CardDashboard/utils/listCard';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -78,6 +80,8 @@ const PLACEHOLDER_CLIENT = [{
 
 export default function TableGeneral({ filters, filtersEquipments, filtersColumns, setElementSelected, searchValue }) {
     const navigate = useNavigate()
+    // Indicador elegido en la franja del panel; null si no hay ninguno
+    const { filtro } = useDashboardFilter()
     const isMobile = useMediaQuery('(max-width: 600px)')
     const [loading, setLoading] = useState(true)
     const [allElements, setAllElements] = useState([])
@@ -106,13 +110,23 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
 
     const elements = useMemo(() => {
         const search = searchValue.toLowerCase()
+        /*
+         * El predicado del indicador sale del catalogo de tarjetas y no se
+         * reescribe aca: es lo que garantiza que el numero de la tarjeta y las
+         * filas que quedan hablen de lo mismo.
+         *
+         * Los nodos sin equipos propios (type 3, que muestran clientes) no
+         * pueden evaluarse contra un indicador de equipos, asi que un filtro
+         * activo los deja afuera.
+         */
+        const indicador = filtro ? cardByKey(filtro)?.matches : null
         return allElements
             .filter((element) => filters[element.type])
             .map((element) => {
                 const equipments = element.type === 3
                     ? PLACEHOLDER_EQUIPMENT.filter((eq) => filtersEquipments[eq.equipmentmodels.type])
                     : element.equipments.filter((eq) => filtersEquipments[eq.equipmentmodels.type])
-                return { ...element, equipments }
+                return { ...element, equipments: indicador ? equipments.filter(indicador) : equipments }
             })
             .filter((element) => element.equipments.length > 0)
             .filter((element) => (
@@ -125,11 +139,11 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                     equipment.observation?.toLowerCase().includes(search)
                 )
             ))
-    }, [allElements, filters, filtersEquipments, searchValue])
+    }, [allElements, filters, filtersEquipments, searchValue, filtro])
 
     useEffect(() => {
         setPage(0)
-    }, [filters, filtersEquipments, searchValue, rowsPerPage])
+    }, [filters, filtersEquipments, searchValue, rowsPerPage, filtro])
 
     useEffect(() => {
         if (page > 0 && page * rowsPerPage >= elements.length) {

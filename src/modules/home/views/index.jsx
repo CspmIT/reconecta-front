@@ -8,6 +8,7 @@ import TabsHome from '../components/TabHome'
 import CardDashboard from '../components/CardDashboard/CardDashboard'
 import { useMediaQuery } from '@mui/material'
 import SubstationRuralBoard from '../../substationRural/views'
+import { DashboardFilterProvider } from '../context/DashboardFilterContext'
 
 const Home = () => {
 	const { tabs, setTabs, setTabCurrent } = useContext(MainContext)
@@ -62,15 +63,25 @@ const Home = () => {
 		}
 		navigate('/tabs')
 	}
+	/*
+	 * El provider envuelve al panel Y a la tabla porque son hermanos: al tocar una
+	 * tarjeta la tabla queda filtrada por ese indicador (ver
+	 * DashboardFilterContext).
+	 *
+	 * El panel arma su propia franja —veredicto, rejilla y cartel de filtro—, asi
+	 * que aca solo va el margen.
+	 */
 	return (
-		<div className='flex flex-col w-full pt-4'>
-			{!isMobile && (
-				<div className='flex flex-wrap gap-3 mb-5 px-3 max-sm:hidden'>
-					<CardDashboard />
-				</div>
-			)}
-			<TabsHome newTab={newTabBoard} />
-		</div>
+		<DashboardFilterProvider>
+			<div className='flex flex-col w-full pt-4'>
+				{!isMobile && (
+					<div className='mb-5 px-3'>
+						<CardDashboard />
+					</div>
+				)}
+				<TabsHome newTab={newTabBoard} />
+			</div>
+		</DashboardFilterProvider>
 	)
 }
 

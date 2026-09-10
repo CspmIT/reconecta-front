@@ -87,7 +87,20 @@ function TabsHome({ newTab }) {
 	return (
 		<div className={`w-full !rounded-xl flex flex-col items-start`}>
 			<div className='bg-white dark:bg-zinc-500 w-full h-full flex justify-center items-center border-2 border-t-0 !p-4 rounded-b-2xl border-zinc-200 dark:!border-gray-700 flex-wrap'>
-				<div className='flex-1 min-w-0 sm:flex-none sm:w-11/12 flex justify-start items-center sm:justify-between mb-3'>
+				{/*
+				  * En el telefono la franja de estado va en su PROPIA fila y con el
+				  * ancho completo. Dentro de la celda que comparte con los Fab quedaba
+				  * en 236px: el titular se partia en cuatro lineas y del riel de chips
+				  * se veian dos. En escritorio la dibuja la vista del Home.
+				  */}
+				{isMobile && (
+					<div className='w-full mb-3'>
+						<CardDashboard />
+					</div>
+				)}
+				{/* Solo contiene el buscador y los dropdowns de escritorio: en el
+				    telefono los tres estan ocultos y la celda queda vacia */}
+				<div className={`${isMobile ? 'hidden' : 'flex'} flex-1 min-w-0 sm:flex-none sm:w-11/12 justify-start items-center sm:justify-between mb-3`}>
 					<TextField
 						value={searchInput}
 						onChange={(e) => setSearchInput(e.target.value)}
@@ -102,16 +115,11 @@ function TabsHome({ newTab }) {
 					  * no un `md:hidden`, que solo las ocultaba: el componente seguia
 					  * montado y pedia los datos por duplicado cada 10 segundos.
 					  */}
-					{isMobile && (
-						<div className='w-full flex flex-wrap justify-center items-center gap-1'>
-							<CardDashboard />
-						</div>
-					)}
 					<DropdownCheckbox title="Nodos" options={NODE_OPTIONS} values={filters} onToggle={handleChecked} />
 					<DropdownCheckbox title="Equipos" options={EQUIPMENT_OPTIONS} values={filtersEquipments} onToggle={handleCheckedEquipments} />
 					<DropdownCheckbox title="Columnas" options={COLUMN_OPTIONS} values={filtersColumns} onToggle={handleCheckedColumns} />
 				</div>
-				<div className='flex shrink-0 sm:w-1/12 justify-end relative mb-3 gap-x-2'>
+				<div className='flex shrink-0 max-sm:w-full sm:w-1/12 justify-end relative mb-3 gap-x-2'>
 					<Fab
 						size='small'
 						className='md:!hidden !flex !justify-center !items-center'
