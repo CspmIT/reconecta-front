@@ -11,6 +11,7 @@ import { getData, removeData } from '../../../storage/cookies-store'
 import LoaderComponent from '../../../components/Loader'
 import { getPermissionDb } from '../../NavBarCustom/utils/js'
 import { initDevicePush } from '../../notifications/utils/sync'
+import NotificationsIntro from '../../notifications/components/NotificationsIntro'
 /*
  * Vistas que usan todo el alto de la ventana. En ellas el footer no se pega al
  * fondo ni reserva su lugar (pb-20): va en el flujo, abajo del pliegue, y los
@@ -86,6 +87,8 @@ const MainContent = () => {
 							<Outlet />
 						</div>
 						<Footer enFlujo={altoCompleto} />
+						{/* Presentacion del modulo, una sola vez por usuario */}
+						<NotificationsIntro />
 					</>
 				)}
 			</div>

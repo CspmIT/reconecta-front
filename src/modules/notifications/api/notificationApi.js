@@ -9,7 +9,9 @@
  *   GET  /notificationPref    → preferencias del usuario
  *   PUT  /notificationPref    → guarda (merge) las preferencias
  *   GET  /notificationPref/options → tipos de alarma y de equipo validos
- *   GET  /Equipments          → equipos, para silenciar de a uno
+ *
+ * La campana por equipo (PUT /notificationPref/devices/:id) vive en el api de la
+ * tabla general, que es donde se toca.
  */
 import { request } from '../../../utils/js/request'
 import { backend } from '../../../utils/routes/app.routes'
@@ -56,15 +58,5 @@ export const notificationApi = {
 	savePreferences: async (changes) => {
 		const { data } = await request(`${backend.Reconecta}/notificationPref`, 'PUT', changes)
 		return data
-	},
-
-	/** Equipos, para silenciar uno puntual. */
-	getEquipments: async () => {
-		const { data } = await request(`${backend.Reconecta}/Equipments`, 'GET')
-		return (Array.isArray(data) ? data : []).map((equipment) => ({
-			id: equipment.id,
-			name: [equipment.observation, equipment.serial].filter(Boolean).join(' - ') || `Equipo ${equipment.id}`,
-			type: equipment.equipmentmodels?.type || null,
-		}))
 	},
 }

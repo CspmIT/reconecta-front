@@ -13,20 +13,28 @@ import { backend } from '../../../../utils/routes/app.routes';
 import LoadingTable from '../../../../components/LoadingTable';
 import { Fab, TableFooter, TablePagination, useMediaQuery } from '@mui/material';
 import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa';
-import { FaPen, FaTableCellsLarge } from 'react-icons/fa6';
+import { FaPen } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 import MobileList from './MobileList';
+import AlarmBell from './AlarmBell';
+import { equipmentLabel } from './labels';
+import { useAlarmBells } from '../../utils/alarmBells';
 import { powerDetail, voltageDetail, currentDetail, SIN_DATO } from '../../utils/measures';
 import PhaseValues from './PhaseValues';
+import { Alimentacion, Modo } from './Indicadores';
 import { useDashboardFilter } from '../../context/DashboardFilterContext';
 import { cardByKey } from '../CardDashboard/utils/listCard';
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
     [`&.${tableCellClasses.head}`]: {
-        backgroundColor: theme.palette.grey[300],
-        color: theme.palette.common.black,
-        fontSize: 18,
-        fontWeight: 'bold'
+        backgroundColor: theme.palette.grey[200],
+        color: theme.palette.grey[700],
+        fontSize: 14.5,
+        fontWeight: 600,
+        letterSpacing: '.03em',
+        whiteSpace: 'nowrap',
+        paddingTop: 9,
+        paddingBottom: 9
     },
     [`&.${tableCellClasses.body}`]: {
         fontSize: 14,
@@ -51,7 +59,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
  * "Pot. trafo" es la potencia nominal del transformador del nodo, la que se
  * carga en el ABM; "Potencia" es la activa que esta midiendo el equipo.
  */
-const HEADERS = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Pot. trafo", "Alimentación", "Modo", "Potencia", "Tensión", "Corriente", ""]
+const HEADERS = ["Matrícula", "Equipo / Cliente", "Nro de serie", "Estado", "Conexión", "Latitud", "Longitud", "Pot. trafo", "Alimentación", "Modo", "Potencia", "Tensión", "Corriente", "Alarmas"]
 /*
  * La matricula tenia un ancho minimo de 24rem que se comia el espacio de las
  * demas columnas. Ahora va acotada y la descripcion larga envuelve, o sea que el
@@ -65,6 +73,26 @@ const BORDER_CLASSES = {
     2: "border-l-red-600",
     3: "border-l-purple-600"
 };
+// Alimentacion y Modo: se centran encabezado y celda (ver HEADERS para el indice)
+const COLUMNAS_CENTRADAS = [8, 9]
+/*
+ * La fila entera abre el detalle: se saco el boton dedicado de la ultima columna
+ * para no repetir la misma accion dos veces. Enter y espacio hacen lo mismo para
+ * quien navega con el teclado, y los controles que quedan adentro de la fila
+ * (editar nodo, campana) cortan la propagacion para no abrirlo sin querer.
+ */
+const rowProps = (label, onOpen) => ({
+    hover: true,
+    tabIndex: 0,
+    title: label,
+    className: 'cursor-pointer',
+    onClick: onOpen,
+    onKeyDown: (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+        event.preventDefault()
+        onOpen()
+    }
+})
 const PLACEHOLDER_EQUIPMENT = [{
     id: null,
     serial: null,
@@ -83,6 +111,8 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
     // Indicador elegido en la franja del panel; null si no hay ninguno
     const { filtro } = useDashboardFilter()
     const isMobile = useMediaQuery('(max-width: 600px)')
+    // Campana por equipo: todos arrancan activos y el usuario apaga los que no quiere
+    const bells = useAlarmBells()
     const [loading, setLoading] = useState(true)
     const [allElements, setAllElements] = useState([])
     const [page, setPage] = useState(0)
@@ -185,6 +215,7 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                     elementsFiltered={elementsFiltered}
                     filtersColumns={filtersColumns}
                     handleSelected={handleSelected}
+                    bells={bells}
                 />
                 <TablePagination
                     component='div'
@@ -205,7 +236,11 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                 <TableHead>
                     <TableRow>
                         {HEADERS.map((header, index) => (
-                            filtersColumns[index] && <StyledTableCell key={index}>{header}</StyledTableCell>
+                            filtersColumns[index] && (
+                                <StyledTableCell key={index} align={COLUMNAS_CENTRADAS.includes(index) ? 'center' : 'left'}>
+                                    {header}
+                                </StyledTableCell>
+                            )
                         ))}
                     </TableRow>
                 </TableHead>
@@ -213,28 +248,39 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                     {elementsFiltered.map((row) =>
                         row.type !== 3 ?
                             row.equipments.map((equipment, index) => (
-                                <StyledTableRow key={`${row.id}-${index}`}>
+                                <StyledTableRow
+                                    key={`${row.id}-${index}`}
+                                    {...rowProps(`Ver datos de ${equipmentLabel(equipment)}`, () => handleSelected(equipment, row))}
+                                >
                                     {index === 0 && (
                                         <StyledTableCell rowSpan={row.equipments.length} className={CELDA_MATRICULA}>
                                             <div className='flex items-start gap-x-2'>
                                                 <div className='flex-1 min-w-0 break-words'>
-                                                    {row.name} <br /> {row.description}
+                                                    <div className='font-semibold leading-tight'>{row.name}</div>
+                                                    {row.description && (
+                                                        <div className='text-[12.5px] leading-tight text-gray-600 dark:text-gray-300'>{row.description}</div>
+                                                    )}
                                                 </div>
-                                                <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0 !shrink-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0 !shrink-0' onClick={(event) => { event.stopPropagation(); navigate(`/editElement/${row.id}`) }} >
                                                     <FaPen />
                                                 </Fab>
                                             </div>
                                         </StyledTableCell>
                                     )}
-                                    <StyledTableCell className={`${BORDER_CLASSES[equipment.equipmentmodels.type]} border-l-8`}>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand} <br /> {equipment.observation}</StyledTableCell>
+                                    <StyledTableCell className={`${BORDER_CLASSES[equipment.equipmentmodels.type]} border-l-8`}>
+                                        <div className='font-medium leading-tight'>{equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}</div>
+                                        {equipment.observation && (
+                                            <div className='text-[12.5px] leading-tight text-gray-600 dark:text-gray-300'>{equipment.observation}</div>
+                                        )}
+                                    </StyledTableCell>
                                     {filtersColumns[2] && (
                                         <StyledTableCell>{equipment.serial}</StyledTableCell>
                                     )}
                                     {filtersColumns[3] && (
                                         <StyledTableCell >
                                             {equipment.equipmentmodels.type === 1 && (
-                                                <span className='flex items-center gap-x-2'>
-                                                    <FaCircle className={`${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
+                                                <span className='flex items-center gap-x-2 font-medium whitespace-nowrap'>
+                                                    <FaCircle size={12} className={`shrink-0 ${equipment.influxData["d/c"]?.[0]?.value === 1 ? "text-red-500" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "text-green-500" : "text-yellow-500"}`} />
                                                     {equipment.influxData["d/c"]?.[0]?.value === 1 ? "Cerrado" : equipment.influxData["d/c"]?.[0]?.value === 0 ? "Abierto" : "Desconocido"}
                                                 </span>
                                             )}
@@ -269,20 +315,16 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         </StyledTableCell>
                                     )}
                                     {filtersColumns[8] && (
-                                        <StyledTableCell >
+                                        <StyledTableCell align='center'>
                                             {equipment.equipmentmodels.type === 1 && (
-                                                <span className='flex items-center gap-x-2'>
-                                                    {equipment.influxData["ac"]?.[0]?.value === 1 ? "Red Electrica" : equipment.influxData["ac"]?.[0]?.value === 0 ? "Batería" : "Desconocido"}
-                                                </span>
+                                                <Alimentacion value={equipment.influxData["ac"]?.[0]?.value} />
                                             )}
                                         </StyledTableCell>
                                     )}
                                     {filtersColumns[9] && (
-                                        <StyledTableCell >
+                                        <StyledTableCell align='center'>
                                             {equipment.equipmentmodels.type === 1 && (
-                                                <span className='flex items-center gap-x-2'>
-                                                    {equipment.influxData["local"]?.[0]?.value === 1 ? "Local" : equipment.influxData["local"]?.[0]?.value === 0 ? "Remoto" : "Desconocido"}
-                                                </span>
+                                                <Modo value={equipment.influxData["local"]?.[0]?.value} />
                                             )}
                                         </StyledTableCell>
                                     )}
@@ -303,19 +345,22 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         </StyledTableCell>
                                     )}
                                     <StyledTableCell align='center'>
-                                        <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected(equipment, row)} ><FaTableCellsLarge /> </Fab>
+                                        <AlarmBell bells={bells} id={equipment.id} label={equipmentLabel(equipment)} />
                                     </StyledTableCell>
                                 </StyledTableRow>
                             )) :
                             (row.clients.length ? row.clients : PLACEHOLDER_CLIENT).map((client, index, clients) => (
-                                <StyledTableRow key={`${row.id}-${index}`}>
+                                <StyledTableRow
+                                    key={`${row.id}-${index}`}
+                                    {...rowProps(`Ver datos de ${row.name}`, () => handleSelected({}, row))}
+                                >
                                     {index === 0 && (
                                         <StyledTableCell rowSpan={clients.length} className={CELDA_MATRICULA}>
                                             <div className='flex items-start gap-x-2'>
                                                 <div className='flex-1 min-w-0 break-words'>
                                                     {row.name}
                                                 </div>
-                                                <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0 !shrink-0' onClick={() => navigate(`/editElement/${row.id}`)} >
+                                                <Fab title='Editar nodo' size='small' className='!bg-yellow-400 !z-0 !shrink-0' onClick={(event) => { event.stopPropagation(); navigate(`/editElement/${row.id}`) }} >
                                                     <FaPen />
                                                 </Fab>
                                             </div>
@@ -328,8 +373,8 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                     {filtersColumns[3] && (
                                         <StyledTableCell >
                                             {client.placeholder ? "-" : (
-                                                <span className='flex items-center gap-x-2'>
-                                                    <FaCircle className={`${client.status ? "text-red-500" : "text-green-500"}`} />
+                                                <span className='flex items-center gap-x-2 font-medium whitespace-nowrap'>
+                                                    <FaCircle size={12} className={`shrink-0 ${client.status ? "text-red-500" : "text-green-500"}`} />
                                                     {client.status ? "En servicio" : "Fuera de servicio"}
                                                 </span>
                                             )}
@@ -358,27 +403,17 @@ export default function TableGeneral({ filters, filtersEquipments, filtersColumn
                                         </StyledTableCell>
                                     )}
                                     {filtersColumns[8] && (
-                                        <StyledTableCell>
-                                            <span className='flex items-center gap-x-2'>
-                                                -
-                                            </span>
-                                        </StyledTableCell>
+                                        <StyledTableCell align='center'>-</StyledTableCell>
                                     )}
                                     {filtersColumns[9] && (
-                                        <StyledTableCell>
-                                            <span className='flex items-center gap-x-2'>
-                                                -
-                                            </span>
-                                        </StyledTableCell>
+                                        <StyledTableCell align='center'>-</StyledTableCell>
                                     )}
                                     {/* El cliente de una subestacion rural no tiene equipo que mida */}
                                     {[10, 11, 12].map((columna) => filtersColumns[columna] && (
                                         <StyledTableCell key={columna} align='right'>{SIN_DATO}</StyledTableCell>
                                     ))}
                                     {index === 0 && (
-                                        <StyledTableCell rowSpan={clients.length} align='center'>
-                                            <Fab size='small' className='!bg-blue-300' onClick={() => handleSelected({}, row)} ><FaTableCellsLarge /> </Fab>
-                                        </StyledTableCell>
+                                        <StyledTableCell rowSpan={clients.length} align='center' />
                                     )}
                                 </StyledTableRow>
                             ))

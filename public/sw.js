@@ -12,7 +12,11 @@ self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
 
 const ICON = '/icons/icon-192.png'
-const BADGE = '/icons/badge-96.png'
+// El sufijo -v2 es un cache-bust: los iconos se sirven con max-age de 4 horas,
+// asi que cambiar el contenido dejando el mismo nombre no llega al telefono
+// hasta que expire. Si algun dia hay que cambiar el dibujo, se sube con nombre
+// nuevo, no se sobreescribe.
+const BADGE = '/icons/badge-96-v2.png'
 
 // El backend manda la URL absoluta de produccion; se usa solo la ruta para que
 // la notificacion abra el origen desde el que se instalo la app.
