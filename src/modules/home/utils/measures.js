@@ -61,6 +61,21 @@ const escalaCorriente = () => ({ factor: 1, unit: 'A' })
 const escalaPotencia = (max, unit) =>
 	!String(unit).startsWith('k') && max >= 1000 ? { factor: 1000, unit: `k${unit}` } : { factor: 1, unit: unit || 'W' }
 
+/*
+ * Desbalance entre fases: la diferencia entre la mayor y la menor, sobre la
+ * mayor. Arriba del umbral la tabla pinta los tres valores en ambar; no es una
+ * alarma, es para que salte a la vista cual de las tres se fue.
+ */
+const DESBALANCE = 0.02
+
+export const hayDesbalance = (values) => {
+	const validos = conDato(values)
+	if (validos.length < 2) return false
+	const max = Math.max(...validos)
+	const min = Math.min(...validos)
+	return max > 0 && (max - min) / max > DESBALANCE
+}
+
 /* ------------------------------------------------------------------ fases */
 
 /**
@@ -71,11 +86,13 @@ const escalaPotencia = (max, unit) =>
  */
 const filasFases = (values, escala) => {
 	const validos = conDato(values)
-	if (!validos.length) return [{ label: null, text: SIN_DATO }]
+	if (!validos.length) return [{ label: null, value: SIN_DATO, unit: null, text: SIN_DATO }]
 	const { factor, unit } = escala(Math.max(...validos.map(Math.abs)))
 	const decimals = decimalesPor(validos.map((v) => v / factor))
 	return values.map((v, index) => ({
 		label: PHASES[index],
+		value: esValor(v) ? fmt(v / factor, decimals) : SIN_DATO,
+		unit: esValor(v) ? unit : null,
 		text: esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO,
 	}))
 }
@@ -99,17 +116,18 @@ const lineaFases = (values, escala) => {
  * comparten escala ni decimales como si hacen las fases.
  */
 const unaPotencia = (value, unidadPublicada) => {
-	if (!esValor(value)) return SIN_DATO
+	if (!esValor(value)) return { value: SIN_DATO, unit: null, text: SIN_DATO }
 	const { factor, unit } = escalaPotencia(Math.abs(value), unidadPublicada)
 	const escalado = value / factor
-	return `${fmt(escalado, decimalesPor([escalado]))} ${unit}`
+	const texto = fmt(escalado, decimalesPor([escalado]))
+	return { value: texto, unit, text: `${texto} ${unit}` }
 }
 
 const filasPotencia = (measures) => {
 	const power = measures?.power
 	const units = measures?.units
-	if (!POWERS.some(({ key }) => esValor(power?.[key]))) return [{ label: null, text: SIN_DATO }]
-	return POWERS.map(({ key, label }) => ({ label, text: unaPotencia(power?.[key], units?.[key]) }))
+	if (!POWERS.some(({ key }) => esValor(power?.[key]))) return [{ label: null, value: SIN_DATO, unit: null, text: SIN_DATO }]
+	return POWERS.map(({ key, label }) => ({ label, ...unaPotencia(power?.[key], units?.[key]) }))
 }
 
 /* ---------------------------------------------------------------- titles */
@@ -168,7 +186,7 @@ export const currentDetail = (measures) => detalleFases(measures, measures?.i, e
 export const powerDetail = (measures) => {
 	const tx = notaTx(measures)
 	if (!POWERS.some(({ key }) => esValor(measures?.power?.[key]))) return tx ?? undefined
-	const partes = POWERS.map(({ key, name }) => `${name} ${unaPotencia(measures?.power?.[key], measures?.units?.[key])}`)
+	const partes = POWERS.map(({ key, name }) => `${name} ${unaPotencia(measures?.power?.[key], measures?.units?.[key]).text}`)
 	if (tx) partes.push(tx)
 	return partes.join(' · ')
 }

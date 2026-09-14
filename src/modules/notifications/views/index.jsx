@@ -1,4 +1,4 @@
-import { Button, CircularProgress, Switch } from '@mui/material'
+import { CircularProgress, Switch } from '@mui/material'
 import { useEffect, useState } from 'react'
 import Swal from 'sweetalert2'
 import { isTauri } from '@tauri-apps/api/core'
@@ -6,8 +6,9 @@ import { isTauri } from '@tauri-apps/api/core'
 import { notificationApi } from '../api/notificationApi'
 import Card from '../components/Card'
 import DevicesSection from '../components/DevicesSection'
-import MutedSection from '../components/MutedSection'
+import ActiveAlarmsSection from '../components/ActiveAlarmsSection'
 import QuietHoursSection from '../components/QuietHoursSection'
+import SaveBar from '../components/SaveBar'
 import {
 	askPermission,
 	getDeviceSubscription,
@@ -27,9 +28,8 @@ const EDITABLE = [
 	'quiet_end',
 	'quiet_days',
 	'quiet_allow_critical',
-	'muted_alarm_types',
-	'muted_device_types',
-	'muted_devices',
+	'alarm_types',
+	'device_types',
 ]
 
 // `request` lanza el cuerpo de la respuesta, que en este backend trae message.
@@ -53,7 +53,6 @@ const Notifications = () => {
 	const [devices, setDevices] = useState([])
 	const [pref, setPref] = useState(null)
 	const [options, setOptions] = useState({ alarm_types: [], device_types: [] })
-	const [equipments, setEquipments] = useState([])
 	const [dirty, setDirty] = useState(false)
 
 	const refreshDevices = async () => {
@@ -73,9 +72,6 @@ const Notifications = () => {
 			setPref(preferences)
 			setOptions(opts)
 
-			// El catalogo es para la lista de equipos silenciados: si falla, la
-			// pantalla sigue sirviendo para el resto.
-			setEquipments(await notificationApi.getEquipments().catch(() => []))
 			await refreshDevices()
 
 			if (supported) {
@@ -243,14 +239,9 @@ const Notifications = () => {
 
 			<QuietHoursSection pref={pref} onChange={change} />
 
-			<MutedSection pref={pref} options={options} equipments={equipments} onChange={change} />
+			<ActiveAlarmsSection pref={pref} options={options} onChange={change} />
 
-			<div className='flex items-center gap-3'>
-				<Button variant='contained' onClick={save} disabled={saving || !dirty}>
-					{saving ? 'Guardando…' : 'Guardar preferencias'}
-				</Button>
-				{dirty ? <span className='text-sm text-amber-600 dark:text-amber-400'>Hay cambios sin guardar</span> : null}
-			</div>
+			<SaveBar dirty={dirty} saving={saving} onSave={save} />
 		</div>
 	)
 }

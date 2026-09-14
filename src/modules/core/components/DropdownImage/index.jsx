@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { FaSignOutAlt, FaExchangeAlt } from 'react-icons/fa'
+import { MdNotificationsActive } from 'react-icons/md'
 import { useNavigate } from 'react-router-dom'
 import { removeData } from '../../../../storage/cookies-store'
 import { Button } from '@mui/material'
@@ -25,6 +26,14 @@ const DropdownImage = () => {
 		await removeData('token')
 		navigator('/')
 	}
+
+	// Las preferencias de notificacion del usuario viven en el menu de
+	// Configuracion, donde quedaban escondidas: este es el acceso directo.
+	const handleNotifications = () => {
+		setDropdownOpen(false)
+		navigator('/config/notifications')
+	}
+
 	const handleChangeClient = async () => {
 		storage.remove('usuario')
 		setInfoNav('')
@@ -79,6 +88,12 @@ const DropdownImage = () => {
 							onClick={() => handleChangeClient()}
 						>
 							<FaExchangeAlt className='mr-2' /> Cambio de Organización
+						</Button>
+						<Button
+							className='!text-black hover:!bg-slate-200 w-full flex !justify-start'
+							onClick={() => handleNotifications()}
+						>
+							<MdNotificationsActive className='mr-2' /> Mis notificaciones
 						</Button>
 						<Button
 							className='!text-black hover:!bg-slate-200 w-full flex !justify-start'

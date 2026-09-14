@@ -1,6 +1,6 @@
 import { Badge } from '@mui/material'
 import { BsFillMenuButtonWideFill } from 'react-icons/bs'
-import { FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram, FaThList } from 'react-icons/fa'
+import { FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram } from 'react-icons/fa'
 import { MdContentPaste, MdNotificationsActive } from 'react-icons/md'
 import { PiTabsFill } from 'react-icons/pi'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
@@ -32,11 +32,6 @@ const MenuSideBar = (tabActive, infoNav) => [
 				name: 'Accesos',
 				link: '/config/menu',
 				icon: <BsFillMenuButtonWideFill className='dark:text-white text-2xl my-1' />,
-			},
-			{
-				name: 'Notificaciones',
-				link: '/config/notifications',
-				icon: <FaThList className='dark:text-white text-2xl my-1' />,
 			},
 			{
 				name: 'Hardware',

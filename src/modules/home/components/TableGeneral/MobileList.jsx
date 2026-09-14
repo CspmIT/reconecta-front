@@ -1,8 +1,28 @@
 import { Fab } from '@mui/material'
 import { FaCheckCircle, FaCircle, FaTimes } from 'react-icons/fa'
-import { FaPen, FaTableCellsLarge } from 'react-icons/fa6'
+import { FaPen } from 'react-icons/fa6'
 import { useNavigate } from 'react-router-dom'
 import { powerCell, voltageCell, currentCell, powerDetail, voltageDetail, currentDetail } from '../../utils/measures'
+import { Alimentacion, Modo } from './Indicadores'
+import AlarmBell from './AlarmBell'
+import { equipmentLabel } from './labels'
+
+/*
+ * La tarjeta entera abre el detalle, igual que la fila en la tabla de escritorio:
+ * el boton dedicado se saco para no repetir la accion. La campana corta la
+ * propagacion para que apagar una alarma no abra el equipo.
+ */
+const cardProps = (label, onOpen) => ({
+    role: 'button',
+    tabIndex: 0,
+    title: label,
+    onClick: onOpen,
+    onKeyDown: (event) => {
+        if (event.key !== 'Enter' && event.key !== ' ') return
+        event.preventDefault()
+        onOpen()
+    }
+})
 
 const BORDER_CLASSES = {
     0: 'border-l-green-600',
@@ -32,80 +52,100 @@ function ConexionIndicator({ influxData }) {
     )
 }
 
-function EquipmentCard({ equipment, row, filtersColumns, handleSelected }) {
+/*
+ * `unico` es el nodo que tiene un solo equipo: ahi el encabezado del nodo ya lo
+ * identifica, asi que el titulo de la tarjeta (modelo, marca y descripcion, o
+ * sea la columna Equipo / Cliente de la tabla) se saca por repetido. Sin titulo
+ * la campana comparte la primera linea con los datos, para no dejar una franja
+ * vacia arriba de la tarjeta.
+ */
+function EquipmentCard({ equipment, row, filtersColumns, handleSelected, bells, unico }) {
     const value = equipment.influxData?.['d/c']?.[0]?.value
     const ac = equipment.influxData?.['ac']?.[0]?.value
     const local = equipment.influxData?.['local']?.[0]?.value
+    const campana = <AlarmBell bells={bells} id={equipment.id} label={equipmentLabel(equipment)} />
+    const datos = (
+        <div className='grid grid-cols-1 gap-y-2'>
+            {filtersColumns[2] && <Field label='Nro de serie'>{equipment.serial}</Field>}
+            {filtersColumns[3] && equipment.equipmentmodels.type === 1 && (
+                <Field label='Estado'>
+                    <span className='flex items-center gap-x-1'>
+                        <FaCircle size={12} className={`shrink-0 ${value === 1 ? 'text-red-500' : value === 0 ? 'text-green-500' : 'text-yellow-500'}`} />
+                        {value === 1 ? 'Cerrado' : value === 0 ? 'Abierto' : 'Desconocido'}
+                    </span>
+                </Field>
+            )}
+            {filtersColumns[4] && (
+                <Field label='Conexión'><ConexionIndicator influxData={equipment.influxData} /></Field>
+            )}
+            {filtersColumns[8] && equipment.equipmentmodels.type === 1 && (
+                <Field label='Alimentación'>
+                    <Alimentacion value={ac} conTexto />
+                </Field>
+            )}
+            {filtersColumns[9] && equipment.equipmentmodels.type === 1 && (
+                <Field label='Modo'>
+                    <Modo value={local} conTexto />
+                </Field>
+            )}
+            {/* R · S · T en una linea, con la unidad una sola vez */}
+            {filtersColumns[10] && (
+                <Field label='Potencia'><span title={powerDetail(equipment.measures)}>{powerCell(equipment.measures)}</span></Field>
+            )}
+            {filtersColumns[11] && (
+                <Field label='Tensión'><span title={voltageDetail(equipment.measures)}>{voltageCell(equipment.measures)}</span></Field>
+            )}
+            {filtersColumns[12] && (
+                <Field label='Corriente'><span title={currentDetail(equipment.measures)}>{currentCell(equipment.measures)}</span></Field>
+            )}
+        </div>
+    )
+
     return (
-        <div className={`${BORDER_CLASSES[equipment.equipmentmodels.type]} border-l-8 p-3 border-b border-gray-400 my-1`}>
-            <div className='flex justify-between items-center mb-2 gap-2'>
-                <div className='flex-1 min-w-0'>
-                    <div className='font-semibold truncate'>
-                        {equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}
-                    </div>
-                    {equipment.observation && (
-                        <div className='text-xs text-gray-600 dark:text-gray-300'>{equipment.observation}</div>
-                    )}
+        <div
+            className={`${BORDER_CLASSES[equipment.equipmentmodels.type]} border-l-8 p-3 border-b border-gray-400 my-1 cursor-pointer`}
+            {...cardProps(`Ver datos de ${equipmentLabel(equipment)}`, () => handleSelected(equipment, row))}
+        >
+            {unico ? (
+                <div className='flex items-start gap-2'>
+                    <div className='flex-1 min-w-0'>{datos}</div>
+                    {campana}
                 </div>
-                <Fab size='small' className='!bg-blue-300 !z-0 !shrink-0' onClick={() => handleSelected(equipment, row)}>
-                    <FaTableCellsLarge />
-                </Fab>
-            </div>
-            <div className='grid grid-cols-1 gap-y-2'>
-                {filtersColumns[2] && <Field label='Nro de serie'>{equipment.serial}</Field>}
-                {filtersColumns[3] && equipment.equipmentmodels.type === 1 && (
-                    <Field label='Estado'>
-                        <span className='flex items-center gap-x-1'>
-                            <FaCircle className={`${value === 1 ? 'text-red-500' : value === 0 ? 'text-green-500' : 'text-yellow-500'}`} />
-                            {value === 1 ? 'Cerrado' : value === 0 ? 'Abierto' : 'Desconocido'}
-                        </span>
-                    </Field>
-                )}
-                {filtersColumns[4] && (
-                    <Field label='Conexión'><ConexionIndicator influxData={equipment.influxData} /></Field>
-                )}
-                {filtersColumns[8] && equipment.equipmentmodels.type === 1 && (
-                    <Field label='Alimentación'>
-                        {ac === 1 ? 'Red Electrica' : ac === 0 ? 'Batería' : 'Desconocido'}
-                    </Field>
-                )}
-                {filtersColumns[9] && equipment.equipmentmodels.type === 1 && (
-                    <Field label='Modo'>
-                        {local === 1 ? 'Local' : local === 0 ? 'Remoto' : 'Desconocido'}
-                    </Field>
-                )}
-                {/* R · S · T en una linea, con la unidad una sola vez */}
-                {filtersColumns[10] && (
-                    <Field label='Potencia'><span title={powerDetail(equipment.measures)}>{powerCell(equipment.measures)}</span></Field>
-                )}
-                {filtersColumns[11] && (
-                    <Field label='Tensión'><span title={voltageDetail(equipment.measures)}>{voltageCell(equipment.measures)}</span></Field>
-                )}
-                {filtersColumns[12] && (
-                    <Field label='Corriente'><span title={currentDetail(equipment.measures)}>{currentCell(equipment.measures)}</span></Field>
-                )}
-            </div>
+            ) : (
+                <>
+                    <div className='flex justify-between items-center mb-2 gap-2'>
+                        <div className='flex-1 min-w-0'>
+                            <div className='font-semibold truncate'>
+                                {equipment.equipmentmodels.name} {equipment.equipmentmodels.brand}
+                            </div>
+                            {equipment.observation && (
+                                <div className='text-xs text-gray-600 dark:text-gray-300'>{equipment.observation}</div>
+                            )}
+                        </div>
+                        {campana}
+                    </div>
+                    {datos}
+                </>
+            )}
         </div>
     )
 }
 
-function ClientCard({ client, row, filtersColumns, handleSelected, showButton }) {
+function ClientCard({ client, row, filtersColumns, handleSelected }) {
     return (
-        <div className={`${BORDER_CLASSES[0]} border-l-8 p-3 border-b border-gray-200 dark:border-gray-700`}>
+        <div
+            className={`${BORDER_CLASSES[0]} border-l-8 p-3 border-b border-gray-200 dark:border-gray-700 cursor-pointer`}
+            {...cardProps(`Ver datos de ${row.name}`, () => handleSelected({}, row))}
+        >
             <div className='flex justify-between items-center mb-2 gap-2'>
                 <div className='flex-1 min-w-0 font-semibold truncate'>{client.name}</div>
-                {showButton && (
-                    <Fab size='small' className='!bg-blue-300 !z-0 !shrink-0' onClick={() => handleSelected({}, row)}>
-                        <FaTableCellsLarge />
-                    </Fab>
-                )}
             </div>
             <div className='grid grid-cols-1 gap-x-3 gap-y-1'>
                 {filtersColumns[2] && <Field label='Nro de serie'>{client.meter}</Field>}
                 {filtersColumns[3] && (
                     <Field label='Estado'>
                         <span className='flex items-center gap-x-1'>
-                            <FaCircle className={`${client.status ? 'text-red-500' : 'text-green-500'}`} />
+                            <FaCircle size={12} className={`shrink-0 ${client.status ? 'text-red-500' : 'text-green-500'}`} />
                             {client.status ? 'En servicio' : 'Fuera de servicio'}
                         </span>
                     </Field>
@@ -115,7 +155,7 @@ function ClientCard({ client, row, filtersColumns, handleSelected, showButton })
     )
 }
 
-export default function MobileList({ elementsFiltered, filtersColumns, handleSelected }) {
+export default function MobileList({ elementsFiltered, filtersColumns, handleSelected, bells }) {
     const navigate = useNavigate()
     const showLocation = filtersColumns[5] || filtersColumns[6] || filtersColumns[7]
     return (
@@ -159,6 +199,8 @@ export default function MobileList({ elementsFiltered, filtersColumns, handleSel
                                         row={row}
                                         filtersColumns={filtersColumns}
                                         handleSelected={handleSelected}
+                                        bells={bells}
+                                        unico={row.equipments.length === 1}
                                     />
                                 ))
                                 : row.clients.length
@@ -169,7 +211,6 @@ export default function MobileList({ elementsFiltered, filtersColumns, handleSel
                                             row={row}
                                             filtersColumns={filtersColumns}
                                             handleSelected={handleSelected}
-                                            showButton={idx === 0}
                                         />
                                     ))
                                     : (
