@@ -67,10 +67,27 @@ const QuietHoursSection = ({ pref, onChange }) => {
 				<p className='text-sm font-medium text-slate-700 dark:text-gray-200 mt-5 mb-2'>
 					Dias en los que aplica
 				</p>
+				{/*
+				 * Los siete dias no entran en una fila de celular y el grupo, que de
+				 * fabrica no envuelve, desbordaba la tarjeta y dejaba la pantalla con
+				 * scroll horizontal. Con el wrap cada boton pasa a llevar su propio
+				 * borde y su radio: de lo contrario la segunda linea arranca sin borde
+				 * izquierdo, porque el grupo los une solapando un pixel.
+				 */}
 				<ToggleButtonGroup
 					size='small'
 					value={days}
 					onChange={(_, value) => onChange({ quiet_days: value.length ? value : null })}
+					sx={{
+						flexWrap: 'wrap',
+						gap: 1,
+						'& .MuiToggleButtonGroup-grouped': {
+							border: '1px solid',
+							borderColor: 'divider',
+							borderRadius: '8px !important',
+							marginLeft: 0,
+						},
+					}}
 				>
 					{DAYS.map((day) => (
 						<ToggleButton key={day.value} value={day.value} sx={{ textTransform: 'none', px: 1.5 }}>
