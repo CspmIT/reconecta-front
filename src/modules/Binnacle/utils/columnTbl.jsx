@@ -70,6 +70,23 @@ export const columnsOrdenes = ({ equiposMap, personalMap, onEdit, onDelete }) =>
 		},
 	},
 	{
+		header: 'Cliente',
+		accessorKey: 'cliente',
+		size: 180,
+		/*
+		 * Las bitacoras anteriores a la columna no tienen cliente. En pantalla eso
+		 * es una raya, pero en el PDF y el Excel va la celda vacia: una raya en un
+		 * archivo que despues se filtra o se suma es un dato mas, no una ausencia.
+		 */
+		exportFn: (row) => row.cliente || '',
+		Cell: ({ cell }) =>
+			cell.getValue() ? (
+				<span className='text-sm'>{cell.getValue()}</span>
+			) : (
+				<span className='text-gray-400'>—</span>
+			),
+	},
+	{
 		header: 'Tipo de tarea',
 		accessorKey: 'tipoTarea',
 		size: 160,

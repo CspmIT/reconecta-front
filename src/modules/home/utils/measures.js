@@ -1,12 +1,16 @@
 /*
  * Formato de las mediciones que trae /Elements en `equipment.measures`.
  *
- * La tension y la corriente vienen POR FASE (L1/L2/L3) y la potencia como las
- * TRES POTENCIAS del equipo — aparente, activa y reactiva —, que son las que
- * muestra su tablero: el reconectador no publica potencia por fase.
+ * La tension y la corriente vienen POR FASE y la potencia como las TRES
+ * POTENCIAS del equipo — aparente, activa y reactiva —, que son las que muestra
+ * su tablero: el reconectador no publica potencia por fase.
  *
- * La tension es la COMPUESTA (de linea): el backend la publica ya resuelta, y
- * `measures.vDerived` dice si la tomo del equipo o la derivo de la fase.
+ * La tension que se muestra es la DE FASE, en `measures.vPhase`, y va etiquetada
+ * A/B/C. Es la que mide el equipo, sin cuentas de por medio. El backend manda
+ * ademas la compuesta en `measures.v` (la que usa el mapa) con `measures.vDerived`
+ * diciendo si la tomo del equipo o la derivo de la fase; aca no se usa.
+ *
+ * La corriente sigue etiquetada L1/L2/L3.
  *
  * Los valores llegan en las unidades de cada equipo, que no son homogeneas: el
  * reconectador manda la primaria real (13200 V) y las potencias en kVA/kW/kVAr,
@@ -24,6 +28,8 @@
 export const SIN_DATO = '—'
 
 const PHASES = ['L1', 'L2', 'L3']
+// La tension se nombra por fase, como la nombran los equipos y los tableros
+const PHASES_ABC = ['A', 'B', 'C']
 
 // Las tres potencias del equipo, en el orden del tablero
 const POWERS = [
@@ -84,13 +90,13 @@ export const hayDesbalance = (values) => {
  * raya para que las otras no se corran de lugar; sin ninguna, una sola fila con
  * la raya.
  */
-const filasFases = (values, escala) => {
+const filasFases = (values, escala, labels = PHASES) => {
 	const validos = conDato(values)
 	if (!validos.length) return [{ label: null, value: SIN_DATO, unit: null, text: SIN_DATO }]
 	const { factor, unit } = escala(Math.max(...validos.map(Math.abs)))
 	const decimals = decimalesPor(validos.map((v) => v / factor))
 	return values.map((v, index) => ({
-		label: PHASES[index],
+		label: labels[index],
 		value: esValor(v) ? fmt(v / factor, decimals) : SIN_DATO,
 		unit: esValor(v) ? unit : null,
 		text: esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO,
@@ -139,13 +145,13 @@ const filasPotencia = (measures) => {
  */
 const notaTx = (measures) => (measures?.tx ? `Convertido: ${measures.tx}` : null)
 
-const detalleFases = (measures, values, escala, nota) => {
+const detalleFases = (measures, values, escala, nota, labels = PHASES) => {
 	const tx = notaTx(measures)
 	const validos = conDato(values)
 	if (!validos.length) return tx ?? undefined
 	const { factor, unit } = escala(Math.max(...validos.map(Math.abs)))
 	const decimals = decimalesPor(validos.map((v) => v / factor))
-	const partes = PHASES.map((fase, index) => {
+	const partes = labels.map((fase, index) => {
 		const v = values[index]
 		return `${fase} ${esValor(v) ? `${fmt(v / factor, decimals)} ${unit}` : SIN_DATO}`
 	})
@@ -156,13 +162,13 @@ const detalleFases = (measures, values, escala, nota) => {
 
 /* ----------------------------------------------------------------- api */
 
-export const voltageRows = (measures) => filasFases(measures?.v, escalaTension)
+export const voltageRows = (measures) => filasFases(measures?.vPhase, escalaTension, PHASES_ABC)
 export const currentRows = (measures) => filasFases(measures?.i, escalaCorriente)
 export const powerRows = (measures) => filasPotencia(measures)
 
 // Version en una linea, para las tarjetas del celular: ahi la fila ya es
 // vertical y apilar los tres valores las haria larguisimas
-export const voltageCell = (measures) => lineaFases(measures?.v, escalaTension)
+export const voltageCell = (measures) => lineaFases(measures?.vPhase, escalaTension)
 export const currentCell = (measures) => lineaFases(measures?.i, escalaCorriente)
 export const powerCell = (measures) => {
 	const filas = filasPotencia(measures)
@@ -171,16 +177,12 @@ export const powerCell = (measures) => {
 }
 
 /*
- * Se aclara que es compuesta y si vino derivada: sin decirlo parece que un
- * modelo mide distinto que otro, que es justo lo que se venia viendo.
+ * Se aclara que es de fase: entre modelos hay una diferencia de raiz(3) segun se
+ * mire fase o linea, y sin decirlo parece que un modelo mide distinto que otro,
+ * que es justo lo que se venia viendo.
  */
 export const voltageDetail = (measures) =>
-	detalleFases(
-		measures,
-		measures?.v,
-		escalaTension,
-		measures?.vDerived ? 'Tensión compuesta, derivada de la fase (×√3)' : 'Tensión compuesta, publicada por el equipo'
-	)
+	detalleFases(measures, measures?.vPhase, escalaTension, 'Tensión de fase, publicada por el equipo', PHASES_ABC)
 export const currentDetail = (measures) => detalleFases(measures, measures?.i, escalaCorriente)
 // Los nombres completos, que en la celda no entran
 export const powerDetail = (measures) => {
