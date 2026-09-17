@@ -9,7 +9,7 @@ const ROWS = {
 // La potencia son tres magnitudes distintas (S, P, Q): no tiene sentido
 // compararlas entre si, asi que el desbalance se mira solo en fases
 const VALUES = {
-    voltage: (measures) => measures?.v,
+    voltage: (measures) => measures?.vPhase,
     current: (measures) => measures?.i
 }
 

@@ -27,6 +27,7 @@ const ordenInicial = {
 	equipoId: '',
 	elementoId: '',
 	equipoNombre: '',
+	cliente: '',
 	tipoTarea: '',
 	descripcion: '',
 	fechaRealizacion: new Date().toISOString().slice(0, 10),
@@ -171,6 +172,7 @@ const AddOrden = () => {
 						equipoId: orden.equipoId || '',
 						elementoId: orden.elementoId || '',
 						equipoNombre: orden.equipoNombre || '',
+						cliente: orden.cliente || '',
 						tipoTarea: orden.tipoTarea || '',
 						descripcion: orden.descripcion || '',
 						fechaRealizacion:
@@ -210,6 +212,7 @@ const AddOrden = () => {
 			equipoId: esModoElemento ? null : data.equipoId,
 			elementoId: esModoElemento ? data.elementoId : null,
 			equipoNombre: data.equipoNombre || null,
+			cliente: data.cliente,
 			tipoTarea: data.tipoTarea,
 			descripcion: data.descripcion,
 			fechaRealizacion: data.fechaRealizacion,
@@ -385,6 +388,18 @@ const AddOrden = () => {
 								label='N° Orden de Mantenimiento'
 								placeholder='Opcional'
 								{...register('numeroOM')}
+								InputLabelProps={{ shrink: true }}
+							/>
+							{/*
+							 * Texto libre: el cliente de una tarea no siempre esta dado de
+							 * alta en el sistema (un particular, una obra de terceros), asi
+							 * que no se elige de un listado. Vacio se guarda como null.
+							 */}
+							<TextField
+								className='w-full md:w-1/2'
+								label='Cliente'
+								placeholder='Opcional'
+								{...register('cliente')}
 								InputLabelProps={{ shrink: true }}
 							/>
 						</div>

@@ -22,21 +22,28 @@ const ControlsBoard = ({ info }) => {
 	const [countdown, setCountdown] = useState(0)
 	const [edit, setEdit] = useState(false)
 	const user = storage.get('usuario').sub
+	/*
+	 * Copia local de `info` que se refresca sola cada 15 seg, igual que hacen los
+	 * tableros de CardBoard. El prop solo se consulta una vez en DataBoard, asi
+	 * que sin esto el estado de los controles quedaba congelado.
+	 */
+	const [dataInfo, setDataInfo] = useState(info)
+
+	const statusControl = (field) =>
+		dataInfo?.instantaneo?.[field] ? dataInfo.instantaneo[field][0].value : 'sin Datos'
 
 	const getControls = async (version) => {
 		const listControls = await request(`${backend.Reconecta}/getControlsRecloserUser`, 'POST', { user, version })
 		const basico = listControls.data
 			.filter((item) => item.control.level == 1)
 			.map((item) => {
-				const checked = info?.instantaneo[item.control.field] ? info?.instantaneo[item.control.field][0].value : 'sin Datos'
-				item.control.status = checked
+				item.control.status = statusControl(item.control.field)
 				return item.control
 			})
 		const avanzado = listControls.data
 			.filter((item) => item.control.level == 2)
 			.map((item) => {
-				const checked = info?.instantaneo[item.control.field] ? info?.instantaneo[item.control.field][0].value : 'sin Datos'
-				item.control.status = checked
+				item.control.status = statusControl(item.control.field)
 				return item.control
 			})
 		setControlBasic(basico)
@@ -44,11 +51,50 @@ const ControlsBoard = ({ info }) => {
 		setControlBasicOrigin(basico)
 		setControlAdvanceOrigin(avanzado)
 	}
-	useEffect(() => {
-		if (info) {
-			getControls(info.recloser.id_version)
+	const getDataRecloser = async (id) => {
+		try {
+			const { data } = await request(
+				`${backend[`${import.meta.env.VITE_APP_NAME}`]}/getDataRecloser?id=${id}`,
+				'GET'
+			)
+			setDataInfo(data)
+		} catch (error) {
+			// Si falla un refresco se mantiene la ultima lectura valida
+			console.error(error)
 		}
+	}
+
+	// Cuando DataBoard vuelve a pedir los datos (boton de recarga) se toma el prop
+	useEffect(() => {
+		setDataInfo(info)
 	}, [info])
+
+	useEffect(() => {
+		const id = info?.recloser?.id
+		if (!id) return
+		const intervalId = setInterval(() => {
+			getDataRecloser(id)
+		}, 15000)
+		return () => clearInterval(intervalId)
+	}, [info?.recloser?.id])
+
+	// El listado y el orden de los controles solo dependen del modelo del equipo
+	useEffect(() => {
+		if (dataInfo) {
+			getControls(dataInfo.recloser.id_version)
+		}
+	}, [dataInfo?.recloser?.id_version])
+
+	/*
+	 * Cada refresco solo pisa el estado de los controles ya cargados: no se vuelve
+	 * a pedir el listado (evita resetear el orden que el usuario esta editando).
+	 */
+	useEffect(() => {
+		if (!dataInfo || edit) return
+		const refresh = (list) => list.map((control) => ({ ...control, status: statusControl(control.field) }))
+		setControlBasic((prev) => refresh(prev))
+		setControlAdvance((prev) => refresh(prev))
+	}, [dataInfo])
 
 	const contador = () => {
 		setCountdown(10)
@@ -175,14 +221,14 @@ const ControlsBoard = ({ info }) => {
 								>
 									{boardcontrol.type_input === 'switch' ? (
 										<ControlSwitch
-											info={info}
+											info={dataInfo}
 											contador={contador}
 											control={boardcontrol}
 											enabled={enabled}
 										/>
 									) : (
 										<ControlCircle
-											info={info}
+											info={dataInfo}
 											contador={contador}
 											control={boardcontrol}
 											enabled={enabled}
@@ -212,10 +258,10 @@ const ControlsBoard = ({ info }) => {
 												} rounded-md items-center justify-between bg-gray-300 `}
 										>
 											{boardcontrol.type_input === 'switch' ? (
-												<ControlSwitch info={info} control={boardcontrol} enabled={enabled} />
+												<ControlSwitch info={dataInfo} control={boardcontrol} enabled={enabled} />
 											) : (
 												<ControlCircle
-													info={info}
+													info={dataInfo}
 													contador={contador}
 													control={boardcontrol}
 													enabled={enabled}

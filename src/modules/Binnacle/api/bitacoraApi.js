@@ -37,6 +37,8 @@ const mapOrdenFromBackend = (b) => ({
 	equipoId: b.id_equipment || null,
 	elementoId: b.id_element || null,
 	equipoNombre: b.name_element || '',
+	// Texto libre y opcional: las bitacoras anteriores a la columna vienen en null
+	cliente: b.client || '',
 	tipoTarea: INT_TO_TIPO_TAREA[b.type_task] || 'otro',
 	descripcion: b.description || '',
 	fechaRealizacion: b.date_task ? String(b.date_task).slice(0, 10) : '',
@@ -71,6 +73,9 @@ const mapOrdenToBackend = (u) => {
 		id_equipment: u.equipoId ? Number(u.equipoId) : null,
 		id_element: u.elementoId ? Number(u.elementoId) : null,
 		name_element: u.equipoNombre || null,
+		// Vacio viaja como null y no como '': la columna es nullable justamente
+		// para distinguir "sin cargar" de "cargado en blanco"
+		client: u.cliente?.trim() || null,
 		order: u.numeroOM?.trim() || null,
 		type_task: TIPO_TAREA_TO_INT[u.tipoTarea] ?? null,
 		date_task: u.fechaRealizacion,
@@ -92,7 +97,7 @@ const filtrarOrdenesUI = (ordenes, params = {}) => {
 	if (params.q) {
 		const q = String(params.q).toLowerCase()
 		res = res.filter((o) =>
-			[o.id, o.numeroOM, o.equipoNombre, o.descripcion, ...(o.personalIds || [])]
+			[o.id, o.numeroOM, o.equipoNombre, o.cliente, o.descripcion, ...(o.personalIds || [])]
 				.filter((v) => v !== null && v !== undefined && v !== '')
 				.join(' ')
 				.toLowerCase()
