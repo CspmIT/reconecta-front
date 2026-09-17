@@ -34,7 +34,7 @@ const MenuSideBar = (tabActive, infoNav) => [
 				icon: <BsFillMenuButtonWideFill className='dark:text-white text-2xl my-1' />,
 			},
 			{
-				name: 'Hardware',
+				name: 'AutonomIA',
 				link: '/config/hardware',
 				icon: <GrConfigure className='dark:text-white text-2xl my-1' />,
 			},

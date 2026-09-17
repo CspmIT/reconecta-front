@@ -41,6 +41,13 @@ export default {
 				linea: '#D5DAE0',
 				'linea-fuerte': '#BFC6CE',
 				acento: '#283080',
+				// Paleta del módulo AutonomIA (portado del Tablero Cooptech): las
+				// clases coop-* vienen con los formularios guiados de configuración.
+				coop: {
+					azul: '#283080',
+					naranja: '#DE6B00',
+					negro: '#17202A',
+				},
 			},
 			// El latido del pulso del veredicto cuando hay algo en rojo
 			keyframes: {
