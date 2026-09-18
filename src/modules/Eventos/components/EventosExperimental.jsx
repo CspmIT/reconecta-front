@@ -27,6 +27,7 @@ const fHora = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSec
 
 export default function EventosExperimental({ registros = [], version, equipo = '', gapInicial = 2 }) {
   const [gap, setGap] = useState(gapInicial);
+  const [orden, setOrden] = useState('desc');
   const [abiertos, setAbiertos] = useState(() => new Set());
   const [copiado, setCopiado] = useState(null);
 
@@ -36,6 +37,16 @@ export default function EventosExperimental({ registros = [], version, equipo = 
       .map((r) => ({ ts: r.fecha, id: Number(r.idEvento), version, equipo, idDnp3: r.idDnp3, descripcion: r.descripcion }));
     return procesar(filas, { gapSegundos: gap });
   }, [registros, version, equipo, gap]);
+
+  // Se ordena una copia con el indice original a cuestas: `abiertos` y `copiado` se
+  // guardan por indice, asi que cambiar el orden no debe mover que fila esta abierta.
+  const eventosOrdenados = useMemo(
+    () =>
+      eventos
+        .map((ev, idx) => ({ ev, idx }))
+        .sort((a, b) => (orden === 'asc' ? a.ev.inicio - b.ev.inicio : b.ev.inicio - a.ev.inicio)),
+    [eventos, orden]
+  );
 
   const cuenta = (s) => eventos.filter((e) => e.severidad === s).length;
 
@@ -67,22 +78,32 @@ export default function EventosExperimental({ registros = [], version, equipo = 
             </span>
           )}
         </p>
-        <label className="ml-auto flex items-center gap-2 text-gray-600">
-          Gap máx. (s)
-          <input type="number" min="0" step="0.5" value={gap} onChange={(e) => setGap(parseFloat(e.target.value) || 0)}
-            className="w-20 rounded border border-gray-300 px-2 py-1 text-gray-900" />
-        </label>
+        <div className="ml-auto flex flex-wrap items-center gap-4">
+          <label className="flex items-center gap-2 text-gray-600">
+            Orden
+            <select value={orden} onChange={(e) => setOrden(e.target.value)}
+              className="rounded border border-gray-300 px-2 py-1 text-gray-900">
+              <option value="desc">Más recientes primero</option>
+              <option value="asc">Más antiguos primero</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-2 text-gray-600">
+            Gap máx. (s)
+            <input type="number" min="0" step="0.5" value={gap} onChange={(e) => setGap(parseFloat(e.target.value) || 0)}
+              className="w-20 rounded border border-gray-300 px-2 py-1 text-gray-900" />
+          </label>
+        </div>
       </div>
 
       {eventos.length === 0 ? (
         <p className="py-8 text-center text-gray-500">No hay registros en el rango seleccionado.</p>
       ) : (
         <ul className="m-0 flex list-none flex-col gap-1.5 p-0">
-          {eventos.map((ev, i) => {
+          {eventosOrdenados.map(({ ev, idx }) => {
             const sev = SEV[ev.severidad] || SEV[4];
-            const abierto = abiertos.has(i);
+            const abierto = abiertos.has(idx);
             return (
-              <li key={i} className="grid grid-cols-[6px_130px_1fr_auto] overflow-hidden rounded border border-gray-300 bg-white">
+              <li key={idx} className="grid grid-cols-[6px_130px_1fr_auto] overflow-hidden rounded border border-gray-300 bg-white">
                 <div className={sev.barra} />
                 <div className="py-2.5 pl-2 font-mono text-xs leading-relaxed text-gray-600">
                   <span className="block text-gray-900">{fFecha(ev.inicio)}</span>
@@ -93,13 +114,13 @@ export default function EventosExperimental({ registros = [], version, equipo = 
                   {ev.detalle.length > 0 && <p className="mt-0.5 text-gray-600">{ev.detalle.join(' · ')}</p>}
                 </div>
                 <div className="flex items-start gap-1.5 px-3 py-2.5 text-xs">
-                  <button type="button" onClick={() => toggle(i)}
+                  <button type="button" onClick={() => toggle(idx)}
                     className="rounded border border-gray-300 px-2 py-0.5 text-gray-600 hover:bg-gray-50">
                     {ev.crudos.length} registro{ev.crudos.length === 1 ? '' : 's'}
                   </button>
-                  <button type="button" onClick={() => copiar(ev, i)} title="Copiar crudos para reportar un veredicto incorrecto"
+                  <button type="button" onClick={() => copiar(ev, idx)} title="Copiar crudos para reportar un veredicto incorrecto"
                     className="rounded border border-gray-300 px-2 py-0.5 text-gray-600 hover:bg-gray-50">
-                    {copiado === i ? 'Copiado' : 'Copiar'}
+                    {copiado === idx ? 'Copiado' : 'Copiar'}
                   </button>
                 </div>
                 {abierto && (
