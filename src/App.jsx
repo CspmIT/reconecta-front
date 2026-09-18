@@ -33,7 +33,7 @@ import AddChart from './modules/diagrams/views/addChart'
 import ConfigAlert from './modules/ConfigAlert/views'
 import { useUpdater } from './hooks/useUpdater'
 import { isTauri } from '@tauri-apps/api/core'
-import ConfigHardware from './modules/ConfigHardware/view'
+import AutonomIA from './modules/AutonomIA/view'
 import ElementTypeAbm from './modules/ElementType/views'
 import ActionAudit from './modules/ActionAudit/views'
 import Notifications from './modules/notifications/views'
@@ -79,7 +79,7 @@ function App() {
 		{ path: '/Equipment', element: <Equipment /> },
 		{ path: '/Equipment/:id', element: <Equipment /> },
 		{ path: '/config/alert', element: <ConfigAlert /> },
-		{ path: '/config/hardware', element: <ConfigHardware /> },
+		{ path: '/config/hardware', element: <AutonomIA /> },
 		{ path: '/config/elementTypes', element: <ElementTypeAbm /> },
 		{ path: '/config/audit', element: <ActionAudit /> },
 		{ path: '/config/notifications', element: <Notifications /> }
