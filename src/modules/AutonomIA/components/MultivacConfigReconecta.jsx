@@ -523,6 +523,9 @@ export default function MultivacConfigReconecta({ habilitado, conectado, enviarL
     );
   };
   // Campo IP estilo configurador de redes de Windows: 4 octetos con puntos.
+  // px-0/py-0.5 explicitos en cada octeto: sin clase de padding propia, el
+  // `input { padding: .6em 1.2em }` global de styles.css (template de Tauri) se
+  // come el ancho del campo y el numero queda cortado.
   const campoIp = (k, label) => {
     const partes = String(campos[k] || '').split('.');
     const oct = [0, 1, 2, 3].map((i) => partes[i] || '');
@@ -542,7 +545,7 @@ export default function MultivacConfigReconecta({ habilitado, conectado, enviarL
             <span key={i} className="flex items-center">
               <input value={v} onChange={(e2) => setOct(i, e2.target.value)} disabled={bloqueado}
                 inputMode="numeric" placeholder="0"
-                className="w-10 text-center text-sm outline-none bg-transparent disabled:text-slate-400" />
+                className="w-10 px-0 py-0.5 text-center text-sm outline-none bg-transparent disabled:text-slate-400" />
               {i < 3 && <span className="text-slate-400 px-0.5">.</span>}
             </span>
           ))}
