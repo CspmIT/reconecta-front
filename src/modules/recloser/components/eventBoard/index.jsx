@@ -10,9 +10,14 @@ import LoaderComponent from '../../../../components/Loader'
 import { Tab, Tabs } from '@mui/material'
 import { FaTachometerAlt } from 'react-icons/fa'
 import { BsFiles } from 'react-icons/bs'
+import { FaFlask } from 'react-icons/fa'
+import EventosExperimental from '../../../Eventos/components/EventosExperimental'
+import { setCatalogo } from '../../../../utils/eventosConcluidos/motor'
 
-const EventBoard = ({ idRecloser }) => {
+const EventBoard = ({ idRecloser, recloser = null }) => {
 	const [rowCriticos, setRowCriticos] = useState(null)
+	// El catalogo de eventos concluidos pesa ~430 KB: se carga recien al abrir la solapa Experimental.
+	const [catalogoListo, setCatalogoListo] = useState(false)
 
 	const getEvents = async (id) => {
 		const data = await request(
@@ -22,6 +27,13 @@ const EventBoard = ({ idRecloser }) => {
 		const rows = data.data.reduce(
 			(acc, item) => {
 				const dateFormated = new Date(item.dateAlert)
+				// Fila cruda para el motor de eventos concluidos: fecha sin formatear e id_event_influx.
+				acc.registros.push({
+					fecha: dateFormated,
+					idEvento: item.id,
+					idDnp3: item.idFile,
+					descripcion: item.event,
+				})
 				item.dateAlert = dateFormated.toLocaleString()
 				const month = dateFormated.getMonth() + 1
 				const day = dateFormated.getDate()
@@ -65,7 +77,7 @@ const EventBoard = ({ idRecloser }) => {
 				}
 				return acc
 			},
-			{ critico: [], basics: [], custom: [] }
+			{ critico: [], basics: [], custom: [], registros: [] }
 		)
 		setRowCriticos(rows)
 	}
@@ -77,10 +89,26 @@ const EventBoard = ({ idRecloser }) => {
 	}, [idRecloser])
 
 	const [selectedCardId, setSelectedCardId] = useState(1)
+
+	useEffect(() => {
+		if (selectedCardId !== 4 || catalogoListo) return
+		let cancelado = false
+		import('../../../../utils/eventosConcluidos/catalogo.json')
+			.then((mod) => {
+				if (cancelado) return
+				setCatalogo(mod.default ?? mod)
+				setCatalogoListo(true)
+			})
+			.catch(() => setCatalogoListo(false))
+		return () => {
+			cancelado = true
+		}
+	}, [selectedCardId, catalogoListo])
 	const boardCards = [
 		{ id: 1, name: 'REGISTROS', icon: <FaTachometerAlt /> },
 		{ id: 2, name: 'AVANZADOS', icon: <BsFiles /> },
 		{ id: 3, name: 'PERSONALIZADOS', icon: <FaTachometerAlt /> },
+		{ id: 4, name: 'EXPERIMENTAL', icon: <FaFlask /> },
 	]
 
 	const handleCard = (id) => {
@@ -223,6 +251,19 @@ const EventBoard = ({ idRecloser }) => {
 										sort
 										pagination
 									/>
+								</div>
+							)}
+							{selectedCardId === 4 && (
+								<div className='w-full bg-white rounded-xl p-4'>
+									{catalogoListo ? (
+										<EventosExperimental
+											registros={rowCriticos.registros}
+											version={recloser?.id_version}
+											equipo={recloser?.name || recloser?.element || ''}
+										/>
+									) : (
+										<LoaderComponent />
+									)}
 								</div>
 							)}
 						</div>

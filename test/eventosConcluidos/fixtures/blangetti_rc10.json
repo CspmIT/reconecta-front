@@ -1,0 +1,481 @@
+{
+"equipo": "Blangetti",
+"version": 2,
+"registros": [
+{
+"fecha": "2026-07-03T10:28:38",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-03T10:28:38",
+"idEvento": 791,
+"idDnp3": 18
+},
+{
+"fecha": "2026-07-03T10:58:36",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-03T10:58:36",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-03T10:58:36",
+"idEvento": 790,
+"idDnp3": 18
+},
+{
+"fecha": "2026-07-03T10:58:37",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 20,
+"idDnp3": 24
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 46,
+"idDnp3": 25
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 82,
+"idDnp3": 28
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 48,
+"idDnp3": 30
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 50,
+"idDnp3": 26
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 21,
+"idDnp3": 24
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 47,
+"idDnp3": 25
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 49,
+"idDnp3": 30
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 83,
+"idDnp3": 28
+},
+{
+"fecha": "2026-07-09T16:14:23",
+"idEvento": 51,
+"idDnp3": 26
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 505,
+"idDnp3": 0
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 192,
+"idDnp3": 11
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 196,
+"idDnp3": 137
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 4,
+"idDnp3": 12
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 515,
+"idDnp3": 79
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 527,
+"idDnp3": 67
+},
+{
+"fecha": "2026-07-18T14:23:06",
+"idEvento": 529,
+"idDnp3": 68
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 20,
+"idDnp3": 24
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 46,
+"idDnp3": 25
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 48,
+"idDnp3": 30
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 82,
+"idDnp3": 28
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 50,
+"idDnp3": 26
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 86,
+"idDnp3": 29
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 87,
+"idDnp3": 29
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 49,
+"idDnp3": 30
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 51,
+"idDnp3": 26
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 21,
+"idDnp3": 24
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 47,
+"idDnp3": 25
+},
+{
+"fecha": "2026-07-18T22:48:06",
+"idEvento": 83,
+"idDnp3": 28
+},
+{
+"fecha": "2026-07-31T11:46:17",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-31T11:46:17",
+"idEvento": 791,
+"idDnp3": 18
+},
+{
+"fecha": "2026-07-31T11:46:46",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-31T11:46:46",
+"idEvento": 790,
+"idDnp3": 18
+},
+{
+"fecha": "2026-07-31T11:46:47",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-07-31T11:46:47",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-04T15:20:35",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-04T15:20:35",
+"idEvento": 791,
+"idDnp3": 18
+},
+{
+"fecha": "2026-08-04T15:51:20",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-04T15:51:20",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-04T15:51:20",
+"idEvento": 790,
+"idDnp3": 18
+},
+{
+"fecha": "2026-08-04T15:51:21",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-06T13:44:17",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-06T13:44:17",
+"idEvento": 791,
+"idDnp3": 18
+},
+{
+"fecha": "2026-08-06T14:15:13",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-06T14:15:13",
+"idEvento": 790,
+"idDnp3": 18
+},
+{
+"fecha": "2026-08-06T14:15:14",
+"idEvento": 756,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-06T14:15:14",
+"idEvento": 757,
+"idDnp3": 17
+},
+{
+"fecha": "2026-08-10T11:17:03",
+"idEvento": 637,
+"idDnp3": 87
+},
+{
+"fecha": "2026-08-10T12:07:23",
+"idEvento": 637,
+"idDnp3": 87
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 20,
+"idDnp3": 24
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 46,
+"idDnp3": 25
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 48,
+"idDnp3": 30
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 50,
+"idDnp3": 26
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 21,
+"idDnp3": 24
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 47,
+"idDnp3": 25
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 49,
+"idDnp3": 30
+},
+{
+"fecha": "2026-08-15T10:51:23",
+"idEvento": 51,
+"idDnp3": 26
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 20,
+"idDnp3": 24
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 46,
+"idDnp3": 25
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 48,
+"idDnp3": 30
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 50,
+"idDnp3": 26
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 21,
+"idDnp3": 24
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 47,
+"idDnp3": 25
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 49,
+"idDnp3": 30
+},
+{
+"fecha": "2026-08-15T10:52:10",
+"idEvento": 51,
+"idDnp3": 26
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 20,
+"idDnp3": 24
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 46,
+"idDnp3": 25
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 48,
+"idDnp3": 30
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 82,
+"idDnp3": 28
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 50,
+"idDnp3": 26
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 21,
+"idDnp3": 24
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 47,
+"idDnp3": 25
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 49,
+"idDnp3": 30
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 83,
+"idDnp3": 28
+},
+{
+"fecha": "2026-08-15T12:21:51",
+"idEvento": 51,
+"idDnp3": 26
+},
+{
+"fecha": "2026-08-16T17:48:29",
+"idEvento": 574,
+"idDnp3": 6
+},
+{
+"fecha": "2026-08-16T18:00:15",
+"idEvento": 575,
+"idDnp3": 6
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 20,
+"idDnp3": 24
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 46,
+"idDnp3": 25
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 82,
+"idDnp3": 28
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 48,
+"idDnp3": 30
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 50,
+"idDnp3": 26
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 86,
+"idDnp3": 29
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 87,
+"idDnp3": 29
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 21,
+"idDnp3": 24
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 47,
+"idDnp3": 25
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 49,
+"idDnp3": 30
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 83,
+"idDnp3": 28
+},
+{
+"fecha": "2026-09-04T10:03:22",
+"idEvento": 51,
+"idDnp3": 26
+}
+]
+}
