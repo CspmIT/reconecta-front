@@ -64,7 +64,7 @@ function CardBoard({ onCardSelect, info }) {
 				className='w-full min-w-0 overflow-x-auto bg-white dark:bg-zinc-500 mt-0.5 flex justify-center items-start border-2 border-t-0 border-l-0 md:p-4 p-3 rounded-r-2xl border-zinc-200 dark:border-gray-800'
 			>
 				{selectedCardId === 1 && <MetrologyBoard idRecloser={info?.recloser?.id || null} />}
-				{selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} />}
+				{selectedCardId === 2 && <EventBoard idRecloser={info?.recloser?.id || null} recloser={info?.recloser || null} />}
 				{selectedCardId === 3 && <AnalyticsBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 4 && <ManeuverBoard idRecloser={info?.recloser?.id || null} />}
 				{selectedCardId === 5 && <MaintenanceBoard idEquipment={info?.recloser?.id || null} />}
