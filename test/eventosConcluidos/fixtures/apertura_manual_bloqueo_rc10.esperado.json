@@ -1,0 +1,33 @@
+[
+ {
+  "inicio": "2026-08-30T11:10:29.000Z",
+  "codigo": "AP_COMANDO",
+  "etiquetas": [
+   "SIN_AC"
+  ],
+  "severidad": 3,
+  "categoria": "APERTURA",
+  "veredicto": "Apertura por comando SCADA (Reconecta) — equipo en bloqueo",
+  "detalle": [
+   "Sin alimentación AC (a batería)"
+  ],
+  "crudos": 9
+ },
+ {
+  "inicio": "2026-08-30T11:14:23.000Z",
+  "codigo": "CI_COMANDO",
+  "etiquetas": [
+   "INRUSH_AL_CERRAR"
+  ],
+  "severidad": 4,
+  "categoria": "CIERRE",
+  "veredicto": "Cierre por comando SCADA (Reconecta)",
+  "detalle": [
+   "Las tres fases cerradas",
+   "Bloqueo repuesto",
+   "Pickup de sobrecorriente de fase OC1+ (etapa 1, directa) al cerrar (corriente de inserción), sin operación",
+   "Alimentación AC restablecida"
+  ],
+  "crudos": 19
+ }
+]
