@@ -33,6 +33,9 @@ const EventBoard = ({ idRecloser, recloser = null }) => {
 					idEvento: item.id,
 					idDnp3: item.idFile,
 					descripcion: item.event,
+					// Columna "Información adicional": el motor saca de aca las corrientes por
+					// fase de los registros tipo Event del Cooper F5. Si no aplica, no matchea.
+					info: item.infoAdd,
 				})
 				item.dateAlert = dateFormated.toLocaleString()
 				const month = dateFormated.getMonth() + 1

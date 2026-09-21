@@ -29,12 +29,12 @@ Normalización del catálogo (`catalogo.js`, generado desde `Events.csv`): cada 
 | A2 | Abrió + protección + **cerró de nuevo dentro del paquete** por AR (recierre rápido, dead-time ≤ 2 s) | Apertura por protección: *elemento* — recierre automático inmediato (intento N) | 2 |
 | A3 | Abrió + protección + `AR initiated` ON (RC10) / sin bloqueo ni non-reclose (Cooper) | Apertura por protección: *elemento* — recierre automático pendiente | 2 |
 | A4 | Abrió + protección, sin AR ni bloqueo | Apertura por protección: *elemento* — sin recierre | 1 |
-| A5 | Abrió + origen de comando (SCADA > HMI > PC > IO > Logic > Local > Manual > Remote) | Apertura por comando *origen* (reinicia la secuencia) | 3 |
+| A5 | Abrió + origen de comando (SCADA > HMI > PC > IO > Logic > Local > Manual > Remote) | Apertura por comando *origen* (+ *— equipo en bloqueo* si Lockout ON; reinicia la secuencia) | 3 |
 | A6 | Abrió + automatismo (LSRM, ABR, ACO, seccionalizador) | Apertura por *automatismo* | 2 |
 | A7 | Abrió + `Undefined` | Apertura reconocida al reinicio del control | 3 |
 | A8 | Abrió sin origen | Apertura — origen no reportado | 2 |
 | C1 | Cerró + `Closed(AR…)` / secuencia activa | Recierre automático (intento N) | 2 |
-| C2 | Cerró + comando | Cierre por comando *origen* (reinicia la secuencia) | 4 |
+| C2 | Cerró + comando | Cierre por comando *origen* (reinicia la secuencia; si hubo pickup en el mismo paquete: *pickup de X al cerrar (corriente de inserción), sin operación*) | 4 |
 | C3 | Cerró + automatismo (ABR, ACO, UV3 AutoClose, Auto-Sync, LS) | Cierre por *automatismo* | 4 |
 | C4 | `Close Req. Blocked` ON | Cierre BLOQUEADO (LLB / UV4 Sag / Hot Line Tag) | 1 |
 | S1 | `Prot initiated` OFF (RC10) / "Over-Current Protection Reset" (F5) | Secuencia de protección finalizada — estado normal (tras N disparos) | 4 |
@@ -57,7 +57,7 @@ Los detalles que se anexan al veredicto cuando corresponden: *Disparo N de la se
 
 **RC10.** Cuando hay agregador y específico en el mismo paquete (`Open(Prot)` + `Open(OC)` + `Open(OC1+)`) gana el específico. Los `Open(SW Phase X)` sirven para distinguir monofásico de trifásico. `Open(Any)` OFF / `Open(SW Phase A)` OFF / `Lockout(Any)` OFF dentro de un cierre son eco de estado, no se mencionan.
 
-**Cooper F5.** Si el paquete trae registros tipo *Event* (256+), ellos mandan y los bits de estado solo complementan (fase por target, tierra, SGF). Trip + Lockout en el mismo paquete → A1 con la causa del *Lockout*. "Manual or SCADA" no distingue origen: queda como "comando (manual o SCADA)". Sin registros Event, se infiere por bits (targets → causa; `Above minimum trip` → pickup).
+**Cooper F5.** Los *Avanzados* de Reconecta son los registros tipo *Event* (256+) con su *Información adicional* (corrientes A/B/C/tierra, hora anterior). Si el paquete los trae, ellos mandan y los bits de estado solo complementan (fase por target, tierra, SGF). Trip + Lockout en el mismo paquete → A1 con la causa del *Lockout*. `Lockout - Manual or SCADA` sin Trip es la **apertura manual** (el F5 no emite Trip para maniobras): A5 con *equipo en bloqueo*. `Advance - Sequence Coordination` junto a un Close = corriente de inserción al cerrar (detalle del cierre); solo = *Disparo NO efectuado: la etapa avanzó por coordinación*. `Clock has been set` → evento informativo (oculto por defecto). `CPU power-up reset` → reinicio del control. Las corrientes de la información adicional se anexan como detalle `I: A · B · C · tierra`. "Manual or SCADA" no distingue origen: queda como "comando (manual o SCADA)". Sin registros Event, se infiere por bits (targets → causa; `Above minimum trip` → pickup).
 
 **Cooper F6.** Solo bits. El origen de comando se toma de las entradas `ci1:RTrip`, `ci3:STrip`, `ci2:SClose`; sin ellas, un cierre durante secuencia activa se interpreta como recierre. Las salidas `co*` no generan evento salvo que vengan solas.
 
@@ -65,6 +65,7 @@ Los detalles que se anexan al veredicto cuando corresponden: *Disparo N de la se
 
 - **Gap ≤ 2 s encadenado** (no ventana fija desde el primero). Consecuencia: un disparo con recierre rápido cae en el mismo paquete → se resuelve por el **último cambio de posición** dentro del paquete (A2).
 - **Las maniobras humanas quedan separadas** (deshabilitar recierre → cerrar → habilitar) como pidió Leonardo; el motor no las colapsa.
+- **Pila de posición por equipo** (cerrado → abierto → cerrado): cada apertura queda pendiente hasta el cierre que la cancela, y el bloqueo se recuerda venga de protección o de apertura manual. Un cierre sin apertura pendiente se marca como *hueco en el log*; un cierre con apertura pendiente solo dice *Bloqueo repuesto*. Requiere procesar el historial en orden (la solapa debería alimentar al motor con todo el rango, no solo la página visible).
 - El **contador de disparos** vive en un contexto por equipo (`ctxPorEquipo`) que se puede persistir entre lotes; se reinicia con bloqueo, cierre por comando o "secuencia finalizada".
 - El ID que se ve en pantalla es el índice DNP3 que el usuario asignó; el motor trabaja con `id_event_influx`. Falta el mapeo índice-usuario → `id_event_influx`, que está en la base de Reconecta.
 - La tabla origen tiene un error en RC10 id 6 (`Lockout (SW Phase A) ON: … not locked out`): el generador lo corrige a OFF.

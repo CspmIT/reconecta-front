@@ -105,7 +105,7 @@
       }
       crudos.push({ ...f, cat: c || null });
       if (!c) continue;
-      if (c.rol === 'EVENTO') { eventos.push(c); continue; }
+      if (c.rol === 'EVENTO') { eventos.push({ ...c, info: f.info || null, ms: f._ms }); continue; }
       if (c.rol === 'POSICION' && c.estado === 1 && /^(Open|Closed)(\(Any\)|\(all phases\)|\(All phases\))?$/.test(c.senal)) {
         ultimaPos = { abierto: c.senal.startsWith('Open'), ms: f._ms };
       }
@@ -150,14 +150,14 @@
       const prot = esp.filter((e) => !COMANDOS.has(e) && !AUTOMATISMOS.has(e) && e !== 'Undefined');
 
       if (cmd) {
-        res.veredicto = 'Apertura por comando ' + COMANDO_ES[cmd];
+        res.veredicto = 'Apertura por comando ' + COMANDO_ES[cmd] + (bloqueo ? ' — equipo en bloqueo' : '');
         res.severidad = 3;
         ctx.secuencia = { activa: false, disparos: 0 };
       } else if (aut) {
-        res.veredicto = 'Apertura por ' + (AUTOM_ES[aut] || aut);
+        res.veredicto = 'Apertura por ' + (AUTOM_ES[aut] || aut) + (bloqueo ? ' — equipo en bloqueo' : '');
         res.severidad = 2;
       } else if (esp.includes('Undefined')) {
-        res.veredicto = 'Apertura reconocida al reinicio del control (origen indeterminado)';
+        res.veredicto = 'Apertura reconocida al reinicio del control (origen indeterminado)' + (bloqueo ? ' — equipo en bloqueo' : '');
         res.severidad = 3;
       } else if (prot.length || on('Open(Prot)')) {
         const lista = prot.length ? prot.map(descElemento).join(' + ') : 'protección (elemento no reportado)';
@@ -170,9 +170,10 @@
         else if (on('AR initiated')) { res.veredicto += ' — recierre automático pendiente'; res.severidad = 2; }
         else { res.veredicto += ' — sin recierre'; res.severidad = 1; }
       } else {
-        res.veredicto = 'Apertura — origen no reportado';
+        res.veredicto = 'Apertura — origen no reportado' + (bloqueo ? ' — equipo en bloqueo' : '');
         res.severidad = 2;
       }
+      if (bloqueo) ctx.bloqueado = true;
       if (fasesAb.length && fasesAb.length < 3 && !on('Open(all phases)')) res.detalle.push('Monofásica: ' + fasesAb.map((f) => FASE_ES[f]).join(', '));
       else if (!recierreRapido && (on('Open(all phases)') || fasesAb.length === 3)) res.detalle.push('Las tres fases abiertas');
       if (recierreRapido && on('Closed(All phases)')) res.detalle.push('Las tres fases cerradas nuevamente');
@@ -209,11 +210,17 @@
         res.severidad = 3;
       }
       if (on('Closed(All phases)')) res.detalle.push('Las tres fases cerradas');
-      if (off('Lockout (Any)') && ctx.bloqueado) { res.detalle.push('Bloqueo repuesto'); ctx.bloqueado = false; }
-      else if (off('Lockout (Any)') && ctx.vistos && !ctx.bloqueado) { res.detalle.push('El equipo venía de BLOQUEO, pero el registro del bloqueo y de la apertura no fue recibido (hueco en el log)'); res.severidad = Math.min(res.severidad, 3); }
-      else if (ctx.vistos && !ctx.abierto) { res.detalle.push('La apertura previa no fue recibida (hueco en el log)'); res.severidad = Math.min(res.severidad, 3); }
-      ctx.abierto = false;
+      if (ctx.bloqueado) { res.detalle.push('Bloqueo repuesto'); }
+      else if (ctx.vistos && !ctx.abierto) {
+        // Pila de posición: cada apertura se cancela con un cierre. Un cierre sin apertura pendiente = registros perdidos.
+        res.detalle.push(off('Lockout (Any)') ? 'El equipo venía de BLOQUEO, pero el registro del bloqueo y de la apertura no fue recibido (hueco en el log)' : 'La apertura previa no fue recibida (hueco en el log)');
+        res.severidad = Math.min(res.severidad, 3);
+      }
+      ctx.bloqueado = false; ctx.abierto = false;
+      const pkCierre = especificos(pickupsOn);
+      if (pkCierre.length && !on('Open(Any)')) res.detalle.push('Pickup de ' + pkCierre.map(descElemento).join(', ') + ' al cerrar (corriente de inserción), sin operación');
       if (on('Close Req. Blocked')) { res.veredicto = 'Cierre BLOQUEADO (LLB / UV4 Sag / Hot Line Tag)'; res.severidad = 1; }
+      ctx.pickupPendiente = null;
       anexarAlimentacion(r, res);
       return res;
     }
@@ -328,6 +335,28 @@
 
   const S_has = (r, senal) => r.S.has(senal);
 
+  /** "45.35 A, 45.76 A, 16.82 A, 0.12 A" → "I: A 45,4 · B 45,8 · C 16,8 · tierra 0,1 A" (Cooper F5, info adicional del SOE). */
+  function corrientesDe(eventos) {
+    for (const e of eventos) {
+      const m = e.info && e.info.match(/([\d.]+)\s*A\s*,\s*([\d.]+)\s*A\s*,\s*([\d.]+)\s*A(?:\s*,\s*([\d.]+)\s*A)?/);
+      if (m) {
+        const f = (x) => (+x).toFixed(1).replace('.', ',');
+        return 'I: A ' + f(m[1]) + ' · B ' + f(m[2]) + ' · C ' + f(m[3]) + (m[4] != null ? ' · tierra ' + f(m[4]) : '') + ' A';
+      }
+    }
+    return null;
+  }
+
+  /** Pila de posición (cerrado → abierto → cerrado): un cierre cancela la apertura pendiente; sin apertura pendiente, hay hueco. */
+  function cerrarPila(ctx, res, lockoutOff) {
+    if (ctx.bloqueado) res.detalle.push('Bloqueo repuesto');
+    else if (ctx.vistos && !ctx.abierto) {
+      res.detalle.push(lockoutOff ? 'El equipo venía de BLOQUEO, pero el registro del bloqueo y de la apertura no fue recibido (hueco en el log)' : 'La apertura previa no fue recibida (hueco en el log)');
+      res.severidad = Math.min(res.severidad, 3);
+    }
+    ctx.bloqueado = false; ctx.abierto = false;
+  }
+
   /** Alimentación AC: como veredicto propio (solo=true) o como detalle anexado. */
   function anexarAlimentacion(r, res, solo) {
     const { on, off } = r;
@@ -335,18 +364,24 @@
     const volvio = off('AC Off (On Battery Supply)') || on('Battery Off (On AC Supply)') || on('AC power present') || off('No AC Power');
     const critica = on('Critical Battery Level');
     if (solo) {
+      const RUN0 = ['Battery Test Running', 'Battery test active', 'Battery Test in Progress']; const runOff = RUN0.some(off);
       if (critica) { res.categoria = 'ALIMENTACION'; res.veredicto = 'Nivel crítico de batería — apagado del control en menos de 5 min'; res.severidad = 1; return true; }
       if (perdio) { res.categoria = 'ALIMENTACION'; res.veredicto = 'Pérdida de alimentación AC — operando a batería'; res.severidad = 2; return true; }
       if (volvio) { res.categoria = 'ALIMENTACION'; res.veredicto = 'Alimentación AC restablecida'; res.severidad = 4; return true; }
-      if (on('Battery Status Abnormal') || on('Check Battery') || on('Battery Alarm')) { res.categoria = 'ALIMENTACION'; res.veredicto = 'Estado anormal de batería — revisar'; res.severidad = 2; return true; }
+      if ((on('Battery Status Abnormal') || on('Check Battery') || on('Battery Alarm')) && !runOff) { res.categoria = 'ALIMENTACION'; res.veredicto = 'Estado anormal de batería — revisar'; res.severidad = 2; return true; }
       if (on('Battery Test Circuit Fault')) { res.categoria = 'ALIMENTACION'; res.veredicto = 'Falla en el circuito de prueba de batería — la prueba no pudo realizarse'; res.severidad = 2; return true; }
-      const testFin = off('Battery Test Running') || S_has(r, 'Battery Test Passed') || on('Battery Test Not Performed');
-      if (on('Battery Test Running') && !testFin) { res.categoria = 'PRUEBA_BATERIA'; res.veredicto = 'Prueba de batería en curso'; res.severidad = 4; res.provisional = true; return true; }
+      // Señal "prueba en curso" según familia: RC10 'Battery Test Running', F5 'Battery test active', F6 'Battery Test in Progress'
+      const RUN = ['Battery Test Running', 'Battery test active', 'Battery Test in Progress'];
+      const runOn = RUN.some(on);
+      const esRC10 = S_has(r, 'Battery Test Running') || S_has(r, 'Battery Test Passed') || S_has(r, 'Battery Test Not Performed');
+      const testFin = runOff || S_has(r, 'Battery Test Passed') || on('Battery Test Not Performed');
+      if (runOn && !testFin) { res.categoria = 'PRUEBA_BATERIA'; res.veredicto = 'Prueba de batería en curso (el control descarga la batería unos segundos para medirla)'; res.severidad = 4; res.provisional = true; return true; }
       if (testFin) {
         res.categoria = 'PRUEBA_BATERIA'; res.cierraPruebaBateria = true;
         if (on('Battery Test Passed')) { res.veredicto = 'Prueba de batería finalizada: aprobada'; res.severidad = 4; }
         else if (off('Battery Test Passed') || on('Check Battery')) { res.veredicto = 'Prueba de batería finalizada: NO aprobada — revisar batería'; res.severidad = 2; }
         else if (on('Battery Test Not Performed')) { res.veredicto = 'Prueba de batería no efectuada'; res.severidad = 3; }
+        else if (!esRC10) { res.veredicto = 'Prueba de batería finalizada: batería sin observaciones (no se activó "Check Battery")'; res.severidad = 4; }
         else { res.veredicto = 'Prueba de batería finalizada (resultado no reportado)'; res.severidad = 4; }
         return true;
       }
@@ -390,12 +425,24 @@
 
     if (eventos.length) {
       const trips = eventos.filter((e) => e.accion === 'Trip' || e.accion === 'Trip&Lockout');
-      const locks = eventos.filter((e) => /Lockout/.test(e.accion || ''));
+      const locksCmd = eventos.filter((e) => e.accion === 'Lockout' && /Manual or SCADA/.test(e.causa));
+      const locks = eventos.filter((e) => /Lockout/.test(e.accion || '') && !locksCmd.includes(e));
       const closes = eventos.filter((e) => e.accion === 'Close');
       const fails = eventos.filter((e) => /Failure/.test(e.accion || ''));
-      const settings = eventos.filter((e) => e.accion === 'Setting' || e.accion === 'Other');
+      const advances = eventos.filter((e) => e.accion === 'Advance');
+      const resets = eventos.filter((e) => /Protection Reset/.test(e.causa || ''));
+      const reloj = eventos.filter((e) => /Clock has been set/.test(e.causa || ''));
+      const powerUp = eventos.filter((e) => /power-up reset/.test(e.causa || ''));
+      const settings = eventos.filter((e) => (e.accion === 'Setting' || e.accion === 'Other') && !resets.includes(e) && !reloj.includes(e) && !powerUp.includes(e));
+      const I = corrientesDe(eventos);
+      const conI = () => { if (I) res.detalle.push(I); };
+      // Apertura manual: el F5 la registra como "Lockout - Manual or SCADA", no como Trip
+      if (locksCmd.length && !trips.length) {
+        res.categoria = 'APERTURA'; res.veredicto = 'Apertura por comando (manual o SCADA) — equipo en bloqueo' + fases(locksCmd[0]);
+        res.severidad = 3; ctx.abierto = true; ctx.bloqueado = true; ctx.secuencia = { activa: false, disparos: 0 }; conI(); return res;
+      }
       if (trips.length) {
-        res.categoria = 'APERTURA';
+        res.categoria = 'APERTURA'; ctx.abierto = true;
         const t = trips[0];
         const esCmd = /Manual or SCADA/.test(t.causa);
         res.veredicto = esCmd ? 'Apertura por comando (manual o SCADA)' : 'Apertura por protección: ' + causaES(t.causa) + fases(t);
@@ -412,20 +459,37 @@
         if (tierra) res.detalle.push('Target de tierra');
         if (sgf) res.detalle.push('Target de tierra sensible');
         if (ctx.pickupPendiente) { res.detalle.push('Precedida por corriente sobre mínimo de disparo'); ctx.pickupPendiente = null; }
-        return res;
+        conI(); return res;
       }
-      if (locks.length) { res.categoria = 'BLOQUEO'; res.veredicto = 'Bloqueo (lockout): ' + causaES(locks[0].causa) + fases(locks[0]); res.severidad = 1; ctx.secuencia.activa = false; return res; }
+      if (locks.length) { res.categoria = 'BLOQUEO'; res.veredicto = 'Bloqueo (lockout): ' + causaES(locks[0].causa) + fases(locks[0]); res.severidad = 1; ctx.secuencia.activa = false; ctx.bloqueado = true; conI(); return res; }
       if (fails.length) { res.categoria = 'FALLA_EQUIPO'; res.veredicto = 'Falla de operación: ' + causaES(fails[0].causa) + fases(fails[0]); res.severidad = 1; return res; }
       if (closes.length) {
         res.categoria = 'CIERRE'; const c = closes[0];
         if (/Manual or SCADA/.test(c.causa)) { res.veredicto = 'Cierre por comando (manual o SCADA)' + fases(c); res.severidad = 4; ctx.secuencia = { activa: false, disparos: 0 }; }
         else if (/Auto-restore|LS/.test(c.causa)) { res.veredicto = 'Cierre por ' + causaES(c.causa); res.severidad = 4; }
         else { res.veredicto = 'Cierre: ' + causaES(c.causa) + fases(c); res.severidad = 3; }
-        if (off('Control (or A Phase) lockout') && ctx.bloqueado) { res.detalle.push('Bloqueo repuesto'); ctx.bloqueado = false; }
-        return res;
+        cerrarPila(ctx, res, off('Control (or A Phase) lockout'));
+        if (advances.length) { res.detalle.push('Al cerrar, la protección de ' + (/Gnd/.test(advances[0].causa) ? 'tierra' : 'sobrecorriente') + ' vio corriente de inserción y avanzó una etapa por coordinación de secuencia, sin disparar'); ctx.secuencia = { activa: true, disparos: 0, coordinacion: true }; }
+        conI(); return res;
       }
-      if (eventos.some((e) => e.accion === 'Advance')) { res.categoria = 'SECUENCIA'; res.veredicto = 'Avance de secuencia por coordinación (sin apertura)'; res.severidad = 3; return res; }
-      if (eventos.some((e) => /Protection Reset/.test(e.causa))) { res.categoria = 'SECUENCIA'; res.veredicto = 'Secuencia de protección finalizada — estado normal de operación'; if (ctx.secuencia.disparos) res.detalle.push('Tras ' + ctx.secuencia.disparos + ' disparo(s)'); ctx.secuencia = { activa: false, disparos: 0 }; return res; }
+      if (advances.length) {
+        res.categoria = 'SECUENCIA';
+        res.veredicto = 'Disparo por ' + (/Gnd/.test(advances[0].causa) ? 'falla a tierra' : 'sobrecorriente') + ' NO efectuado: la etapa avanzó por coordinación de secuencia' + fases(advances[0]);
+        res.severidad = 3; ctx.secuencia = { activa: true, disparos: ctx.secuencia.disparos, coordinacion: true }; conI(); return res;
+      }
+      if (resets.length) {
+        res.categoria = 'SECUENCIA';
+        res.veredicto = 'Secuencia de protección finalizada — estado normal de operación';
+        if (ctx.secuencia.disparos) res.detalle.push('Tras ' + ctx.secuencia.disparos + ' disparo(s)');
+        else if (ctx.secuencia.coordinacion) res.detalle.push('La etapa avanzada por coordinación volvió a su valor inicial sin que hubiera disparo');
+        ctx.secuencia = { activa: false, disparos: 0 }; conI(); return res;
+      }
+      if (reloj.length) {
+        res.categoria = 'RELOJ'; res.informativo = true; res.severidad = 4;
+        const m = reloj[0].info && reloj[0].info.match(/\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}/);
+        res.veredicto = 'Hora interna del control actualizada' + (m ? ' (anterior: ' + m[0] + ')' : ''); return res;
+      }
+      if (powerUp.length) { res.categoria = 'FALLA_EQUIPO'; res.veredicto = 'Reinicio del control (power-up reset)'; res.severidad = 2; return res; }
       if (eventos.some((e) => e.accion === 'Target')) { res.categoria = 'ALARMA'; res.veredicto = 'Target de falla (modo seccionador, sin apertura): ' + causaES(eventos[0].causa); res.severidad = 2; return res; }
       if (settings.length) { res.categoria = 'MODO'; res.veredicto = settings.map((e) => e.es.split(/[.:]/)[0]).join('; '); res.severidad = 4; return res; }
       res.categoria = 'OTRO'; res.veredicto = eventos.map((e) => e.es).join('; '); return res;
@@ -435,13 +499,13 @@
     const abrio = on('Recloser (or A Phase) open') || on('B Phase Open') || on('C Phase Open');
     const cerro = on('Recloser (or A Phase) closed') || on('B Phase Closed') || on('C Phase Closed');
     if (abrio) {
-      res.categoria = 'APERTURA';
+      res.categoria = 'APERTURA'; ctx.abierto = true;
       const causa = tierra ? 'falla a tierra' : sgf ? 'falla a tierra sensible' : targets.length ? 'falla de fase' : null;
       res.veredicto = causa ? 'Apertura por protección: ' + causa + (targets.length ? ' (' + targets.map((f) => FASE_ES[f]).join(', ') + ')' : '') : 'Apertura — origen no reportado';
-      if (on('Control (or A Phase) lockout')) { res.veredicto += ' — BLOQUEO (lockout)'; res.severidad = 1; } else res.severidad = 2;
+      if (on('Control (or A Phase) lockout')) { res.veredicto += ' — BLOQUEO (lockout)'; res.severidad = 1; ctx.bloqueado = true; } else res.severidad = 2;
       return res;
     }
-    if (cerro) { res.categoria = 'CIERRE'; if (on('Close')) { res.veredicto = 'Cierre por comando'; ctx.secuencia = { activa: false, disparos: 0 }; } else if (ctx.secuencia.activa) { res.veredicto = 'Recierre automático (intento ' + ctx.secuencia.disparos + ')'; res.severidad = 2; } else res.veredicto = 'Cierre — origen no reportado'; if (off('Control (or A Phase) lockout')) res.detalle.push('Bloqueo repuesto'); return res; }
+    if (cerro) { res.categoria = 'CIERRE'; cerrarPila(ctx, res, off('Control (or A Phase) lockout')); if (on('Close')) { res.veredicto = 'Cierre por comando'; ctx.secuencia = { activa: false, disparos: 0 }; } else if (ctx.secuencia.activa) { res.veredicto = 'Recierre automático (intento ' + ctx.secuencia.disparos + ')'; res.severidad = 2; } else res.veredicto = 'Cierre — origen no reportado'; if (off('Control (or A Phase) lockout')) res.detalle.push('Bloqueo repuesto'); return res; }
     if (on('Control (or A Phase) lockout')) { res.categoria = 'BLOQUEO'; res.veredicto = 'Bloqueo (lockout)'; res.severidad = 1; return res; }
     if (off('Control (or A Phase) lockout')) { res.categoria = 'BLOQUEO'; res.veredicto = 'Bloqueo repuesto'; return res; }
     if (on('Above minimum trip')) { res.categoria = 'PICKUP'; if (off('Above minimum trip') && r.S.get('Above minimum trip').oscilo) { res.veredicto = 'Evaluación de protección (corriente sobre mínimo de disparo) desestimada, sin provocar apertura'; res.severidad = 3; res.cierraPickup = true; } else { res.veredicto = 'Evaluación de protección en curso (corriente sobre mínimo de disparo)'; res.severidad = 2; res.provisional = true; ctx.pickupPendiente = { elems: [] }; } return res; }
@@ -466,7 +530,7 @@
     const cerro = on('Recloser Closed');
     const recierreRapido = abrio && cerro && r.ultimaPos && !r.ultimaPos.abierto && !on('ci2:SClose (TB1:5-6)');
     if (abrio) {
-      res.categoria = 'APERTURA';
+      res.categoria = 'APERTURA'; ctx.abierto = true;
       if (trips.length) {
         const txt = trips.map((t) => (t.elemento === 'SEF' ? 'falla a tierra sensible' : t.elemento === 'EF' ? 'falla a tierra' : 'falla de fase' + (t.fase ? ' (' + FASE_ES[t.fase] + ')' : ''))).join(' + ');
         res.veredicto = 'Apertura por protección: ' + txt;
@@ -478,6 +542,7 @@
         else { res.veredicto += ' — recierre pendiente'; res.severidad = 2; }
       } else if (on('ci3:STrip (TB1:7-8)') || on('ci1:RTrip (TB1:3-4)')) { res.veredicto = 'Apertura por comando (entrada supervisoria/remota)'; res.severidad = 3; ctx.secuencia = { activa: false, disparos: 0 }; }
       else { res.veredicto = 'Apertura — origen no reportado' + (on('Control is Locked Out') ? ' — BLOQUEO (lockout)' : ''); res.severidad = on('Control is Locked Out') ? 1 : 2; }
+      if (on('Control is Locked Out')) ctx.bloqueado = true;
       if (ctx.pickupPendiente) { res.detalle.push('Precedida por corriente sobre mínimo de disparo'); ctx.pickupPendiente = null; }
       anexarAlimentacion(r, res); return res;
     }
@@ -486,7 +551,7 @@
       if (on('ci2:SClose (TB1:5-6)')) { res.veredicto = 'Cierre por comando (entrada supervisoria)'; ctx.secuencia = { activa: false, disparos: 0 }; }
       else if (ctx.secuencia.activa) { res.veredicto = 'Recierre automático (intento ' + ctx.secuencia.disparos + ')'; res.severidad = 2; }
       else res.veredicto = 'Cierre';
-      if (off('Control is Locked Out') && ctx.bloqueado) { res.detalle.push('Bloqueo repuesto'); ctx.bloqueado = false; }
+      cerrarPila(ctx, res, off('Control is Locked Out'));
       anexarAlimentacion(r, res); return res;
     }
     if (on('Control is Locked Out')) { res.categoria = 'BLOQUEO'; res.veredicto = 'Bloqueo (lockout)'; res.severidad = 1; ctx.secuencia.activa = false; return res; }
@@ -513,6 +578,85 @@
     return null;
   }
 
+
+  // ------------------------------------------------------------ códigos estables
+  // Cada evento concluido lleva un `codigo` de una lista cerrada (ver catalogo_concluidos.json) sobre el que
+  // se configuran prioridad, destello y notificaciones, y `etiquetas` con condiciones adicionales.
+  const CODIGOS = [
+    ['APERTURA', /BLOQUEO/, 'AP_PROT_BLOQUEO'],
+    ['APERTURA', /^Apertura por protección.*recierre automático/, 'AP_PROT_RECIERRE'],
+    ['APERTURA', /^Apertura por protección.*sin recierre/, 'AP_PROT_SIN_RECIERRE'],
+    ['APERTURA', /^Apertura por protección/, 'AP_PROT_RECIERRE'],
+    ['APERTURA', /^Apertura por comando/, 'AP_COMANDO'],
+    ['APERTURA', /reinicio del control/, 'AP_REINICIO'],
+    ['APERTURA', /origen no reportado/, 'AP_ORIGEN_DESCONOCIDO'],
+    ['APERTURA', /^Apertura por /, 'AP_AUTOMATISMO'],
+    ['CIERRE', /^Cierre BLOQUEADO/, 'CI_BLOQUEADO'],
+    ['CIERRE', /^Recierre automático/, 'CI_RECIERRE_AUTO'],
+    ['CIERRE', /^Cierre por comando/, 'CI_COMANDO'],
+    ['CIERRE', /reinicio del control/, 'CI_REINICIO'],
+    ['CIERRE', /origen no reportado|^Cierre$/, 'CI_ORIGEN_DESCONOCIDO'],
+    ['CIERRE', /^Cierre por |^Cierre: /, 'CI_AUTOMATISMO'],
+    ['SECUENCIA', /finalizada/, 'SEQ_FIN'],
+    ['SECUENCIA', /coordinación/, 'SEQ_COORDINACION'],
+    ['SECUENCIA', /iniciada/, 'SEQ_INICIO'],
+    ['PICKUP', /desestimada/, 'PK_DESESTIMADO'],
+    ['PICKUP', /en curso/, 'PK_EN_CURSO'],
+    ['BLOQUEO', /mecánico repuesto/, 'BL_MECANICO_REPUESTO'],
+    ['BLOQUEO', /mecánico/, 'BL_MECANICO'],
+    ['BLOQUEO', /repuesto/, 'BL_REPUESTO'],
+    ['BLOQUEO', /./, 'BL_BLOQUEO'],
+    ['ALARMA', /repuesta/, 'AL_PROT_REPUESTA'],
+    ['ALARMA', /Target/, 'AL_TARGET'],
+    ['ALARMA', /./, 'AL_PROT'],
+    ['ALIMENTACION', /crítico/, 'BAT_CRITICA'],
+    ['ALIMENTACION', /Pérdida de alimentación/, 'AC_PERDIDA'],
+    ['ALIMENTACION', /restablecida/, 'AC_RESTABLECIDA'],
+    ['ALIMENTACION', /circuito de prueba/, 'BAT_CIRCUITO_FALLA'],
+    ['ALIMENTACION', /./, 'BAT_ANORMAL'],
+    ['PRUEBA_BATERIA', /NO aprobada/, 'BT_NO_APROBADA'],
+    ['PRUEBA_BATERIA', /aprobada/, 'BT_APROBADA'],
+    ['PRUEBA_BATERIA', /no efectuada/, 'BT_NO_EFECTUADA'],
+    ['PRUEBA_BATERIA', /en curso/, 'BT_EN_CURSO'],
+    ['PRUEBA_BATERIA', /sin observaciones/, 'BT_APROBADA'],
+    ['PRUEBA_BATERIA', /./, 'BT_SIN_RESULTADO'],
+    ['FALLA_EQUIPO', /Reinicio del control/, 'EQ_REINICIO_CONTROL'],
+    ['FALLA_EQUIPO', /repuesta/, 'EQ_REPUESTA'],
+    ['FALLA_EQUIPO', /Falla de operación/, 'EQ_FALLA_OPERACION'],
+    ['FALLA_EQUIPO', /./, 'EQ_FALLA'],
+    ['MODO', /Recierre automático DESHABILITADO|Recierre DESHABILITADO|Non.?reclos.*(activ|set)/i, 'MD_RECIERRE_OFF'],
+    ['MODO', /Recierre automático HABILITADO|Recierre HABILITADO/i, 'MD_RECIERRE_ON'],
+    ['MODO', /a LOCAL|Supervisory off.*set|Supervisorio.*(desactiv|OFF)/i, 'MD_LOCAL'],
+    ['MODO', /a REMOTO|Supervisorio.*(activ|ON)/i, 'MD_REMOTO'],
+    ['MODO', /Protección DESHABILITADA|\) DESHABILITADA|bloqueada|blocked.*set/i, 'MD_PROT_OFF'],
+    ['MODO', /\) HABILITADA|Protección habilitada/i, 'MD_PROT_ON'],
+    ['MODO', /Hot Line Tag|línea viva/i, 'MD_HOT_LINE_TAG'],
+    ['MODO', /Grupo de protección|Perfil|profile/i, 'MD_GRUPO'],
+    ['MODO', /./, 'MD_OTRO'],
+    ['ADVERTENCIA', /limpiadas/, 'WR_OFF'],
+    ['ADVERTENCIA', /./, 'WR_ON'],
+    ['PRUEBA', /Fin/, 'TS_OFF'],
+    ['PRUEBA', /./, 'TS_ON'],
+    ['RELOJ', /./, 'RJ_HORA'],
+    ['IO', /./, 'IO_CAMBIO'],
+    ['COMANDO', /./, 'CMD_RECIBIDO'],
+  ];
+  function codigoDe(res) {
+    for (const [cat, re, cod] of CODIGOS) if (res.categoria === cat && re.test(res.veredicto)) return cod;
+    return 'OTRO';
+  }
+  function etiquetasDe(res) {
+    const e = [];
+    if (res.detalle.some((d) => /hueco en el log/.test(d))) e.push('HUECO_LOG');
+    if (res.detalle.some((d) => /al cerrar \(corriente de inserción\)|corriente de inserción/.test(d))) e.push('INRUSH_AL_CERRAR');
+    if (res.detalle.some((d) => /duplicado/.test(d))) e.push('DUPLICADOS');
+    if (res.detalle.some((d) => /Monofásica/.test(d))) e.push('MONOFASICA');
+    if (res.detalle.some((d) => /Sin alimentación AC/.test(d))) e.push('SIN_AC');
+    if (res.detalle.some((d) => /Máximo número de disparos/.test(d))) e.push('MNT_EXCEDIDO');
+    if (res.provisional) e.push('PROVISIONAL');
+    return e;
+  }
+
   // ------------------------------------------------------------ orquestación
   function concluir(grupo, ctx) {
     const version = grupo[0].version;
@@ -524,13 +668,18 @@
       const nombres = Array.from(r.S.entries()).map(([s, v]) => s + (v.estado === 1 ? ' ON' : ' OFF'));
       res = { categoria: 'OTRO', veredicto: nombres.length ? 'Cambio de estado: ' + nombres.join(', ') : 'Registros sin catálogo', detalle: [], severidad: 4 };
     }
-    if (r.duplicados) res.detalle = [...(res.detalle || []), r.duplicados + ' registro' + (r.duplicados === 1 ? '' : 's') + ' duplicado' + (r.duplicados === 1 ? '' : 's') + ' descartado' + (r.duplicados === 1 ? '' : 's')];
-    return {
+    res.detalle = res.detalle || [];
+    if (r.duplicados) res.detalle = [...res.detalle, r.duplicados + ' registro' + (r.duplicados === 1 ? '' : 's') + ' duplicado' + (r.duplicados === 1 ? '' : 's') + ' descartado' + (r.duplicados === 1 ? '' : 's')];
+    const ev = {
       equipo: grupo[0].equipo || null, version,
       inicio: new Date(grupo[0]._ms), fin: new Date(grupo[grupo.length - 1]._ms),
       ...res, crudos: r.crudos,
     };
+    ev.codigo = codigoDe(ev); ev.etiquetas = etiquetasDe(ev);
+    return ev;
   }
+
+  const refrescar = (ev) => { ev.codigo = codigoDe(ev); ev.etiquetas = etiquetasDe(ev); return ev; };
 
   /** Une "evaluación en curso" + "desestimada" consecutivas en un solo evento concluido. */
   function postProceso(lista) {
@@ -539,11 +688,11 @@
       const prev = out[out.length - 1];
       if (prev && prev.provisional && prev.categoria === 'PRUEBA_BATERIA' && ev.cierraPruebaBateria) {
         const dur = Math.round((ev.fin - prev.inicio) / 1000);
-        out[out.length - 1] = { ...ev, inicio: prev.inicio, provisional: false, detalle: ['Duración ' + dur + ' s', ...(prev.crudos.concat(ev.crudos).some((c) => c.duplicado) ? [prev.crudos.concat(ev.crudos).filter((c) => c.duplicado).length + ' registros duplicados descartados'] : [])], crudos: prev.crudos.concat(ev.crudos) };
+        out[out.length - 1] = refrescar({ ...ev, inicio: prev.inicio, provisional: false, detalle: ['Duración ' + dur + ' s', ...(prev.crudos.concat(ev.crudos).some((c) => c.duplicado) ? [prev.crudos.concat(ev.crudos).filter((c) => c.duplicado).length + ' registros duplicados descartados'] : [])], crudos: prev.crudos.concat(ev.crudos) });
         continue;
       }
       if (prev && prev.provisional && ev.categoria === 'PICKUP' && ev.cierraPickup) {
-        out[out.length - 1] = { ...ev, inicio: prev.inicio, provisional: false, crudos: prev.crudos.concat(ev.crudos) };
+        out[out.length - 1] = refrescar({ ...ev, inicio: prev.inicio, provisional: false, crudos: prev.crudos.concat(ev.crudos) });
         continue;
       }
       out.push(ev);
@@ -571,4 +720,5 @@
     return salida.sort((a, b) => a.inicio - b.inicio);
   }
 
+  export const LISTA_CODIGOS = CODIGOS.map((c) => c[2]).filter((v, i, a) => a.indexOf(v) === i).concat(['OTRO']);
   export { procesar, agrupar, resolver, descElemento, nuevoCtx };

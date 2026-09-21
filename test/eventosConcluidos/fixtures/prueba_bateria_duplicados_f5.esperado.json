@@ -1,0 +1,17 @@
+[
+ {
+  "inicio": "2026-09-17T18:40:30.000Z",
+  "codigo": "BT_APROBADA",
+  "etiquetas": [
+   "DUPLICADOS"
+  ],
+  "severidad": 4,
+  "categoria": "PRUEBA_BATERIA",
+  "veredicto": "Prueba de batería finalizada: batería sin observaciones (no se activó \"Check Battery\")",
+  "detalle": [
+   "Duración 5 s",
+   "8 registros duplicados descartados"
+  ],
+  "crudos": 10
+ }
+]
