@@ -1,0 +1,73 @@
+[
+ {
+  "inicio": "2026-09-16T04:00:04.000Z",
+  "codigo": "RJ_HORA",
+  "etiquetas": [],
+  "severidad": 4,
+  "categoria": "RELOJ",
+  "veredicto": "Hora interna del control actualizada (anterior: 16/09/2026 04:00)",
+  "detalle": [],
+  "crudos": 1
+ },
+ {
+  "inicio": "2026-09-16T09:02:28.000Z",
+  "codigo": "RJ_HORA",
+  "etiquetas": [],
+  "severidad": 4,
+  "categoria": "RELOJ",
+  "veredicto": "Hora interna del control actualizada (anterior: 16/09/2026 09:02)",
+  "detalle": [],
+  "crudos": 1
+ },
+ {
+  "inicio": "2026-09-16T09:28:49.000Z",
+  "codigo": "AP_COMANDO",
+  "etiquetas": [],
+  "severidad": 3,
+  "categoria": "APERTURA",
+  "veredicto": "Apertura por comando (manual o SCADA) — equipo en bloqueo",
+  "detalle": [
+   "I: A 1,0 · B 0,3 · C 1,0 · tierra 0,1 A"
+  ],
+  "crudos": 3
+ },
+ {
+  "inicio": "2026-09-16T10:17:15.000Z",
+  "codigo": "RJ_HORA",
+  "etiquetas": [],
+  "severidad": 4,
+  "categoria": "RELOJ",
+  "veredicto": "Hora interna del control actualizada (anterior: 16/09/2026 09:41)",
+  "detalle": [],
+  "crudos": 1
+ },
+ {
+  "inicio": "2026-09-16T10:19:14.000Z",
+  "codigo": "CI_COMANDO",
+  "etiquetas": [
+   "INRUSH_AL_CERRAR"
+  ],
+  "severidad": 4,
+  "categoria": "CIERRE",
+  "veredicto": "Cierre por comando (manual o SCADA)",
+  "detalle": [
+   "Bloqueo repuesto",
+   "Al cerrar, la protección de sobrecorriente vio corriente de inserción y avanzó una etapa por coordinación de secuencia, sin disparar",
+   "I: A 45,4 · B 45,8 · C 16,8 · tierra 0,1 A"
+  ],
+  "crudos": 4
+ },
+ {
+  "inicio": "2026-09-16T10:19:44.000Z",
+  "codigo": "SEQ_FIN",
+  "etiquetas": [],
+  "severidad": 4,
+  "categoria": "SECUENCIA",
+  "veredicto": "Secuencia de protección finalizada — estado normal de operación",
+  "detalle": [
+   "La etapa avanzada por coordinación volvió a su valor inicial sin que hubiera disparo",
+   "I: A 1,2 · B 0,9 · C 1,5 · tierra 0,1 A"
+  ],
+  "crudos": 1
+ }
+]
