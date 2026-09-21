@@ -15,12 +15,14 @@
  *               Sin config se usan los valores sugeridos del catálogo.
  *
  * Todo corre en el cliente. Orden: más reciente arriba; los eventos de las últimas 24 h van en un bloque separado.
+ * Visual deliberadamente austera (pedido de operación): ícono, fecha, veredicto, detalle y cantidad de registros.
+ * Código, etiquetas, duplicados y la explicación del método viven en la capacitación y en el botón "Copiar para reportar".
  */
 import { useMemo, useState } from 'react'
 import {
 	FaRegClock, FaLock, FaLockOpen, FaCarBattery, FaBatteryHalf, FaExclamationTriangle, FaBell, FaBellSlash,
-	FaPlug, FaTools, FaSlidersH, FaCheckCircle, FaQuestionCircle, FaTerminal, FaExchangeAlt, FaFlask, FaUnlink,
-	FaBolt, FaMapMarkerAlt, FaPaperPlane,
+	FaTools, FaSlidersH, FaCheckCircle, FaQuestionCircle, FaTerminal, FaExchangeAlt, FaFlask,
+	FaBolt,
 } from 'react-icons/fa'
 import { procesar } from '../../../utils/eventosConcluidos/motor'
 import { resolverAccion } from '../../../utils/eventosConcluidos/acciones'
@@ -37,15 +39,41 @@ const fFecha = (d) => `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullY
 const fHora = (d) => `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
 const H24 = 24 * 60 * 60 * 1000
 
-/** LED con la convención de campo: verde = abierto, rojo = cerrado. */
-function Led({ abierto }) {
+/** Símbolo de interruptor con la convención de campo: cuadro verde con contacto abierto = abierto, cuadro rojo con contacto cerrado = cerrado. */
+function Interruptor({ abierto }) {
+	const color = abierto ? '#22A447' : '#E4232B'
 	return (
-		<span
-			className={`inline-block h-3.5 w-3.5 rounded-full ring-2 ring-offset-1 ring-offset-white dark:ring-offset-zinc-700 ${
-				abierto ? 'bg-emerald-500 ring-emerald-200' : 'bg-red-600 ring-red-200'
-			}`}
-			title={abierto ? 'Reconectador abierto' : 'Reconectador cerrado'}
-		/>
+		<svg viewBox='0 0 32 40' className='h-7 w-6' aria-hidden='true' title={abierto ? 'Reconectador abierto' : 'Reconectador cerrado'}>
+			<line x1='16' y1='0' x2='16' y2='40' stroke='currentColor' strokeWidth='2' className='text-gray-800 dark:text-zinc-200' />
+			<rect x='4' y='10' width='24' height='20' fill={color} stroke='currentColor' strokeWidth='1.5' className='text-gray-900 dark:text-zinc-100' />
+			{abierto ? (
+				<line x1='16' y1='26' x2='25' y2='16' stroke='#111' strokeWidth='2.5' strokeLinecap='round' />
+			) : (
+				<line x1='16' y1='14' x2='16' y2='26' stroke='#111' strokeWidth='2.5' />
+			)}
+			<circle cx='16' cy='14' r='2.3' fill='#111' />
+			<circle cx='16' cy='26' r='2.3' fill='#111' />
+		</svg>
+	)
+}
+
+/** Símbolos IEC de corriente: DC (línea y trazos) cuando el control queda a batería, AC (senoide) cuando vuelve la red. */
+function Corriente({ dc }) {
+	const color = dc ? '#DE6B00' : 'currentColor'
+	return (
+		<svg viewBox='0 0 32 32' className='h-6 w-6 text-gray-700 dark:text-zinc-200' aria-hidden='true' title={dc ? 'Alimentación por batería (DC)' : 'Alimentación de red (AC)'}>
+			<circle cx='16' cy='16' r='13.5' fill='none' stroke={color} strokeWidth='2.5' />
+			{dc ? (
+				<>
+					<line x1='9' y1='13' x2='23' y2='13' stroke={color} strokeWidth='2.5' strokeLinecap='round' />
+					<line x1='9' y1='19' x2='12.5' y2='19' stroke={color} strokeWidth='2.5' strokeLinecap='round' />
+					<line x1='14.5' y1='19' x2='17.5' y2='19' stroke={color} strokeWidth='2.5' strokeLinecap='round' />
+					<line x1='19.5' y1='19' x2='23' y2='19' stroke={color} strokeWidth='2.5' strokeLinecap='round' />
+				</>
+			) : (
+				<path d='M8 17 C 11 11, 14 11, 16 16 S 21 21, 24 15' fill='none' stroke={color} strokeWidth='2.5' strokeLinecap='round' />
+			)}
+		</svg>
 	)
 }
 
@@ -53,8 +81,8 @@ function Led({ abierto }) {
 function IconoEvento({ ev }) {
 	const c = ev.codigo || ''
 	const cls = 'h-5 w-5 text-gray-500 dark:text-zinc-300'
-	if (c.startsWith('AP_')) return <Led abierto />
-	if (c.startsWith('CI_')) return <Led abierto={false} />
+	if (c.startsWith('AP_')) return <Interruptor abierto />
+	if (c.startsWith('CI_')) return <Interruptor abierto={false} />
 	if (c === 'PK_DESESTIMADO' || c === 'PK_EN_CURSO') return <FaExclamationTriangle className={`${cls} text-amber-500`} title='Pickup de protección' />
 	if (c === 'SEQ_FIN') return <FaCheckCircle className={`${cls} text-emerald-600`} title='Secuencia finalizada' />
 	if (c.startsWith('SEQ_')) return <FaBolt className={cls} title='Secuencia de protección' />
@@ -62,7 +90,8 @@ function IconoEvento({ ev }) {
 	if (c.startsWith('BL_')) return <FaLock className={`${cls} text-[#B3261E]`} title='Bloqueo' />
 	if (c === 'AL_PROT_REPUESTA') return <FaBellSlash className={cls} title='Alarma repuesta' />
 	if (c.startsWith('AL_')) return <FaBell className={`${cls} text-amber-500`} title='Alarma de protección' />
-	if (c.startsWith('AC_')) return <FaPlug className={`${cls} ${c === 'AC_PERDIDA' ? 'text-[#DE6B00]' : ''}`} title='Alimentación AC' />
+	if (c === 'AC_PERDIDA') return <Corriente dc />
+	if (c === 'AC_RESTABLECIDA') return <Corriente dc={false} />
 	if (c.startsWith('BAT_')) return <FaCarBattery className={`${cls} text-[#DE6B00]`} title='Batería' />
 	if (c.startsWith('BT_')) return <FaBatteryHalf className={cls} title='Prueba de batería' />
 	if (c.startsWith('EQ_')) return <FaTools className={`${cls} ${c === 'EQ_REPUESTA' ? '' : 'text-[#B3261E]'}`} title='Estado del equipo' />
@@ -77,12 +106,10 @@ function IconoEvento({ ev }) {
 
 export default function EventosExperimental({ registros = [], version, equipo = '', gapInicial = 2, config }) {
 	const [gap, setGap] = useState(gapInicial)
-	const [orden, setOrden] = useState('desc')
 	const [abiertos, setAbiertos] = useState(() => new Set())
 	const [copiado, setCopiado] = useState(null)
-	const [verInformativos, setVerInformativos] = useState(false)
 
-	// Procesa en orden cronológico (el motor lo necesita para la pila de posición) y después ordena para mostrar.
+	// Procesa en orden cronológico (el motor lo necesita para la pila de posición) y luego invierte para mostrar.
 	const eventos = useMemo(() => {
 		const filas = registros
 			.filter((r) => r && r.idEvento != null && r.fecha)
@@ -95,19 +122,19 @@ export default function EventosExperimental({ registros = [], version, equipo = 
 				descripcion: r.descripcion,
 				info: r.info && r.info !== '-' ? r.info : undefined,
 			}))
-		// `_i` = indice original del motor: identifica la fila de forma estable, asi ni
-		// cambiar el orden ni mostrar los informativos mueve cual evento esta desplegado.
 		return procesar(filas, { gapSegundos: gap })
-			.map((ev, i) => ({ ...ev, _i: i, accion: resolverAccion(ev, config) }))
-			.sort((a, b) => (orden === 'asc' ? a.inicio - b.inicio : b.inicio - a.inicio))
-	}, [registros, version, equipo, gap, config, orden])
+			.map((ev) => ({ ...ev, accion: resolverAccion(ev, config) }))
+			.reverse()
+	}, [registros, version, equipo, gap, config])
 
-	const visibles = useMemo(() => (verInformativos ? eventos : eventos.filter((e) => !e.informativo)), [eventos, verInformativos])
-	const nInformativos = eventos.length - visibles.length
+	// Los informativos (actualización de hora, etc.) no se muestran; siguen disponibles en Registros/Avanzados.
+	const visibles = useMemo(() => eventos.filter((e) => !e.informativo), [eventos])
+	// Detalles de diagnóstico interno (duplicados) no se muestran; quedan en el portapapeles al copiar.
+	const detalleVisible = (ev) => ev.detalle.filter((d) => !/duplicado/.test(d))
 	const ahora = Date.now()
 	const recientes = visibles.filter((e) => ahora - e.fin.getTime() <= H24)
 	const anteriores = visibles.filter((e) => ahora - e.fin.getTime() > H24)
-	const cuenta = (p) => eventos.filter((e) => e.accion.prioridad === p).length
+	const ultimo = visibles[0] || null // el más reciente (la lista ya viene invertida)
 
 	const toggle = (k) => setAbiertos((prev) => { const n = new Set(prev); n.has(k) ? n.delete(k) : n.add(k); return n })
 
@@ -138,23 +165,12 @@ export default function EventosExperimental({ registros = [], version, equipo = 
 					{fHora(ev.inicio)}{ev.fin - ev.inicio > 0 && <> → {fHora(ev.fin)}</>}
 				</div>
 				<div className='py-2.5 pr-2'>
-					<h3 className={`m-0 text-sm font-semibold ${sev.texto}`}>
-						{ev.veredicto}
-						{ev.accion.destello && <FaMapMarkerAlt className='ml-1.5 inline h-3 w-3 align-middle text-gray-400' title='Destello en mapa' />}
-						{(ev.accion.discord || ev.accion.push) && <FaPaperPlane className='ml-1 inline h-3 w-3 align-middle text-gray-400' title='Notifica' />}
-						{ev.etiquetas.includes('HUECO_LOG') && <FaUnlink className='ml-1 inline h-3 w-3 align-middle text-[#8A6800]' title='Hueco en el log' />}
-						<span className='ml-1.5 align-middle font-mono text-[11px] font-normal text-gray-400 dark:text-zinc-400' title='Código del evento concluido (configuración de alarmas)'>
-							{ev.codigo}{ev.etiquetas.map((e) => ' +' + e).join('')}
-						</span>
-					</h3>
-					{ev.detalle.length > 0 && <p className='mt-0.5 text-gray-600 dark:text-zinc-300'>{ev.detalle.join(' · ')}</p>}
+					<h3 className={`m-0 text-sm font-semibold ${sev.texto}`}>{ev.veredicto}</h3>
+					{detalleVisible(ev).length > 0 && <p className='mt-0.5 text-gray-600 dark:text-zinc-300'>{detalleVisible(ev).join(' · ')}</p>}
 				</div>
 				<div className='flex items-start gap-1.5 px-3 py-2.5 text-xs'>
 					<button type='button' onClick={() => toggle(k)} className='rounded border border-gray-300 px-2 py-0.5 text-gray-600 hover:bg-gray-50 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-600'>
 						{ev.crudos.length} registro{ev.crudos.length === 1 ? '' : 's'}
-					</button>
-					<button type='button' onClick={() => copiar(ev, k)} title='Copiar veredicto y crudos para reportar un veredicto incorrecto' className='rounded border border-gray-300 px-2 py-0.5 text-gray-600 hover:bg-gray-50 dark:border-zinc-500 dark:text-zinc-200 dark:hover:bg-zinc-600'>
-						{copiado === k ? 'Copiado' : 'Copiar'}
 					</button>
 				</div>
 				{abierto && (
@@ -186,6 +202,11 @@ export default function EventosExperimental({ registros = [], version, equipo = 
 								))}
 							</tbody>
 						</table>
+						<div className='mt-1.5 text-right'>
+							<button type='button' onClick={() => copiar(ev, k)} title='Copia veredicto, código y crudos con sus IDs, para reportar un veredicto incorrecto' className='rounded border border-gray-300 px-2 py-0.5 text-[11px] text-gray-500 hover:bg-gray-100 dark:border-zinc-500 dark:text-zinc-300 dark:hover:bg-zinc-700'>
+								{copiado === k ? 'Copiado' : 'Copiar para reportar'}
+							</button>
+						</div>
 					</div>
 				)}
 			</li>
@@ -194,66 +215,41 @@ export default function EventosExperimental({ registros = [], version, equipo = 
 
 	return (
 		<div className='text-sm text-gray-900 dark:text-zinc-100'>
-			<p className='mb-3 rounded border border-gray-300 bg-gray-50 px-3 py-2 text-gray-600 dark:border-zinc-600 dark:bg-zinc-800 dark:text-zinc-300'>
-				Vista experimental: cada evento resume un paquete de registros del equipo (los que llegan con ≤ {gap} s entre sí).
-				Es un derivado de las solapas Registros y Avanzados y no reemplaza su lectura ni la información del CMS.
-			</p>
-
-			<div className='mb-3 flex flex-wrap items-center gap-4'>
-				<p className='m-0 font-medium'>
-					{registros.length} registros → {eventos.length} eventos concluidos
-					{eventos.length > 0 && (
-						<span className='font-normal text-gray-600 dark:text-zinc-300'>
-							{' · '}{cuenta('alta')} de alta prioridad, {cuenta('baja')} de baja, {cuenta('info')} informativos
-						</span>
-					)}
-				</p>
-				<div className='ml-auto flex flex-wrap items-center gap-4'>
-					{nInformativos > 0 && (
-						<label className='flex items-center gap-1.5 text-gray-600 dark:text-zinc-300'>
-							<input type='checkbox' checked={verInformativos} onChange={(e) => setVerInformativos(e.target.checked)} />
-							mostrar {nInformativos} informativo{nInformativos === 1 ? '' : 's'} (reloj, etc.)
-						</label>
-					)}
-					<label className='flex items-center gap-2 text-gray-600 dark:text-zinc-300'>
-						Orden
-						<select value={orden} onChange={(e) => setOrden(e.target.value)}
-							className='rounded border border-gray-300 px-2 py-1 text-gray-900 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-100'>
-							<option value='desc'>Más recientes primero</option>
-							<option value='asc'>Más antiguos primero</option>
-						</select>
-					</label>
-					<label className='flex items-center gap-2 text-gray-600 dark:text-zinc-300'>
-						Gap máx. (s)
-						<input type='number' min='0' step='0.5' value={gap} onChange={(e) => setGap(parseFloat(e.target.value) || 0)}
-							className='w-20 rounded border border-gray-300 px-2 py-1 text-gray-900 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-100' />
-					</label>
-				</div>
+			<div className='mb-3 flex items-center justify-end'>
+				<label className='flex items-center gap-2 text-gray-600 dark:text-zinc-300'>
+					Gap máx. (s)
+					<input type='number' min='0' step='0.5' value={gap} onChange={(e) => setGap(parseFloat(e.target.value) || 0)}
+						className='w-20 rounded border border-gray-300 px-2 py-1 text-gray-900 dark:border-zinc-500 dark:bg-zinc-800 dark:text-zinc-100' />
+				</label>
 			</div>
 
 			{visibles.length === 0 ? (
 				<p className='py-8 text-center text-gray-500 dark:text-zinc-400'>No hay registros en el rango seleccionado.</p>
 			) : (
 				<>
-					{recientes.length > 0 && (
-						<section className='mb-5'>
-							<h4 className='mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-400'>
-								Últimas 24 horas <span className='font-normal normal-case tracking-normal'>· {recientes.length}</span>
+					<section className='mb-6 rounded-lg border-2 border-sky-300 bg-sky-50/70 p-3 dark:border-sky-700 dark:bg-sky-950/40'>
+						<h4 className='mb-2 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-sky-900 dark:text-sky-200'>
+							<FaRegClock className='h-4 w-4' />
+							Últimas 24 horas
+							<span className='rounded-full bg-sky-700 px-2 py-0.5 text-xs font-semibold text-white dark:bg-sky-500'>{recientes.length}</span>
+						</h4>
+						{recientes.length > 0 ? (
+							<ul className='m-0 flex list-none flex-col gap-1.5 p-0'>
+								{recientes.map((ev, i) => <Evento key={'r' + i} ev={ev} k={'r' + i} />)}
+							</ul>
+						) : (
+							<p className='m-0 rounded border border-dashed border-sky-300 bg-white/60 px-3 py-3 text-center text-sky-900/80 dark:border-sky-700 dark:bg-zinc-800/60 dark:text-sky-200/80'>
+								Sin eventos en las últimas 24 horas{ultimo ? ` · el último fue el ${fFecha(ultimo.fin)} a las ${fHora(ultimo.fin)}` : ''}
+							</p>
+						)}
+					</section>
+					{anteriores.length > 0 && (
+						<section>
+							<h4 className='mb-2 text-sm font-bold uppercase tracking-wide text-gray-500 dark:text-zinc-400'>
+								Anteriores <span className='ml-1 rounded-full bg-gray-300 px-2 py-0.5 text-xs font-semibold text-gray-800 dark:bg-zinc-600 dark:text-zinc-100'>{anteriores.length}</span>
 							</h4>
 							<ul className='m-0 flex list-none flex-col gap-1.5 p-0'>
-								{recientes.map((ev) => <Evento key={'e' + ev._i} ev={ev} k={'e' + ev._i} />)}
-							</ul>
-						</section>
-					)}
-					{anteriores.length > 0 && (
-						<section className={recientes.length ? 'border-t border-gray-300 pt-4 dark:border-zinc-600' : ''}>
-							{recientes.length > 0 && (
-								<h4 className='mb-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-zinc-400'>
-									Anteriores <span className='font-normal normal-case tracking-normal'>· {anteriores.length}</span>
-								</h4>
-							)}
-							<ul className='m-0 flex list-none flex-col gap-1.5 p-0'>
-								{anteriores.map((ev) => <Evento key={'e' + ev._i} ev={ev} k={'e' + ev._i} />)}
+								{anteriores.map((ev, i) => <Evento key={'a' + i} ev={ev} k={'a' + i} />)}
 							</ul>
 						</section>
 					)}

@@ -381,7 +381,7 @@
         if (on('Battery Test Passed')) { res.veredicto = 'Prueba de batería finalizada: aprobada'; res.severidad = 4; }
         else if (off('Battery Test Passed') || on('Check Battery')) { res.veredicto = 'Prueba de batería finalizada: NO aprobada — revisar batería'; res.severidad = 2; }
         else if (on('Battery Test Not Performed')) { res.veredicto = 'Prueba de batería no efectuada'; res.severidad = 3; }
-        else if (!esRC10) { res.veredicto = 'Prueba de batería finalizada: batería sin observaciones (no se activó "Check Battery")'; res.severidad = 4; }
+        else if (!esRC10) { res.veredicto = 'Prueba de batería finalizada: sin observaciones'; res.severidad = 4; }
         else { res.veredicto = 'Prueba de batería finalizada (resultado no reportado)'; res.severidad = 4; }
         return true;
       }

@@ -7,7 +7,7 @@
   ],
   "severidad": 4,
   "categoria": "PRUEBA_BATERIA",
-  "veredicto": "Prueba de batería finalizada: batería sin observaciones (no se activó \"Check Battery\")",
+  "veredicto": "Prueba de batería finalizada: sin observaciones",
   "detalle": [
    "Duración 5 s",
    "8 registros duplicados descartados"
