@@ -37,6 +37,7 @@ import AutonomIA from './modules/AutonomIA/view'
 import ElementTypeAbm from './modules/ElementType/views'
 import ActionAudit from './modules/ActionAudit/views'
 import Notifications from './modules/notifications/views'
+import ExternalApi from './modules/ExternalApi/views'
 
 function App() {
 	// Updater tauri
@@ -82,7 +83,8 @@ function App() {
 		{ path: '/config/hardware', element: <AutonomIA /> },
 		{ path: '/config/elementTypes', element: <ElementTypeAbm /> },
 		{ path: '/config/audit', element: <ActionAudit /> },
-		{ path: '/config/notifications', element: <Notifications /> }
+		{ path: '/config/notifications', element: <Notifications /> },
+		{ path: '/config/externalApi', element: <ExternalApi /> }
 	]
 	//Incorporo el theme de mui
 	const lightTheme = createTheme({

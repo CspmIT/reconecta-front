@@ -1,4 +1,4 @@
-import { FaBell, FaClipboardList, FaCogs, FaFile, FaMapMarkedAlt, FaProjectDiagram, FaThList, FaUserLock } from 'react-icons/fa'
+import { FaBell, FaClipboardList, FaCogs, FaFile, FaKey, FaMapMarkedAlt, FaProjectDiagram, FaThList, FaUserLock } from 'react-icons/fa'
 import { MdContentPaste, MdHistory, MdNotificationsActive } from 'react-icons/md'
 import { RiAlertFill, RiDashboardFill } from 'react-icons/ri'
 import { GrConfigure } from "react-icons/gr";
@@ -16,6 +16,7 @@ const ListIcon = () => [
 	{ title: 'Hardware', name: 'GrConfigure', icon: <GrConfigure className=' text-3xl' /> },
 	{ title: 'Infraestructuras', name: 'FaClipboardList', icon: <FaClipboardList className=' text-3xl' /> },
 	{ title: 'Auditoría', name: 'MdHistory', icon: <MdHistory className=' text-3xl' /> },
+	{ title: 'API externa', name: 'FaKey', icon: <FaKey className=' text-3xl' /> },
 	{
 		title: 'Mis notificaciones',
 		name: 'MdNotificationsActive',
