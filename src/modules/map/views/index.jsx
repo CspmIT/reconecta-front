@@ -1,9 +1,12 @@
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import LoaderComponent from '../../../components/Loader'
 import DevicePanel from '../components/DevicePanel'
 import EquipmentPicker from '../components/EquipmentPicker'
 import LineEditor from '../components/LineEditor'
 import LupaGuides from '../components/LupaGuides'
 import LupaWindow from '../components/LupaWindow'
+import MapSetup from '../components/MapSetup'
 import MapTools from '../components/MapTools'
 import OperationalMap from '../components/OperationalMap'
 import { MapProvider, useMapContext } from '../context/MapContext'
@@ -16,8 +19,8 @@ import '../utils/css/operational.css'
  *
  * Fase pendiente del rediseno: editor de tramos con snapping sobre /map/lines.
  */
-function MapLayout() {
-	const { loading, error, config, toast, lupas, armed, rootRef, cardRef, lineMode } = useMapContext()
+function MapLayout({ onCreated }) {
+	const { loading, error, config, setup, toast, lupas, armed, rootRef, cardRef, lineMode } = useMapContext()
 
 	if (loading) {
 		return (
@@ -26,6 +29,8 @@ function MapLayout() {
 			</div>
 		)
 	}
+
+	if (setup) return <MapSetup elements={setup.elements} onCreated={onCreated} />
 
 	if (!config) {
 		return <div className='rc-empty'>{error || 'No hay una vista de mapa configurada.'}</div>
@@ -66,9 +71,17 @@ function MapLayout() {
 }
 
 function Map() {
+	const navigate = useNavigate()
+	const { state } = useLocation()
+	// Tras dar de alta la vista se remonta el provider: vuelve a hacer la carga
+	// inicial completa (vista, tipos, tramos, filtros y preferencias).
+	const [carga, setCarga] = useState(0)
+	// Si se llego desde otra pantalla que necesitaba el mapa (el alta de
+	// elementos), se vuelve ahi en lugar de quedarse en el mapa vacio
+	const onCreated = () => (state?.volver ? navigate(state.volver, { replace: true }) : setCarga((n) => n + 1))
 	return (
-		<MapProvider>
-			<MapLayout />
+		<MapProvider key={carga}>
+			<MapLayout onCreated={onCreated} />
 		</MapProvider>
 	)
 }

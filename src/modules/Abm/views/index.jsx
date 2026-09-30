@@ -11,6 +11,7 @@ import { backend } from '../../../utils/routes/app.routes'
 import { useNavigate, useParams } from 'react-router-dom'
 import Swal from 'sweetalert2'
 import SubstationClient from '../Components/SubstationClient'
+import LoaderComponent from '../../../components/Loader'
 
 const Abm = () => {
 	const navigate = useNavigate()
@@ -27,6 +28,8 @@ const Abm = () => {
 	const [abrevSelected, setAbrevSelected] = useState(null)
 	const [feedSelected, setFeedSelected] = useState(null)
 	const [dataEdit, setDataEdit] = useState([])
+	// null = verificando; false = no hay vista de mapa y no se puede dar de alta
+	const [mapaListo, setMapaListo] = useState(elementId ? true : null)
 	const {
 		register,
 		watch,
@@ -118,6 +121,27 @@ const Abm = () => {
 	const shouldShrink = (value) => {
 		return value !== undefined && value !== null && value !== '';
 	}
+
+	/*
+	 * Todo elemento se vincula a un mapa (id_map). Sin la vista por defecto
+	 * cargada el selector de mapa queda vacio y el elemento se guardaria suelto,
+	 * asi que antes que nada se pide configurar el mapa. Al editar no hace falta:
+	 * si el elemento existe, ya hubo mapa.
+	 */
+	useEffect(() => {
+		if (elementId) return
+		const verificarMapa = async () => {
+			try {
+				await request(`${backend.Reconecta}/map`, 'GET')
+				setMapaListo(true)
+			} catch (e) {
+				// Solo NO_MAP bloquea: ante otro error se deja seguir, el propio
+				// formulario exige elegir un mapa
+				setMapaListo(e?.code !== 'NO_MAP')
+			}
+		}
+		verificarMapa()
+	}, [elementId])
 
 	useEffect(() => {
 		const fetchElementTypes = async () => {
@@ -223,6 +247,36 @@ const Abm = () => {
 			setElementSelected(elements.find((el) => el.id === dataEdit.type))
 		}
 	}, [elements, dataEdit])
+
+	if (mapaListo === null) {
+		return (
+			<div className='w-full'>
+				<LoaderComponent />
+			</div>
+		)
+	}
+
+	if (mapaListo === false) {
+		return (
+			<div className={'w-full flex justify-center items-center rounded-md text-black'}>
+				<CardCustom className={'w-full md:w-2/3 rounded-md text-black flex flex-col items-center gap-4 p-8'}>
+					<p className='w-full text-center text-2xl'>Primero hay que configurar el mapa</p>
+					<p className='w-full text-center text-gray-600'>
+						Cada elemento se ubica en un mapa, y todavía no hay ninguno cargado. Configurá la vista inicial
+						del mapa y después volvés a esta pantalla para cargar el elemento.
+					</p>
+					<button
+						type='button'
+						onClick={() => navigate('/map', { state: { volver: '/AddElement' } })}
+						className='bg-green-600 hover:bg-green-500 text-white rounded-md p-2'
+					>
+						Configurar el mapa
+					</button>
+				</CardCustom>
+			</div>
+		)
+	}
+
 	return (
 		<div className={'w-full flex justify-center items-center rounded-md text-black'}>
 			<CardCustom className={'w-full rounded-md text-black flex justify-center flex-wrap gap-y-3'}>

@@ -70,6 +70,8 @@ export function MapProvider({ children }) {
 	const [lines, setLines] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [error, setError] = useState(null)
+	// { elements } cuando no hay vista por defecto cargada y hay que darla de alta
+	const [setup, setSetup] = useState(null)
 	const [stamp, setStamp] = useState(null)
 
 	// Filtros y seleccion
@@ -166,7 +168,11 @@ export function MapProvider({ children }) {
 			if (cancelado) return
 
 			if (mapRes.status === 'rejected') {
-				setError(mapRes.reason?.message || 'No se pudo cargar la vista del mapa')
+				// Sin vista cargada no es un error: la pantalla ofrece el alta
+				if (mapRes.reason?.code === 'NO_MAP') {
+					setSetup({ elements: mapRes.reason.elements ?? [] })
+				}
+				else setError(mapRes.reason?.message || 'No se pudo cargar la vista del mapa')
 				setLoading(false)
 				return
 			}
@@ -784,6 +790,7 @@ export function MapProvider({ children }) {
 	const value = {
 		// datos
 		config,
+		setup,
 		types,
 		devices,
 		onMap,
