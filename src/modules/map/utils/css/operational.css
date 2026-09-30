@@ -1526,3 +1526,62 @@ body.dark .rc-alarmbar.on {
 	border: 0;
 	cursor: pointer;
 }
+
+/* ---------- alta de la vista por defecto ---------- */
+.rc-setup {
+	/* hereda de .rc-panel ancho, fondo y borde; aca solo el contenido */
+	padding: 14px 16px;
+	color: var(--rc-txt);
+	overflow-y: auto;
+}
+.rc-setup h2 {
+	font-size: 15px;
+	font-weight: 600;
+	margin: 0 0 6px;
+}
+.rc-setup p {
+	font-size: 12.5px;
+	line-height: 1.45;
+	color: var(--rc-txt2);
+	margin: 0 0 12px;
+}
+.rc-setup .rc-search {
+	box-sizing: border-box;
+}
+.rc-setup-label {
+	display: block;
+	font-size: 12px;
+	color: var(--rc-txt2);
+	margin-bottom: 4px;
+}
+.rc-setup-view {
+	margin-top: 8px;
+	font-size: 11.5px;
+	color: var(--rc-txt3);
+	font-variant-numeric: tabular-nums;
+}
+.rc-setup-error {
+	margin-top: 8px;
+	font-size: 12px;
+	color: var(--rc-rojo);
+}
+.rc-setup-actions {
+	display: flex;
+	justify-content: center;
+	margin-top: 16px;
+}
+/* Mira en el centro: lo que queda debajo es el centro que se guarda */
+.rc-setup-cross {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 22px;
+	height: 22px;
+	margin: -11px 0 0 -11px;
+	z-index: 500;
+	pointer-events: none;
+	background:
+		linear-gradient(var(--rc-azul), var(--rc-azul)) center / 2px 100% no-repeat,
+		linear-gradient(var(--rc-azul), var(--rc-azul)) center / 100% 2px no-repeat;
+	filter: drop-shadow(0 0 1px #fff);
+}

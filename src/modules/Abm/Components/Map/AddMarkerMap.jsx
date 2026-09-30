@@ -85,6 +85,14 @@ function AddMarkerMap({ register, errors, dataEdit, setSelectMarkers }) {
 								{item.name}
 							</MenuItem>
 						))}
+						{/* /getMaps trae solo los activos: si el elemento en edicion quedo
+						    en un mapa dado de baja se muestra igual, para que el campo no
+						    aparezca vacio y se pueda pasar al activo */}
+						{dataEdit.id_map && !maps.some((item) => item.id === dataEdit.id_map) && (
+							<MenuItem value={dataEdit.id_map}>
+								<em>Mapa {dataEdit.id_map} (dado de baja)</em>
+							</MenuItem>
+						)}
 					</TextField>
 				) : null}
 				<TextField
