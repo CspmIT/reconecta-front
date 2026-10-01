@@ -44,8 +44,8 @@ const EventBoard = ({ idRecloser, recloser = null }) => {
 				const hours = dateFormated.getHours()
 				const minutes = dateFormated.getMinutes()
 				const seconds = dateFormated.getSeconds()
-				item.dateAlert = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year} 
-				${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`
+				const milliseconds = String(dateFormated.getMilliseconds()).padStart(3, '0')
+				item.dateAlert = `${day < 10 ? '0' + day : day}/${month < 10 ? '0' + month : month}/${year} ${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}.${milliseconds}`
 				if (item.type_var == "Event") {
 					acc.basics.push({
 						id: item.eventId,
@@ -137,8 +137,9 @@ const EventBoard = ({ idRecloser, recloser = null }) => {
 				const parseDate = (str) => {
 					const [datePart, timePart] = str.split(' ')
 					const [day, month, year] = datePart.split('/').map(Number)
-					const [hour, minute, second] = timePart.split(':').map(Number)
-					return new Date(year, month - 1, day, hour, minute, second)
+					const [hour, minute, secondMs] = timePart.split(':')
+					const [second, ms] = secondMs.split('.').map(Number)
+					return new Date(year, month - 1, day, Number(hour), Number(minute), second, ms || 0)
 				}
 				return parseDate(b.dateAlert) - parseDate(a.dateAlert)
 			})
