@@ -1,7 +1,7 @@
 export const ColumnsEvent = (handleChecked) => [
 	{
 		accessorFn: (originalRow) => originalRow.dateAlert,
-		size: 200,
+		size: 230,
 		id: 'dateAlert',
 		header: 'Fecha',
 		accessorKey: 'dateAlert',
